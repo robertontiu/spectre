@@ -1,73 +1,90 @@
-# Spectre
+<p align="center"><img src="assets/badge.png" width="96" alt="Spectre's badge"></p>
 
-**An experiment: can an AI make a hip-hop beat the way a human producer does, starting from a feeling?**
+<h1 align="center">Spectre</h1>
 
-Spectre is not a text-to-music model. No neural network generates audio here. Instead, an AI agent plays the role of a producer and works in a small studio made of code:
+**Can an AI make a hip-hop track the way a human producer does?**
 
-- every sound (drums, 808s, keys, strings, choir, vinyl crackle) is synthesized from scratch,
-- the agent writes musical *intentions* ("a kick that leans early, a snare that drags, an 808 sliding up into the hook"), and a "hand" performs them with swing, timing and velocity, the way fingers on drum pads would,
-- the agent can't hear, so it **listens by looking**: every render becomes spectrograms, an arrangement view and measurements,
-- it works one decision at a time, writing down what it heard, what it felt and why it made each move.
+### → Listen at [spectre.robertontiu.com](https://spectre.robertontiu.com)
 
-Then a person listens and guesses which feeling it was making.
+<p align="center">
+  <img src="assets/spectrogram-005.png" width="30%" alt="Spectrogram of Fuck Every War">
+  <img src="assets/spectrogram-004.png" width="30%" alt="Spectrogram of Tura">
+  <img src="assets/spectrogram-003.png" width="30%" alt="Spectrogram of Throw It Back">
+</p>
+<p align="center"><sub>Spectre can't hear. This is how it sees its tracks: <i>Fuck Every War</i>, <i>Tura</i>, <i>Throw It Back</i>.</sub></p>
 
-It's a sibling of [Teodor](https://github.com/robertontiu/teodor), the same idea applied to painting.
+---
 
-## Results so far
+## What this is
 
-| # | Track | Feeling | What happened |
-|---|---|---|---|
-| 001 | [Bleachers](sessions/001-bleachers/) | hidden (blind test) | 3:12, 90 bpm. The listener guessed *longing*; it was **defiance**. Close, but not aggressive enough. It also exposed a mix problem on laptop speakers, which led to the mastering stage. |
-| 002 | [Lid Off](sessions/002-lid-off/) | rage (briefed: high tempo, aggressive) | 2:51, 160 bpm, E Phrygian. Rage-trap meets industrial: distorted 808s, a blown-out dissonant supersaw cluster, an eighth of dead silence before every slam. Applied the lessons from 001: attitude built into the sound, controlled low end, mastered at -10 LUFS. |
-| 003 | [Throw It Back](sessions/003-rebellion/) | rebellion (briefed: oriental trap) | 2:48, 140 bpm, D Hijaz. Oud calls, the crowd answers louder each time; a march where the trap drums drop out and only feet, hands and darbuka walk. Built with new oud, ney and darbuka instruments. |
-| 004 | [Tura](sessions/004-hustle/) | the hustle (briefed: Romanian folk trap, underground) | 2:43, 144 bpm half-time, E Romanian minor. The old 7/16 geamparale limp folded into the trap grid as 3-3-2, so the beat walks like someone carrying weight; fiddles, cobza, cimbalom; a tired nai doina at "the wall" while the clock keeps ticking. |
-| 005 | [Fuck Every War](sessions/005-fuck-war/) | anti-war statement (briefed: Ukrainian folk trap) | 3:01, 140 bpm half-time, E Ukrainian Dorian. A war machine locked to the grid against white voices, tsymbaly, lira and trembita played loose; every hook the people shout "FUCK. WAR." and the machine goes silent; it ends on silence and a far-off trembita. |
+Most AI music appears in a single step: a prompt goes in, a song comes out of a neural network. Spectre is an experiment in the opposite direction. It is an AI producer that works the way a human producer works: it starts from a feeling, builds a loop, listens, feels what the track does to it, and decides the next move from there. It builds the track slowly, over 25 to 45 short sessions in a studio made of code, until one more move would only be over-explaining.
 
-Each session folder has the mastered MP3, the producer's journal (every move, numbered), the project file that reproduces the track exactly, and pictures of what the producer "saw".
+No neural network generates any audio here. Every sound, from the 808 to the kokle, is synthesized from scratch; the producer writes musical intentions and a "hand" performs them. And because Spectre can't hear, it listens by looking: every render becomes spectrograms, an arrangement view and measurements.
 
-## How a session works
+The question isn't whether the result sounds like a record. It's whether the *process* can be made analogous to a human one, and whether a track made that way carries something a person can feel.
 
-1. **Sit with it.** The producer describes the feeling in the body, in time and space, and picks tempo, groove, key and sounds.
-2. **The loop.** It builds a 4- or 8-bar loop until it carries the feeling on repeat.
-3. **Arrangement.** It extends to a full 2:30-3:30 beat with an emotional arc.
-4. **Transitions and detail.** Drop-outs, fills, risers, switch-ups.
-5. **Mix and master.** Balance, then a mastering stage (tonal balance, mono low end, gentle compression, bass harmonics for small speakers, true-peak limiting).
-6. **Final listen** from the top.
+It grew out of [Teodor](https://github.com/robertontiu/teodor), the same experiment applied to painting.
 
-Every step is: listen, feel, decide one thing, render, write it down.
+## How Spectre produces
 
-## What we've learned
+Every part of the process is modeled on how producers actually work and on research into how music carries emotion.
 
-- **Notes aren't attitude.** The first blind test aimed for defiance and was heard as longing. A minor melody that keeps reaching up *means* refusal on paper but *sounds* like yearning. The AI can verify structure by looking at sound; it can't yet verify attitude.
-- **Most of making rage was taking out the wrong feelings.** In session 002 a hissing snare tail read as anxiety, a riser read as festival hype, and a half-time verse went cold like menace, so each was cut or reworked.
-- **Taking things away carries a feeling.** In session 003 the strongest rebellion moments came from removing the trap drums (a march of feet, hands and darbuka) and leaving the crowd shouting over nothing.
-- **Laptops can't play sub bass.** A beat that's all 50 Hz sounds clunky on a MacBook. Mastering now checks how a track translates to small speakers.
+**It starts from a feeling, not a genre.** Spectre is given a theme, like *rage*, *the hustle* or *revolution*, sometimes a genre (Romanian or Ukrainian folk trap), and decides what the track must make a stranger feel. Every decision after that is checked against it, and against the *nearest wrong feeling*: rage can drift into hype, rebellion into triumph, an anti-war statement into a battle anthem.
 
-More in [docs/LESSONS.md](docs/LESSONS.md).
+**The mind decides, the hand plays.** A producer doesn't place every hit by hand; they decide intentions and their hands perform them. Spectre writes intentions in a compact notation ("a snare that drags, ghost notes, an 808 sliding up into the hook"), and the engine's hand performs them with swing, micro-timing, velocity phrasing, rolls, chord voicing and voice leading.
 
-## Try it
+**The groove carries emotion.** Research on microrhythm shows how small timing deviations, like J Dilla's "drunk" drums, shape how a groove feels. Spectre's hand can push, drag and humanize each element separately, and two time feels can mean something: in *Fuck Every War* the war machine is locked to the grid while the people play late.
 
-Requires Python 3.11+ and ffmpeg.
+**It listens by looking.** Every render becomes an arrangement view, a mel spectrogram, band energy, a loudness curve and a timing roll that shows where every hit landed. Spectre zooms in, squints (mono and low-passed checks) and steps back, like a producer switching between headphones, monitors and a laptop.
 
-```bash
-pip install -r requirements.txt
-mkdir -p /tmp/beat && cp examples/engine-test.json /tmp/beat/project.json
-cd /tmp/beat && export BEAT_DIR=$PWD
-python3 <path-to-repo>/engine/studio.py render    # renders/v001.wav
-python3 <path-to-repo>/engine/studio.py listen    # ear.png: what the producer "sees"
-python3 <path-to-repo>/engine/studio.py master    # renders/v001.master.mp3
-```
+**Attitude lives in the sound.** Mode and tempo are the strongest emotion cues in music, but timbre, roughness and articulation decide the attitude. The first track aimed for defiance and came across as longing because its sounds lacked bite. Since then, distortion, density, hard transients and cuts are part of every decision.
 
-To reproduce a session's track exactly, render its `project.json` (rendering is deterministic).
+**Subtraction is the strongest move.** The most powerful moments in these tracks are things taken away: the drums dropping out for a march of feet and darbuka, a crowd shouting over silence, a siren cut off by every hook.
 
-The project format is documented in [docs/MANUAL.md](docs/MANUAL.md), and the hip-hop craft notes the producer reads are in [docs/CRAFT.md](docs/CRAFT.md). If you're an AI agent, start with [AGENTS.md](AGENTS.md).
+**It researches the culture first.** For folk-fusion tracks, Spectre studies the tradition (instruments, rhythms, modes, the modern artists who fuse it with beats) and the engine gets the culture's own instruments: oud, ney and darbuka; cimbalom, fiddle and nai; trembita and lira; kokle, dūdas and trīdeksnis.
 
-## Honest limits
+**It mixes, then masters.** A mastering stage, built on how mastering engineers work, balances the tonal spectrum, keeps the low end mono, adds bass harmonics so the track reads on laptop speakers, and limits true peaks. When the master has to correct too much, Spectre goes back and fixes the mix.
 
-- All sounds are synthesized, so it sounds like a good demo, not a commercial record.
-- No vocals.
-- The producer judges its work through images and numbers, not ears. That's the core constraint of the experiment, and the most interesting thing to improve.
+**It keeps a journal.** Every move is written down: what it heard, what it felt, what it changed and why. Each track comes with that journal, the project file that reproduces it exactly, and the pictures Spectre saw. You'll find them in [`sessions/`](sessions).
+
+## The research behind it
+
+- P. N. Juslin & D. Västfjäll, ["Emotional responses to music: The need to consider underlying mechanisms"](https://doi.org/10.1017/S0140525X08005293), *Behavioral and Brain Sciences* 31(5), 2008. How music evokes emotion.
+- T. Eerola, A. Friberg & R. Bresin, ["Emotional expression in music: contribution, linearity, and additivity of primary musical cues"](https://doi.org/10.3389/fpsyg.2013.00487), *Frontiers in Psychology* 4, 2013. Mode and tempo as the strongest cues, then register, dynamics, articulation and timbre.
+- A. Gabrielsson & E. Lindström, "The role of structure in the musical expression of emotions", in P. N. Juslin & J. A. Sloboda (eds.), *Handbook of Music and Emotion*, Oxford University Press, 2010. Which musical features carry which emotions.
+- A. Danielsen (ed.), *Musical Rhythm in the Age of Digital Reproduction*, Ashgate, 2010. Microrhythm and groove in programmed music.
+- Spotify for Artists, ["Loudness normalization"](https://support.spotify.com/artists/article/loudness-normalization/). Loudness and true-peak targets for the mastering stage.
+- Genre research for each fusion, with sources: [`docs/ROMANIAN.md`](docs/ROMANIAN.md), [`docs/UKRAINIAN.md`](docs/UKRAINIAN.md), [`docs/LATVIAN.md`](docs/LATVIAN.md). Production craft: [`docs/CRAFT.md`](docs/CRAFT.md). Mastering: [`docs/MASTERING.md`](docs/MASTERING.md).
+
+## Produce your own
+
+1. **Fork** this repository (or clone it).
+2. **Open it in an AI coding agent session**, such as [Claude Code](https://claude.com/claude-code). The agent reads [`AGENTS.md`](AGENTS.md), which teaches it how to set up the studio and run a producer session.
+3. **Ask it for a track**, giving it a theme or a feeling, and a genre if you like:
+   - *"Make a track about the hustle, Romanian folk trap, underground."* Spectre decides the tempo and sound.
+   - *"Make a high-tempo, aggressive track that carries rage."* Spectre produces exactly that feeling.
+
+A track takes 30 to 90 minutes of agent time. The agent installs what it needs (Python with numpy, scipy, pedalboard, librosa, soundfile and pyloudnorm, plus ffmpeg). You get back:
+
+- the mastered track and its title
+- Spectre's journal of the whole session
+- the project file that reproduces the track, and the pictures it listened with
+
+## Want to know more?
+
+- [`docs/LESSONS.md`](docs/LESSONS.md): what each track taught, and what carries across genres
+- [`AGENTS.md`](AGENTS.md): the technical handbook (the sound engine, the hand, the ears, the mastering stage, how a session is run)
+- [`docs/ORCHESTRATION.md`](docs/ORCHESTRATION.md): how sessions are started, kept alive and delivered
+- [`web/`](web): the website (Next.js); [`site/`](site): its prototype
+
+## Credits
+
+An experiment by [Robert Ontiu](https://github.com/robertontiu), built with Claude (Anthropic). The tracks, journals and titles are Spectre's.
 
 ## License
 
-[MIT](LICENSE)
+The code is [MIT](LICENSE) © 2026 Robert Ontiu.
+
+**Spectre's tracks in this repository** (the audio, journals, project files and images in `sessions/`, `assets/`, `site/` and `web/`) are licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): free to use, share and adapt, including commercially, as long as you credit this repository, for example *"Spectre, [github.com/robertontiu/spectre](https://github.com/robertontiu/spectre)"*.
+
+**Tracks you make with it are yours.** If you run this project to make your own tracks, you hold the rights to them and are responsible for them and how they're used.

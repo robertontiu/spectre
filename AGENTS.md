@@ -8,7 +8,7 @@ Read this file fully before touching anything. It is the single source of truth 
 
 **Spectre** is an AI hip-hop producer built as a human analogue. It does not generate audio with a neural music model. It works the way a human producer does:
 
-1. It starts from a **feeling** (sometimes hidden from everyone, including the person running it).
+1. It starts from a **feeling** (given in a brief, or chosen by Spectre itself from a theme).
 2. It works in a **studio** made of code: synthesized instruments, a sequencer, effects, a mix bus and a mastering stage.
 3. It **listens** through "ears" that turn audio into pictures and numbers (the agent cannot hear audio, but it can see spectrograms).
 4. It makes **one musical decision at a time** in a feel-listen-decide loop and journals every move.
@@ -21,7 +21,6 @@ It is a sibling experiment to [Teodor](https://github.com/robertontiu/teodor), a
 - **Mind/hand split.** The agent (the mind) writes musical intentions in a compact notation. The engine (the hand) performs them: swing, micro-timing, velocity phrasing, rolls, chord voicing and voice leading, strums, arps, transitions. Don't make the agent place every sample, and don't let the engine make musical decisions.
 - **Feeling-first loop.** Every iteration: listen, feel (original feeling plus what the track now does), decide ONE intention, render, journal. Never render twice without listening in between.
 - **Forward only.** Every render is versioned (`renders/vNNN.*`). The agent can change anything in `project.json`, but never reverts to an old version.
-- **Never name the feeling** in blind sessions: not in the journal, file names, titles or the project.
 - **The ears are the bottleneck.** Quality is capped by how well the agent can judge what it hears. Improving the ears is usually the highest-value engine work.
 
 ## 2. Repository map
@@ -51,7 +50,7 @@ tools/
   sync_tracks.py  copies each session's mastered MP3 into site/tracks and player/tracks
 sessions/
   NNN-name/       one folder per session: project.json, journal.md, mastered mp3, ear and master images,
-                  README.md with the result (and the blind-test outcome if blind)
+                  README.md with the result
 examples/
   engine-test.json  a small project that exercises most engine features (render it to smoke-test changes)
 ```
@@ -76,14 +75,13 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 
 ## 4. Running a producer session
 
-1. Create `sessions/NNN-shortname/`. For a **blind** session, write the feeling word to `.secret` in that folder (it's gitignored) without reading it yourself, and keep the eight answer options in `.options`. For a **briefed** session, put the brief in the prompt.
+1. Create `sessions/NNN-shortname/` and write the brief into `PROMPT.md` there (see `docs/ORCHESTRATION.md`).
 2. Fill in `prompts/producer.md` (placeholders in `{{...}}`) and run it as a sub-agent with file, shell and image-reading tools. A full session is 25-45 iterations, about 30-60 minutes.
 3. When it finishes: check the master report (LUFS, true peak under -1 dBTP, no warnings), check the length (2:30-3:30), copy `final.mp3`, and write the session `README.md` (see `sessions/001-bleachers/README.md` for the format).
-4. Blind sessions: give the listener the track and the eight options, reveal `.secret` only after they guess, record the outcome in the session README and in `docs/LESSONS.md`.
-5. Long sessions can be interrupted (for example when the operator's own turn is interrupted). Check on them periodically; to resume, start a fresh producer agent with the same prompt plus "read journal.md and the helper scripts, listen to the latest render, continue numbering". Forward-only versioning makes this seamless.
-6. **After every genre switch, record lessons in the repo** (owner's standing rule): add the session entry to `docs/LESSONS.md` and update its "Across genres" section with what transferred and what didn't. If the new genre needed research, save it as a `docs/<GENRE>.md` brief (see `docs/ROMANIAN.md`, `docs/UKRAINIAN.md`). Commit these with the session.
-7. Sessions can run in parallel (one folder each). Engine changes made while another session is rendering must be additive and written atomically (write a temp file, then rename), so a running render never imports a half-written module.
-8. Commit the session folder **without** `renders/` (the WAVs are large and reproducible from `project.json`, because rendering is seeded and deterministic).
+4. Long sessions can be interrupted (for example when the operator's own turn is interrupted). Check on them periodically; to resume, start a fresh producer agent with the same prompt plus "read journal.md and the helper scripts, listen to the latest render, continue numbering". Forward-only versioning makes this seamless.
+5. **After every genre switch, record lessons in the repo** (owner's standing rule): add the session entry to `docs/LESSONS.md` and update its "Across genres" section with what transferred and what didn't. If the new genre needed research, save it as a `docs/<GENRE>.md` brief (see `docs/ROMANIAN.md`, `docs/UKRAINIAN.md`). Commit these with the session.
+6. Sessions can run in parallel (one folder each). Engine changes made while another session is rendering must be additive and written atomically (write a temp file, then rename), so a running render never imports a half-written module.
+7. Commit the session folder **without** `renders/` (the WAVs are large and reproducible from `project.json`, because rendering is seeded and deterministic).
 
 ## 5. Engine conventions
 
@@ -98,7 +96,7 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 
 ## 6. Known limits and open directions (in priority order)
 
-1. **The ears can't hear attitude.** Structure reads well on spectrograms; timbre and emotional "bite" don't. Session 001 aimed for defiance and the listener heard longing. Ideas: an audio-capable model as a critic ("describe what you hear, without naming emotions"), CLAP-style embeddings as a weak signal, or a human checkpoint ear after the loop stage.
+1. **The ears can't hear attitude.** Structure reads well on spectrograms; timbre and emotional "bite" don't. Session 001 aimed for defiance and came across as longing. Ideas: an audio-capable model as a critic ("describe what you hear, without naming emotions"), CLAP-style embeddings as a weak signal, or a human checkpoint ear after the loop stage.
 2. **Synth timbres lean soft.** No real samples. Real drum one-shots or sample packs (the user would provide them; the sandbox network is restricted) would raise quality a lot.
 3. **No vocals.** A generative model as a "session musician" (stems on demand) is the planned v2 for metal and pop.
 4. **Mastering targets** are a single hip-hop curve. Genre-specific targets and reference-track matching would help.
@@ -107,5 +105,5 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 ## 7. Git
 
 - Default branch `main`. Commit engine changes separately from session results.
-- Don't commit `renders/`, `.secret`, WAVs, `__pycache__`.
+- Don't commit `renders/`, WAVs, `__pycache__`.
 - MIT licensed (see `LICENSE`).

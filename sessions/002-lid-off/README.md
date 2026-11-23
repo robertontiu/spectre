@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Mode | Briefed (not blind). Theme: **rage**. Specs: high tempo, aggressive, strongly felt |
+| Mode | Briefed. Theme: **rage**. Specs: high tempo, aggressive, strongly felt |
 | Length / tempo / key | 2:48 of music (2:51 with the final ring-out), 112 bars, 160 bpm straight, E Phrygian with a flat 5, up a semitone to F for the last hook |
 | Genre | Rage-trap crossed with industrial: full-time stampede hooks, half-time verses with a muted chug, distorted 808s, a blown-out diminished supersaw cluster (E-G-Bb-F), a hammering bitcrushed lead |
 | Iterations | 31 render-and-listen loops (about 11 loop, 6 arrangement, 9 transitions and detail, 5 mix), then the master |

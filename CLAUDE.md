@@ -4,8 +4,7 @@ All agent instructions for this repository live in [AGENTS.md](AGENTS.md). Read 
 
 Quick rules:
 - `docs/MANUAL.md` is the producer agent's only interface to the engine. Keep it in sync with the code.
-- Never commit `renders/`, WAV files or `.secret` files.
-- In blind sessions, never read or print a session's `.secret` until the listener has guessed.
+- Never commit `renders/` or WAV files.
 - Smoke-test engine changes with `examples/engine-test.json` (render, listen, master) before committing.
 - The artist is called Spectre everywhere.
 - Never leave a producer session stopped: check every ~15 minutes and resume from its PROMPT.md and journal.

@@ -14,8 +14,8 @@ Genres so far: boom-bap/trap hybrid (001), rage-trap/industrial (002), oriental 
 - **The same instrument can tell opposite stories (004):** the fiddle first danced like a wedding band (celebration, the wrong feeling); digging the bow in (grit, sawing, long notes) turned it into work. Articulation decides the feeling as much as the instrument choice.
 - **Shared modes:** Ukrainian Dorian, Romanian minor and the klezmer "Misheberak" scale are the same Dorian #4; Hijaz / Phrygian dominant links oriental, Romanian and Ukrainian material. The key detector in the ears misreads these modes; ignore it there.
 
-## Session 001: "Bleachers" (blind, hidden feeling: defiance)
-- **Outcome:** the listener guessed *longing* (and said defiance was his second thought, but "it didn't feel aggressive enough"). A near miss.
+## Session 001: "Bleachers" (feeling: defiance)
+- **Outcome:** the track came across closer to *longing* than defiance; Robert's feedback was that it "didn't feel aggressive enough". A near miss.
 - **Why:** the core idea was "minor melodies that climb back up every time the chords pull them down". The producer meant it as refusal, but upward-reaching minor melodies are the textbook shape of yearning. The bridge's strings sinking by half-steps pushed further toward ache. The synthesized brass and organ lacked bite.
 - **Lesson 1:** attitude lives in the sound (distortion, roughness, hard transients, density), not only in the notes. The ears can verify structure but not attitude.
 - **Lesson 2:** at every stage, ask what the nearest wrong feeling is and what separates the two.
