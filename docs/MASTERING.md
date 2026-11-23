@@ -18,7 +18,7 @@ Session 001 ("Bleachers") sounded clunky on MacBook speakers. Analysis showed th
 |---|---|
 | 0. Analyse | Integrated LUFS, true peak (4x), 1/3-octave long-term spectrum (gated to the loud parts) |
 | 1. Clean-up | 28 Hz 8th-order high-pass; side channel high-passed below 120 Hz (linear phase) so the low end is mono |
-| 2. Tonal EQ | Two-pass linear-phase EQ that moves the spectrum toward a hip-hop target curve, aligned on 200 Hz-5 kHz. Strength set by `--eq`; at most -8/+4 dB per band in total |
+| 2. Tonal EQ | Two-pass linear-phase EQ that moves the spectrum toward a beat target curve, aligned on 200 Hz-5 kHz. Strength set by `--eq`; at most -8/+4 dB per band in total |
 | 3. Multiband | 4 linear-phase bands (120 / 600 / 4000 Hz crossovers) that sum back perfectly; each compresses only its own loudest peaks (threshold from its 95th percentile) |
 | 4. Translation | 55-150 Hz bass body to tanh saturation to a 160-700 Hz band-pass, mixed in (`--translate`) |
 | 5. Glue | 2:1, 30 ms attack, 200 ms release, about 1-2 dB of reduction |
@@ -28,7 +28,7 @@ Session 001 ("Bleachers") sounded clunky on MacBook speakers. Analysis showed th
 
 Defaults: `--lufs -11 --tp -1 --eq 0.7 --translate 0.5` (session 001 used `--eq 0.9`).
 
-The target curve is in `TARGET_ANCHORS` (dB relative to 1 kHz per 1/3 octave). It is a hand-tuned modern hip-hop balance, not measured from references. Reference matching is a good next step.
+The target curve is in `TARGET_ANCHORS` (dB relative to 1 kHz per 1/3 octave). It is a hand-tuned balance for modern 808-driven beats, not measured from references. Reference matching is a good next step.
 
 ## Sources
 - Spotify: Loudness normalization: https://support.spotify.com/artists/article/loudness-normalization/

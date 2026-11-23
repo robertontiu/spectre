@@ -6,7 +6,7 @@ Read this file fully before touching anything. It is the single source of truth 
 
 **This is an experiment**, not a product. The question it explores: can an AI make music the way a human does, driven by a feeling and shaped by listening, rather than by generating audio from a prompt? Treat everything here (results, engine, prompts) as research in progress, and report outcomes honestly, including misses.
 
-**Spectre** is an AI hip-hop producer built as a human analogue. It does not generate audio with a neural music model. It works the way a human producer does:
+**Spectre** is an AI beat producer built as a human analogue, across genres (trap, boom-bap, rage, and folk fusions from the Middle East to the Baltics). It does not generate audio with a neural music model. It works the way a human producer does:
 
 1. It starts from a **feeling** (given in a brief, or chosen by Spectre itself from a theme).
 2. It works in a **studio** made of code: synthesized instruments, a sequencer, effects, a mix bus and a mastering stage.
@@ -39,7 +39,7 @@ engine/
   solos.sh        diagnostic: per-track RMS and band levels via solo renders (written by the producer in session 002)
 docs/
   MANUAL.md       the studio manual the producer agent reads (project format, commands, how to read the ears)
-  CRAFT.md        hip-hop craft brief: groove, drums, 808, harmony, timbre, arrangement, transitions, mix
+  CRAFT.md        beat craft brief: groove, drums, 808, harmony, timbre, arrangement, transitions, mix
   MASTERING.md    mastering research brief and how master.py implements it
   LESSONS.md      what each session taught us; read before changing the agent prompt or engine
 prompts/
@@ -99,7 +99,7 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 1. **The ears can't hear attitude.** Structure reads well on spectrograms; timbre and emotional "bite" don't. Session 001 aimed for defiance and came across as longing. Ideas: an audio-capable model as a critic ("describe what you hear, without naming emotions"), CLAP-style embeddings as a weak signal, or a human checkpoint ear after the loop stage.
 2. **Synth timbres lean soft.** No real samples. Real drum one-shots or sample packs (the user would provide them; the sandbox network is restricted) would raise quality a lot.
 3. **No vocals.** A generative model as a "session musician" (stems on demand) is the planned v2 for metal and pop.
-4. **Mastering targets** are a single hip-hop curve. Genre-specific targets and reference-track matching would help.
+4. **Mastering targets** are a single curve tuned for 808-driven beats. Genre-specific targets and reference-track matching would help.
 5. **Speed.** A full-length render takes 20-45 s. Per-track caching would make the loop faster.
 
 ## 7. Git

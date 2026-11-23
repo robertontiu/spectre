@@ -153,7 +153,7 @@ const TRACKS=[
 ];
 const FREQS=[60,170,310,600,1000,3000,6000,12000,14000,16000];
 const PRESETS={
- 'Spectre (hip-hop)':{pre:-3,g:[3,2,-1,-2,-1,1,2,2,1,0]},
+ 'Spectre':{pre:-3,g:[3,2,-1,-2,-1,1,2,2,1,0]},
  'Flat':{pre:0,g:[0,0,0,0,0,0,0,0,0,0]},
  'Laptop speakers':{pre:-2,g:[-6,3,3,1,0,1,1,0,-1,-2]},
  'Headphones':{pre:-3,g:[2,1,0,-1,0,1,2,3,2,1]},
@@ -288,7 +288,7 @@ document.addEventListener('keydown',e=>{if(/INPUT|SELECT/.test(e.target.tagName)
  else if(k==='z')$('prev').click();else if(k==='b')$('next').click();else if(k==='x')play();else if(k==='c')au.pause();else if(k==='s')$('shuf').click();else if(k==='r')$('rep').click();else if(k==='v')big.click()});
 
 /* restore */
-$('preset').value=st.preset&&(PRESETS[st.preset]||st.preset==='Custom')?st.preset:'Spectre (hip-hop)';
+$('preset').value=st.preset&&(PRESETS[st.preset]||st.preset==='Custom')?st.preset:'Spectre';
 if(st.preset==='Custom'&&st.g){setEQ({pre:st.pre||0,g:st.g})}else setEQ(PRESETS[$('preset').value]);
 if(typeof st.vol==='number')$('vol').value=st.vol;
 if(st.shuffle){shuffle=true;tog($('shuf'),true)}if(st.repeat===false){repeat=false;tog($('rep'),false)}

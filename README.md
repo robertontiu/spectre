@@ -2,7 +2,7 @@
 
 <h1 align="center">Spectre</h1>
 
-**Can an AI make a hip-hop track the way a human producer does?**
+**Can an AI make a beat the way a human producer does?**
 
 ### → Listen at [spectre.robertontiu.com](https://spectre.robertontiu.com)
 

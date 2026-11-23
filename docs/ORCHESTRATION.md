@@ -48,7 +48,7 @@ Publishing: `publish_files` with the artifact slug, `base_version` from `get_art
 - Badge: a tonal hooded wraith carved out by cold backlight, eye glints, eclipse-like corona; also the favicon. No cartoon features, no line drawing.
 - Title: SPECTRE as dark smoky letters against the same backlight, faded (~80% opacity), with an occasional horror-film blur-and-shake glitch every 8-20 s.
 - No descriptions on the page: no tagline, no track style line, no footer prose (only a small GitHub link).
-- Layout: top half brand banner; bottom half a blurred field of the playing track's colours; the player in the middle, raised over the top, dissolving into the bottom. Inside the player: bar visualizer, controls, EQ ("Spectre (hip-hop)" preset default), playlist ("Spectre - Title", duration, BPM below), newest first.
+- Layout: top half brand banner; bottom half a blurred field of the playing track's colours; the player in the middle, raised over the top, dissolving into the bottom. Inside the player: bar visualizer, controls, EQ ("Spectre" preset default), playlist ("Spectre - Title", duration, BPM below), newest first.
 - Track colours lead in the bottom field (moderately muted), bleed lightly into the top, and tint the mist. Fuck Every War uses the Ukrainian flag colours.
 - Mist: several fog layers moving visibly (12-28 s passes) across both halves, denser at the top.
 - One fixed full-viewport background stack (no section backgrounds, no clipping), so there are no seams; verify seams with a row-by-row luminance script, not by eye.

@@ -1,4 +1,6 @@
-# Hip-hop beat craft: a working brief
+# Beat craft: a working brief
+
+_Rooted in hip-hop and trap production, where Spectre started; the genre briefs in `docs/` extend it to other traditions._
 
 Distilled from production guides, producer interviews and music-emotion research. This is a starting vocabulary, not a rulebook; the feeling decides when to break it.
 

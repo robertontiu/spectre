@@ -25,7 +25,7 @@ from scipy.ndimage import minimum_filter1d, uniform_filter1d
 SR = 44100
 THIRD = np.array([31.5, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600,
                   2000, 2500, 3150, 4000, 5000, 6300, 8000, 10000, 12500, 16000])
-# Long-term 1/3-octave energy target for modern hip-hop, relative to 1 kHz (dB). Sub-forward but
+# Long-term 1/3-octave energy target for modern 808-driven beats, relative to 1 kHz (dB). Sub-forward but
 # not sub-dominated; falls ~3 dB/oct above 2 kHz. Interpolated between anchors.
 TARGET_ANCHORS = {31.5: 3.0, 40: 5.5, 50: 6.5, 63: 6.5, 80: 6.0, 100: 5.0, 160: 3.0, 250: 1.5, 500: 1.0,
                   1000: 0.0, 2000: -2.0, 4000: -5.0, 8000: -8.5, 12500: -12.0, 16000: -16.0}
@@ -270,7 +270,7 @@ def picture(rep, path):
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots(1, 1, figsize=(11, 4.5))
     tgt = target_curve(THIRD)
-    ax.semilogx(THIRD, tgt, "k--", lw=1.5, label="target (hip-hop)")
+    ax.semilogx(THIRD, tgt, "k--", lw=1.5, label="target (beat)")
     ax.semilogx(THIRD, rep["in"]["tonal"], color="tab:red", lw=1.2, label=f"premaster ({rep['in']['lufs']} LUFS)")
     ax.semilogx(THIRD, rep["out"]["tonal"], color="tab:blue", lw=1.8, label=f"master ({rep['out']['lufs']} LUFS, {rep['out']['true_peak']} dBTP)")
     ax.axvspan(20, 150, color="0.9", zorder=0)
