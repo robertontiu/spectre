@@ -1,0 +1,19 @@
+ZOOM 92.6-106.3s  LUFS -10.4
+  siren         8 events  timing vs 16th grid: mean  +0.0 ms, spread  0.0 ms  velocity 0.85-0.85
+  clank        47 events  timing vs 16th grid: mean  +0.0 ms, spread  0.0 ms  velocity 0.57-0.82
+  engine        2 events  timing vs 16th grid: mean  -0.0 ms, spread  0.0 ms  velocity 0.85-0.85
+  kick         17 events  timing vs 16th grid: mean  +0.1 ms, spread  1.1 ms  velocity 0.76-1.00
+  snare         4 events  timing vs 16th grid: mean  +0.4 ms, spread  1.1 ms  velocity 0.98-1.00
+  clap         10 events  timing vs 16th grid: mean  -4.4 ms, spread  4.4 ms  velocity 0.44-1.00
+  hat          18 events  timing vs 16th grid: mean  -2.6 ms, spread 12.2 ms  velocity 0.63-0.85
+  808           4 events  timing vs 16th grid: mean  +2.3 ms, spread  5.3 ms  velocity 0.81-0.99
+  choir        22 events  timing vs 16th grid: mean +13.4 ms, spread 12.0 ms  velocity 0.79-0.97
+  choirHi      21 events  timing vs 16th grid: mean +17.6 ms, spread 13.4 ms  velocity 0.78-0.94
+  drone         4 events  timing vs 16th grid: mean  +4.3 ms, spread 17.9 ms  velocity 0.81-0.91
+  shout         4 events  timing vs 16th grid: mean  -0.4 ms, spread  3.7 ms  velocity 0.93-1.00
+  shout2        4 events  timing vs 16th grid: mean  -3.5 ms, spread  7.7 ms  velocity 0.97-1.00
+  lira          2 events  timing vs 16th grid: mean  +2.7 ms, spread  3.0 ms  velocity 0.85-0.92
+  fiddle        2 events  timing vs 16th grid: mean +24.7 ms, spread  3.4 ms  velocity 0.83-0.95
+  shaker       56 events  timing vs 16th grid: mean  +5.7 ms, spread  9.8 ms  velocity 0.32-1.00
+  tsym         86 events  timing vs 16th grid: mean  +1.5 ms, spread 21.6 ms  velocity 0.34-1.00
+image: /home/claude/spectre/sessions/005-fuck-war/ear_zoom.png

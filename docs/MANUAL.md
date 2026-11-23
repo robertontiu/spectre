@@ -97,6 +97,7 @@ A pattern is a set of parts for several tracks, `bars` long. Sections loop patte
            "lpf": {"tracks": ["keys"], "beats": 4, "to_hz": 400},
            "tapestop": 2, "silence": 1}}
 ```
+Note: an exit `cut` only silences its own window; 808 and reverb tails can ring on into the next section. For true silence in a section, also add `"auto": {"<track>": {"mute": true}}` there.
 Section names must be unique. Bars per section should be multiples of 4 (2 for short breaks).
 
 ## Tips from the bench

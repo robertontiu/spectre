@@ -490,7 +490,8 @@ def cmd_render(args):
     if not args.solo:
         sf.write(path.replace(".wav", ".premaster.wav"), pre.T, SR, subtype="FLOAT")
     json.dump(meta, open(path.replace(".wav", ".meta.json"), "w"))
-    json.dump(dict(wav=path), open(os.path.join(RENDERS, "latest.json"), "w"))
+    if not args.solo:  # a solo render must not become "latest": listen should keep hearing the mix
+        json.dump(dict(wav=path), open(os.path.join(RENDERS, "latest.json"), "w"))
     m, s = divmod(meta["duration"], 60)
     print(f"rendered {os.path.basename(path)}  {int(m)}:{s:04.1f}  ({meta['render_sec']}s)")
     print("sections:", ", ".join(f"{x['name']}[bars {x['bar0']}-{x['bar0'] + x['bars'] - 1}]" for x in meta["sections"]))
