@@ -1,6 +1,13 @@
 # Lessons log
 
-What each session taught us. Read this before changing the producer prompt or the engine, and add an entry after every session.
+What each session taught us. Read this before changing the producer prompt or the engine, and add an entry after every session. **After every genre switch, update the "Across genres" section too.**
+
+## Across genres (updated after each switch)
+Genres so far: boom-bap/trap hybrid (001), rage-trap/industrial (002), oriental trap (003), Romanian folk trap (004, running), Ukrainian folk trap (005, running).
+- **What transfers everywhere:** the feel-listen-decide loop; naming the nearest wrong feelings in the brief; subtraction (drop-outs, sections where the beat leaves) as the strongest emotional tool; mixing low end before mastering; one session folder plus journal so a session can be resumed by a fresh agent.
+- **Folk-fusion genres need three things before the session starts:** (1) research saved as a `docs/<GENRE>.md` brief (instruments, rhythms, modes, the modern reference artists), (2) the genre's signature instruments built and checked in the engine (generic synths can't fake them), (3) a warning against "postcard" use: the folk elements must carry the feeling, not decorate it. Session 003 showed it works: the listener's favourite moments were the oud and darbuka sitting inside the beat.
+- **Each genre has its own trap:** briefed rage drifted toward hype and anxiety; rebellion toward triumph; the hustle toward celebration or nostalgia; anti-war toward a battle anthem. Name the trap in the brief.
+- **Shared modes:** Ukrainian Dorian, Romanian minor and the klezmer "Misheberak" scale are the same Dorian #4; Hijaz / Phrygian dominant links oriental, Romanian and Ukrainian material. The key detector in the ears misreads these modes; ignore it there.
 
 ## Session 001: "Bleachers" (blind, hidden feeling: defiance)
 - **Outcome:** the listener guessed *longing* (and said defiance was his second thought, but "it didn't feel aggressive enough"). A near miss.

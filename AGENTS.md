@@ -77,7 +77,9 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 3. When it finishes: check the master report (LUFS, true peak under -1 dBTP, no warnings), check the length (2:30-3:30), copy `final.mp3`, and write the session `README.md` (see `sessions/001-bleachers/README.md` for the format).
 4. Blind sessions: give the listener the track and the eight options, reveal `.secret` only after they guess, record the outcome in the session README and in `docs/LESSONS.md`.
 5. Long sessions can be interrupted (for example when the operator's own turn is interrupted). Check on them periodically; to resume, start a fresh producer agent with the same prompt plus "read journal.md and the helper scripts, listen to the latest render, continue numbering". Forward-only versioning makes this seamless.
-6. Commit the session folder **without** `renders/` (the WAVs are large and reproducible from `project.json`, because rendering is seeded and deterministic).
+6. **After every genre switch, record lessons in the repo** (owner's standing rule): add the session entry to `docs/LESSONS.md` and update its "Across genres" section with what transferred and what didn't. If the new genre needed research, save it as a `docs/<GENRE>.md` brief (see `docs/ROMANIAN.md`, `docs/UKRAINIAN.md`). Commit these with the session.
+7. Sessions can run in parallel (one folder each). Engine changes made while another session is rendering must be additive and written atomically (write a temp file, then rename), so a running render never imports a half-written module.
+8. Commit the session folder **without** `renders/` (the WAVs are large and reproducible from `project.json`, because rendering is seeded and deterministic).
 
 ## 5. Engine conventions
 

@@ -444,7 +444,29 @@ def cimbalom(p, f, vel, dur):
     return (x * vel * 0.45).astype(np.float32)
 
 
-TONAL = dict(cimbalom=cimbalom, oud=oud, ep=ep, piano=piano, pad=pad, strings=strings, choir=choir, bell=bell,
+def lira(p, f, vel, dur):
+    """Hurdy-gurdy (lira): a rosined wheel bows the strings, so the tone is steady and nasal,
+    with the wheel's slight wobble and an optional rhythmic buzz. Play long notes for drones."""
+    rel = p.get("release", 0.15)
+    hold = _n(dur)
+    env = adsr(hold, p.get("attack", 0.05), 0.1, 0.95, rel)
+    n = len(env)
+    t = _t(n)
+    wob = 1 + 0.003 * np.sin(2 * np.pi * 0.35 * t + RNG.random() * 6)
+    raw = polyblep_saw(f * wob, n)
+    x = np.zeros(n, dtype=np.float32)
+    for fc, g in ((330, 0.8), (700, 0.7), (1500, 1.0), (3000, 0.6)):
+        x += bp(raw, fc * 0.8, fc * 1.25) * g
+    buzz = p.get("buzz", 0.0)
+    if buzz > 0:
+        rate = p.get("buzz_rate", 8.0)
+        gate = (np.sin(2 * np.pi * rate * t) > 0.3).astype(np.float32)
+        x += hp(np.sign(raw) * gate, 1500) * buzz * 0.4
+    x += hp(noise(n), 4000) * 0.02
+    return soft(x * env, 0.2) * vel * 0.5
+
+
+TONAL = dict(lira=lira, cimbalom=cimbalom, oud=oud, ep=ep, piano=piano, pad=pad, strings=strings, choir=choir, bell=bell,
              musicbox=musicbox, pluck=pluck, organ=organ, sine=sine)
 
 # ------------------------------------------------- monophonic (glide) voices
@@ -504,9 +526,10 @@ def mono_voice(kind, p, notes, total_n):
                 fo = min(_n(0.004), length)
                 env[-fo:] *= np.linspace(1, 0, fo)
             x = soft(x * env, p.get("drive", 0.25)) * vel
-        elif kind in ("ney", "nai", "fiddle"):
+        elif kind in ("ney", "nai", "fiddle", "trembita"):
             # phase-continuous voices so glides and ornaments are seamless
-            vrate, vdepth, vdelay = {"ney": (5.0, 0.18, 0.15), "nai": (4.6, 0.12, 0.2), "fiddle": (5.8, 0.22, 0.12)}[kind]
+            vrate, vdepth, vdelay = {"ney": (5.0, 0.18, 0.15), "nai": (4.6, 0.12, 0.2), "fiddle": (5.8, 0.22, 0.12),
+                                     "trembita": (4.2, 0.05, 0.4)}[kind]
             vdepth = p.get("vibrato", vdepth)
             vib = 2 ** (vdepth * np.sin(2 * np.pi * vrate * t) * np.clip((t - vdelay) / 0.35, 0, 1) / 12)
             ff = f * vib
@@ -525,6 +548,19 @@ def mono_voice(kind, p, notes, total_n):
                 chiff = bp(noise(length), 1500, 6000) * np.exp(-t / 0.02) * (0 if glide else 1.6)
                 air = air + chiff
                 atk = p.get("attack", 0.025)
+            elif kind == "trembita":
+                # long wooden horn: lip-buzzed natural harmonics, gets brassier as it swells
+                swell = np.ones_like(t) if glide else np.clip(t / p.get("attack", 0.18), 0, 1)
+                tone = np.zeros(length, dtype=np.float32)
+                bright = p.get("bright", 0.6) * (0.5 + 0.5 * vel)
+                for k in range(1, 14):
+                    if k * nt["f"] > SR * 0.4:
+                        break
+                    w = (1 / k ** (1.6 - 0.9 * bright)) * (swell ** (0.3 * k))
+                    tone += (w * np.sin(k * ph)).astype(np.float32)
+                tone = soft(lp(tone, 900 + 2500 * bright), p.get("blare", 0.3))
+                air = bp(noise(length), 300, 2000) * p.get("breath", 0.12)
+                atk = p.get("attack", 0.18)
             else:  # fiddle: bowed string through a wooden body
                 raw = np.mod(ph / (2 * np.pi), 1.0) * 2 - 1
                 body = np.zeros(length, dtype=np.float32)
@@ -562,7 +598,7 @@ def mono_voice(kind, p, notes, total_n):
             x = lp(x, cut * (0.6 + 0.6 * vel), 2) * env * vel * 0.5
             x = soft(x, p.get("drive", 0.0))
         # click-free join (808 glides are phase-continuous and need no fade)
-        if not (kind in ("808", "ney", "nai", "fiddle") and glide):
+        if not (kind in ("808", "ney", "nai", "fiddle", "trembita") and glide):
             fade = min(64, length)
             x[:fade] *= np.linspace(0, 1, fade)
         out[start:start + length] += x.astype(np.float32)
@@ -570,7 +606,7 @@ def mono_voice(kind, p, notes, total_n):
     return out
 
 
-MONO = {"808", "bass", "lead", "ney", "nai", "fiddle"}
+MONO = {"808", "bass", "lead", "ney", "nai", "fiddle", "trembita"}
 
 # ------------------------------------------------- textures and transition fx
 

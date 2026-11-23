@@ -1,0 +1,9 @@
+ZOOM 73.3-93.3s  LUFS -12.3
+  kick          1 events  timing vs 16th grid: mean  -3.3 ms, spread  0.0 ms  velocity 0.98-0.98
+  hat         192 events  timing vs 16th grid: mean  +0.2 ms, spread  2.0 ms  velocity 0.25-1.00
+  toba         24 events  timing vs 16th grid: mean  -0.9 ms, spread  3.4 ms  velocity 0.71-0.92
+  fidLo        11 events  timing vs 16th grid: mean  +8.1 ms, spread  3.1 ms  velocity 0.77-1.00
+  cimb        510 events  timing vs 16th grid: mean  -2.4 ms, spread 35.2 ms  velocity 0.23-0.59
+  nai          39 events  timing vs 16th grid: mean  -0.4 ms, spread  4.0 ms  velocity 0.67-1.00
+  cobza        50 events  timing vs 16th grid: mean  +3.8 ms, spread  4.4 ms  velocity 0.59-1.00
+image: /home/claude/spectre/sessions/004-hustle/ear_zoom.png
