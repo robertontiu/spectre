@@ -1,0 +1,103 @@
+# AGENTS.md: guide for AI agents taking over Spectre
+
+Read this file fully before touching anything. It is the single source of truth for how this project works and how to continue it.
+
+## 1. What this project is
+
+**This is an experiment**, not a product. The question it explores: can an AI make music the way a human does, driven by a feeling and shaped by listening, rather than by generating audio from a prompt? Treat everything here (results, engine, prompts) as research in progress, and report outcomes honestly, including misses.
+
+**Spectre** is an AI hip-hop producer built as a human analogue. It does not generate audio with a neural music model. It works the way a human producer does:
+
+1. It starts from a **feeling** (sometimes hidden from everyone, including the person running it).
+2. It works in a **studio** made of code: synthesized instruments, a sequencer, effects, a mix bus and a mastering stage.
+3. It **listens** through "ears" that turn audio into pictures and numbers (the agent cannot hear audio, but it can see spectrograms).
+4. It makes **one musical decision at a time** in a feel-listen-decide loop and journals every move.
+
+The persona the producer agent inhabits is **Odell Marsh** (an invented name, checked against real producers). "Spectre" is the artist name for the project as a whole.
+
+It is a sibling experiment to [Teodor](https://github.com/robertontiu/teodor), an emotion-driven AI painter built on the same principles.
+
+### Core principles (do not break these without the owner's agreement)
+- **Mind/hand split.** The agent (the mind) writes musical intentions in a compact notation. The engine (the hand) performs them: swing, micro-timing, velocity phrasing, rolls, chord voicing and voice leading, strums, arps, transitions. Don't make the agent place every sample, and don't let the engine make musical decisions.
+- **Feeling-first loop.** Every iteration: listen, feel (original feeling plus what the track now does), decide ONE intention, render, journal. Never render twice without listening in between.
+- **Forward only.** Every render is versioned (`renders/vNNN.*`). The agent can change anything in `project.json`, but never reverts to an old version.
+- **Never name the feeling** in blind sessions: not in the journal, file names, titles or the project.
+- **The ears are the bottleneck.** Quality is capped by how well the agent can judge what it hears. Improving the ears is usually the highest-value engine work.
+
+## 2. Repository map
+
+```
+engine/
+  instruments.py  synthesized instruments: drums, 808/bass/lead (mono, glide), keys, pads, strings, choir, bells,
+                  plucks, organ, textures (vinyl, tape, rain), transition fx (riser, impact, reverse cymbal)
+  hand.py         the hand: step/note/chord notation parser, swing, humanization, voicing, rolls, arps
+  studio.py       project loader, arrangement scheduler, track rendering, fx, sends, sidechain, section
+                  automation and transitions, quick master, CLI (render / listen / master)
+  ear.py          the ears: arrangement lanes, mel spectrogram, band energy, loudness, per-section stats,
+                  warnings; zoom view with onset grid and timing roll
+  master.py       the release mastering stage (see docs/MASTERING.md)
+  gallery.py      dev tool: spectrogram gallery of every instrument (sanity-check sound design)
+docs/
+  MANUAL.md       the studio manual the producer agent reads (project format, commands, how to read the ears)
+  CRAFT.md        hip-hop craft brief: groove, drums, 808, harmony, timbre, arrangement, transitions, mix
+  MASTERING.md    mastering research brief and how master.py implements it
+  LESSONS.md      what each session taught us; read before changing the agent prompt or engine
+prompts/
+  producer.md     the producer agent prompt template (persona, brief, studio, stages, loop, finish)
+sessions/
+  NNN-name/       one folder per session: project.json, journal.md, mastered mp3, ear and master images,
+                  README.md with the result (and the blind-test outcome if blind)
+examples/
+  engine-test.json  a small project that exercises most engine features (render it to smoke-test changes)
+```
+
+## 3. Setup
+
+Python 3.11+ (developed on 3.13), ffmpeg on PATH.
+
+```bash
+pip install -r requirements.txt
+```
+
+Smoke test (about 20 s to render, 25 s to listen):
+
+```bash
+mkdir -p /tmp/smoke && cp examples/engine-test.json /tmp/smoke/project.json
+cd /tmp/smoke && export BEAT_DIR=$PWD
+python3 <repo>/engine/studio.py render && python3 <repo>/engine/studio.py listen
+python3 <repo>/engine/studio.py master          # writes renders/v001.master.{wav,mp3,png,report.json}
+```
+Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
+
+## 4. Running a producer session
+
+1. Create `sessions/NNN-shortname/`. For a **blind** session, write the feeling word to `.secret` in that folder (it's gitignored) without reading it yourself, and keep the eight answer options in `.options`. For a **briefed** session, put the brief in the prompt.
+2. Fill in `prompts/producer.md` (placeholders in `{{...}}`) and run it as a sub-agent with file, shell and image-reading tools. A full session is 25-45 iterations, about 30-60 minutes.
+3. When it finishes: check the master report (LUFS, true peak under -1 dBTP, no warnings), check the length (2:30-3:30), copy `final.mp3`, and write the session `README.md` (see `sessions/001-bleachers/README.md` for the format).
+4. Blind sessions: give the listener the track and the eight options, reveal `.secret` only after they guess, record the outcome in the session README and in `docs/LESSONS.md`.
+5. Commit the session folder **without** `renders/` (the WAVs are large and reproducible from `project.json`, because rendering is seeded and deterministic).
+
+## 5. Engine conventions
+
+- Sample rate 44.1 kHz, float32 internally, stereo `(2, n)` arrays.
+- Rendering is **deterministic** for a given `project.json` (the seed is in the project). Re-rendering an old project reproduces it bit-for-bit; that's how `renders/` can stay out of git.
+- `DEFAULT_GAIN` in `studio.py` sets per-instrument starting levels; a track's `gain_db` is relative to that.
+- Every render writes `vNNN.wav` (quick master, for listening while working), `vNNN.premaster.wav` (the raw mix bus, float), `vNNN.meta.json` (sections, events, per-track level envelopes) and `vNNN.project.json`.
+- `master.py` only ever reads a premaster. It never touches the mix.
+- New instruments go in `instruments.py`: register them in `DRUMS`, `TONAL`, `MONO` or `TEXTURES`, add a default gain in `studio.py`, document them in `docs/MANUAL.md`, and check them with `engine/gallery.py`.
+- New effects go in `apply_fx` in `studio.py`; document them in `docs/MANUAL.md`.
+- Keep `docs/MANUAL.md` in sync with the code. It's the only interface the producer agent sees.
+
+## 6. Known limits and open directions (in priority order)
+
+1. **The ears can't hear attitude.** Structure reads well on spectrograms; timbre and emotional "bite" don't. Session 001 aimed for defiance and the listener heard longing. Ideas: an audio-capable model as a critic ("describe what you hear, without naming emotions"), CLAP-style embeddings as a weak signal, or a human checkpoint ear after the loop stage.
+2. **Synth timbres lean soft.** No real samples. Real drum one-shots or sample packs (the user would provide them; the sandbox network is restricted) would raise quality a lot.
+3. **No vocals.** A generative model as a "session musician" (stems on demand) is the planned v2 for metal and pop.
+4. **Mastering targets** are a single hip-hop curve. Genre-specific targets and reference-track matching would help.
+5. **Speed.** A full-length render takes 20-45 s. Per-track caching would make the loop faster.
+
+## 7. Git
+
+- Default branch `main`. Commit engine changes separately from session results.
+- Don't commit `renders/`, `.secret`, WAVs, `__pycache__`.
+- MIT licensed (see `LICENSE`).

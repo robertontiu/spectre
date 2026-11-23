@@ -1,0 +1,10 @@
+renders/
+*.wav
+.secret
+ear.png
+ear_*.png
+ear_zoom*.png
+gallery.png
+__pycache__/
+*.pyc
+.DS_Store

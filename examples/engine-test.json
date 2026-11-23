@@ -1,0 +1,43 @@
+{
+  "title": "engine test",
+  "bpm": 86,
+  "swing": 0.58,
+  "seed": 3,
+  "tracks": {
+    "kick":  {"inst": {"type": "kick", "tune": 50, "decay": 0.3, "punch": 1.0, "click": 0.5, "drive": 0.2}, "humanize_ms": 4, "push_ms": -3},
+    "snare": {"inst": {"type": "snare", "tone": 185, "decay": 0.17, "snap": 0.8}, "push_ms": 9, "send_reverb": 0.15},
+    "clap":  {"inst": {"type": "clap"}, "push_ms": 6, "gain_db": -3},
+    "hat":   {"inst": {"type": "hat", "decay": 0.04}, "dyn": [1.0, 0.7, 0.88, 0.66], "pan": 0.15, "roll_pitch": 3},
+    "ohat":  {"inst": {"type": "openhat", "decay": 0.25}, "pan": -0.2},
+    "808":   {"inst": {"type": "808", "decay": 0.9, "drive": 0.35, "glide_ms": 80}, "sidechain": {"source": "kick", "depth": 0.7, "release_ms": 110}, "humanize_ms": 2},
+    "keys":  {"inst": {"type": "ep", "bright": 0.8}, "fx": [{"type": "lofi", "amount": 0.5}, {"type": "tremolo", "rate": 4.5, "depth": 0.25}, {"type": "hpf", "hz": 140}], "send_reverb": 0.25, "humanize_ms": 7},
+    "bells": {"inst": {"type": "bell", "decay": 1.8}, "fx": [{"type": "hpf", "hz": 400}], "send_delay": 0.35, "send_reverb": 0.3, "pan": 0.3, "gain_db": -2},
+    "vinyl": {"inst": {"type": "vinyl", "density": 5}}
+  },
+  "patterns": {
+    "keysA": {"bars": 4, "keys": {"chords": "Fm9:16 Dbmaj7:16 Bbm9:16 C7b9:16", "style": "sustain", "register": "Ab4", "vel": 0.65}},
+    "vinyl": {"bars": 1, "vinyl": "on"},
+    "beatA": {"bars": 1,
+      "kick":  "X.....x...x.....",
+      "snare": "....X..o....X...",
+      "hat":   "x.x.x.x.x.x.x.xr",
+      "ohat":  "..............x."},
+    "beatB": {"bars": 2,
+      "kick":  "X.....x...x..x..X.....x.......x.",
+      "snare": "....X..o....X.o.....X..o....X...",
+      "clap":  "....x.......x.......x.......x...",
+      "hat":   "x.x.x.x.x.xtx.x.x.x.x.x.x.x.T.x."},
+    "bassA": {"bars": 4, "808": "0:F1:6 6:F1:2 10:Ab1:6~ 16:Db2:8 26:C2:6~ 32:Bb1:10 44:Db2:4~ 48:C2:12 60:E1:4~"},
+    "melA":  {"bars": 2, "bells": "0:C6:2 3:Ab5:2 6:G5:3 12:F5:4 16:Eb5:2 19:F5:2 22:G5:6"},
+    "fillA": {"bars": 1, "snare": "....X...o.o.RRRR", "kick": "X.......x.......", "hat": "x.x.x.x........."}
+  },
+  "arrangement": [
+    {"name": "intro", "bars": 4, "play": ["keysA", "vinyl"], "auto": {"keys": {"lpf": [700, 3000]}}, "exit": {"riser": 4}},
+    {"name": "hook1", "bars": 8, "play": ["keysA", "beatB", "bassA", "melA", "vinyl"], "enter": {"impact": 0.7}, "fill": {"pattern": "fillA"}},
+    {"name": "verse1", "bars": 16, "play": ["keysA", "beatA", "bassA", "vinyl"], "exit": {"cut": {"tracks": ["kick", "808", "hat"], "beats": 2}}},
+    {"name": "hook2", "bars": 8, "play": ["keysA", "beatB", "bassA", "melA", "vinyl"], "enter": {"crash": 0.6}},
+    {"name": "outro", "bars": 4, "play": ["keysA", "vinyl"], "auto": {"keys": {"lpf": [3000, 500], "gain_db": [0, -8]}}, "exit": {"tapestop": 2}}
+  ],
+  "mix": {"reverb": {"size": 0.7}, "delay": {"beats": 0.75, "feedback": 0.4}},
+  "master": {"lufs": -11, "sat": 0.2, "tape": 0.3}
+}
