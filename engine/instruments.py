@@ -207,7 +207,35 @@ def cowbell(p, vel, ps=0.0):
     return x * vel * 0.5
 
 
-DRUMS = dict(kick=kick, snare=snare, clap=clap, hat=hat, openhat=openhat, rim=rim,
+def darbuka(p, vel, ps=0.0):
+    """Goblet drum. stroke: doum (deep centre), tek (bright rim), ka (muted rim), slap."""
+    stroke = p.get("stroke", "tek")
+    k = 2 ** (ps / 12) * p.get("tune", 1.0)
+    if stroke == "doum":
+        n = _n(p.get("decay", 0.22) * 7)
+        t = _t(n)
+        f = 105 * k * (1 + 0.35 * np.exp(-t / 0.03))
+        x = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / p.get("decay", 0.22))
+        x += 0.35 * np.sin(2 * np.pi * np.cumsum(f * 2.3) / SR) * np.exp(-t / 0.06)
+        x += lp(noise(n), 900) * np.exp(-t / 0.015) * 0.3
+        return soft(x.astype(np.float32), 0.1) * vel
+    n = _n(0.3)
+    t = _t(n)
+    if stroke == "slap":
+        x = bp(noise(n), 700, 5000) * np.exp(-t / 0.03) + np.sin(2 * np.pi * 330 * k * t) * np.exp(-t / 0.05) * 0.5
+        return (x / (np.abs(x).max() + 1e-9)).astype(np.float32) * vel * 0.9
+    dec = 0.045 if stroke == "tek" else 0.025
+    x = np.zeros(n, dtype=np.float32)
+    for fr, g in ((620, 1.0), (1030, 0.7), (1640, 0.45), (2350, 0.3)):
+        x += (g * np.sin(2 * np.pi * fr * k * t + RNG.random() * 6) * np.exp(-t / dec)).astype(np.float32)
+    x += hp(noise(n), 3000) * np.exp(-t / 0.004) * 0.6
+    if stroke == "ka":
+        x = lp(x, 2500)
+    x = x / (np.abs(x).max() + 1e-9)
+    return x * vel * (0.7 if stroke == "ka" else 0.9)
+
+
+DRUMS = dict(darbuka=darbuka, kick=kick, snare=snare, clap=clap, hat=hat, openhat=openhat, rim=rim,
              shaker=shaker, snap=snap, tom=tom, crash=crash, cowbell=cowbell)
 
 # ---------------------------------------------------------------- tonal
@@ -368,7 +396,29 @@ def sine(p, f, vel, dur):
     return (np.sin(2 * np.pi * f * t) * env * vel * 0.5).astype(np.float32)
 
 
-TONAL = dict(ep=ep, piano=piano, pad=pad, strings=strings, choir=choir, bell=bell,
+def oud(p, f, vel, dur):
+    """Fretless lute: two detuned plucked courses, a dark wooden body, quick decay."""
+    n = _n(min(dur + 1.2, 3.5))
+    damp = p.get("damp", 0.993)
+    y = np.zeros(n, dtype=np.float32)
+    for det in (-0.0015, 0.0015):
+        N = max(2, int(SR / (f * (1 + det))))
+        exc = np.zeros(n, dtype=np.float32)
+        exc[:N] = lp(noise(N), 2500 + 5000 * vel * p.get("bright", 0.6))
+        a = np.zeros(N + 2)
+        a[0], a[N], a[N + 1] = 1, -0.5 * damp, -0.5 * damp
+        y += signal.lfilter([1.0], a, exc).astype(np.float32)
+    body = bp(y, 180, 420) * 0.9 + bp(y, 800, 1500) * 0.5 + y * 0.35
+    t = _t(n)
+    pick = hp(noise(n), 2500) * np.exp(-t / 0.003) * 0.15 * vel
+    x = body + pick
+    hold = _n(dur)
+    if hold < n:
+        x[hold:] *= np.exp(-np.arange(n - hold) / _n(0.06))
+    return (x * vel * 0.5).astype(np.float32)
+
+
+TONAL = dict(oud=oud, ep=ep, piano=piano, pad=pad, strings=strings, choir=choir, bell=bell,
              musicbox=musicbox, pluck=pluck, organ=organ, sine=sine)
 
 # ------------------------------------------------- monophonic (glide) voices
@@ -428,6 +478,22 @@ def mono_voice(kind, p, notes, total_n):
                 fo = min(_n(0.004), length)
                 env[-fo:] *= np.linspace(1, 0, fo)
             x = soft(x * env, p.get("drive", 0.25)) * vel
+        elif kind == "ney":
+            vib = 2 ** (p.get("vibrato", 0.18) * np.sin(2 * np.pi * 5.0 * t) * np.clip((t - 0.15) / 0.4, 0, 1) / 12)
+            ff = f * vib
+            ph = (prev_phase if (glide and prev_phase is not None) else 0.0) + 2 * np.pi * np.cumsum(ff) / SR
+            j = (nxt - start) if nxt is not None else None
+            prev_phase = float(ph[j - 1]) if (j is not None and 0 < j <= length) else None
+            tone = np.sin(ph) + 0.22 * np.sin(2 * ph) + 0.08 * np.sin(3 * ph)
+            breath = bp(noise(length), 1200, 5000) * p.get("breath", 0.35)
+            breath = breath * (0.6 + 0.4 * np.abs(np.sin(ph * 0.5)))
+            env = adsr(min(nt["n"], length), p.get("attack", 0.06), 0.2, 0.85, p.get("release", 0.12))[:length]
+            if len(env) < length:
+                env = np.pad(env, (0, length - len(env)))
+            if glide:
+                env = np.maximum(env, np.minimum(1, 0.85 + 0 * env))
+                env[min(nt["n"], length):] *= np.exp(-np.arange(length - min(nt["n"], length)) / _n(0.1))
+            x = (tone * 0.5 + breath * 0.25) * env * vel
         else:  # bass / lead synth
             vib = 1.0
             if kind == "lead":
@@ -447,7 +513,7 @@ def mono_voice(kind, p, notes, total_n):
             x = lp(x, cut * (0.6 + 0.6 * vel), 2) * env * vel * 0.5
             x = soft(x, p.get("drive", 0.0))
         # click-free join (808 glides are phase-continuous and need no fade)
-        if not (kind == "808" and glide):
+        if not (kind in ("808", "ney") and glide):
             fade = min(64, length)
             x[:fade] *= np.linspace(0, 1, fade)
         out[start:start + length] += x.astype(np.float32)
@@ -455,7 +521,7 @@ def mono_voice(kind, p, notes, total_n):
     return out
 
 
-MONO = {"808", "bass", "lead"}
+MONO = {"808", "bass", "lead", "ney"}
 
 # ------------------------------------------------- textures and transition fx
 

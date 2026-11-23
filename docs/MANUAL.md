@@ -58,9 +58,9 @@ How to read the ears:
 ```
 
 Instrument types and their main params (all optional):
-- **Drums**: `kick` (tune Hz 40-70, decay, punch 0-2, click 0-1, drive), `snare` (tone, decay, snap 0-1, body, drive), `clap` (tone, decay, spread), `hat` (decay 0.02-0.08, tone Hz, tune, noise), `openhat` (decay 0.15-0.6), `rim`, `shaker`, `snap`, `tom` (tune, decay), `crash` (decay, tone), `cowbell`
-- **Monophonic with glide**: `808` (decay 0.3-3, drive 0-1, punch, tone 0-0.5 = 2nd harmonic, glide_ms, release), `bass` (cutoff, sub, drive, attack, release), `lead` (cutoff, square, vibrato, glide_ms)
-- **Polyphonic**: `ep` (electric piano: bright, sustain, release), `piano` (felt 0-1, release), `pad` (attack, release, cutoff, voices, detune cents), `strings` (attack, release, cutoff, vibrato, detune), `choir` (vowel ah/oo/ee/oh, attack, release), `bell` (decay, ratio), `musicbox`, `pluck` (damp 0.99-0.999, bright), `organ` (drawbars [..]), `sine` (attack, release)
+- **Drums**: `kick` (tune Hz 40-70, decay, punch 0-2, click 0-1, drive), `snare` (tone, decay, snap 0-1, body, drive), `clap` (tone, decay, spread), `hat` (decay 0.02-0.08, tone Hz, tune, noise), `openhat` (decay 0.15-0.6), `rim`, `shaker`, `snap`, `tom` (tune, decay), `crash` (decay, tone), `cowbell`, `darbuka` (stroke: doum = deep centre, tek = bright rim, ka = muted rim, slap; tune, decay). Use one darbuka track per stroke type
+- **Monophonic with glide**: `808` (decay 0.3-3, drive 0-1, punch, tone 0-0.5 = 2nd harmonic, glide_ms, release), `bass` (cutoff, sub, drive, attack, release), `lead` (cutoff, square, vibrato, glide_ms), `ney` (breathy reed flute: breath 0-1, vibrato, attack, glide_ms; use `~` glides and short grace notes for maqam-style ornaments)
+- **Polyphonic**: `oud` (fretless lute: damp 0.98-0.997, bright; fast repeated 16ths/32nds = tremolo picking), `ep` (electric piano: bright, sustain, release), `piano` (felt 0-1, release), `pad` (attack, release, cutoff, voices, detune cents), `strings` (attack, release, cutoff, vibrato, detune), `choir` (vowel ah/oo/ee/oh, attack, release), `bell` (decay, ratio), `musicbox`, `pluck` (damp 0.99-0.999, bright), `organ` (drawbars [..]), `sine` (attack, release)
 - **Textures** (continuous while a pattern lists them with the value `"on"`): `vinyl` (density), `tape`, `rain`
 - Any tonal instrument accepts `"transpose": semitones`.
 
