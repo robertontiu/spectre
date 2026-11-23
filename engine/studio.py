@@ -497,6 +497,9 @@ def cmd_render(args):
 
 
 def main():
+    import signal
+    if hasattr(signal, "SIGPIPE"):
+        signal.signal(signal.SIGPIPE, signal.SIG_DFL)  # piping into head must not crash
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd")
     r = sub.add_parser("render")

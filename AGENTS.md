@@ -76,7 +76,8 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 2. Fill in `prompts/producer.md` (placeholders in `{{...}}`) and run it as a sub-agent with file, shell and image-reading tools. A full session is 25-45 iterations, about 30-60 minutes.
 3. When it finishes: check the master report (LUFS, true peak under -1 dBTP, no warnings), check the length (2:30-3:30), copy `final.mp3`, and write the session `README.md` (see `sessions/001-bleachers/README.md` for the format).
 4. Blind sessions: give the listener the track and the eight options, reveal `.secret` only after they guess, record the outcome in the session README and in `docs/LESSONS.md`.
-5. Commit the session folder **without** `renders/` (the WAVs are large and reproducible from `project.json`, because rendering is seeded and deterministic).
+5. Long sessions can be interrupted (for example when the operator's own turn is interrupted). Check on them periodically; to resume, start a fresh producer agent with the same prompt plus "read journal.md and the helper scripts, listen to the latest render, continue numbering". Forward-only versioning makes this seamless.
+6. Commit the session folder **without** `renders/` (the WAVs are large and reproducible from `project.json`, because rendering is seeded and deterministic).
 
 ## 5. Engine conventions
 

@@ -106,7 +106,10 @@ def listen(a, renders):
     import librosa
     import librosa.display
     latest = a.wav or json.load(open(os.path.join(renders, "latest.json")))["wav"]
-    meta = json.load(open(latest.replace(".wav", ".meta.json")))
+    mp = latest.replace(".wav", ".meta.json")
+    if not os.path.exists(mp):  # e.g. vNNN.master.wav: use the render's own meta
+        mp = latest.replace(".master.wav", ".meta.json").replace(".premaster.wav", ".meta.json")
+    meta = json.load(open(mp))
     y, sr = sf.read(latest, always_2d=True)
     st = y.T.astype(np.float32)
     if a.mono:
