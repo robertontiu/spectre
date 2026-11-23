@@ -22,7 +22,7 @@ WORK = os.environ.get("BEAT_DIR", os.getcwd())
 RENDERS = os.path.join(WORK, "renders")
 
 DRUM_TYPES = set(I.DRUMS)
-DEFAULT_GAIN = {"darbuka": -6, "oud": -6, "ney": -10, "kick": -1, "snare": -4, "clap": -5, "hat": -13, "openhat": -15, "rim": -8, "shaker": -16,
+DEFAULT_GAIN = {"cimbalom": -8, "fiddle": -9, "nai": -10, "darbuka": -6, "oud": -6, "ney": -10, "kick": -1, "snare": -4, "clap": -5, "hat": -13, "openhat": -15, "rim": -8, "shaker": -16,
                 "snap": -8, "tom": -6, "crash": -14, "cowbell": -14, "808": -2, "bass": -4, "lead": -12,
                 "ep": -9, "piano": -8, "pad": -14, "strings": -13, "choir": -14, "bell": -14, "musicbox": -12,
                 "pluck": -10, "organ": -14, "sine": -10, "vinyl": -6, "tape": -6, "rain": -10}

@@ -418,7 +418,33 @@ def oud(p, f, vel, dur):
     return (x * vel * 0.5).astype(np.float32)
 
 
-TONAL = dict(oud=oud, ep=ep, piano=piano, pad=pad, strings=strings, choir=choir, bell=bell,
+def cimbalom(p, f, vel, dur):
+    """Hammered dulcimer (țambal): three detuned strings per course, a hard hammer, long ring.
+    Repeated 32nds = the classic tremolo roll. damp shortens the ring (0 = free, 1 = damped)."""
+    damp = p.get("damp", 0.2)
+    ring = 2.8 * (220.0 / f) ** 0.4 * (1 - 0.85 * damp)
+    n = _n(min(max(dur + 0.3, ring * 2.5), 6))
+    t = _t(n)
+    x = np.zeros(n, dtype=np.float32)
+    hard = p.get("hard", 0.6)
+    B = 0.00025
+    for k in range(1, 12):
+        fk = k * f * np.sqrt(1 + B * k * k)
+        if fk > SR * 0.45:
+            break
+        amp = (1 / k ** (1.4 - 0.6 * hard * vel))
+        tau = ring / (1 + 0.45 * (k - 1))
+        for det in (-0.0018, 0.0, 0.0021):
+            x += (amp / 3 * np.sin(2 * np.pi * fk * (1 + det) * t + RNG.random() * 6) * np.exp(-t / tau)).astype(np.float32)
+    x += hp(noise(n), 2500) * np.exp(-t / 0.0025) * 0.25 * hard * vel
+    x *= np.minimum(t / 0.0008, 1)
+    if damp > 0.6 and _n(dur) < n:
+        h = _n(dur)
+        x[h:] *= np.exp(-np.arange(n - h) / _n(0.08))
+    return (x * vel * 0.45).astype(np.float32)
+
+
+TONAL = dict(cimbalom=cimbalom, oud=oud, ep=ep, piano=piano, pad=pad, strings=strings, choir=choir, bell=bell,
              musicbox=musicbox, pluck=pluck, organ=organ, sine=sine)
 
 # ------------------------------------------------- monophonic (glide) voices
@@ -478,22 +504,45 @@ def mono_voice(kind, p, notes, total_n):
                 fo = min(_n(0.004), length)
                 env[-fo:] *= np.linspace(1, 0, fo)
             x = soft(x * env, p.get("drive", 0.25)) * vel
-        elif kind == "ney":
-            vib = 2 ** (p.get("vibrato", 0.18) * np.sin(2 * np.pi * 5.0 * t) * np.clip((t - 0.15) / 0.4, 0, 1) / 12)
+        elif kind in ("ney", "nai", "fiddle"):
+            # phase-continuous voices so glides and ornaments are seamless
+            vrate, vdepth, vdelay = {"ney": (5.0, 0.18, 0.15), "nai": (4.6, 0.12, 0.2), "fiddle": (5.8, 0.22, 0.12)}[kind]
+            vdepth = p.get("vibrato", vdepth)
+            vib = 2 ** (vdepth * np.sin(2 * np.pi * vrate * t) * np.clip((t - vdelay) / 0.35, 0, 1) / 12)
             ff = f * vib
+            if kind == "fiddle" and not glide:
+                ff = ff * 2 ** (-0.3 * np.exp(-t / 0.035) / 12)  # finger scoop into the note
             ph = (prev_phase if (glide and prev_phase is not None) else 0.0) + 2 * np.pi * np.cumsum(ff) / SR
             j = (nxt - start) if nxt is not None else None
             prev_phase = float(ph[j - 1]) if (j is not None and 0 < j <= length) else None
-            tone = np.sin(ph) + 0.22 * np.sin(2 * ph) + 0.08 * np.sin(3 * ph)
-            breath = bp(noise(length), 1200, 5000) * p.get("breath", 0.35)
-            breath = breath * (0.6 + 0.4 * np.abs(np.sin(ph * 0.5)))
-            env = adsr(min(nt["n"], length), p.get("attack", 0.06), 0.2, 0.85, p.get("release", 0.12))[:length]
+            if kind == "ney":
+                tone = np.sin(ph) + 0.22 * np.sin(2 * ph) + 0.08 * np.sin(3 * ph)
+                air = bp(noise(length), 1200, 5000) * p.get("breath", 0.35) * (0.6 + 0.4 * np.abs(np.sin(ph * 0.5)))
+                atk = p.get("attack", 0.06)
+            elif kind == "nai":
+                tone = np.sin(ph) + 0.06 * np.sin(2 * ph) + 0.12 * np.sin(3 * ph)
+                air = bp(noise(length), 2000, 9000) * p.get("breath", 0.25)
+                chiff = bp(noise(length), 1500, 6000) * np.exp(-t / 0.02) * (0 if glide else 1.6)
+                air = air + chiff
+                atk = p.get("attack", 0.025)
+            else:  # fiddle: bowed string through a wooden body
+                raw = np.mod(ph / (2 * np.pi), 1.0) * 2 - 1
+                body = np.zeros(length, dtype=np.float32)
+                for fc, g in ((290, 1.0), (520, 0.8), (1150, 0.6), (2600, 0.7), (3600, 0.35)):
+                    body += bp(raw.astype(np.float32), fc * 0.8, fc * 1.25) * g
+                tone = body * 0.9
+                bowmod = 1 + 0.08 * np.sin(2 * np.pi * 7.3 * t + RNG.random() * 6)
+                tone = tone * bowmod
+                air = hp(noise(length), 3000) * p.get("bow_noise", 0.12)
+                atk = p.get("attack", 0.035)
+                tone = soft(tone.astype(np.float32), p.get("grit", 0.15))
+            env = adsr(min(nt["n"], length), atk, 0.2, 0.85, p.get("release", 0.12))[:length]
             if len(env) < length:
                 env = np.pad(env, (0, length - len(env)))
             if glide:
                 env = np.maximum(env, np.minimum(1, 0.85 + 0 * env))
                 env[min(nt["n"], length):] *= np.exp(-np.arange(length - min(nt["n"], length)) / _n(0.1))
-            x = (tone * 0.5 + breath * 0.25) * env * vel
+            x = (tone * 0.5 + air * 0.25) * env * vel
         else:  # bass / lead synth
             vib = 1.0
             if kind == "lead":
@@ -513,7 +562,7 @@ def mono_voice(kind, p, notes, total_n):
             x = lp(x, cut * (0.6 + 0.6 * vel), 2) * env * vel * 0.5
             x = soft(x, p.get("drive", 0.0))
         # click-free join (808 glides are phase-continuous and need no fade)
-        if not (kind in ("808", "ney") and glide):
+        if not (kind in ("808", "ney", "nai", "fiddle") and glide):
             fade = min(64, length)
             x[:fade] *= np.linspace(0, 1, fade)
         out[start:start + length] += x.astype(np.float32)
@@ -521,7 +570,7 @@ def mono_voice(kind, p, notes, total_n):
     return out
 
 
-MONO = {"808", "bass", "lead", "ney"}
+MONO = {"808", "bass", "lead", "ney", "nai", "fiddle"}
 
 # ------------------------------------------------- textures and transition fx
 
