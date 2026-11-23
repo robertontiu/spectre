@@ -4,7 +4,7 @@ You make the beat by editing `project.json` in your working folder, rendering it
 
 ```
 python3 engine/studio.py render              # render project.json -> renders/vNNN.wav (~15-25 s)
-python3 engine/studio.py render --solo 808   # render one track alone -> renders/solo_808.wav
+python3 engine/studio.py render --solo 808   # render one track alone -> renders/solo_808.wav (real level, not loudness-normalized; doesn't change latest.json)
 python3 engine/studio.py listen              # overview -> ear.png + stats (whole beat)
 python3 engine/studio.py listen --bars 9-12  # zoom: hi-res spectrogram + onset grid + timing roll -> ear_zoom.png
 python3 engine/studio.py listen --section hook1
@@ -105,4 +105,7 @@ Section names must be unique. Bars per section should be multiples of 4 (2 for s
 - Hats live and die by `dyn`, `humanize_ms`, swing and rolls. The 808 should almost always sidechain to the kick or follow it.
 - High-pass melodic tracks (`hpf` 120-200) so the 808 owns the low end.
 - `lofi` plus `send_reverb` on keys gives the "sampled record" feel; `width` 0.3-0.7 on pads and keys opens the stereo field (the default is quite mono).
+- For per-section track levels, read `stems_rms` in `renders/vNNN.meta.json` (one RMS value per 0.05 s per track); see `sessions/004-hustle/levels.py` or `sessions/005-fuck-war/stems.py`.
+- The ears' "no contrast" warning only compares loudness, band levels and onset density; a purely rhythmic or textural change between sections can trip it. Check with a zoom before acting on it.
+- `gain_db` acts before the track's fx: on tracks with heavy drive, saturation flattens the change; use a `gain` fx at the end of the chain to change the post-drive level.
 - A render is about 20 s; an overview listen about 25 s. Zoom listens are faster.

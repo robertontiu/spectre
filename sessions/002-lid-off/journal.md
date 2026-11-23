@@ -1,4 +1,4 @@
-# Run 2 journal: RAGE (Odell Marsh)
+# Run 2 journal: RAGE (Spectre)
 
 ## 0. SIT WITH IT
 Rage in the body: jaw locked, blood in the ears, breath through the teeth, hands that need something to hit. In time it doesn't wait. It leans forward, it arrives early, it repeats the same thing harder instead of saying something new, and then it snaps. In space it's close, in your face, dry, no reverb halo, no distance; the room is too small for it. It's HOT: grit, clipping, overloaded mids, hard transients, things colliding (semitone rubs, tritones), density that crowds the air.

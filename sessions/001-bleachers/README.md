@@ -12,12 +12,12 @@
 
 ## Files
 - `bleachers-mastered.mp3`: the track
-- `journal.md`: Odell's 27 numbered moves
+- `journal.md`: Spectre's 27 numbered moves
 - `project.json`: reproduces the track exactly (render it with the engine)
 - `ear-overview.png`: what the producer "saw" of the final render (arrangement lanes, spectrogram, band energy, loudness)
 - `master-tonal-balance.png`, `master-report.json`: the mastering stage's before/after
 
-## Odell's note
+## Spectre's note
 "It started as a wall of organ and synth all shouting at once, and the first real decision was to shut most of it up so the fist only lands when the foot does. Once the stomp-and-clap pocket locked, everything else had to talk back to it. The chant answers in the gaps, the piano in the verse sits on one note and won't move, and the bridge piles weight on top with strings sinking a half-step at a time. The best moments are the stops, where the band drops out and the voices keep going without it."
 
 ## Why it was heard as longing

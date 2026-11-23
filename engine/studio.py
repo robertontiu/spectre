@@ -453,7 +453,7 @@ def render(P, solo=None, out_prefix=None, quiet=False):
     target = ms.get("lufs", -10.5)
     src = mix.copy()
     L0 = meter.integrated_loudness(src.T)
-    if np.isfinite(L0):
+    if np.isfinite(L0) and not solo:  # solo renders keep their real level so tracks can be compared
         g = target - L0
         for _ in range(4):
             mix = limit(src * db(g), -1.0)

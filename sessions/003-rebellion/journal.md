@@ -1,4 +1,4 @@
-# Session 003 journal (Odell Marsh). Brief: oriental trap, rebellion
+# Session 003 journal (Spectre). Brief: oriental trap, rebellion
 
 ## 1. SIT WITH IT
 Rebellion in the body is feet, not fists: a lot of feet landing together, chest open, voice raised with other voices. In time it is a pulse that does not hurry and does not stop; it gathers people as it goes, so it has to get denser and louder in steps, never explode early. In space it is a street: wide, crowded, echoing off walls, a chant thrown from the front and thrown back by the many. Wrong feelings to keep out: rage (chaos, one hot man, I just did that), defiance (one figure planted still), triumph (resolution, major lift, celebration), menace (cold, sparse, predatory), and tourism (an oud sitting on top like a postcard).

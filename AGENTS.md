@@ -13,7 +13,7 @@ Read this file fully before touching anything. It is the single source of truth 
 3. It **listens** through "ears" that turn audio into pictures and numbers (the agent cannot hear audio, but it can see spectrograms).
 4. It makes **one musical decision at a time** in a feel-listen-decide loop and journals every move.
 
-The persona the producer agent inhabits is **Odell Marsh** (an invented name, checked against real producers). "Spectre" is the artist name for the project as a whole.
+The producer agent works as **Spectre**: the artist and the persona share one name. (Sessions 001-004 were run under an earlier persona name and were renamed to Spectre afterwards.)
 
 It is a sibling experiment to [Teodor](https://github.com/robertontiu/teodor), an emotion-driven AI painter built on the same principles.
 

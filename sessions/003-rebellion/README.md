@@ -22,10 +22,10 @@
 
 ## Files
 - `throw-it-back-mastered.mp3`: the track
-- `journal.md`: Odell's 27 numbered moves
+- `journal.md`: Spectre's 27 numbered moves
 - `project.json`: reproduces the track exactly
 - `build.py`, `levels.py`, `trem.py`: helper scripts the producer wrote for itself during the session (generating parts of the project, checking levels, oud tremolo)
 - `ear-overview.png`, `master-tonal-balance.png`, `master-report.json`
 
-## Odell's note
+## Spectre's note
 "Rebellion isn't one man shouting. It's a line thrown out and a whole street throwing it back louder every time, so the work here was making the crowd grow and keeping the hype out: no risers, no major lift, nothing that sounds like we already won. The best move was taking things away. The march where the trap drops out and only feet, hands and the darbuka walk, and the standoff where the crowd shouts with nothing under it before the last hook hits. It ends with the voices still going down the road, because the fight isn't over."

@@ -22,9 +22,9 @@ Every 4-bar hook phrase ends with an eighth of total silence and then a slam on 
 
 ## Files
 - `lid-off-mastered.mp3`: the track
-- `journal.md`: Odell's numbered moves
+- `journal.md`: Spectre's numbered moves
 - `project.json`: reproduces the track exactly
 - `ear-overview.png`, `master-tonal-balance.png`, `master-report.json`
 
-## Odell's note
+## Spectre's note
 "Last time I wrote defiance on paper and the speakers gave back longing, so this time I made every decision in the sound: grind in the 808's mids, a sour cluster where a power chord would've been, hard cuts where I'd usually put a riser. Most of the session was taking things out that told the wrong story. The snare tail hiss read as anxiety, the riser read as festival hype, and the half-time verse went cold like menace until I put the chug under it. What I'm proudest of is the eighth of dead air before every fourth bar, because rage isn't loud all the time, it's a gasp through the teeth and then a fist. It ends cut off mid-swing with two beats of nothing and one slam, because rage doesn't fade out, it slams the door."

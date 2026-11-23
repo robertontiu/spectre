@@ -1,4 +1,4 @@
-# Session journal (Odell Marsh)
+# Session journal (Spectre)
 
 ## 1. SIT WITH IT
 It lives in the jaw and the spine: chin up, heels dug in, chest square to a wind that wants you to fold. Time doesn't drag and doesn't hurry; it plants. Every step lands on purpose, like walking toward something everyone told you to walk away from. Space is close and dry, no hiding in reverb, a voice in a hallway that won't lower itself. Upright pocket: 90 bpm, swing barely there (0.53), kick leaning a hair early, snare and clap dead on top, hard. F minor, but melodies that climb back up every time the chords try to pull them down. Sounds that hold it: a stomping kick-and-clap like a crowd on bleachers, a gritty 808 that slides UP, and a hard minor stab (organ plus brass-ish lead) that keeps hitting the same note like a fist on a table.
