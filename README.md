@@ -18,7 +18,7 @@ It's a sibling of [Teodor](https://github.com/robertontiu/teodor), the same idea
 | # | Track | Feeling | What happened |
 |---|---|---|---|
 | 001 | [Bleachers](sessions/001-bleachers/) | hidden (blind test) | 3:12, 90 bpm. The listener guessed *longing*; it was **defiance**. Close, but not aggressive enough. It also exposed a mix problem on laptop speakers, which led to the mastering stage. |
-| 002 | Rage session | rage (briefed) | in progress |
+| 002 | [Lid Off](sessions/002-lid-off/) | rage (briefed: high tempo, aggressive) | 2:51, 160 bpm, E Phrygian. Rage-trap meets industrial: distorted 808s, a blown-out dissonant supersaw cluster, an eighth of dead silence before every slam. Applied the lessons from 001: attitude built into the sound, controlled low end, mastered at -10 LUFS. |
 
 Each session folder has the mastered MP3, the producer's journal (every move, numbered), the project file that reproduces the track exactly, and pictures of what the producer "saw".
 
@@ -36,6 +36,7 @@ Every step is: listen, feel, decide one thing, render, write it down.
 ## What we've learned
 
 - **Notes aren't attitude.** The first blind test aimed for defiance and was heard as longing. A minor melody that keeps reaching up *means* refusal on paper but *sounds* like yearning. The AI can verify structure by looking at sound; it can't yet verify attitude.
+- **Most of making rage was taking out the wrong feelings.** In session 002 a hissing snare tail read as anxiety, a riser read as festival hype, and a half-time verse went cold like menace, so each was cut or reworked.
 - **Laptops can't play sub bass.** A beat that's all 50 Hz sounds clunky on a MacBook. Mastering now checks how a track translates to small speakers.
 
 More in [docs/LESSONS.md](docs/LESSONS.md).

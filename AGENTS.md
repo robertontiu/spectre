@@ -37,6 +37,7 @@ engine/
                   warnings; zoom view with onset grid and timing roll
   master.py       the release mastering stage (see docs/MASTERING.md)
   gallery.py      dev tool: spectrogram gallery of every instrument (sanity-check sound design)
+  solos.sh        diagnostic: per-track RMS and band levels via solo renders (written by the producer in session 002)
 docs/
   MANUAL.md       the studio manual the producer agent reads (project format, commands, how to read the ears)
   CRAFT.md        hip-hop craft brief: groove, drums, 808, harmony, timbre, arrangement, transitions, mix

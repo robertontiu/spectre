@@ -281,8 +281,8 @@ def render_track(name, tr, evs, holds, total_n, bpm):
             if key not in cache:
                 cache[key] = fn(p, key[0] / 24, key[1] / 4)
             x = cache[key]
-            i = int(e["t"] * SR)
-            if i < 0 or i >= total_n:
+            i = max(0, int(e["t"] * SR))  # hits pushed before 0:00 play at 0:00
+            if i >= total_n:
                 continue
             m = min(len(x), total_n - i)
             if tr.get("choke"):
@@ -297,8 +297,8 @@ def render_track(name, tr, evs, holds, total_n, bpm):
         fn = I.TONAL[typ]
         for e in evs:
             x = fn(p, midi_to_hz(e["midi"] + p.get("transpose", 0)), e["vel"], max(e["dur"], 0.02))
-            i = int(e["t"] * SR)
-            if i < 0 or i >= total_n:
+            i = max(0, int(e["t"] * SR))  # hits pushed before 0:00 play at 0:00
+            if i >= total_n:
                 continue
             m = min(len(x), total_n - i)
             mono[i:i + m] += x[:m]
