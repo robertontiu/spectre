@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spectre Amp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Silkscreen&display=swap" rel="stylesheet">
+<style>
+/* VOICE occasion: a late-90s desktop music player, played loud
+   IDEA a skinnable MP3 player of the era: bevelled gunmetal windows, green LCD, a playlist editor, a graphic EQ
+   PICTURE a big visualizer window driven live by the music (bars, scope, tunnel), plus the mini spectrum in the LCD
+   COLOUR teal desktop, gunmetal chrome, LCD green #00e000 on black, amber and red for peaks
+   TYPE VT323 for LCD and playlist text, Silkscreen for window chrome
+   LAYOUT laptop: player stack left (main, EQ, playlist), visualizer right; phone: main, visualizer, EQ, playlist */
+:root{color-scheme:dark;--desk:#0b6b6b;--chrome:#3a3d48;--chrome2:#22242c;--hi:#6b6f80;--lo:#101117;--lcd:#00e000;--lcdd:#0a3a0a;--amber:#ffc400;--red:#ff3a2a;--ink:#d8dce8}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;background:var(--desk);color:var(--ink)}
+body{font:16px/1.4 "VT323",ui-monospace,monospace;overflow-x:clip;background:radial-gradient(circle at 20% 10%,#0e7c7c,var(--desk) 60%)}
+.desk{max-width:1240px;margin:0 auto;padding:20px max(16px,3vw) 40px;display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:16px;align-items:start}
+.stack{display:grid;gap:10px}
+.win{background:linear-gradient(var(--chrome),var(--chrome2));border:2px solid;border-color:var(--hi) var(--lo) var(--lo) var(--hi);box-shadow:3px 4px 0 rgba(0,0,0,.35);padding:0 6px 6px}
+.bar{display:flex;align-items:center;gap:8px;height:22px;font:10px "Silkscreen",monospace;letter-spacing:.04em;color:#c9cde0;user-select:none}
+.bar::before,.bar::after{content:"";flex:1;height:6px;background:repeating-linear-gradient(transparent 0 1px,#8a8fa6 1px 2px)}
+.bar b{font-weight:400;white-space:nowrap}
+.lcd{background:#000;border:2px solid;border-color:var(--lo) var(--hi) var(--hi) var(--lo);color:var(--lcd);text-shadow:0 0 4px rgba(0,224,0,.55)}
+.main .top{display:grid;grid-template-columns:132px minmax(0,1fr);gap:6px}
+.screen{padding:4px 6px;display:grid;grid-template-rows:auto 1fr;gap:2px}
+.time{font-size:44px;line-height:1;cursor:pointer;letter-spacing:.02em;white-space:nowrap}
+.time .st{font-size:14px;vertical-align:top;color:var(--lcd)}
+#mini{width:100%;height:34px;display:block}
+.info{display:grid;gap:4px}
+.marq{overflow:hidden;white-space:nowrap;padding:2px 6px;font-size:20px}
+.marq span{display:inline-block;padding-left:100%;animation:marq 14s linear infinite}
+@keyframes marq{to{transform:translateX(-100%)}}
+.meta{display:flex;gap:6px;flex-wrap:wrap;font-size:15px}
+.meta .lcd{padding:0 6px}.meta .off{color:var(--lcdd);text-shadow:none}
+.sliders{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:8px;margin-top:6px;align-items:center}
+label.s{display:flex;align-items:center;gap:6px;font:9px "Silkscreen",monospace;color:#aeb3c8}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:16px;background:transparent;cursor:pointer;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:6px;background:linear-gradient(90deg,#183018,#2f8a2f);border:1px solid var(--lo)}
+input[type=range]::-moz-range-track{height:6px;background:linear-gradient(90deg,#183018,#2f8a2f);border:1px solid var(--lo)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;margin-top:-5px;background:linear-gradient(#cfd3e0,#7c8196);border:1px solid #111}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:0;background:linear-gradient(#cfd3e0,#7c8196);border:1px solid #111}
+#seek{margin-top:8px}
+.ctrls{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap;align-items:center}
+button{font:11px "Silkscreen",monospace;color:#e4e7f2;background:linear-gradient(#5a5e70,#2c2e38);border:2px solid;border-color:#8a8fa6 #14151b #14151b #8a8fa6;min-height:36px;min-width:40px;padding:0 8px;cursor:pointer}
+button:active,button.on{border-color:#14151b #8a8fa6 #8a8fa6 #14151b;background:linear-gradient(#26282f,#3d404d)}
+button.on{color:var(--lcd);text-shadow:0 0 4px rgba(0,224,0,.6)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+.ctrls .tr button{width:44px;font-size:14px;padding:0}
+.ctrls .sp{flex:1}
+.eq .body{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px}
+.eqtop{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+select{font:16px "VT323",monospace;background:#000;color:var(--lcd);border:2px solid;border-color:var(--lo) var(--hi) var(--hi) var(--lo);min-height:36px;padding:0 6px;flex:1}
+#curve{height:36px;flex:1 1 120px;display:block}
+.bands{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:2px;align-items:end}
+.band{display:grid;justify-items:center;gap:2px;font:8px "Silkscreen",monospace;color:#aeb3c8}
+.band input{writing-mode:vertical-lr;direction:rtl;width:22px;height:110px}
+.band input::-webkit-slider-runnable-track{width:6px;height:auto;background:linear-gradient(#ff3a2a,#ffc400 40%,#2f8a2f)}
+.band output{font:14px "VT323",monospace;color:var(--lcd)}
+.band.pre{border-right:1px solid #555a6c;padding-right:2px}
+.pl ol{list-style:none;margin:0;padding:0;max-height:340px;overflow:auto}
+.pl li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:6px;align-items:center;padding:4px 6px;border-bottom:1px solid #072907;cursor:pointer}
+.pl li:hover{background:#061f06}
+.pl li.cur{background:#0a3a8a;color:#fff;text-shadow:none}
+.pl li.cur .sub{color:#cfe0ff}
+.pl li.wait{color:#2f7a2f;cursor:default;text-shadow:none}
+.pl .t{font-size:21px;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl .sub{font-size:15px;color:#5fc25f}
+.pl .d{font-size:20px;white-space:nowrap}
+.pl li button{min-width:36px;padding:0}
+.plfoot{display:flex;justify-content:space-between;font-size:15px;padding:4px 6px}
+.viz .stage{position:relative;height:clamp(300px,52vh,560px)}
+.viz canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:pointer}
+.viz .hint{position:absolute;left:10px;bottom:8px;font-size:16px;color:#6fdc6f;pointer-events:none;text-shadow:0 0 3px #000}
+.notes{margin-top:10px;padding:10px 12px;font-size:17px;color:#c7f7c7;background:#000}
+.notes h2{font:12px "Silkscreen",monospace;margin:0 0 6px;color:var(--amber);font-weight:400}
+.notes p{margin:0 0 6px}
+.keys{font-size:15px;color:#8fd88f}
+@media(max-width:860px){.desk{grid-template-columns:minmax(0,1fr)}.viz{order:-1}.stack{order:-2}}
+@media(max-width:420px){.time{font-size:36px}.main .top{grid-template-columns:110px minmax(0,1fr)}.band input{height:90px}}
+@media(prefers-reduced-motion:reduce){.marq span{animation:none;padding-left:0}}
+</style>
+</head>
+<body>
+<div class="desk">
+  <div class="stack">
+    <section class="win main" aria-label="Player">
+      <div class="bar"><b>SPECTRE AMP</b></div>
+      <div class="top">
+        <div class="lcd screen">
+          <div class="time" id="time" title="Click: elapsed / remaining"><span class="st" id="pst">■</span> 0:00</div>
+          <canvas id="mini" aria-label="Spectrum analyser"></canvas>
+        </div>
+        <div class="info">
+          <div class="lcd marq"><span id="marq">Spectre Amp. Press play.</span></div>
+          <div class="meta"><span class="lcd" id="kbps">320</span><span class="lcd">kbps</span><span class="lcd">44 kHz</span><span class="lcd off" id="mono">mono</span><span class="lcd" id="stereo">stereo</span></div>
+        </div>
+      </div>
+      <div class="sliders">
+        <label class="s" for="vol">VOL <input type="range" id="vol" min="0" max="1" step="0.01" value="0.8"></label>
+        <label class="s" for="bal">BAL <input type="range" id="bal" min="-1" max="1" step="0.05" value="0"></label>
+      </div>
+      <input type="range" id="seek" min="0" max="1000" value="0" aria-label="Seek">
+      <div class="ctrls">
+        <span class="tr"><button id="prev" aria-label="Previous">|◀</button><button id="play" aria-label="Play">▶</button><button id="pause" aria-label="Pause">❚❚</button><button id="stop" aria-label="Stop">■</button><button id="next" aria-label="Next">▶|</button></span>
+        <span class="sp"></span>
+        <button id="shuf" aria-pressed="false">Shuffle</button>
+        <button id="rep" class="on" aria-pressed="true">Repeat</button>
+      </div>
+    </section>
+
+    <section class="win eq" aria-label="Equalizer">
+      <div class="bar"><b>EQUALIZER</b></div>
+      <div class="eqtop">
+        <button id="eqon" class="on" aria-pressed="true">On</button>
+        <select id="preset" aria-label="EQ preset"></select>
+        <canvas id="curve" class="lcd" aria-label="EQ curve"></canvas>
+      </div>
+      <div class="bands" id="bands"></div>
+    </section>
+
+    <section class="win pl" aria-label="Playlist">
+      <div class="bar"><b>PLAYLIST EDITOR</b></div>
+      <div class="lcd">
+        <ol id="list"></ol>
+        <div class="plfoot"><span id="plcount"></span><span id="pltotal"></span></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="win viz" aria-label="Visualizer">
+    <div class="bar"><b>VISUALIZATION</b></div>
+    <div class="lcd stage"><canvas id="big"></canvas><div class="hint" id="vmode">Bars. Click to change.</div></div>
+    <div class="notes lcd" id="notes"></div>
+  </section>
+</div>
+<audio id="au" preload="metadata"></audio>
+<script>
+{
+const TRACKS=[
+ {id:'005',title:'Fuck Every War',src:'tracks/005-fuck-every-war.mp3',secs:181,feel:'Anti-war',mode:'Ukrainian folk trap',bpm:140,key:'E Ukr. Dorian',
+  note:'Ukrainian folk trap. A war machine locked to the grid against white voices, tsymbaly, lira and trembita played loose. Every hook the people shout and the machine goes silent; the siren is drowned out; it ends on silence and a far-off trembita.'},
+ {id:'004',title:'Tura',src:'tracks/004-tura.mp3',secs:163,feel:'The hustle',mode:'Romanian folk trap',bpm:144,key:'E Rom. minor',
+  note:'Romanian underground-folklore trap. The old 7/16 limp hidden in the hats and cobza as 3-3-2, so the beat walks like a man carrying something. A tired nai doina at the wall while the fiddle keeps sawing. No victory lap: it ends at five in the morning again.'},
+ {id:'003',title:'Throw It Back',src:'tracks/003-throw-it-back.mp3',secs:168,feel:'Rebellion',mode:'Oriental trap',bpm:140,key:'D Hijaz',
+  note:'Oriental trap. The oud throws the call, the crowd throws it back louder each time. A march where the trap drums drop out and only feet, hands and darbuka walk; a standoff where the crowd shouts over nothing.'},
+ {id:'002',title:'Lid Off',src:'tracks/002-lid-off.mp3',secs:171,feel:'Rage',mode:'Briefed',bpm:160,key:'E Phrygian',
+  note:'Rage-trap meets industrial. Distorted 808s, a blown-out dissonant supersaw cluster, an eighth of dead silence before every slam. Ends cut off mid-swing.'},
+ {id:'001',title:'Bleachers',src:'tracks/001-bleachers.mp3',secs:195,feel:'Defiance',mode:'Blind test',bpm:90,key:'F minor',
+  note:'Blind test. The feeling was hidden from everyone. Heard as longing; it was defiance. Stomp-stomp-clap, gritty 808s that slide up, organ stabs, a brass-like chant.'}
+];
+const FREQS=[60,170,310,600,1000,3000,6000,12000,14000,16000];
+const PRESETS={
+ 'Spectre (hip-hop)':{pre:-3,g:[3,2,-1,-2,-1,1,2,2,1,0]},
+ 'Flat':{pre:0,g:[0,0,0,0,0,0,0,0,0,0]},
+ 'Laptop speakers':{pre:-2,g:[-6,3,3,1,0,1,1,0,-1,-2]},
+ 'Headphones':{pre:-3,g:[2,1,0,-1,0,1,2,3,2,1]},
+ 'Club':{pre:-4,g:[5,3,0,-2,-1,0,1,2,2,1]},
+ 'Late night (soft)':{pre:0,g:[1,1,0,0,-1,-2,-3,-4,-5,-6]}
+};
+const $=id=>document.getElementById(id);
+const au=$('au');
+let cur=-1,ctx=null,an=null,pre=null,filt=[],vol=null,pan=null,showLeft=false,shuffle=false,repeat=true,order=[],vizMode=0,eqOn=true;
+const playable=()=>TRACKS.map((t,i)=>t.wait?-1:i).filter(i=>i>=0);
+const fmt=s=>{s=Math.max(0,Math.floor(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+let st={};try{st=JSON.parse(localStorage.getItem('spectreamp')||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem('spectreamp',JSON.stringify({preset:$('preset').value,g:filtVals(),pre:+$('b-pre').value,vol:+$('vol').value,shuffle,repeat,eqOn,vizMode}))}catch(e){}};
+
+/* playlist */
+const list=$('list');
+list.innerHTML=TRACKS.map((t,i)=>t.wait
+ ?`<li class="wait"><span></span><div><div class="t">${t.id}. ${t.title}</div><div class="sub">${t.mode}, in production</div></div><span class="d">--:--</span></li>`
+ :`<li data-i="${i}"><button data-i="${i}" aria-label="Play ${t.title}">▶</button><div><div class="t">${t.id}. Spectre, ${t.title}</div><div class="sub">${t.feel} · ${t.mode} · ${t.bpm} bpm · ${t.key}</div></div><span class="d">${fmt(t.secs)}</span></li>`).join('');
+const pls=playable();
+$('plcount').textContent=pls.length+' tracks, '+(TRACKS.length-pls.length)+' in production';
+$('pltotal').textContent=fmt(pls.reduce((a,i)=>a+TRACKS[i].secs,0));
+list.addEventListener('click',e=>{const el=e.target.closest('[data-i]');if(el)load(+el.dataset.i,true)});
+
+/* audio graph */
+function graph(){
+ if(ctx)return;
+ const AC=window.AudioContext||window.webkitAudioContext;ctx=new AC();
+ const src=ctx.createMediaElementSource(au);
+ pre=ctx.createGain();
+ filt=FREQS.map((f,i)=>{const b=ctx.createBiquadFilter();b.type=i===0?'lowshelf':i===9?'highshelf':'peaking';b.frequency.value=f;b.Q.value=1.1;return b});
+ an=ctx.createAnalyser();an.fftSize=2048;an.smoothingTimeConstant=.72;
+ vol=ctx.createGain();pan=ctx.createStereoPanner?ctx.createStereoPanner():null;
+ let n=src.connect(pre);filt.forEach(b=>{n.connect(b);n=b});n.connect(an);an.connect(vol);
+ if(pan){vol.connect(pan);pan.connect(ctx.destination)}else vol.connect(ctx.destination);
+ applyEQ();vol.gain.value=+$('vol').value;if(pan)pan.pan.value=+$('bal').value;
+}
+function load(i,go){
+ if(i<0||TRACKS[i].wait)return;cur=i;const t=TRACKS[i];
+ au.src=t.src;
+ $('marq').textContent=`${t.id}. Spectre, ${t.title} (${fmt(t.secs)}) · ${t.feel} · ${t.bpm} bpm  ***  `;
+ $('notes').innerHTML=`<h2>Now playing: ${t.title}</h2><p>${t.note}</p><p class="keys">Keys: space play/pause · ← → seek · z prev · b next · s shuffle · r repeat · v visualizer</p>`;
+ [...list.children].forEach((li,k)=>li.classList.toggle('cur',k===i));
+ if(go)play();
+}
+async function play(){
+ if(cur<0)load(shuffle?pick():pls[0],false);
+ graph();try{await ctx.resume();await au.play()}catch(e){}
+}
+function pick(){const c=pls.filter(i=>i!==cur);return c.length?c[Math.floor(Math.random()*c.length)]:pls[0]}
+function step(d){
+ if(shuffle){load(pick(),true);return}
+ const k=pls.indexOf(cur)+d;
+ if(k>=pls.length){if(repeat)load(pls[0],true);else{au.pause();au.currentTime=0}}
+ else load(pls[(k+pls.length)%pls.length],true);
+}
+au.addEventListener('ended',()=>step(1));
+au.addEventListener('play',()=>$('pst').textContent='▶');
+au.addEventListener('pause',()=>$('pst').textContent=au.currentTime?'❚❚':'■');
+$('play').onclick=play;$('pause').onclick=()=>au.paused?play():au.pause();
+$('stop').onclick=()=>{au.pause();au.currentTime=0;$('pst').textContent='■'};
+$('prev').onclick=()=>au.currentTime>3?au.currentTime=0:step(-1);
+$('next').onclick=()=>step(1);
+const tog=(el,v)=>{el.classList.toggle('on',v);el.setAttribute('aria-pressed',v)};
+$('shuf').onclick=()=>{shuffle=!shuffle;tog($('shuf'),shuffle);save()};
+$('rep').onclick=()=>{repeat=!repeat;tog($('rep'),repeat);save()};
+$('time').onclick=()=>showLeft=!showLeft;
+$('vol').oninput=e=>{if(vol)vol.gain.value=+e.target.value;save()};
+$('bal').oninput=e=>{if(pan)pan.pan.value=+e.target.value};
+let seeking=false;const sk=$('seek');
+sk.oninput=()=>{seeking=true};sk.onchange=()=>{if(au.duration)au.currentTime=sk.value/1000*au.duration;seeking=false};
+
+/* EQ */
+$('bands').innerHTML=`<div class="band pre"><output id="o-pre">0</output><input type="range" id="b-pre" min="-12" max="12" step="1" value="0" aria-label="Preamp"><span>PRE</span></div>`+
+ FREQS.map((f,i)=>`<div class="band"><output id="o-${i}">0</output><input type="range" id="b-${i}" min="-12" max="12" step="1" value="0" aria-label="${f} Hz"><span>${f>=1000?f/1000+'K':f}</span></div>`).join('');
+$('preset').innerHTML=Object.keys(PRESETS).map(k=>`<option>${k}</option>`).join('')+'<option>Custom</option>';
+const filtVals=()=>FREQS.map((f,i)=>+$('b-'+i).value);
+function setEQ(p){$('b-pre').value=p.pre;p.g.forEach((v,i)=>$('b-'+i).value=v);applyEQ()}
+function applyEQ(){
+ $('o-pre').textContent=$('b-pre').value;FREQS.forEach((f,i)=>$('o-'+i).textContent=$('b-'+i).value);
+ if(pre){pre.gain.value=eqOn?Math.pow(10,+$('b-pre').value/20):1;filt.forEach((b,i)=>b.gain.value=eqOn?+$('b-'+i).value:0)}
+ drawCurve();
+}
+$('bands').addEventListener('input',()=>{$('preset').value='Custom';applyEQ();save()});
+$('preset').onchange=e=>{const p=PRESETS[e.target.value];if(p)setEQ(p);save()};
+$('eqon').onclick=()=>{eqOn=!eqOn;tog($('eqon'),eqOn);applyEQ();save()};
+function drawCurve(){
+ const c=$('curve'),W=c.clientWidth,H=c.clientHeight;if(!W)return;c.width=W*devicePixelRatio;c.height=H*devicePixelRatio;
+ const g=c.getContext('2d');g.scale(devicePixelRatio,devicePixelRatio);g.fillStyle='#000';g.fillRect(0,0,W,H);
+ g.strokeStyle='#0a3a0a';g.beginPath();g.moveTo(0,H/2);g.lineTo(W,H/2);g.stroke();
+ const v=filtVals();g.strokeStyle=eqOn?'#00e000':'#1f5a1f';g.lineWidth=1.5;g.beginPath();
+ v.forEach((d,i)=>{const x=4+i*(W-8)/9,y=H/2-d/12*(H/2-3);i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();
+}
+
+/* visualizers */
+const mini=$('mini'),big=$('big');
+const fb=new Uint8Array(1024),tb=new Uint8Array(2048);
+const peaks=new Array(64).fill(0);
+const MODES=['Bars','Scope','Tunnel'];
+big.onclick=()=>{vizMode=(vizMode+1)%3;$('vmode').textContent=MODES[vizMode]+'. Click to change.';save()};
+function size(c){const W=c.clientWidth,H=c.clientHeight,r=devicePixelRatio||1;if(c.width!==Math.round(W*r)){c.width=Math.round(W*r);c.height=Math.round(H*r)}return[W,H,r]}
+function bandsOf(n){
+ const out=[];for(let i=0;i<n;i++){const a=Math.floor(Math.pow(1.5,i*14/n)*1.2),b=Math.max(a+1,Math.floor(Math.pow(1.5,(i+1)*14/n)*1.2));
+ let m=0;for(let k=a;k<b&&k<fb.length;k++)m=Math.max(m,fb[k]);out.push(m/255)}return out}
+function grad(g,y0,y1){const gr=g.createLinearGradient(0,y1,0,y0);gr.addColorStop(0,'#00c000');gr.addColorStop(.6,'#c8e000');gr.addColorStop(.85,'#ffc400');gr.addColorStop(1,'#ff3a2a');return gr}
+let hue=0,last=0;
+function frame(t){
+ requestAnimationFrame(frame);
+ if(an){an.getByteFrequencyData(fb);an.getByteTimeDomainData(tb)}else{fb.fill(0);tb.fill(128)}
+ const d=au.duration||0,ct=au.currentTime||0;
+ if(t-last>200){last=t;$('time').lastChild.textContent=' '+(showLeft?'-'+fmt(d-ct):fmt(ct));if(!seeking&&d)sk.value=ct/d*1000}
+ // mini spectrum: 19 bars like the classic
+ {const[W,H,r]=size(mini),g=mini.getContext('2d');g.setTransform(r,0,0,r,0,0);g.clearRect(0,0,W,H);const b=bandsOf(19),bw=W/19;g.fillStyle=grad(g,0,H);
+  b.forEach((v,i)=>{const h=Math.round(v*H/2)*2;g.fillRect(i*bw+1,H-h,bw-2,h);peaks[i]=Math.max(peaks[i]-0.012,v);g.fillStyle='#bfbfbf';g.fillRect(i*bw+1,H-peaks[i]*H-1,bw-2,1);g.fillStyle=grad(g,0,H)})}
+ // big
+ const[W,H,r]=size(big),g=big.getContext('2d');g.setTransform(r,0,0,r,0,0);
+ const bass=bandsOf(32).slice(0,5).reduce((a,v)=>a+v,0)/5;
+ if(vizMode===0){g.fillStyle='#000';g.fillRect(0,0,W,H);const n=W<520?24:44,b=bandsOf(n),bw=W/n,seg=Math.max(4,H/40);
+  for(let i=0;i<n;i++){const h=b[i]*H*.92;for(let y=H;y>H-h;y-=seg){const f=(H-y)/H;g.fillStyle=f>.85?'#ff3a2a':f>.65?'#ffc400':f>.4?'#c8e000':'#00c000';g.fillRect(i*bw+2,y-seg+1,bw-4,seg-2)}
+   const pi=20+i;peaks[pi%64]=Math.max((peaks[pi%64]||0)-0.008,b[i]);g.fillStyle='#e6e6e6';g.fillRect(i*bw+2,H-peaks[pi%64]*H*.92-3,bw-4,2)}}
+ else if(vizMode===1){g.fillStyle='rgba(0,0,0,.35)';g.fillRect(0,0,W,H);g.strokeStyle='#00e000';g.lineWidth=2;g.shadowColor='#00e000';g.shadowBlur=8;g.beginPath();
+  for(let i=0;i<tb.length;i+=2){const x=i/tb.length*W,y=H/2+(tb[i]-128)/128*H*.45;i?g.lineTo(x,y):g.moveTo(x,y)}g.stroke();g.shadowBlur=0}
+ else{hue=(hue+0.4+bass*3)%360;g.fillStyle='rgba(0,0,0,.18)';g.fillRect(0,0,W,H);const cx=W/2,cy=H/2,R=Math.min(W,H)*(.18+bass*.12),b=bandsOf(48);
+  for(let k=0;k<4;k++){g.strokeStyle=`hsla(${(hue+k*40)%360},90%,55%,${.5-k*.1})`;g.lineWidth=2;g.beginPath();g.arc(cx,cy,R*(1+k*.45)+bass*30*k,0,7);g.stroke()}
+  for(let i=0;i<96;i++){const v=b[i%48],a=i/96*Math.PI*2+hue/60,l=R+v*Math.min(W,H)*.32;g.strokeStyle=`hsl(${(hue+i*3)%360},95%,${45+v*30}%)`;g.lineWidth=3;g.beginPath();g.moveTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R);g.lineTo(cx+Math.cos(a)*l,cy+Math.sin(a)*l);g.stroke()}}
+ if(!an||au.paused){g.fillStyle='#5fc25f';g.font='22px VT323, monospace';g.fillText(cur<0?'Press ▶ or pick a track':'Paused',12,28)}
+}
+requestAnimationFrame(frame);
+new ResizeObserver(drawCurve).observe($('curve'));
+document.addEventListener('keydown',e=>{if(/INPUT|SELECT/.test(e.target.tagName))return;
+ const k=e.key.toLowerCase();if(k===' '){e.preventDefault();au.paused?play():au.pause()}else if(k==='arrowright')au.currentTime+=5;else if(k==='arrowleft')au.currentTime-=5;
+ else if(k==='z')$('prev').click();else if(k==='b')$('next').click();else if(k==='x')play();else if(k==='c')au.pause();else if(k==='s')$('shuf').click();else if(k==='r')$('rep').click();else if(k==='v')big.click()});
+
+/* restore */
+$('preset').value=st.preset&&(PRESETS[st.preset]||st.preset==='Custom')?st.preset:'Spectre (hip-hop)';
+if(st.preset==='Custom'&&st.g){setEQ({pre:st.pre||0,g:st.g})}else setEQ(PRESETS[$('preset').value]);
+if(typeof st.vol==='number')$('vol').value=st.vol;
+if(st.shuffle){shuffle=true;tog($('shuf'),true)}if(st.repeat===false){repeat=false;tog($('rep'),false)}
+if(st.eqOn===false){eqOn=false;tog($('eqon'),false);applyEQ()}
+if(st.vizMode){vizMode=st.vizMode%3;$('vmode').textContent=MODES[vizMode]+'. Click to change.'}
+load(pls[0],false);
+}
+</script>
+</body>
+</html>

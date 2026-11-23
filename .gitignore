@@ -8,3 +8,5 @@ gallery.png
 __pycache__/
 *.pyc
 .DS_Store
+site/tracks/*.mp3
+player/tracks/*.mp3

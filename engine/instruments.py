@@ -235,7 +235,26 @@ def darbuka(p, vel, ps=0.0):
     return x * vel * (0.7 if stroke == "ka" else 0.9)
 
 
-DRUMS = dict(darbuka=darbuka, kick=kick, snare=snare, clap=clap, hat=hat, openhat=openhat, rim=rim,
+def tridksnis(p, vel, ps=0.0):
+    """Trīdeksnis: a staff hung with metal plates and rings, struck on the floor or shaken:
+    a scatter of bright inharmonic clinks over a short thud."""
+    decay = p.get("decay", 0.22)
+    n = _n(decay * 4 + 0.05)
+    t = _t(n)
+    x = np.zeros(n, dtype=np.float32)
+    k = 2 ** (ps / 12)
+    for i in range(9):
+        t0 = abs(RNG.normal(0, 0.012)) + i * 0.003
+        m = t >= t0
+        fr = RNG.uniform(2500, 9000) * k
+        x[m] += (np.sin(2 * np.pi * fr * (t[m] - t0)) * np.exp(-(t[m] - t0) / (decay * RNG.uniform(0.3, 1.0)))).astype(np.float32) * RNG.uniform(0.3, 1)
+    x = hp(x, 2000) + hp(noise(n), 6000) * np.exp(-t / 0.03) * 0.5
+    thud = lp(noise(n), 300) * np.exp(-t / 0.04) * p.get("thud", 0.6)
+    x = x / (np.abs(x).max() + 1e-9) + thud
+    return (x * vel * 0.6).astype(np.float32)
+
+
+DRUMS = dict(tridksnis=tridksnis, darbuka=darbuka, kick=kick, snare=snare, clap=clap, hat=hat, openhat=openhat, rim=rim,
              shaker=shaker, snap=snap, tom=tom, crash=crash, cowbell=cowbell)
 
 # ---------------------------------------------------------------- tonal
@@ -466,7 +485,29 @@ def lira(p, f, vel, dur):
     return soft(x * env, 0.2) * vel * 0.5
 
 
-TONAL = dict(lira=lira, cimbalom=cimbalom, oud=oud, ep=ep, piano=piano, pad=pad, strings=strings, choir=choir, bell=bell,
+def kokle(p, f, vel, dur):
+    """Latvian box zither: plucked metal strings that ring long and bright over a light
+    wooden box, with a soft shimmer of sympathetic strings. ring 0-1 sets the sustain."""
+    ring = p.get("ring", 0.7)
+    n = _n(min(max(dur + 0.4, 1.2 + 3.0 * ring), 6))
+    N = max(2, int(SR / f))
+    exc = np.zeros(n, dtype=np.float32)
+    exc[:N] = hp(noise(N), 200) * (0.5 + 0.5 * vel)
+    damp = 0.9965 + 0.0032 * ring
+    a = np.zeros(N + 2)
+    a[0], a[N], a[N + 1] = 1, -0.5 * damp, -0.5 * damp
+    y = signal.lfilter([1.0], a, exc).astype(np.float32)
+    y = y * 0.7 + bp(y, 250, 600) * 0.5 + bp(y, 1800, 4200) * p.get("bright", 0.6) * 0.6
+    t = _t(n)
+    shimmer = (np.sin(2 * np.pi * f * 2.003 * t) + 0.6 * np.sin(2 * np.pi * f * 1.5 * t)) * np.exp(-t / (0.8 + ring)) * 0.04
+    y = y + (shimmer * np.minimum(t / 0.15, 1)).astype(np.float32)
+    if p.get("damped") and _n(dur) < n:
+        h = _n(dur)
+        y[h:] *= np.exp(-np.arange(n - h) / _n(0.05))
+    return (y * vel * 0.55).astype(np.float32)
+
+
+TONAL = dict(kokle=kokle, lira=lira, cimbalom=cimbalom, oud=oud, ep=ep, piano=piano, pad=pad, strings=strings, choir=choir, bell=bell,
              musicbox=musicbox, pluck=pluck, organ=organ, sine=sine)
 
 # ------------------------------------------------- monophonic (glide) voices
@@ -526,10 +567,10 @@ def mono_voice(kind, p, notes, total_n):
                 fo = min(_n(0.004), length)
                 env[-fo:] *= np.linspace(1, 0, fo)
             x = soft(x * env, p.get("drive", 0.25)) * vel
-        elif kind in ("ney", "nai", "fiddle", "trembita"):
+        elif kind in ("ney", "nai", "fiddle", "trembita", "dudas"):
             # phase-continuous voices so glides and ornaments are seamless
             vrate, vdepth, vdelay = {"ney": (5.0, 0.18, 0.15), "nai": (4.6, 0.12, 0.2), "fiddle": (5.8, 0.22, 0.12),
-                                     "trembita": (4.2, 0.05, 0.4)}[kind]
+                                     "trembita": (4.2, 0.05, 0.4), "dudas": (5.0, 0.0, 9.0)}[kind]
             vdepth = p.get("vibrato", vdepth)
             vib = 2 ** (vdepth * np.sin(2 * np.pi * vrate * t) * np.clip((t - vdelay) / 0.35, 0, 1) / 12)
             ff = f * vib
@@ -548,6 +589,21 @@ def mono_voice(kind, p, notes, total_n):
                 chiff = bp(noise(length), 1500, 6000) * np.exp(-t / 0.02) * (0 if glide else 1.6)
                 air = air + chiff
                 atk = p.get("attack", 0.025)
+            elif kind == "dudas":
+                # bagpipe chanter: constant pressure, no dynamics, bright nasal reed
+                ph01 = np.mod(ph / (2 * np.pi), 1.0)
+                reed = np.where(ph01 < p.get("pulse", 0.32), 1.0, -0.45).astype(np.float32)
+                reed = lp(reed, 7000)
+                tone = np.zeros(length, dtype=np.float32)
+                for fc, g in ((900, 1.0), (1900, 0.8), (3100, 0.45)):
+                    tone += bp(reed, fc * 0.75, fc * 1.3) * g
+                tone = tone + lp(reed, 600) * 0.5
+                if p.get("drone"):
+                    dph = 2 * np.pi * p["drone"] * t
+                    dr = np.where(np.mod(dph / (2 * np.pi), 1) < 0.4, 1.0, -0.6).astype(np.float32)
+                    tone = tone + lp(dr, 1200) * p.get("drone_level", 0.45)
+                air = hp(noise(length), 5000) * 0.05
+                atk = p.get("attack", 0.015)
             elif kind == "trembita":
                 # long wooden horn: lip-buzzed natural harmonics, gets brassier as it swells
                 swell = np.ones_like(t) if glide else np.clip(t / p.get("attack", 0.18), 0, 1)
@@ -598,7 +654,7 @@ def mono_voice(kind, p, notes, total_n):
             x = lp(x, cut * (0.6 + 0.6 * vel), 2) * env * vel * 0.5
             x = soft(x, p.get("drive", 0.0))
         # click-free join (808 glides are phase-continuous and need no fade)
-        if not (kind in ("808", "ney", "nai", "fiddle", "trembita") and glide):
+        if not (kind in ("808", "ney", "nai", "fiddle", "trembita", "dudas") and glide):
             fade = min(64, length)
             x[:fade] *= np.linspace(0, 1, fade)
         out[start:start + length] += x.astype(np.float32)
@@ -606,7 +662,7 @@ def mono_voice(kind, p, notes, total_n):
     return out
 
 
-MONO = {"808", "bass", "lead", "ney", "nai", "fiddle", "trembita"}
+MONO = {"808", "bass", "lead", "ney", "nai", "fiddle", "trembita", "dudas"}
 
 # ------------------------------------------------- textures and transition fx
 

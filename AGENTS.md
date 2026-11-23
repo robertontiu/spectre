@@ -1,6 +1,6 @@
 # AGENTS.md: guide for AI agents taking over Spectre
 
-Read this file fully before touching anything. It is the single source of truth for how this project works and how to continue it.
+Read this file fully before touching anything. It is the single source of truth for how this project works and how to continue it. If you are the **orchestrator** (the agent the owner talks to, who starts and monitors producer sessions and maintains the players), also read [docs/ORCHESTRATION.md](docs/ORCHESTRATION.md): it holds the owner's standing rules, the delivery procedure and the player artifacts.
 
 ## 1. What this project is
 
@@ -45,6 +45,10 @@ docs/
   LESSONS.md      what each session taught us; read before changing the agent prompt or engine
 prompts/
   producer.md     the producer agent prompt template (persona, brief, studio, stages, loop, finish)
+site/             the Spectre showcase page (static; deploys to Vercel); tracks/tracks.json lists the tracks
+player/           "Spectre Amp", the retro player artifact
+tools/
+  sync_tracks.py  copies each session's mastered MP3 into site/tracks and player/tracks
 sessions/
   NNN-name/       one folder per session: project.json, journal.md, mastered mp3, ear and master images,
                   README.md with the result (and the blind-test outcome if blind)
