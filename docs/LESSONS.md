@@ -3,7 +3,7 @@
 What each session taught us. Read this before changing the producer prompt or the engine, and add an entry after every session. **After every genre switch, update the "Across genres" section too.**
 
 ## Across genres (updated after each switch)
-Genres so far: boom-bap/trap hybrid (001), rage-trap/industrial (002), oriental trap (003), Romanian folk trap (004), Ukrainian folk trap (005).
+Genres so far: boom-bap/trap hybrid (001), rage-trap/industrial (002), oriental trap (003), Romanian folk trap (004), Ukrainian folk trap (005), Latvian folk trap (006).
 - **What transfers everywhere:** the feel-listen-decide loop; naming the nearest wrong feelings in the brief; subtraction (drop-outs, sections where the beat leaves) as the strongest emotional tool; mixing low end before mastering; one session folder plus journal so a session can be resumed by a fresh agent.
 - **Folk-fusion genres need three things before the session starts:** (1) research saved as a `docs/<GENRE>.md` brief (instruments, rhythms, modes, the modern reference artists), (2) the genre's signature instruments built and checked in the engine (generic synths can't fake them), (3) a warning against "postcard" use: the folk elements must carry the feeling, not decorate it. Session 003 showed it works: the listener's favourite moments were the oud and darbuka sitting inside the beat.
 - **Each genre has its own trap:** briefed rage drifted toward hype and anxiety; rebellion toward triumph; the hustle toward celebration or nostalgia; anti-war toward a battle anthem. Name the trap in the brief.
@@ -12,7 +12,16 @@ Genres so far: boom-bap/trap hybrid (001), rage-trap/industrial (002), oriental 
 - **Watch for groove that means the wrong thing (005):** an even stomp on every quarter reads as an army. In folk-fusion work, check what each rhythm means in the culture, not just whether it bangs.
 - **A folk rhythm can carry the theme (004):** the hustle's "carrying weight" came from an asymmetric folk meter (7/16 geamparale) folded into the trap grid as a 3-3-2 limp in hats, cobza and drum. Look for the culture's own rhythm before writing melody.
 - **The same instrument can tell opposite stories (004):** the fiddle first danced like a wedding band (celebration, the wrong feeling); digging the bow in (grit, sawing, long notes) turned it into work. Articulation decides the feeling as much as the instrument choice.
+- **A folk song form can be the hook (006):** the Suiti call, repeat and drone (one voice calls, the next repeats the words, a drone holds underneath) carried the subject on its own: a chain that grows each hook reads as a crowd joining. Look for the culture's singing form, not just its scales and instruments.
+- **Triplets sway, straight 8ths and quarters march (006):** 8th-note triplets in hats and jingles made a crowd swaying arm in arm; a kick on 1 and 3 drifted toward a soldier's two-step and was moved. Together with 005: decide whether the rhythm is a crowd or an army.
+- **Revolution doesn't have to be an attack (006):** framing the subject as endurance (holding the line through a cold night) gave the track a patient arc with no triumph; the cold (wind, raw voices, dark register) kept the communal singing from turning cosy.
 - **Shared modes:** Ukrainian Dorian, Romanian minor and the klezmer "Misheberak" scale are the same Dorian #4; Hijaz / Phrygian dominant links oriental, Romanian and Ukrainian material. The key detector in the ears misreads these modes; ignore it there.
+
+## Session 006: "Līdz rītam" (briefed: Latvian folk trap, revolution)
+- **Result:** 2:52, 136 bpm half-time with a triplet sway, G Dorian. Mastered at -10.5 LUFS, -1.02 dBTP, laptop loss -1.8 dB, no warnings. 26 renders.
+- **What worked:** see "Across genres": Suiti call-and-repeat as the hook, the triplet sway, revolution as staying. The best moment is a single bar of the crowd singing the call over the drone alone before the last hook. Drifts caught and fixed: a jig in the first loop, a marching kick, and a kokle arpeggio that turned pastoral (replaced by struck strums).
+- **Mix:** a drone, voices and kokle all piling up at 300-400 Hz gave a boxy master (+6.7 dB at 315 Hz in the first trial); cutting that band in each source got it to +2.9. An engine rumble on D1 (37 Hz) leaked into the sub band and was pumped by the master's low lift; it moved up to D2. The release master pushes quiet intros further down than the render's quick master (-14.4 to -19.4 LUFS here); fine for a cold opening, worth knowing.
+- **Engine fixes after this session:** chord `stabs` rhythm strings now follow the drum-step grid (12 characters = 8th-note triplets) instead of always being 16ths; the manual now says so and notes that the key detector misreads modes and that zoom timing-roll labels can look shifted by one row. Triplet melodic notes work by writing fractional 16th steps (multiples of 4/3).
 
 ## Session 001: "Bleachers" (feeling: defiance)
 - **Outcome:** the track came across closer to *longing* than defiance; Robert's feedback was that it "didn't feel aggressive enough". A near miss.

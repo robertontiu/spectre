@@ -205,11 +205,14 @@ class Hand:
                 hits = [(pos, ln)]
             elif style == "stabs":
                 r = re.sub(r"[\s|]", "", rhythm or "x...x...x...x...")
+                # one string = one bar; its length sets the grid like drum steps
+                # (16 = 16ths, 12 = 8th-note triplets, 24 = 16th triplets, 32 = 32nds)
+                step = 16.0 / len(r)
                 hits = []
-                for b in range(int(np.ceil(ln / len(r)))):
+                for b in range(int(np.ceil(ln / 16.0))):
                     for i, ch in enumerate(r):
-                        p = pos + b * len(r) + i
-                        if ch != "." and p < pos + ln:
+                        p = pos + b * 16.0 + i * step
+                        if ch != "." and p < pos + ln - 1e-9:
                             hits.append((p, spec.get("stab_len", 2)))
             elif style == "arp":
                 rate = spec.get("rate", 2)  # in 16ths

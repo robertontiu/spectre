@@ -29,6 +29,13 @@ A revolution in Latvian terms can mean: the many against the machine, unarmed vo
 ## The modern reference
 Skyforger (Latvian folk/pagan metal: kokle, dūdas, birch trumpet and folk singing ensembles with heavy metal), Tautumeitas (six singers: Latvian folk melodies and lyrics with powerful harmonies over modern beats and production).
 
+## What session 006 learned
+- Suiti drone singing (caller, a "bender" repeating the same words, drone singers holding one tone) works as a trap hook as it is: let the chain grow each hook.
+- 8th-note triplets in the hats and the trīdeksnis give the crowd's sway; the trīdeksnis jingles ring about 0.4 s above 5 kHz, so keep it off the snare (beat 1 only) or it glitters into a crash.
+- Strike the kokle (low damped strings, open-fifth strums); arpeggios turn it into a pastoral postcard.
+- Drone, voices and kokle all crowd 300-400 Hz; cut that band per source before mastering.
+- The taure's climbing harmonics make a good call between sections.
+
 ## Sources
 - Music of Latvia: https://en.wikipedia.org/wiki/Music_of_Latvia ; Kokle: https://en.wikipedia.org/wiki/Kokle ; Daina: https://www.wikiwand.com/en/Daina_(Latvia)
 - Smithsonian Folklife 1998 (dainas, drone singing): https://folklife-media.si.edu/docs/festival/program-book-articles/FESTBK1998_21.pdf

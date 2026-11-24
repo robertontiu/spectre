@@ -1,0 +1,1140 @@
+{
+ "title": "Līdz rītam",
+ "bpm": 136,
+ "swing": 0.5,
+ "seed": 6,
+ "tracks": {
+  "wind": {
+   "inst": {
+    "type": "rain"
+   },
+   "gain_db": 28,
+   "width": 0.9,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 500
+    },
+    {
+     "type": "eq",
+     "hz": 1400,
+     "gain_db": 5,
+     "q": 2.5
+    },
+    {
+     "type": "lpf",
+     "hz": 4500
+    },
+    {
+     "type": "tremolo",
+     "rate": 0.13,
+     "depth": 0.7
+    }
+   ]
+  },
+  "fire": {
+   "inst": {
+    "type": "vinyl",
+    "density": 30
+   },
+   "gain_db": 12,
+   "pan": -0.1,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 900
+    }
+   ]
+  },
+  "burdon": {
+   "inst": {
+    "type": "choir",
+    "vowel": "ee",
+    "attack": 0.6,
+    "release": 1.2
+   },
+   "gain_db": 11,
+   "width": 0.9,
+   "humanize_ms": 20,
+   "send_reverb": 0.3,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 140
+    },
+    {
+     "type": "drive",
+     "db": 6
+    },
+    {
+     "type": "eq",
+     "hz": 310,
+     "gain_db": -7,
+     "q": 0.8
+    },
+    {
+     "type": "eq",
+     "hz": 500,
+     "gain_db": -2,
+     "q": 1.0
+    }
+   ]
+  },
+  "caller": {
+   "inst": {
+    "type": "choir",
+    "vowel": "ah",
+    "attack": 0.03,
+    "release": 0.3
+   },
+   "gain_db": 16,
+   "pan": -0.3,
+   "width": 0.3,
+   "humanize_ms": 12,
+   "push_ms": 10,
+   "send_reverb": 0.25,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 200
+    },
+    {
+     "type": "drive",
+     "db": 12
+    },
+    {
+     "type": "eq",
+     "hz": 380,
+     "gain_db": -3,
+     "q": 1.2
+    },
+    {
+     "type": "eq",
+     "hz": 550,
+     "gain_db": -3,
+     "q": 1.0
+    },
+    {
+     "type": "eq",
+     "hz": 1800,
+     "gain_db": 3,
+     "q": 0.8
+    }
+   ]
+  },
+  "bender": {
+   "inst": {
+    "type": "choir",
+    "vowel": "oh",
+    "attack": 0.03,
+    "release": 0.3
+   },
+   "gain_db": 14,
+   "pan": 0.3,
+   "width": 0.3,
+   "humanize_ms": 14,
+   "push_ms": 16,
+   "send_reverb": 0.25,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 200
+    },
+    {
+     "type": "drive",
+     "db": 12
+    },
+    {
+     "type": "eq",
+     "hz": 380,
+     "gain_db": -3,
+     "q": 1.2
+    },
+    {
+     "type": "eq",
+     "hz": 550,
+     "gain_db": -3,
+     "q": 1.0
+    },
+    {
+     "type": "eq",
+     "hz": 1500,
+     "gain_db": 3,
+     "q": 0.8
+    }
+   ]
+  },
+  "kokle": {
+   "inst": {
+    "type": "kokle",
+    "ring": 0.3,
+    "bright": 0.5,
+    "damped": true
+   },
+   "gain_db": 4,
+   "pan": 0.2,
+   "humanize_ms": 8,
+   "push_ms": 8,
+   "vel_jitter": 0.1,
+   "send_reverb": 0.12,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 110
+    },
+    {
+     "type": "drive",
+     "db": 4
+    },
+    {
+     "type": "eq",
+     "hz": 320,
+     "gain_db": -3,
+     "q": 1.0
+    }
+   ]
+  },
+  "staff": {
+   "inst": {
+    "type": "tridksnis",
+    "decay": 0.12,
+    "thud": 1.0
+   },
+   "gain_db": 14,
+   "pan": -0.25,
+   "humanize_ms": 9,
+   "push_ms": 6,
+   "vel_jitter": 0.12,
+   "send_reverb": 0.1
+  },
+  "crowd": {
+   "inst": {
+    "type": "choir",
+    "vowel": "ah",
+    "attack": 0.05,
+    "release": 0.4
+   },
+   "gain_db": 12,
+   "width": 1.0,
+   "humanize_ms": 25,
+   "push_ms": 20,
+   "send_reverb": 0.35,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 180
+    },
+    {
+     "type": "drive",
+     "db": 10
+    },
+    {
+     "type": "eq",
+     "hz": 520,
+     "gain_db": -4,
+     "q": 1.0
+    },
+    {
+     "type": "eq",
+     "hz": 1700,
+     "gain_db": 3,
+     "q": 0.8
+    }
+   ]
+  },
+  "kokleR": {
+   "inst": {
+    "type": "kokle",
+    "ring": 0.85,
+    "bright": 0.7
+   },
+   "gain_db": 6,
+   "pan": 0.35,
+   "width": 0.4,
+   "humanize_ms": 10,
+   "push_ms": 10,
+   "send_reverb": 0.3,
+   "send_delay": 0.12,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 200
+    }
+   ]
+  },
+  "dudas": {
+   "inst": {
+    "type": "dudas",
+    "pulse": 0.3,
+    "drone": 98.0,
+    "drone_level": 0.4
+   },
+   "gain_db": 10,
+   "pan": -0.15,
+   "humanize_ms": 6,
+   "push_ms": 6,
+   "send_reverb": 0.2,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 150
+    },
+    {
+     "type": "eq",
+     "hz": 2800,
+     "gain_db": -3,
+     "q": 1.0
+    }
+   ]
+  },
+  "taure": {
+   "inst": {
+    "type": "trembita",
+    "attack": 0.3,
+    "bright": 0.75,
+    "blare": 0.45,
+    "breath": 0.2
+   },
+   "gain_db": 12,
+   "pan": 0.4,
+   "send_reverb": 0.6,
+   "send_delay": 0.15,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 90
+    }
+   ]
+  },
+  "engines": {
+   "inst": {
+    "type": "bass",
+    "cutoff": 220,
+    "sub": 0.3,
+    "drive": 0.7,
+    "attack": 1.5,
+    "release": 1.0
+   },
+   "gain_db": 0,
+   "humanize_ms": 0,
+   "vel_jitter": 0,
+   "fx": [
+    {
+     "type": "drive",
+     "db": 10
+    },
+    {
+     "type": "tremolo",
+     "rate": 6.2,
+     "depth": 0.4
+    },
+    {
+     "type": "hpf",
+     "hz": 70
+    },
+    {
+     "type": "eq",
+     "hz": 150,
+     "gain_db": 4,
+     "q": 0.8
+    },
+    {
+     "type": "lpf",
+     "hz": 600
+    },
+    {
+     "type": "reverb",
+     "size": 0.9,
+     "mix": 0.4
+    }
+   ]
+  },
+  "kick": {
+   "inst": {
+    "type": "kick",
+    "tune": 68,
+    "decay": 0.11,
+    "punch": 1.4,
+    "click": 0.6,
+    "drive": 0.5
+   },
+   "gain_db": -2,
+   "humanize_ms": 2,
+   "fx": [
+    {
+     "type": "eq",
+     "hz": 100,
+     "gain_db": 4,
+     "q": 1.0
+    },
+    {
+     "type": "eq",
+     "hz": 2500,
+     "gain_db": 2,
+     "q": 0.9
+    },
+    {
+     "type": "gain",
+     "db": 1.5
+    }
+   ]
+  },
+  "snare": {
+   "inst": {
+    "type": "snare",
+    "tone": 200,
+    "decay": 0.05,
+    "snap": 0.5,
+    "body": 1.3,
+    "drive": 0.8
+   },
+   "gain_db": 6,
+   "humanize_ms": 3,
+   "push_ms": 6,
+   "send_reverb": 0.12,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 120
+    },
+    {
+     "type": "eq",
+     "hz": 1500,
+     "gain_db": 3,
+     "q": 1.0
+    },
+    {
+     "type": "highshelf",
+     "hz": 4500,
+     "gain_db": -7
+    }
+   ]
+  },
+  "clap": {
+   "inst": {
+    "type": "clap",
+    "tone": 1200,
+    "decay": 0.06,
+    "spread": 1.0
+   },
+   "gain_db": 18,
+   "push_ms": 4,
+   "width": 0.9,
+   "humanize_ms": 6,
+   "send_reverb": 0.08,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 250
+    },
+    {
+     "type": "drive",
+     "db": 4
+    },
+    {
+     "type": "highshelf",
+     "hz": 6000,
+     "gain_db": -3
+    }
+   ]
+  },
+  "hat": {
+   "inst": {
+    "type": "hat",
+    "decay": 0.035,
+    "tone": 8000
+   },
+   "gain_db": 11,
+   "pan": 0.25,
+   "humanize_ms": 4,
+   "dyn": [
+    1.0,
+    0.45,
+    0.7
+   ],
+   "vel_jitter": 0.1,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 500
+    },
+    {
+     "type": "highshelf",
+     "hz": 7000,
+     "gain_db": -3
+    }
+   ]
+  },
+  "808": {
+   "inst": {
+    "type": "808",
+    "decay": 1.2,
+    "drive": 0.5,
+    "punch": 0.6,
+    "tone": 0.35,
+    "glide_ms": 90
+   },
+   "gain_db": -12,
+   "legato": 0.95,
+   "sidechain": {
+    "source": "kick",
+    "depth": 0.6,
+    "release_ms": 100
+   },
+   "fx": [
+    {
+     "type": "drive",
+     "db": 6
+    },
+    {
+     "type": "sat",
+     "amount": 0.3
+    },
+    {
+     "type": "eq",
+     "hz": 85,
+     "gain_db": 3,
+     "q": 0.9
+    },
+    {
+     "type": "eq",
+     "hz": 130,
+     "gain_db": 3,
+     "q": 1.0
+    },
+    {
+     "type": "eq",
+     "hz": 170,
+     "gain_db": 2,
+     "q": 1.0
+    },
+    {
+     "type": "lpf",
+     "hz": 2500
+    },
+    {
+     "type": "gain",
+     "db": -2
+    }
+   ]
+  }
+ },
+ "patterns": {
+  "night": {
+   "bars": 4,
+   "wind": "on",
+   "fire": "on"
+  },
+  "drone": {
+   "bars": 4,
+   "burdon": "0:G3:32 0:D4:32 0:G2:32 32:G3:32 32:D4:32 32:G2:32"
+  },
+  "chain": {
+   "bars": 4,
+   "caller": "0:D5:5 5:C5:1~ 6:Bb4:2 8:C5:2 10:Bb4:2 12:A4:4 16:Bb4:2 18:A4:2 20:G4:3 23:A4:1 24:G4:6",
+   "bender": "32:D5:5 37:C5:1~ 38:Bb4:2 40:C5:2 42:Bb4:2 44:A4:4 48:Bb4:2 50:A4:2 52:G4:3 55:A4:1 56:G4:6"
+  },
+  "stamp": {
+   "bars": 4,
+   "kokle": "0.0000:G2:2.6667:0.95 6.6667:D3:1.3333:0.6 8.0000:G2:2.6667:0.9 14.6667:D3:1.3333:0.6 16.0000:G2:2.6667:0.95 22.6667:D3:1.3333:0.6 24.0000:G2:2.6667:0.9 30.6667:D3:1.3333:0.6 32.0000:G2:2.6667:0.95 38.6667:D3:1.3333:0.6 40.0000:G2:2.6667:0.9 46.6667:D3:1.3333:0.6 48.0000:G2:2.6667:0.95 54.6667:D3:1.3333:0.6 56.0000:G2:2.6667:0.9 62.6667:D3:1.3333:0.6",
+   "staff": "X........o..X........o..X........o..X........o.."
+  },
+  "beat": {
+   "bars": 4,
+   "kick": "X.......x...X........x..X.......x...X..x....x..x",
+   "snare": "......X...........X...........X...........X..o.o",
+   "clap": "......X...........X...........X...........X.....",
+   "hat": "..x..x..x..x..x..x..xr.x..x..x..x..x..x..x.x.tQZ"
+  },
+  "bass": {
+   "bars": 4,
+   "808": "0:G1:10 10:G1:6 16:Bb1:10 26:A1:6~ 32:G1:10 42:F1:6 48:C2:8 56:Bb1:4~ 60:A1:4~"
+  },
+  "nightP": {
+   "bars": 4,
+   "wind": "on",
+   "fire": "on"
+  },
+  "droneIn": {
+   "bars": 4,
+   "burdon": "0:G3:32 0:D4:32 32:G3:32 32:D4:32"
+  },
+  "callOnly": {
+   "bars": 4,
+   "caller": "0:D5:5 5:C5:1~ 6:Bb4:2 8:C5:2 10:Bb4:2 12:A4:4 16:Bb4:2 18:A4:2 20:G4:3 23:A4:1 24:G4:6"
+  },
+  "kokleSparse": {
+   "bars": 4,
+   "kokle": "0.0000:G2:4.0000:0.8 16.0000:G2:4.0000:0.8 32.0000:G2:4.0000:0.8 48.0000:G2:4.0000:0.8"
+  },
+  "crowdTail": {
+   "bars": 4,
+   "crowd": "32:Bb4:2 34:A4:2 36:G4:3 39:A4:1 40:G4:6"
+  },
+  "crowdFull": {
+   "bars": 4,
+   "crowd": "32:D5:5 37:C5:1~ 38:Bb4:2 40:C5:2 42:Bb4:2 44:A4:4 48:Bb4:2 50:A4:2 52:G4:3 55:A4:1 56:G4:6"
+  },
+  "beatV": {
+   "bars": 4,
+   "kick": "X...........X........x..X...........X.......x...",
+   "clap": "......X...........X...........X...........X.....",
+   "snare": "......X...........X...........X...........X.....",
+   "hat": "..x..x..x..x..x..x..x..x..x..x..x..x..x..x..xr.t"
+  },
+  "bassV": {
+   "bars": 4,
+   "808": "0:G1:14 16:G1:12 28:Bb1:4~ 32:A1:14 48:F1:8 56:G1:8~"
+  },
+  "verseTag": {
+   "bars": 8,
+   "caller": "96:D5:5 101:C5:1~ 102:Bb4:2 104:A4:2 106:G4:6"
+  },
+  "verseTag2": {
+   "bars": 8,
+   "caller": "32:D5:5 37:C5:1~ 38:Bb4:2 40:A4:2 42:G4:6 96:D5:5 101:C5:1~ 102:Bb4:2 104:A4:2 106:G4:6",
+   "bender": "48:D5:5 53:C5:1~ 54:Bb4:2 56:A4:2 58:G4:6 112:D5:5 117:C5:1~ 118:Bb4:2 120:A4:2 122:G4:6"
+  },
+  "allCall": {
+   "bars": 8,
+   "crowd": "112:D5:10 122:C5:2~ 124:Bb4:4"
+  },
+  "engineLow": {
+   "bars": 8,
+   "engines": "0:D2:64:0.5 64:D2:64:0.5"
+  },
+  "hourP": {
+   "bars": 8,
+   "engines": "0:D2:60 64:Eb2:56~",
+   "staff": "X...........X...........X...........X...........X...........X...........X.......................",
+   "caller": "0:D5:6 6:C5:2 8:Bb4:8 32:Bb4:2 34:A4:2 36:G4:12",
+   "taure": "80:D3:6 86:G3:10~ 100:D3:4 104:G3:6~ 110:A3:2~ 112:G3:14"
+  },
+  "dudasLine": {
+   "bars": 4,
+   "dudas": "0:D5:5 5:C5:1~ 6:Bb4:2 8:C5:2 10:Bb4:2 12:A4:4 16:Bb4:2 18:A4:2 20:G4:3 23:A4:1 24:G4:6 32:D5:5 37:C5:1~ 38:Bb4:2 40:C5:2 42:Bb4:2 44:A4:4 48:Bb4:2 50:A4:2 52:G4:3 55:A4:1 56:G4:6"
+  },
+  "dudasRiff": {
+   "bars": 8,
+   "dudas": "52:D5:3 55:Eb5:1~ 56:D5:2 58:C5:2 60:Bb4:2 62:A4:2 116:D5:4 120:C5:1 121:D5:3 124:G4:4"
+  },
+  "kokleRing": {
+   "bars": 4,
+   "kokleR": {
+    "chords": "G5:16 G5:16 Bb5:8 F5:8 G5:16",
+    "style": "stabs",
+    "rhythm": "x.......x.....x.",
+    "stab_len": 6,
+    "register": "G3",
+    "voicing": "spread",
+    "vel": 0.8
+   }
+  },
+  "morningP": {
+   "bars": 8,
+   "caller": "0:D5:5 5:C5:1~ 6:Bb4:2 8:C5:2 10:Bb4:2 12:A4:4 16:Bb4:2 18:A4:2 20:G4:3 23:A4:1 24:G4:6",
+   "bender": "32:D5:5 37:C5:1~ 38:Bb4:2 40:C5:2 42:Bb4:2 44:A4:4 48:Bb4:2 50:A4:2 52:G4:3 55:A4:1 56:G4:8",
+   "staff": "X...........X...........X...........X...........X...........X...........X.......................",
+   "kokle": "0.0000:G2:4.0000:0.7 16.0000:G2:4.0000:0.7 32.0000:G2:4.0000:0.7 48.0000:G2:4.0000:0.7 64.0000:G2:4.0000:0.7 80.0000:G2:4.0000:0.7 96.0000:G2:4.0000:0.7"
+  }
+ },
+ "arrangement": [
+  {
+   "name": "night",
+   "bars": 8,
+   "play": [
+    "nightP",
+    "droneIn",
+    "kokleSparse"
+   ],
+   "auto": {
+    "burdon": {
+     "gain_db": [
+      -16,
+      -5
+     ]
+    }
+   }
+  },
+  {
+   "name": "call",
+   "bars": 4,
+   "play": [
+    "nightP",
+    "drone",
+    "callOnly",
+    "kokleSparse"
+   ],
+   "auto": {
+    "caller": {
+     "gain_db": [
+      -5,
+      -5
+     ]
+    },
+    "burdon": {
+     "gain_db": [
+      -5,
+      -5
+     ]
+    }
+   }
+  },
+  {
+   "name": "answer",
+   "bars": 4,
+   "play": [
+    "nightP",
+    "drone",
+    "chain",
+    "stamp"
+   ],
+   "auto": {
+    "caller": {
+     "gain_db": [
+      -5,
+      -5
+     ]
+    },
+    "bender": {
+     "gain_db": [
+      -5,
+      -5
+     ]
+    },
+    "burdon": {
+     "gain_db": [
+      -5,
+      -4
+     ]
+    }
+   },
+   "exit": {
+    "cut": {
+     "tracks": "all",
+     "beats": 0.5
+    }
+   }
+  },
+  {
+   "name": "hook1",
+   "bars": 8,
+   "play": [
+    "nightP",
+    "drone",
+    "chain",
+    "stamp",
+    "beat",
+    "bass"
+   ],
+   "auto": {
+    "caller": {
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "bender": {
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "808": {
+     "gain_db": [
+      -2,
+      -2
+     ]
+    },
+    "burdon": {
+     "gain_db": [
+      -2,
+      -2
+     ]
+    }
+   }
+  },
+  {
+   "name": "verse1",
+   "bars": 8,
+   "play": [
+    "nightP",
+    "drone",
+    "stamp",
+    "beatV",
+    "bassV",
+    "verseTag"
+   ],
+   "auto": {
+    "808": {
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "kokle": {
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "burdon": {
+     "gain_db": [
+      -3,
+      -3
+     ]
+    }
+   }
+  },
+  {
+   "name": "verse1b",
+   "bars": 8,
+   "play": [
+    "nightP",
+    "drone",
+    "stamp",
+    "beatV",
+    "bassV",
+    "verseTag2",
+    "engineLow"
+   ],
+   "auto": {
+    "engines": {
+     "gain_db": [
+      -18,
+      -8
+     ]
+    },
+    "caller": {
+     "gain_db": [
+      -4,
+      -4
+     ]
+    },
+    "bender": {
+     "gain_db": [
+      -4,
+      -4
+     ]
+    },
+    "808": {
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "kokle": {
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "burdon": {
+     "gain_db": [
+      -3,
+      -3
+     ]
+    }
+   }
+  },
+  {
+   "name": "hook2",
+   "bars": 8,
+   "play": [
+    "nightP",
+    "drone",
+    "chain",
+    "stamp",
+    "beat",
+    "bass",
+    "crowdTail"
+   ],
+   "exit": {
+    "cut": {
+     "tracks": "all",
+     "beats": 1
+    }
+   }
+  },
+  {
+   "name": "hour",
+   "bars": 8,
+   "play": [
+    "nightP",
+    "drone",
+    "hourP"
+   ],
+   "auto": {
+    "engines": {
+     "gain_db": [
+      -20,
+      -10
+     ]
+    },
+    "caller": {
+     "gain_db": [
+      -1,
+      -1
+     ]
+    },
+    "burdon": {
+     "gain_db": [
+      -6,
+      -6
+     ]
+    },
+    "wind": {
+     "gain_db": [
+      2,
+      4
+     ]
+    },
+    "808": {
+     "mute": true
+    },
+    "kick": {
+     "mute": true
+    }
+   }
+  },
+  {
+   "name": "hook3",
+   "bars": 8,
+   "play": [
+    "nightP",
+    "drone",
+    "chain",
+    "stamp",
+    "beat",
+    "bass",
+    "crowdFull",
+    "dudasLine"
+   ],
+   "auto": {
+    "crowd": {
+     "gain_db": [
+      2,
+      2
+     ]
+    },
+    "dudas": {
+     "gain_db": [
+      3,
+      3
+     ]
+    }
+   }
+  },
+  {
+   "name": "verse2",
+   "bars": 8,
+   "play": [
+    "nightP",
+    "drone",
+    "stamp",
+    "beatV",
+    "bassV",
+    "dudasRiff",
+    "verseTag"
+   ],
+   "auto": {
+    "808": {
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "kokle": {
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "burdon": {
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "dudas": {
+     "gain_db": [
+      7,
+      7
+     ]
+    }
+   }
+  },
+  {
+   "name": "verse2b",
+   "bars": 8,
+   "play": [
+    "nightP",
+    "drone",
+    "stamp",
+    "beatV",
+    "bassV",
+    "dudasRiff",
+    "verseTag2",
+    "allCall"
+   ],
+   "auto": {
+    "808": {
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "kokle": {
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "burdon": {
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "dudas": {
+     "gain_db": [
+      7,
+      7
+     ]
+    },
+    "crowd": {
+     "gain_db": [
+      4,
+      4
+     ]
+    }
+   },
+   "exit": {
+    "cut": {
+     "tracks": [
+      "kick",
+      "808",
+      "hat",
+      "snare",
+      "clap",
+      "kokle",
+      "staff",
+      "dudas"
+     ],
+     "beats": 4
+    }
+   }
+  },
+  {
+   "name": "hook4",
+   "bars": 8,
+   "play": [
+    "nightP",
+    "drone",
+    "chain",
+    "stamp",
+    "beat",
+    "bass",
+    "crowdFull",
+    "dudasLine",
+    "kokleRing"
+   ],
+   "auto": {
+    "crowd": {
+     "gain_db": [
+      4,
+      4
+     ]
+    },
+    "dudas": {
+     "gain_db": [
+      4,
+      4
+     ]
+    },
+    "caller": {
+     "gain_db": [
+      2,
+      2
+     ]
+    },
+    "bender": {
+     "gain_db": [
+      2,
+      2
+     ]
+    },
+    "burdon": {
+     "gain_db": [
+      2,
+      2
+     ]
+    },
+    "clap": {
+     "gain_db": [
+      4,
+      4
+     ]
+    }
+   }
+  },
+  {
+   "name": "morning",
+   "bars": 8,
+   "play": [
+    "nightP",
+    "drone",
+    "morningP"
+   ],
+   "auto": {
+    "wind": {
+     "gain_db": [
+      0,
+      -8
+     ]
+    },
+    "808": {
+     "mute": true
+    },
+    "staff": {
+     "gain_db": [
+      0,
+      -8
+     ]
+    },
+    "kokle": {
+     "gain_db": [
+      -2,
+      -8
+     ]
+    },
+    "bender": {
+     "gain_db": [
+      -2,
+      -2
+     ]
+    }
+   }
+  }
+ ],
+ "mix": {
+  "reverb": {
+   "size": 0.85,
+   "damping": 0.6,
+   "return_db": -5,
+   "lpf": 6000
+  },
+  "delay": {
+   "beats": 1.5,
+   "feedback": 0.3,
+   "return_db": -10,
+   "lpf": 3000
+  }
+ },
+ "master": {
+  "lufs": -10.5,
+  "sat": 0.15,
+  "tape": 0.0,
+  "glue": true
+ }
+}

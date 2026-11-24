@@ -81,7 +81,7 @@ A pattern is a set of parts for several tracks, `bars` long. Sections loop patte
   `"0:F1:6 6:F1:2 10:Ab1:6~ 16:Db2:8"`. Suffix `~` on len = glide into this note from the previous one, `!` = accent, `.` = soft; an optional 4th field sets velocity (`"8:C5:2:0.5"`).
 - **Chords** (polyphonic tracks): `{"chords": "Fm9:16 Dbmaj7:16 Bbm9:8 C7b9:8", "style": "sustain", "register": "Ab4", "voicing": "keys", "vel": 0.7}`
   Lengths in 16ths (16 = one bar). `-:8` = rest. Slash chords work (`Ab/C`). The hand voice-leads between chords.
-  style: `sustain`, `strum` (strum_ms), `stabs` (with `"rhythm": "x..x..x...x....."` per bar, `stab_len`), `arp` (`rate` in 16ths, `pattern` up/down/updown/random, `octaves`).
+  style: `sustain`, `strum` (strum_ms), `stabs` (with `"rhythm": "x..x..x...x....."` per bar, `stab_len`; the string length sets the grid like drum steps, so 12 characters = 8th-note triplets), `arp` (`rate` in 16ths, `pattern` up/down/updown/random, `octaves`).
   voicing: `keys` (left-hand root plus right-hand close voicing), `close`, `spread`.
   Qualities: "", m, maj7, m7, 7, m9, maj9, 9, add9, madd9, 6, m6, sus2, sus4, 7sus4, dim, dim7, m7b5, aug, 7b9, 7#9, m7b9, 11, m11, 13, maj13, 6/9, maj7#11, 7b13, mmaj7, m(maj9), 5
 - **Texture**: `"vinyl": "on"`
@@ -107,5 +107,6 @@ Section names must be unique. Bars per section should be multiples of 4 (2 for s
 - `lofi` plus `send_reverb` on keys gives the "sampled record" feel; `width` 0.3-0.7 on pads and keys opens the stereo field (the default is quite mono).
 - For per-section track levels, read `stems_rms` in `renders/vNNN.meta.json` (one RMS value per 0.05 s per track); see `sessions/004-hustle/levels.py` or `sessions/005-fuck-war/stems.py`.
 - The ears' "no contrast" warning only compares loudness, band levels and onset density; a purely rhythmic or textural change between sections can trip it. Check with a zoom before acting on it.
+- The key detector reads modal material (Dorian, Romanian minor, Hijaz) as the nearest major/minor key; trust your own mode. In the zoom timing roll, row labels can look shifted by one track when several drum tracks share a hit; identify rows by their timing.
 - `gain_db` acts before the track's fx: on tracks with heavy drive, saturation flattens the change; use a `gain` fx at the end of the chain to change the post-drive level.
 - A render is about 20 s; an overview listen about 25 s. Zoom listens are faster.

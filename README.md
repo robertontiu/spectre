@@ -7,9 +7,9 @@
 ### → Listen at [spectre.robertontiu.com](https://spectre.robertontiu.com)
 
 <p align="center">
+  <img src="assets/spectrogram-006.png" width="30%" alt="Spectrogram of Līdz rītam">
   <img src="assets/spectrogram-005.png" width="30%" alt="Spectrogram of Fuck Every War">
   <img src="assets/spectrogram-004.png" width="30%" alt="Spectrogram of Tura">
-  <img src="assets/spectrogram-003.png" width="30%" alt="Spectrogram of Throw It Back">
 </p>
 <p align="center"><sub>Spectre can't hear. This is how it sees its tracks: <i>Fuck Every War</i>, <i>Tura</i>, <i>Throw It Back</i>.</sub></p>
 
@@ -29,7 +29,7 @@ It grew out of [Teodor](https://github.com/robertontiu/teodor), the same experim
 
 Every part of the process is modeled on how producers actually work and on research into how music carries emotion.
 
-**It starts from a feeling, not a genre.** Spectre is given a theme, like *rage*, *the hustle* or *revolution*, sometimes a genre (Romanian or Ukrainian folk trap), and decides what the track must make a stranger feel. Every decision after that is checked against it, and against the *nearest wrong feeling*: rage can drift into hype, rebellion into triumph, an anti-war statement into a battle anthem.
+**It starts from a feeling, not a genre.** Spectre is given a theme, like *rage*, *the hustle* or *revolution*, sometimes a genre (Romanian, Ukrainian or Latvian folk trap), and decides what the track must make a stranger feel. Every decision after that is checked against it, and against the *nearest wrong feeling*: rage can drift into hype, rebellion into triumph, an anti-war statement into a battle anthem.
 
 **The mind decides, the hand plays.** A producer doesn't place every hit by hand; they decide intentions and their hands perform them. Spectre writes intentions in a compact notation ("a snare that drags, ghost notes, an 808 sliding up into the hook"), and the engine's hand performs them with swing, micro-timing, velocity phrasing, rolls, chord voicing and voice leading.
 
