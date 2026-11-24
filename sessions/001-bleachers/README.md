@@ -7,7 +7,7 @@
 | Length / tempo / key | 3:12, 72 bars, 90 bpm, F minor, swing 0.53 |
 | Genre | Stomping boom-bap and 808-trap hybrid: stomp-stomp-clap groove, gritty 808s that slide up, organ stabs, a brass-like chant lead, gang-vocal hits |
 | Iterations | 27 (loop, arrangement, transitions/detail, mix/master, final listen) |
-| Master | -11.1 LUFS, -1.05 dBTP, PLR 10.1, low end mono. Tonal EQ cut 8 dB at 50 Hz and 6 dB at 40 Hz (the mix was very sub-heavy) |
+| Master | `studio.py master v027 --genre hiphop --eq 0.9 --lufs -11` (master version 2): -11.1 LUFS, -1.06 dBTP (MP3 -0.88), PLR 10.1, LRA about 4.1 LU, laptop loss -2.4 dB, no warnings. Top end within 0.7 dB of the measured hip-hop curve from 1 to 16 kHz (4k -0.1, 8k -0.5, 12.5k -0.7, 16k +0.0); phone check 6-12 kHz -0.1 dB vs the curve. Largest EQ moves: -8.0 dB at 31.5 Hz, -8.0 dB at 40.0 Hz, -8.0 dB at 50.0 Hz. Remastered 2026-11-24: top end brought onto the measured curve (the first release used `--genre trap`; `--genre trap --legacy-master` reproduces it) |
 
 ## Files
 - `bleachers-mastered.mp3`: the track
@@ -22,4 +22,4 @@
 ## Why it came across as longing
 See [docs/LESSONS.md](../../docs/LESSONS.md). In short: "minor melodies that climb back up every time the chords pull them down" means refusal on paper but sounds like yearning, and the synthesized timbres lacked the bite that defiance needs.
 
-Note: this track was mastered after the session with the then-new mastering stage (`--eq 0.9`); the session itself ended with the engine's quick master.
+Note: this track was first mastered after the session with the then-new mastering stage (`--eq 0.9 --lufs -11`); the session itself ended with the engine's quick master. The remaster re-renders `project.json` (deterministic: the legacy chain reproduces the first master's report exactly) and keeps those two settings: the mix is very sub-heavy, and -11 LUFS is its documented loudness.

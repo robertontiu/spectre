@@ -18,21 +18,21 @@ Session 001 ("Bleachers") sounded clunky on MacBook speakers. Analysis showed th
 |---|---|
 | 0. Analyse | Integrated LUFS, true peak (4x), 1/3-octave long-term spectrum (gated to the loud parts) |
 | 1. Clean-up | 28 Hz 8th-order high-pass; side channel high-passed below 120 Hz (linear phase) so the low end is mono |
-| 2. Tonal EQ | Two-pass linear-phase EQ that moves the spectrum toward a genre target curve (`--target`), aligned on 200 Hz-5 kHz. Strength set by `--eq`; at most -8/+4 dB per band in total |
+| 2. Tonal EQ | Linear-phase EQ that moves the spectrum toward a genre target curve (`--target`). Version 2 (default since 2026-11-24): the curve is laid over the mix at its level around 1 kHz (mean deviation over 500 Hz-2 kHz); two open-loop passes with strength `--eq`, except that from 2 kHz up cuts are made at full strength and boosts from 5 kHz up are capped at +2 dB; then a closed loop: the finished master (after stages 3-7) is measured and every band from 1 to 16 kHz more than 1 dB off the curve is corrected and stages 3-7 re-run (at most 4 runs). At most -8/+4 dB per band in total (-12 dB at 12.5-16 kHz). Version 1 (`--legacy-master`): two passes aligned on the median deviation over 200 Hz-5 kHz, strength `--eq` everywhere, -8/+4 dB, no closed loop (see "Top end" below) |
 | 3. Multiband | 4 linear-phase bands (120 / 600 / 4000 Hz crossovers) that sum back perfectly; each compresses only its own loudest peaks (threshold from its 95th percentile) |
 | 4. Translation | 55-150 Hz bass body to tanh saturation to a 160-700 Hz band-pass, mixed in (`--translate`) |
 | 5. Glue | 2:1, 30 ms attack, 200 ms release, about 1-2 dB of reduction |
 | 6. Clip + limit | Soft clipper (4x) into a look-ahead true-peak limiter running 4x oversampled, ceiling `--tp` |
 | 7. Loudness | The input drive is solved iteratively so integrated loudness lands on `--lufs` (±0.15 LU). A true-peak guard then turns the master down if the 4x down-sampling recreated inter-sample peaks above `--tp` (reported as `tp_guard_db`; it never acts on a master that already meets the ceiling) |
-| 8. QC | LUFS, true peak, PLR, loudness range, low-end L/R correlation, stereo width (side minus mid, LU), laptop loss (loudness change after a 180 Hz high-pass), remaining tonal deviations, EQ bands at their limit, warnings; before/after picture |
+| 8. QC | LUFS, true peak (WAV; `studio.py master` also measures the MP3, `mp3_true_peak`), PLR, loudness range, low-end L/R correlation, stereo width (side minus mid, LU), laptop loss (loudness change after a 180 Hz high-pass), remaining tonal deviations, `top_end` (1-16 kHz deviations with the curve at the master's level around 1 kHz) and `top_end_max_abs_dev_db`, the phone check (`phone`, premaster and master), EQ bands at their limit, warnings, `master_version`; before/after picture |
 
 Settings come from a **genre configuration** (`engine/genres.json`), chosen with `--genre`; explicit flags override single values. There is **no default genre**: `studio.py master` stops with an error listing the genres when neither `--genre` nor `--target` is given. An old `--target`-only command still works and takes the matching genre's settings (`--target beat` is an alias of `trap`). Every report records `genre`, `settings` (the values used), `eq_at_limit` and `warnings`, plus the stereo width (`width_side_minus_mid_lu`).
 
 ## Genre configurations (`--genre`)
 | Genre | Target curve | `--lufs` | `--tp` | `--eq` | `--translate` | Status |
 |---|---|---|---|---|---|---|
-| `trap` | `beat` (hand-tuned) | -10.5 | -1 | 0.7 | 0.5 | **Trap / beats: the configuration of sessions 001-006**, the former engine default, preserved exactly (craft brief: docs/CRAFT.md). Verified: `--genre trap` re-masters session 005's v025 sample-identically to the pre-change engine and to its stored report |
-| `hiphop` | `hiphop` (measured) | -10.5 | -1 | 0.7 | 0.5 | researched alternative for beats: `trap` with the measured hip-hop curve. Recommended for future beat sessions, with the caveats below |
+| `trap` | `beat` (hand-tuned) | -10.5 | -1 | 0.7 | 0.5 | **Trap / beats: the configuration of the first releases of sessions 001-006**, the former engine default, preserved exactly (craft brief: docs/CRAFT.md; with `--legacy-master` it reproduces those masters). Verified: `--genre trap` re-masters session 005's v025 sample-identically to the pre-change engine and to its stored report |
+| `hiphop` | `hiphop` (measured) | -10.5 | -1 | 0.7 | 0.5 | `trap` with the measured hip-hop curve: the configuration for beat sessions; sessions 001-006 were remastered with it on 2026-11-24 (see "Top end"), with the caveats below |
 | `trance` | `trance` (measured) | -10 | -1 | 0.7 | 0.4 | docs/TRANCE.md |
 | `rock` | `rock` (measured) | -10 | -1 | 0.7 | 0.3 | docs/POP_ROCK.md |
 
@@ -105,6 +105,60 @@ Values in brackets are interpolated by the engine between the `beat` curve's anc
 | `examples/poprock-test.json` | `--genre rock` | -10.1 | -1.05 | 9.0 | -7.7 LU | +4 at 100-400 Hz; -8 at 63 Hz | the sounds: a 63 Hz kick spike (+12.6, every genre at most +2.5) and holes at 125 Hz (-11, every genre at least +3) and 250 Hz; the old curve also boosted +4 across 31-315 Hz. Known: guitars and bass are thin at 100-300 Hz |
 
 Warnings: none in any of these masters (the EQ-limit note is informational). In every case the curve is not at fault: the measured genres never come near the test mixes' values in the failing bands. Fix it in the mix: tune the kick and bass so 50-63 Hz isn't a spike, and add body to guitars, bass and snare at 100-300 Hz.
+
+## Top end (master version 2, 2026-11-24)
+**The complaint.** Listening on a phone and on Mac speakers, the owner heard the rain, the hi-hats and the hissy elements of the released tracks stand out and sound like static. The orchestrator measured the released masters against the measured hip-hop curve, relative to the 1 kHz band: 006 2-7 dB hot from 2 kHz up, 001-005 3-5 dB hot at 12.5-16 kHz; a test re-master of 006 with `--genre hiphop` barely moved.
+
+**Diagnosis** (006 v026 premaster, `--genre hiphop`, version 1; spectrum measured after every stage; deviation from the curve at 4k / 8k / 12.5k / 16k with the curve laid over the mix at the EQ's own reference, the median over 200 Hz-5 kHz):
+
+| After stage | 4k | 8k | 12.5k | 16k | reference offset |
+|---|---|---|---|---|---|
+| premaster | -0.9 | +1.4 | +3.0 | +8.3 | +1.5 |
+| tonal EQ | -0.6 | +0.4 | -0.3 | +2.3 | +2.9 |
+| multiband | -0.8 | -0.3 | -0.5 | +2.2 | +2.6 |
+| translation | -0.8 | -0.4 | -0.5 | +2.2 | +2.6 |
+| glue | -0.8 | -0.5 | -0.2 | +2.5 | +2.7 |
+| clip + limit (final) | -0.8 | -0.4 | -0.2 | +2.6 | +2.5 |
+
+- **The stages after the EQ are not the cause.** Translation, glue, the clipper and the limiter change no top band by more than 0.3 dB; the multiband's high band takes 0.5-0.8 dB *off* 5-10 kHz. The hypothesis that the clipper or translation adds high-frequency energy is ruled out.
+- **The EQ's reference drifted.** Version 1 laid the curve over the mix at the median deviation over 200 Hz-5 kHz, recomputed on every pass. That range includes the 2-5 kHz presence region it is supposed to judge, and in 006 its own first pass (+1.3 at 2 kHz, +0.8 at 4 kHz, -0.9 to -1.7 at 400 Hz-1 kHz) raised that median from +1.5 to +2.9 dB. Measured against 1 kHz, the master stayed 1.5-2.5 dB hot from 1.6 kHz up and the EQ never saw it.
+- **The 1 kHz band is a poor reference for one mix.** The curves are averages over hundreds of songs, normalised at 1 kHz, so their 1 kHz band is smooth. 006 has a dip at 1 kHz between two note peaks (800 Hz +5.3, 1250 Hz +5.6 dB relative to 1 kHz). Relative to that single band everything above looks hot: the orchestrator's "2-7 dB hot" for 006 is about 2 dB of real excess plus the dip. Relative to the mix's level around 1 kHz (mean of 500 Hz-2 kHz), the released 006 master read -0.5 at 2k, -0.8 at 4k, -0.6 at 8k, +1.1 at 12.5k and +5.2 at 16k.
+- **The top octave was under-corrected in every track.** Moving each band by only `eq` = 0.7 of its deviation, the [1/4, 1/2, 1/4] smoothing over neighbouring bands (which pulls 16 kHz toward 12.5 kHz), and the -8 dB limit left 12.5-16 kHz 3.6-5.3 dB over the hip-hop curve in all six released masters. Part of that was the target itself: the hand-tuned `beat` curve used for the releases asks for -16 dB at 16 kHz where the measured hip-hop curve has -20.
+
+**The fix (version 2, the default; `--legacy-master` or `--master-version 1` keeps version 1, which still reproduces 001-006's first masters sample for sample, checked on 005 v025 and on fresh re-renders of 001 and 002):**
+1. The reference is the mean deviation over 500 Hz-2 kHz: the mix's level around 1 kHz, where every curve is normalised. One dipped or peaked band no longer moves the whole curve, and the presence region no longer sets its own reference.
+2. From 2 kHz up, cuts are made at full strength. Excess top end is what reads as harsh static on small speakers, and a cut there takes away nothing the mix needs. Boosts keep `eq` and are capped at +2 dB from 5 kHz up: boosting a dull top end mostly boosts hiss, so a dull mix is reported instead.
+3. The 12.5 and 16 kHz bands may be cut by up to 12 dB (8 dB elsewhere). Synthesized hats and noise run flat up there, while every measured curve falls 3.5-7 dB per third-octave above 10 kHz.
+4. A closed loop: the finished master is measured, and any band from 1 to 16 kHz more than 1 dB off the curve is corrected (only the part beyond 1 dB) and stages 3-7 are re-run, at most 4 runs. Whatever the dynamics stages do, the output lands on the curve within about 1-1.5 dB wherever the limits allow.
+Masters take 1-3 runs of the dynamics stages, about 1.5-4 minutes. The limiter and clipper now oversample one channel at a time (same numbers, about 25% less peak memory).
+
+**Remasters of 001-006** (`--genre hiphop`; 001 keeps `--eq 0.9 --lufs -11`, 002 its documented -10 LUFS). Deviation from the hip-hop curve with the curve at the master's level around 1 kHz, measured on the MP3s that ship. Phone = 6-12 kHz vs 1-2.8 kHz through the phone model, relative to the curve heard the same way.
+
+| Track | Version | LUFS | dBTP (WAV / MP3) | 4k | 8k | 12.5k | 16k | max 1-16k | phone |
+|---|---|---|---|---|---|---|---|---|---|
+| 001 Bleachers | released (v1, trap) | -11.1 | -1.05 / -0.86 | -0.5 | -0.8 | -0.2 | +3.9 | 3.9 | -0.3 |
+| | remaster (v2, hiphop) | -11.1 | -1.06 / -0.88 | -0.1 | -0.5 | -0.7 | +0.1 | 0.7 | -0.1 |
+| 002 Lid Off | released | -10.1 | -1.04 / -0.80 | +0.1 | +0.1 | +0.7 | +5.3 | 5.3 | 0.0 |
+| | remaster | -10.1 | -1.04 / -0.90 | +0.1 | -0.1 | -0.3 | +1.1 | 1.1 | -0.2 |
+| 003 Throw It Back | released | -10.5 | -1.02 / -0.56 | -0.7 | -1.3 | +1.0 | +5.1 | 5.1 | -1.8 |
+| | remaster | -10.5 | -1.04 / -0.73 | -0.6 | -1.0 | -0.4 | +0.8 | 1.0 | -1.4 |
+| 004 Tura | released | -10.5 | -1.06 / -0.63 | -1.0 | -1.6 | +0.7 | +4.8 | 4.8 | -1.7 |
+| | remaster | -10.5 | -1.07 / -0.34 | -0.7 | -1.0 | -0.4 | +0.5 | 1.1 | -1.0 |
+| 005 Fuck Every War | released | -10.5 | -1.01 / -0.54 | -1.7 | -2.8 | -0.4 | +3.6 | 3.6 | -3.3 |
+| | remaster | -10.5 | -1.03 / -0.55 | -1.0 | -1.3 | -0.9 | -0.5 | 1.9 | -2.1 |
+| 006 Līdz rītam | released | -10.5 | -1.02 / -0.43 | -0.8 | -0.6 | +1.1 | +5.2 | 5.2 | -1.4 |
+| | remaster | -10.5 | -1.04 / -0.55 | -0.7 | -1.0 | -0.1 | +0.8 | 1.3 | -1.0 |
+
+No warnings in any remaster. 005 misses by up to 1.9 dB at 5-6.3 kHz on the dull side (the +2 dB boost cap, on purpose). Measured against the single 1 kHz band, the 006 remaster still reads +0.4 / +0.1 / +1.0 / +1.8 at 4k / 8k / 12.5k / 16k because of the 1 kHz dip in the mix.
+
+**Side effects.** The hip-hop curve has much less sub than the hand-tuned `beat` curve (50 Hz: -0.5 against +6.5 dB relative to 1 kHz), so the remasters carry less 31-63 Hz than the first releases. At 40 / 50 Hz relative to the curve: 001 +10.5/+10.5 → +8.8/+10.2, 002 +10.5/+3.7 → +6.5/-0.3, 003 +12.4/+5.1 → +6.6/+0.1, 004 +11.5/+4.2 → +7.6/0.0, 005 +11.2/+1.7 → +7.2/-0.4, 006 +6.5/+8.7 → +0.7/+2.3. Every track except 006 still sits well above the curve at 40 Hz, and laptop loss, PLR and loudness are unchanged (±0.3). If the 808 weight is missed on big speakers, `--genre trap` with version 2 keeps the old low end and still corrects the top (its curve is 1-4 dB brighter than hip-hop at 12.5-16 kHz).
+**MP3 true peak.** The 320 kbps encoder raises true peak by 0.2-0.7 dB, so every shipped MP3 (first releases and remasters alike) peaks between -0.9 and -0.3 dBTP, over the -1 dBTP aim but under 0 dBFS. `studio.py master` now records `mp3_true_peak` in the report. Not fixed yet: master a little lower or trim before encoding if the MP3 itself has to meet -1 dBTP.
+
+**What mastering cannot fix: the noise sources.** On the phone check, the long-term top end of every track, before and after, sits at or below the curve (6-12 kHz -3.3 to 0 dB). Seen whole-track, the static is not a level problem; it is specific noises exposed in specific sections, and a static EQ can't separate them from the music. The 4-16 kHz content of every track is entirely noise (`noise_likeness_4_16k` 0.88-1.01): synthesized hats, snares, rain and breath, with no tonal shimmer. Measured with solo renders (share of the section's 4-12 kHz energy):
+- **006 Līdz rītam: the wind** (the `rain` texture at +28 dB, then a 4.5 kHz low-pass) is 100% of 4-12 kHz in "night", "call" and "hour" and about 40% everywhere else; it also sits at 1-4.5 kHz, right in a phone's presence peak. "night" reads +3.0 dB over the curve on the phone after the remaster. Test in a /tmp copy: a second 3 kHz low-pass on the wind (and the first moved to 3 kHz) takes "night" from +3.9 to +1.7 and "hour" from +1.2 to -0.9 (premaster phone check).
+- **004 Tura: the nai's breath** (`breath` 0.65, band-passed 2-9 kHz noise, driven 9 dB) is 100% of 4-12 kHz in "the wall" and 4-12 kHz there sits 1.5 dB brighter relative to the mids than in the hooks (-6.0 against -7.3 to -7.6 dB); the wall's 3-second window is the track's worst. Test: `breath` 0.3 lowers the wall's 4-12 kHz by 3.4 dB and 2-5 kHz by 1.9 dB, making it about 1.5 dB darker than the hooks, with no change elsewhere except hook 3b (-0.3 dB).
+- **002 Lid Off: the snare, not the hats.** Folded over the 16th grid, about 95% of 4-12 kHz energy in the hooks falls on the backbeat snare hits; the 16th hats are -33 dB of it (under 1%) and -24 dB of 9-18 kHz. The remaster's 12.5/16 kHz cuts (-5.0/-10.4 dB against -2.8/-3.9 in the first release) take the hats' own band down about 2-6 dB more, but lowering the hats in the mix would change almost nothing measurable. If the backbeat still sounds like sizzle, darken the snare (its 3.5 kHz high shelf from -5 to about -9 dB, or a 7 kHz low-pass); not test-rendered.
+- **Hats elsewhere** (001-006, `tone` 8-9 kHz, half white noise) are most of 9-18 kHz in 004 and the main 12.5-16 kHz content everywhere, which is why the top-octave cut matters on Mac speakers.
 
 ## Sources
 - Spotify: Loudness normalization: https://support.spotify.com/artists/article/loudness-normalization/

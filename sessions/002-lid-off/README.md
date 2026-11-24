@@ -6,7 +6,7 @@
 | Length / tempo / key | 2:48 of music (2:51 with the final ring-out), 112 bars, 160 bpm straight, E Phrygian with a flat 5, up a semitone to F for the last hook |
 | Genre | Rage-trap crossed with industrial: full-time stampede hooks, half-time verses with a muted chug, distorted 808s, a blown-out diminished supersaw cluster (E-G-Bb-F), a hammering bitcrushed lead |
 | Iterations | 31 render-and-listen loops (about 11 loop, 6 arrangement, 9 transitions and detail, 5 mix), then the master |
-| Master | `studio.py master v032 --lufs -10 --tp -1 --genre trap`: -10.1 LUFS, -1.04 dBTP, PLR 9.1, laptop loss -2.1 dB, no warnings. Largest EQ moves: -4.3 dB at 63 Hz, -3.9 dB at 16 kHz |
+| Master | `studio.py master v032 --genre hiphop --lufs -10` (master version 2): -10.1 LUFS, -1.04 dBTP (MP3 -0.9), PLR 9.1, LRA about 3.9 LU, laptop loss -2.2 dB, no warnings. Top end within 1.1 dB of the measured hip-hop curve from 1 to 16 kHz (4k +0.2, 8k +0.0, 12.5k -0.2, 16k +1.1); phone check 6-12 kHz -0.2 dB vs the curve. Largest EQ moves: -10.4 dB at 16000 Hz, -8.0 dB at 40.0 Hz, -8.0 dB at 63.0 Hz. Remastered 2026-11-24: top end brought onto the measured curve (the first release used `--genre trap`; `--genre trap --legacy-master` reproduces it) |
 
 ## Arrangement
 1. Intro: a growling 808 under a filtered riff

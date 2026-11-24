@@ -6,7 +6,7 @@
 | Length / tempo / key | 2:44.6 of music (96 bars), 140 bpm straight, half-time trap pocket, D Hijaz (Phrygian dominant) |
 | Instruments | oud, ney, darbuka (doum, tek, ka), trap kit, 808, crowd chant sections. The engine got oud, ney and darbuka for this session |
 | Iterations | 27 (12, then an interruption, then 15 more resumed from the saved project and journal) |
-| Master | `studio.py master v025 --lufs -10.5 --tp -1 --genre trap`: -10.5 LUFS, -1.02 dBTP, PLR 9.5, LRA about 7.8 LU, laptop loss -2.1 dB, no warnings. All EQ moves under 4.1 dB |
+| Master | `studio.py master v025 --genre hiphop` (master version 2): -10.5 LUFS, -1.04 dBTP (MP3 -0.73), PLR 9.5, LRA about 8.0 LU, laptop loss -2.1 dB, no warnings. Top end within 1.0 dB of the measured hip-hop curve from 1 to 16 kHz (4k -0.6, 8k -1.0, 12.5k -0.4, 16k +0.8); phone check 6-12 kHz -1.4 dB vs the curve. Largest EQ moves: -9.9 dB at 16000 Hz, -8.0 dB at 31.5 Hz, -8.0 dB at 40.0 Hz. Remastered 2026-11-24: top end brought onto the measured curve (the first release used `--genre trap`; `--genre trap --legacy-master` reproduces it) |
 
 ## Arrangement
 - **Intro (1-8):** the oud calls alone through a slowly opening filter, darbuka rims only

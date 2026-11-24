@@ -3,7 +3,7 @@
  "trap": {
   "name": "Trap / beats (808-driven: trap, boom-bap, drill, rage, folk-fusion trap)",
   "doc": "docs/CRAFT.md",
-  "status": "the configuration used for sessions 001-006, preserved exactly (the former engine default; `--target beat` is an alias)",
+  "status": "the configuration of the first releases of sessions 001-006, preserved exactly (the former engine default; `--target beat` is an alias; add `--legacy-master` to reproduce those masters). Sessions 001-006 were remastered with `hiphop` on 2026-11-24",
   "master": {"target": "beat", "lufs": -10.5, "tp": -1.0, "eq": 0.7, "translate": 0.5, "mono_below": 120.0},
   "length": "2:30-3:30",
   "form": "an intro, a real arrangement (hooks and verses) and an outro",
@@ -20,7 +20,7 @@
  "hiphop": {
   "name": "Hip-hop / trap with a measured tonal target (researched alternative to `trap`)",
   "doc": "docs/CRAFT.md",
-  "status": "same as `trap` except the tonal target, which is the measured hip-hop spectrum; recommended for future beat sessions",
+  "status": "same as `trap` except the tonal target, which is the measured hip-hop spectrum; the configuration for beat sessions (sessions 001-006 remastered with it, master version 2, 2026-11-24)",
   "master": {"target": "hiphop", "lufs": -10.5, "tp": -1.0, "eq": 0.7, "translate": 0.5, "mono_below": 120.0},
   "length": "2:30-3:30",
   "form": "an intro, a real arrangement (hooks and verses) and an outro",

@@ -111,6 +111,8 @@ def listen(a, renders):
         mp = latest.replace(".master.wav", ".meta.json").replace(".premaster.wav", ".meta.json")
     meta = json.load(open(mp))
     y, sr = sf.read(latest, always_2d=True)
+    if getattr(a, "phone", False):
+        return phone_listen(a, latest, meta, y)
     st = y.T.astype(np.float32)
     if a.mono:
         st = np.stack([st.mean(0)] * 2)
@@ -249,3 +251,39 @@ def listen(a, renders):
         print(f"  {n:10s} {len(es):4d} events  timing vs 16th grid: mean {np.mean(offs):+5.1f} ms, spread {np.std(offs):4.1f} ms  "
               f"velocity {min(vs):.2f}-{max(vs):.2f}")
     print(f"image: {path}")
+
+
+def phone_listen(a, path, meta, y):
+    """`listen --phone`: how the track's top end reads on a phone speaker (master.phone_check)."""
+    import master as M
+    genre = a.genre or "hiphop"
+    target = M.load_genres()[genre]["master"]["target"] if genre in M.load_genres() else genre
+    sections = meta["sections"]
+    x = y.T.astype(np.float64)
+    if a.section or a.bars:
+        beat = 60 / meta["bpm"]
+        if a.section:
+            s = next((s for s in sections if s["name"] == a.section), None)
+            if not s:
+                raise SystemExit(f"no section '{a.section}'. Have: {[s['name'] for s in sections]}")
+            t0, t1 = s["start"], s["end"]
+        else:
+            b0, b1 = [int(v) for v in a.bars.split("-")]
+            t0, t1 = (b0 - 1) * beat * 4, b1 * beat * 4
+        x = x[:, int(t0 * SR):int(t1 * SR)]
+        sections = [dict(s, start=max(s["start"], t0) - t0, end=min(s["end"], t1) - t0) for s in sections
+                    if s["end"] > t0 and s["start"] < t1]
+    r = M.phone_check(x, target, sections)
+    ww = r["worst_window"]
+    print(f"PHONE: {os.path.basename(path)}  speaker model: {r['model']}  target: {target} (genre {genre})")
+    print(f"  6-12 kHz vs 1-2.8 kHz {r['air_6_12k_vs_mid_db']} dB = {r['air_excess_db']:+} dB vs the target   "
+          f"5-16 kHz {r['top_excess_db']:+} dB vs the target   flatness 4-16 kHz {r['flatness_4_16k']} (1 = white noise)   "
+          f"noise-likeness 4-16 kHz {r['noise_likeness_4_16k']} (slope removed; 1 = noise, 0 = tones)")
+    print(f"  worst 3 s at {ww['start_s']} s: 6-12 kHz {ww['air_excess_db']:+} dB vs the target, flatness {ww['flatness_4_16k']}")
+    print("  section        level  6-12k vs target  flatness")
+    for s in r.get("sections", []):
+        flag = "  <- hissy" if (s["air_excess_db"] > 3 and s["flatness_4_16k"] > 0.2) else (
+            "  <- bright" if s["air_excess_db"] > 3 else "")
+        print(f"  {s['name'][:13]:13s} {s['level_db']:6.1f}  {s['air_excess_db']:+10.1f}       {s['flatness_4_16k']:5.2f}{flag}")
+    for n in r["notes"]:
+        print("PHONE NOTE:", n)

@@ -623,6 +623,9 @@ def main():
     l.add_argument("--mono", action="store_true")
     l.add_argument("--lowpass", action="store_true")
     l.add_argument("--wav")
+    l.add_argument("--phone", action="store_true",
+                   help="phone-speaker check: top end vs the genre curve, noise-likeness, worst moments per section")
+    l.add_argument("--genre", help="with --phone: the genre whose target curve to compare with (default hiphop)")
     m = sub.add_parser("master")
     m.add_argument("version", nargs="?", help="e.g. v027 (default: latest)")
     m.add_argument("--genre", help="genre configuration (engine/genres.json): trap, hiphop, trance, rock; required "
@@ -632,6 +635,8 @@ def main():
     m.add_argument("--eq", type=float)
     m.add_argument("--translate", type=float)
     m.add_argument("--target", help="tonal target curve override (beat = the trap curve), e.g. hiphop, trance, rock")
+    m.add_argument("--legacy-master", action="store_true",
+                   help="master version 1: reproduces the masters released before 2026-11-24 exactly")
     a = ap.parse_args()
     if a.cmd == "render":
         cmd_render(a)
@@ -649,11 +654,23 @@ def main():
         for k in ("genre", "target", "lufs", "tp", "eq", "translate"):
             if getattr(a, k) is not None:
                 flags += [f"--{k}", str(getattr(a, k))]
+        if a.legacy_master:
+            flags.append("--legacy-master")
         subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "master.py"), pre]
                        + flags, check=True)
         out = pre.replace(".premaster.wav", ".master.wav")
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", out, "-b:a", "320k", out.replace(".wav", ".mp3")], check=True)
-        print("mp3:", out.replace(".wav", ".mp3"))
+        mp3 = out.replace(".wav", ".mp3")
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", out, "-b:a", "320k", mp3], check=True)
+        # the MP3 encoder adds inter-sample overshoot: measure the file that ships and keep it in the report
+        import master as _m
+        dec = subprocess.run(["ffmpeg", "-loglevel", "error", "-i", mp3, "-f", "f32le", "-ac", "2", "-"],
+                             capture_output=True, check=True).stdout
+        tp_mp3 = round(_m.true_peak_db(np.frombuffer(dec, dtype=np.float32).reshape(-1, 2).T.astype(np.float64)), 2)
+        rp = out.replace(".wav", ".report.json")
+        rep = json.load(open(rp))
+        rep["out"]["mp3_true_peak"] = tp_mp3
+        json.dump(rep, open(rp, "w"), indent=1)
+        print(f"mp3: {mp3}  (true peak of the MP3 {tp_mp3} dBTP)")
     elif a.cmd == "listen":
         import ear
         ear.listen(a, RENDERS)

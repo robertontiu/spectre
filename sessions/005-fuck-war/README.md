@@ -7,7 +7,7 @@
 | Length / tempo / mode | 2:58 of music (104 bars), 140 bpm felt in half-time, E Ukrainian Dorian (E F# G A# B C# D) |
 | Instruments | white-voice choir sections, tsymbaly (cimbalom), lira (hurdy-gurdy drones), trembita, fiddle, trap kit, 808, plus a war machine of siren, motor and bitcrushed metal clank. trembita and lira were built for this session |
 | Iterations | 27 (25 renders, master, final listen) |
-| Master | `studio.py master v025 --lufs -10.5 --tp -1 --genre trap`: -10.5 LUFS, -1.01 dBTP, PLR 9.5, LRA 9.3 LU, laptop loss -1.9 dB, no warnings. Largest EQ moves +4 dB in the 30-100 Hz gaps around a one-note 808 |
+| Master | `studio.py master v025 --genre hiphop` (master version 2): -10.5 LUFS, -1.03 dBTP (MP3 -0.55), PLR 9.5, LRA about 8.9 LU, laptop loss -1.8 dB, no warnings. Top end within 1.9 dB of the measured hip-hop curve from 1 to 16 kHz (4k -1.0, 8k -1.3, 12.5k -0.9, 16k -0.6); phone check 6-12 kHz -2.1 dB vs the curve. Largest EQ moves: -8.0 dB at 40.0 Hz, -7.0 dB at 16000 Hz, +4.0 dB at 31.5 Hz. Remastered 2026-11-24: top end brought onto the measured curve (the first release used `--genre trap`; `--genre trap --legacy-master` reproduces it) |
 
 ## How it makes the statement
 - **Two feels:** the war is a machine locked dead straight to the grid; the people (voices, tsymbaly, fiddle) play loose, 10-16 ms late.

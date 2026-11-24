@@ -7,7 +7,7 @@
 | Instruments | two fiddles an octave apart, cobza (oud, bright) chopping the off-beat chords, cimbalom tremolo and drone, nai, tobă, trap kit, 808. cimbalom, fiddle and nai were built for this session |
 | Folk rhythm | the geamparale's 7/16 limp folded into the trap grid as 3-3-2, in the hats, the cobza and the tobă: "the beat walks like a man carrying something" |
 | Iterations | 30 |
-| Master | `studio.py master v026 --lufs -10.5 --tp -1 --genre trap`: -10.5 LUFS, -1.06 dBTP, PLR 9.5, LRA 5.3 LU, laptop loss -2.1 dB, no warnings. Largest EQ moves +4 dB at 31.5 and 50 Hz, -2.6 at 40 Hz, +2.9 at 630 Hz |
+| Master | `studio.py master v026 --genre hiphop` (master version 2): -10.5 LUFS, -1.07 dBTP (MP3 -0.34), PLR 9.4, LRA about 5.1 LU, laptop loss -2.2 dB, no warnings. Top end within 1.1 dB of the measured hip-hop curve from 1 to 16 kHz (4k -0.7, 8k -1.0, 12.5k -0.4, 16k +0.4); phone check 6-12 kHz -1.0 dB vs the curve. Largest EQ moves: -8.8 dB at 16000 Hz, -8.0 dB at 40.0 Hz, -6.6 dB at 63.0 Hz. Remastered 2026-11-24: top end brought onto the measured curve (the first release used `--genre trap`; `--genre trap --legacy-master` reproduces it) |
 
 ## Arrangement
 - **intro1 (4):** a lone fiddle behind a closed filter; the 3-3-2 hat "clock" fades in
