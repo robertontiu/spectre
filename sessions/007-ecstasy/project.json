@@ -52,28 +52,19 @@
   },
   "clap": {
    "inst": {
-    "type": "clap",
-    "tone": 1200,
-    "decay": 0.2,
-    "spread": 0.6
+    "type": "handclap",
+    "clappers": 5,
+    "spread_ms": 9,
+    "room": 0.3
    },
    "humanize_ms": 1,
    "send_reverb": 0.25,
-   "gain_db": 10,
+   "gain_db": -7,
    "width": 0.4,
    "fx": [
     {
-     "type": "sat",
-     "amount": 0.5
-    },
-    {
-     "type": "highshelf",
-     "hz": 10000,
-     "gain_db": -5
-    },
-    {
-     "type": "gain",
-     "db": -2.5
+     "type": "hpf",
+     "hz": 250
     }
    ]
   },

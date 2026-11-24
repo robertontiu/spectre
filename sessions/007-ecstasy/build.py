@@ -14,8 +14,13 @@ tracks = {
              "fx": [{"type": "hpf", "hz": 40}, {"type": "eq", "hz": 55, "gain_db": -5, "q": 0.8},
                     {"type": "eq", "hz": 66, "gain_db": -11, "q": 1.4}, {"type": "eq", "hz": 105, "gain_db": 5, "q": 0.9},
                     {"type": "sat", "amount": 0.9}, {"type": "gain", "db": 1}]},
-    "clap": {"inst": {"type": "clap", "tone": 1200, "decay": 0.2, "spread": 0.6}, "humanize_ms": 1, "send_reverb": 0.25,
-             "gain_db": 10, "width": 0.4, "fx": [{"type": "sat", "amount": 0.5}, {"type": "highshelf", "hz": 10000, "gain_db": -5}, {"type": "gain", "db": -2.5}]},
+    # v029 (owner's request): the old `clap` here ("spread": 0.6 is in seconds: one 4 ms click plus a stray second
+    # click 0.6 s later, turned up 10 dB and saturated) is replaced by the synthesized `handclap`, peaks about
+    # 6 dB under the kick. Until v028 it was:
+    # {"inst": {"type": "clap", "tone": 1200, "decay": 0.2, "spread": 0.6}, "humanize_ms": 1, "send_reverb": 0.25,
+    #  "gain_db": 10, "width": 0.4, "fx": [{"type": "sat", "amount": 0.5}, {"type": "highshelf", "hz": 10000, "gain_db": -5}, {"type": "gain", "db": -2.5}]}
+    "clap": {"inst": {"type": "handclap", "clappers": 5, "spread_ms": 9, "room": 0.3}, "humanize_ms": 1, "send_reverb": 0.25,
+             "gain_db": -7, "width": 0.4, "fx": [{"type": "hpf", "hz": 250}]},
     "ohat": {"inst": {"type": "openhat", "decay": 0.1, "tone": 8500}, "humanize_ms": 1, "pan": 0.12, "gain_db": 8,
              "fx": [{"type": "highshelf", "hz": 9000, "gain_db": -6}, {"type": "lpf", "hz": 12000}, {"type": "eq", "hz": 6500, "gain_db": 2, "q": 1.0}]},
     "chh": {"inst": {"type": "shaker"}, "humanize_ms": 2, "dyn": [0.3, 0.55, 0.4, 0.75], "pan": -0.2,
