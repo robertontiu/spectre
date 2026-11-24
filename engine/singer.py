@@ -248,11 +248,32 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False, extra=None):
     vowel = np.zeros(nF, dtype=bool)  # vowel (nucleus) frames
     lead_ms = p.get("pitch_lead_ms")  # None: the pitch moves where the onset consonant starts (see below)
     recs = []  # `tts`: per syllable, where it ends and starts (for releases and attacks)
+    # note times with the timing jitter, drawn up front in the same order as before (t0, then t_end, per syllable)
+    T0, TE = [], []
+    for g in groups:
+        T0.append(g["notes"][0]["t0"] / HOP + (rng.normal(0, jit) if jit else 0))
+        TE.append((g["notes"][-1]["t0"] + g["notes"][-1]["n"]) / HOP + (rng.normal(0, jit) if jit else 0))
+    max_on = p.get("max_onset_ms", 160) / FP
+    keep_joins = p.get("source") == "tts" and bool(p.get("keep_joins", True))
+    gap_f = float(p.get("phrase_gap_s", 0.3)) * 1000 / FP
+
+    def onset_frames(k):
+        """How many frames syllable k's onset takes before its note (the same rule as below)."""
+        sk = groups[k]["syl"]
+        if sk is None:
+            return 0
+        pk = groups[k - 1]["notes"][0]["t0"] / HOP if k > 0 else -1e9
+        return min(sk["on"][1] - sk["on"][0], int(min(max_on, max(2.0, 0.45 * (T0[k] - pk)))))
+
     for gi, g in enumerate(groups):
         s = g["syl"]
         ns = g["notes"]
-        t0 = ns[0]["t0"] / HOP + (rng.normal(0, jit) if jit else 0)
-        t_end = (ns[-1]["t0"] + ns[-1]["n"]) / HOP + (rng.normal(0, jit) if jit else 0)
+        t0, t_end = T0[gi], TE[gi]
+        if keep_joins and gi + 1 < len(groups) and T0[gi + 1] - t_end < gap_f:
+            # `tts`: when the next syllable follows closely, this one ends exactly where the next onset begins, so
+            # the consonants at the join keep their spoken length (the next onset used to be written over this
+            # syllable's coda: "hold on" lost its /l/) and the next vowel still starts on its note
+            t_end = T0[gi + 1] - onset_frames(gi + 1)
         nxt0 = groups[gi + 1]["notes"][0]["t0"] / HOP if gi + 1 < len(groups) else nF
         n_on = 0
         if s is not None:
@@ -294,6 +315,8 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False, extra=None):
                 sid[f] = gi
         # vowel: linger on the first part (u**1.6)
         L = int(np.ceil(v_len))
+        if keep_joins:  # whole frames, so the coda ends exactly where the next onset starts
+            L = max(1, int(round(t_end)) - int(round(t0)) - int(np.ceil(c_len)))
         for j in range(L):
             f = int(round(t0)) + j
             if 0 <= f < nF:
@@ -700,7 +723,7 @@ TTS_DEFAULTS = {  # `source: "tts"`: sung, not tuned (the first defaults, which 
 TTS_TUNED = {  # the first `tts` defaults (2026-11-24): fast retune, flat held notes; for a deliberately tuned vocal
     "tune": 0.7, "retune_ms": 40, "portamento_ms": 0, "scoop": 0.0, "scoop_some": 1.0, "vibrato": 0.18,
     "vib_delay": 0.25, "vib_late": 0, "vib_min_s": 0, "vib_vary": 0, "drift_cents": 0, "micro": 0.5, "loose_ms": 0,
-    "release_ms": 0, "attack_ms": 0, "attack_ms_vowel": 0, "coartic_ms": 30,
+    "release_ms": 0, "attack_ms": 0, "attack_ms_vowel": 0, "coartic_ms": 30, "keep_joins": False,
 }
 
 
