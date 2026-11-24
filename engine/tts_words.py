@@ -250,6 +250,19 @@ def final_consonants(text, lang="en-us"):
     return ph[i + 1:]
 
 
+@functools.lru_cache(maxsize=4096)
+def vowel_initial(text, lang="en-us"):
+    """Does the word start with a vowel sound (Kokoro's phonemizer)? Then its onset in a phrase is a linking
+    consonant from the previous word."""
+    try:
+        from kokoro_onnx.tokenizer import Tokenizer
+        ph = Tokenizer().phonemize(text, lang)
+    except Exception:  # pragma: no cover
+        return text[:1].lower() in "aeiou"
+    ph = "".join(c for c in ph if (c.isalpha() or c in _VOWELS or c in _GLIDES) and c not in "ˈˌ")
+    return bool(ph) and ph[0] in _VOWELS
+
+
 def _cap_coda(sy, fin):
     """A spoken word ends with its pitch and level falling away; in a sung syllable that tail would eat the note. An
     open syllable ('we', 'go') keeps 50 ms of it, one ending on a liquid or glide ('here', 'are') 120 ms; a real final
@@ -443,7 +456,10 @@ def phrase_syllables(words, p):
         return None
     feats, bounds, t = [], [], 0
     cites = []  # each syllable as spoken in its word alone (citation form): the reference for `prosody`
+    initial_v = []  # per syllable: is it the first syllable of a word that starts with a vowel?
     for x in pieces:
+        iv = vowel_initial("".join(x), "en-gb" if voice[:1] == "b" else "en-us")
+        initial_v += [iv] + [False] * (len(x) - 1)
         ww = analyze("".join(x), voice, speed)
         rng = _split(ww, len(x)) if len(ww["f0"]) > 6 else None
         if rng is None:
@@ -471,7 +487,7 @@ def phrase_syllables(words, p):
     out = []
     f0v = w["f0"][w["f0"] > 0]
     med = float(np.median(12 * np.log2(f0v / 440.0))) if len(f0v) else 0.0
-    for (a, b), (ww, con, cnu, cco) in zip(zip(cuts[:-1], cuts[1:]), cites):
+    for (a, b), (ww, con, cnu, cco), iv in zip(zip(cuts[:-1], cuts[1:]), cites, initial_v):
         on, nu, co = _parts(w, a, b)
         # the phrase's own stress on this syllable, against the same syllable spoken alone: spectral tilt (the
         # strongest acoustic cue of stress), onset force, and the pitch accent (nucleus F0 against the phrase)
@@ -483,7 +499,10 @@ def phrase_syllables(words, p):
                         # the previous word's linking consonant ("round-and"), which its citation form lacks
                         onf_fix=float(np.clip(_onf(ww, con, cnu) - _onf(w, on, nu), -4, 4))
                         if on[1] > on[0] and con[1] - con[0] >= 3 else 0.0,
-                        accent=acc))
+                        accent=acc,
+                        # does the word itself start with consonants here (not a linking consonant of the previous
+                        # word)? Timing rules for onsets apply only then
+                        own_onset=not iv))
     fin = final_consonants("".join(pieces[-1]), "en-gb" if voice[:1] == "b" else "en-us")
     out[-1] = dict(_voiced_coda(_cap_coda(out[-1], fin), fin), last=True)
     return out

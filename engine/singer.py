@@ -267,6 +267,11 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False, extra=None):
         sk = groups[k]["syl"]
         pk = groups[k - 1]["notes"][0]["t0"] / HOP if k > 0 else -1e9
         n = sk["on"][1] - sk["on"][0]
+        if not sk.get("own_onset", True):
+            # a vowel-initial word: its "onset" in the phrase is the previous word's linking consonant, which
+            # singers sing at the end of that word (GTSinger: no lead on vowel-initial words): keep it before the
+            # note, as spoken
+            return min(n, int(min(max_on, max(2.0, 0.45 * (T0[k] - pk))))), 0
         if p.get("onset_fit") and n > 0:
             # how long a singer makes a spoken onset (GTSinger paired speech, same singer and words): about
             # 59 ms + 0.54 x the spoken length; applied only to lengthen
