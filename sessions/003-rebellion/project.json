@@ -74,23 +74,18 @@
   },
   "clap": {
    "inst": {
-    "type": "clap",
-    "tone": 1200,
-    "decay": 0.12,
-    "spread": 1.0
+    "type": "handclap",
+    "clappers": 5,
+    "spread_ms": 9
    },
-   "gain_db": 9,
-   "push_ms": -6,
+   "gain_db": -10.7,
    "width": 0.8,
+   "push_ms": -6,
    "send_reverb": 0.08,
    "fx": [
     {
      "type": "hpf",
      "hz": 200
-    },
-    {
-     "type": "drive",
-     "db": 4
     },
     {
      "type": "highshelf",

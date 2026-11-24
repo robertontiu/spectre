@@ -22,7 +22,8 @@ def trip(notes, bars_offset=0):
 tracks = {
     # ---------------- the night
     "wind": {"inst": {"type": "rain"}, "gain_db": 28, "width": 0.9,
-             "fx": [{"type": "hpf", "hz": 500}, {"type": "eq", "hz": 1400, "gain_db": 5, "q": 2.5}, {"type": "lpf", "hz": 4500}, {"type": "tremolo", "rate": 0.13, "depth": 0.7}]},
+             "fx": [{"type": "hpf", "hz": 500}, {"type": "eq", "hz": 1400, "gain_db": 5, "q": 2.5}, {"type": "lpf", "hz": 3000}, {"type": "lpf", "hz": 3000},
+                    {"type": "tremolo", "rate": 0.13, "depth": 0.7}]},  # one lpf at 4500 until v026: the wind was the static on phones
     "fire": {"inst": {"type": "vinyl", "density": 30}, "gain_db": 12, "pan": -0.1,
              "fx": [{"type": "hpf", "hz": 900}]},
     # ---------------- the people
@@ -66,8 +67,11 @@ tracks = {
     "snare": {"inst": {"type": "snare", "tone": 200, "decay": 0.05, "snap": 0.5, "body": 1.3, "drive": 0.8},
               "gain_db": 6, "humanize_ms": 3, "push_ms": 6, "send_reverb": 0.12,
               "fx": [{"type": "hpf", "hz": 120}, {"type": "eq", "hz": 1500, "gain_db": 3, "q": 1.0}, {"type": "highshelf", "hz": 4500, "gain_db": -7}]},
-    "clap": {"inst": {"type": "clap", "tone": 1200, "decay": 0.06, "spread": 1.0}, "gain_db": 18, "push_ms": 4, "width": 0.9,
-             "humanize_ms": 6, "send_reverb": 0.08, "fx": [{"type": "hpf", "hz": 250}, {"type": "drive", "db": 4}, {"type": "highshelf", "hz": 6000, "gain_db": -3}]},
+    # 2026-11-24 (owner's request, off-beat audit): the old `clap` here took `spread` in seconds, so its 3-burst
+    # clap never sounded (a bare 4 ms click, the later bursts fell outside its buffer or played off the beat).
+    # Replaced by `handclap` (model 2), drive dropped, peaks 6 dB under the kick. It was:
+    # "clap": {"inst": {"type": "clap", "tone": 1200, "decay": 0.06, "spread": 1.0}, "gain_db": 18, "push_ms": 4, "width": 0.9, "humanize_ms": 6, "send_reverb": 0.08, "fx": [{"type": "hpf", "hz": 250}, {"type": "drive", "db": 4}, {"type": "highshelf", "hz": 6000, "gain_db": -3}]},
+    "clap": {"inst": {"type": "handclap", "clappers": 5, "spread_ms": 9}, "gain_db": -6.5, "width": 0.9, "push_ms": 4, "humanize_ms": 6, "send_reverb": 0.08, "fx": [{"type": "hpf", "hz": 250}, {"type": "highshelf", "hz": 6000, "gain_db": -3}]},
     "hat": {"inst": {"type": "hat", "decay": 0.035, "tone": 8000}, "gain_db": 11, "pan": 0.25,
             "humanize_ms": 4, "dyn": [1.0, 0.45, 0.7], "vel_jitter": 0.1,
             "fx": [{"type": "hpf", "hz": 500}, {"type": "highshelf", "hz": 7000, "gain_db": -3}]},

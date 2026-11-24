@@ -39,9 +39,11 @@ tracks = {
  "snare": {"inst": {"type": "snare", "tone": 200, "decay": 0.05, "snap": 0.9, "body": 1.0, "drive": 0.9},
            "gain_db": 7, "humanize_ms": 2, "send_reverb": 0.0,
            "fx": [{"type": "hpf", "hz": 150}, {"type": "drive", "db": 6}, {"type": "eq", "hz": 1800, "gain_db": 3, "q": 1.0}, {"type": "eq", "hz": 750, "gain_db": 2, "q": 0.8}, {"type": "highshelf", "hz": 4000, "gain_db": -11}]},
- "clap": {"inst": {"type": "clap", "tone": 1100, "decay": 0.06, "spread": 0.5},
-          "gain_db": 10, "push_ms": -5, "width": 0.4, "send_reverb": 0.0,
-          "fx": [{"type": "hpf", "hz": 250}, {"type": "drive", "db": 3}, {"type": "eq", "hz": 750, "gain_db": 2, "q": 0.8}, {"type": "highshelf", "hz": 5000, "gain_db": -5}]},
+ # 2026-11-24 (owner's request, off-beat audit): the old `clap` here took `spread` in seconds, so its 3-burst
+ # clap never sounded (a bare 4 ms click, the later bursts fell outside its buffer or played off the beat).
+ # Replaced by `handclap` (model 2), drive dropped, peaks 6 dB under the kick. It was:
+ # "clap": {"inst": {"type": "clap", "tone": 1100, "decay": 0.06, "spread": 0.5}, "gain_db": 10, "push_ms": -5, "width": 0.4, "send_reverb": 0.0, "fx": [{"type": "hpf", "hz": 250}, {"type": "drive", "db": 3}, {"type": "eq", "hz": 750, "gain_db": 2, "q": 0.8}, {"type": "highshelf", "hz": 5000, "gain_db": -5}]},
+ "clap": {"inst": {"type": "handclap", "clappers": 5, "spread_ms": 9}, "gain_db": -10.4, "width": 0.4, "push_ms": -5, "send_reverb": 0.0, "fx": [{"type": "hpf", "hz": 250}, {"type": "eq", "hz": 750, "gain_db": 2, "q": 0.8}, {"type": "highshelf", "hz": 5000, "gain_db": -5}]},
  "hat": {"inst": {"type": "hat", "decay": 0.03, "tone": 8000}, "gain_db": 9, "pan": 0.3, "width": 0.3, "humanize_ms": 2,
          "fx": [{"type": "hpf", "hz": 500}, {"type": "highshelf", "hz": 5000, "gain_db": -8}]},
  "toba": {"inst": {"type": "darbuka", "stroke": "doum", "tune": 1.0, "decay": 0.08}, "gain_db": -3, "pan": -0.3,
@@ -60,7 +62,8 @@ tracks = {
  "cimb": {"inst": {"type": "cimbalom", "hard": 0.7, "damp": 0.3}, "gain_db": -5, "pan": 0.45, "width": 0.6, "humanize_ms": 3,
           "send_reverb": 0.18,
           "fx": [{"type": "hpf", "hz": 250}, {"type": "drive", "db": 4}, {"type": "eq", "hz": 600, "gain_db": -3, "q": 1.0}, {"type": "eq", "hz": 330, "gain_db": -4, "q": 1.4}, {"type": "highshelf", "hz": 6000, "gain_db": -3}]},
- "nai": {"inst": {"type": "nai", "breath": 0.65, "vibrato": 0.12, "glide_ms": 70}, "gain_db": 0, "pan": -0.05, "legato": 0.95,
+ "nai": {"inst": {"type": "nai", "breath": 0.3,  # 0.65 until v026: the breath was the static in "the wall" on phones
+        "vibrato": 0.12, "glide_ms": 70}, "gain_db": 0, "pan": -0.05, "legato": 0.95,
          "send_reverb": 0.25, "send_delay": 0.12,
          "fx": [{"type": "hpf", "hz": 300}, {"type": "drive", "db": 9}, {"type": "eq", "hz": 1500, "gain_db": 2, "q": 0.8}, {"type": "highshelf", "hz": 5000, "gain_db": -8}]},
  "cobza": {"inst": {"type": "oud", "damp": 0.975, "bright": 1.0}, "gain_db": 4, "pan": -0.5, "width": 0.3, "humanize_ms": 3,

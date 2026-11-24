@@ -23,7 +23,11 @@
     },
     {
      "type": "lpf",
-     "hz": 4500
+     "hz": 3000
+    },
+    {
+     "type": "lpf",
+     "hz": 3000
     },
     {
      "type": "tremolo",
@@ -412,24 +416,19 @@
   },
   "clap": {
    "inst": {
-    "type": "clap",
-    "tone": 1200,
-    "decay": 0.06,
-    "spread": 1.0
+    "type": "handclap",
+    "clappers": 5,
+    "spread_ms": 9
    },
-   "gain_db": 18,
-   "push_ms": 4,
+   "gain_db": -6.5,
    "width": 0.9,
+   "push_ms": 4,
    "humanize_ms": 6,
    "send_reverb": 0.08,
    "fx": [
     {
      "type": "hpf",
      "hz": 250
-    },
-    {
-     "type": "drive",
-     "db": 4
     },
     {
      "type": "highshelf",

@@ -42,14 +42,13 @@
   },
   "clap": {
    "inst": {
-    "type": "clap",
-    "tone": 1300,
-    "decay": 0.25,
-    "spread": 0.9
+    "type": "handclap",
+    "clappers": 5,
+    "spread_ms": 9
    },
-   "gain_db": -2,
-   "push_ms": -4,
+   "gain_db": -4.6,
    "width": 0.9,
+   "push_ms": -4,
    "send_reverb": 0.18
   },
   "hat": {

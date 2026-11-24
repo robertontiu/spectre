@@ -75,23 +75,18 @@
   },
   "clap": {
    "inst": {
-    "type": "clap",
-    "tone": 1100,
-    "decay": 0.06,
-    "spread": 0.5
+    "type": "handclap",
+    "clappers": 5,
+    "spread_ms": 9
    },
-   "gain_db": 10,
-   "push_ms": -5,
+   "gain_db": -10.4,
    "width": 0.4,
+   "push_ms": -5,
    "send_reverb": 0.0,
    "fx": [
     {
      "type": "hpf",
      "hz": 250
-    },
-    {
-     "type": "drive",
-     "db": 3
     },
     {
      "type": "eq",
@@ -342,7 +337,7 @@
   "nai": {
    "inst": {
     "type": "nai",
-    "breath": 0.65,
+    "breath": 0.3,
     "vibrato": 0.12,
     "glide_ms": 70
    },

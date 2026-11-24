@@ -15,9 +15,11 @@ tracks = {
  "snare": {"inst": {"type": "snare", "tone": 200, "decay": 0.07, "snap": 0.8, "body": 1.0, "drive": 0.8},
            "gain_db": 3, "humanize_ms": 2, "send_reverb": 0.05,
            "fx": [{"type": "hpf", "hz": 120}, {"type": "drive", "db": 4}, {"type": "eq", "hz": 180, "gain_db": -2, "q": 1.0}, {"type": "highshelf", "hz": 3500, "gain_db": -7}]},
- "clap": {"inst": {"type": "clap", "tone": 1200, "decay": 0.12, "spread": 1.0},
-          "gain_db": 9, "push_ms": -6, "width": 0.8, "send_reverb": 0.08,
-          "fx": [{"type": "hpf", "hz": 200}, {"type": "drive", "db": 4}, {"type": "highshelf", "hz": 4000, "gain_db": -4}]},
+ # 2026-11-24 (owner's request, off-beat audit): the old `clap` here took `spread` in seconds, so its 3-burst
+ # clap never sounded (a bare 4 ms click, the later bursts fell outside its buffer or played off the beat).
+ # Replaced by `handclap` (model 2), drive dropped, peaks 6 dB under the kick. It was:
+ # "clap": {"inst": {"type": "clap", "tone": 1200, "decay": 0.12, "spread": 1.0}, "gain_db": 9, "push_ms": -6, "width": 0.8, "send_reverb": 0.08, "fx": [{"type": "hpf", "hz": 200}, {"type": "drive", "db": 4}, {"type": "highshelf", "hz": 4000, "gain_db": -4}]},
+ "clap": {"inst": {"type": "handclap", "clappers": 5, "spread_ms": 9}, "gain_db": -10.7, "width": 0.8, "push_ms": -6, "send_reverb": 0.08, "fx": [{"type": "hpf", "hz": 200}, {"type": "highshelf", "hz": 4000, "gain_db": -4}]},
  "hat": {"inst": {"type": "hat", "decay": 0.035, "tone": 8500}, "gain_db": 8, "pan": 0.2, "humanize_ms": 3,
          "dyn": [1.0, 0.55, 0.8, 0.6], "roll_pitch": 0,
          "fx": [{"type": "hpf", "hz": 400}, {"type": "highshelf", "hz": 5000, "gain_db": -4}]},
