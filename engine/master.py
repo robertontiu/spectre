@@ -35,9 +35,24 @@ def db(x):
     return 10 ** (x / 20)
 
 
-def target_curve(freqs):
-    f = np.array(sorted(TARGET_ANCHORS))
-    v = np.array([TARGET_ANCHORS[k] for k in f])
+# Genre targets (hand-tuned, not measured from references; see docs/MASTERING.md). Only the shape matters:
+# the EQ aligns each curve to the mix on 200 Hz-5 kHz.
+# trance: a short club kick and rolling bass instead of a sustained 808, so less sub at 31-40 Hz; dense bright
+#         supersaws, hats and long reverbs, so the top falls more slowly.
+# rock:   kick and bass guitar live at 60-250 Hz, little true sub; guitars fill 200 Hz-5 kHz; cymbals keep the top open.
+TARGETS = {
+    "beat": TARGET_ANCHORS,
+    "trance": {31.5: -4.0, 40: 1.5, 50: 5.0, 63: 5.5, 80: 5.0, 100: 4.0, 160: 2.0, 250: 1.0, 500: 0.5,
+               1000: 0.0, 2000: -1.5, 4000: -3.5, 8000: -6.5, 12500: -9.5, 16000: -13.0},
+    "rock": {31.5: -7.0, 40: -3.0, 50: 0.5, 63: 2.5, 80: 3.5, 100: 3.5, 160: 3.0, 250: 2.0, 500: 1.0,
+             1000: 0.0, 2000: -1.0, 4000: -3.5, 8000: -7.0, 12500: -10.5, 16000: -15.0},
+}
+
+
+def target_curve(freqs, target="beat"):
+    anchors = TARGETS[target]
+    f = np.array(sorted(anchors))
+    v = np.array([anchors[k] for k in f])
     return np.interp(np.log10(freqs), np.log10(f), v)
 
 
@@ -156,8 +171,9 @@ def soft_clip(x, ceiling_db=-0.5, amount=0.5):
     return signal.resample_poly(y, 1, 4, axis=1)[:, :x.shape[1]]
 
 
-def master(x, lufs=-11.0, tp=-1.0, mono_below=120.0, eq_strength=0.7, translate=0.5, report=None):
+def master(x, lufs=-11.0, tp=-1.0, mono_below=120.0, eq_strength=0.7, translate=0.5, report=None, target="beat"):
     rep = report if report is not None else {}
+    rep["target"] = target
     meter = pyln.Meter(SR)
     rep["in"] = dict(lufs=round(meter.integrated_loudness(x.T), 1), true_peak=round(true_peak_db(x), 1))
     mid0 = x.mean(0)
@@ -173,7 +189,7 @@ def master(x, lufs=-11.0, tp=-1.0, mono_below=120.0, eq_strength=0.7, translate=
 
     # 2. tonal EQ toward target (relative shape only; level is handled later). Two passes, because
     #    a narrow 808 fundamental needs a second look after the broad correction.
-    tgt = target_curve(THIRD)
+    tgt = target_curve(THIRD, target)
     total = np.zeros(len(THIRD))
     for _pass in range(2):
         tb = third_octave(x.mean(0))
@@ -240,6 +256,10 @@ def master(x, lufs=-11.0, tp=-1.0, mono_below=120.0, eq_strength=0.7, translate=
     rep["limiter_max_gr_db"] = round(-lim_gr, 1)
     rep["drive_db"] = round(drive, 1)
     y = np.clip(y, -1, 1)
+    over = true_peak_db(y) - tp
+    if over > 0:  # safety: inter-sample overs recreated by the 4x down-sampling (only acts when over the ceiling)
+        y = y * db(-over - 0.03)
+        rep["tp_guard_db"] = round(-over - 0.03, 2)
 
     # 8. QC
     st = short_term_lufs(y, meter)
@@ -259,8 +279,8 @@ def master(x, lufs=-11.0, tp=-1.0, mono_below=120.0, eq_strength=0.7, translate=
                       laptop_loss_db=round(meter.integrated_loudness(lap.T) - Lfull, 1),
                       tonal=[round(v, 1) for v in tb1])
     rep["in"]["laptop_loss_db"] = round(meter.integrated_loudness(signal.sosfilt(sos, np.asarray(rep.get("_src")), axis=1).T) - rep["in"]["lufs"], 1) if rep.get("_src") is not None else None
-    rep["tonal_dev_in"] = [round(float(a), 1) for a in (tb0 - target_curve(THIRD))]
-    rep["tonal_dev_out"] = [round(float(a), 1) for a in (tb1 - target_curve(THIRD))]
+    rep["tonal_dev_in"] = [round(float(a), 1) for a in (tb0 - target_curve(THIRD, target))]
+    rep["tonal_dev_out"] = [round(float(a), 1) for a in (tb1 - target_curve(THIRD, target))]
     return y.astype(np.float32), rep
 
 
@@ -269,8 +289,8 @@ def picture(rep, path):
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots(1, 1, figsize=(11, 4.5))
-    tgt = target_curve(THIRD)
-    ax.semilogx(THIRD, tgt, "k--", lw=1.5, label="target (beat)")
+    tgt = target_curve(THIRD, rep.get("target", "beat"))
+    ax.semilogx(THIRD, tgt, "k--", lw=1.5, label=f"target ({rep.get('target', 'beat')})")
     ax.semilogx(THIRD, rep["in"]["tonal"], color="tab:red", lw=1.2, label=f"premaster ({rep['in']['lufs']} LUFS)")
     ax.semilogx(THIRD, rep["out"]["tonal"], color="tab:blue", lw=1.8, label=f"master ({rep['out']['lufs']} LUFS, {rep['out']['true_peak']} dBTP)")
     ax.axvspan(20, 150, color="0.9", zorder=0)
@@ -293,13 +313,15 @@ def main():
     ap.add_argument("--mono-below", type=float, default=120.0)
     ap.add_argument("--eq", type=float, default=0.7, help="how strongly to move toward the tonal target (0-1)")
     ap.add_argument("--translate", type=float, default=0.5, help="bass harmonics for small speakers (0-1)")
+    ap.add_argument("--target", default="beat", choices=sorted(TARGETS),
+                    help="tonal target curve: beat (808 beats, default), trance, rock")
     ap.add_argument("--out")
     a = ap.parse_args()
     x, sr = sf.read(a.premaster, always_2d=True)
     assert sr == SR
     x = x.T.astype(np.float64)
     rep = {"_src": x}
-    y, rep = master(x, a.lufs, a.tp, a.mono_below, a.eq, a.translate, rep)
+    y, rep = master(x, a.lufs, a.tp, a.mono_below, a.eq, a.translate, rep, a.target)
     rep.pop("_src", None)
     out = a.out or a.premaster.replace(".premaster.wav", ".master.wav")
     sf.write(out, y.T, SR, subtype="PCM_24")

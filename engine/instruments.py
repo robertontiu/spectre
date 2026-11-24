@@ -738,3 +738,612 @@ def downlifter(sec):
     n = _n(sec)
     t = _t(n)
     return sweep_noise(n, 8000, 200) * np.exp(-t / (sec * 0.5)) * 0.8
+
+
+# ================================================================ trance and pop rock (added for sessions 007-008)
+# Everything below is additive: existing instruments and their random-number consumption are untouched.
+
+def _biquad(kind, fc, q=0.707, gain_db=0.0):
+    """RBJ-cookbook biquad coefficients (b, a): kind = lp, hp, peak."""
+    fc = float(np.clip(fc, 10, SR * 0.45))
+    w = 2 * np.pi * fc / SR
+    cw, sw = np.cos(w), np.sin(w)
+    al = sw / (2 * q)
+    if kind == "lp":
+        b = np.array([(1 - cw) / 2, 1 - cw, (1 - cw) / 2])
+        a = np.array([1 + al, -2 * cw, 1 - al])
+    elif kind == "hp":
+        b = np.array([(1 + cw) / 2, -(1 + cw), (1 + cw) / 2])
+        a = np.array([1 + al, -2 * cw, 1 - al])
+    else:  # peak
+        A = 10 ** (gain_db / 40)
+        b = np.array([1 + al * A, -2 * cw, 1 - al * A])
+        a = np.array([1 + al / A, -2 * cw, 1 - al / A])
+    return b / a[0], a / a[0]
+
+
+def peq(x, fc, gain_db, q=1.0):
+    b, a = _biquad("peak", fc, q, gain_db)
+    return signal.lfilter(b, a, x).astype(np.float32)
+
+
+def env_lp(x, cut, q=0.707, B=256):
+    """Low-pass whose cutoff follows the array `cut` (Hz per sample). Block-wise; once the cutoff has
+    settled it finishes the rest in one call, so a filter envelope costs little."""
+    n = len(x)
+    y = np.empty(n, dtype=np.float32)
+    zi = np.zeros(2)
+    s = 0
+    while s < n:
+        c = float(cut[s])
+        e = n if abs(float(cut[-1]) - c) < 0.02 * c else min(n, s + B)
+        b, a = _biquad("lp", c, q)
+        y[s:e], zi = signal.lfilter(b, a, x[s:e], zi=zi)
+        s = e
+    return y
+
+
+# Szabo (2010), "How to Emulate the Super Saw": the JP-8000's measured, deliberately uneven detune offsets
+SZABO = np.array([-0.11002313, -0.06288439, -0.01952356, 0.0, 0.01991221, 0.06216538, 0.10745242])
+
+
+def _detune_offsets(voices):
+    if voices <= 1:
+        return np.array([0.0])
+    return np.interp(np.linspace(0, 6, voices), np.arange(7), SZABO / 0.11)
+
+
+def supersaw(p, f, vel, dur):
+    """Trance supersaw: `voices` free-running saws with the JP-8000's uneven detune, side voices spread
+    across the stereo field. Returns STEREO. With sustain_level 0 and a short decay it is a pluck; with
+    env > 0 the filter opens on each note (fdecay)."""
+    voices = int(p.get("voices", 7))
+    det = p.get("detune", 25.0)
+    mix = p.get("mix", 0.7)
+    spread = p.get("spread", 0.8)
+    hold = _n(dur)
+    env = adsr(hold, p.get("attack", 0.004), p.get("decay", 0.4), p.get("sustain_level", 0.9), p.get("release", 0.3))
+    n = len(env)
+    offs = _detune_offsets(voices)
+    order = np.argsort(np.abs(offs))
+    L = np.zeros(n, dtype=np.float32)
+    R = np.zeros(n, dtype=np.float32)
+    for rank, i in enumerate(order):
+        o = offs[i]
+        x = polyblep_saw(f * 2 ** (o * det / 1200), n)
+        if rank == 0:
+            L += x
+            R += x
+            continue
+        side = 1 if rank % 2 else -1
+        pan = side * spread * (0.35 + 0.65 * abs(o))
+        a = (pan + 1) * np.pi / 4
+        L += x * mix * np.cos(a) * np.sqrt(2)
+        R += x * mix * np.sin(a) * np.sqrt(2)
+    norm = 1 / np.sqrt(1 + mix * mix * (voices - 1))
+    cut0 = p.get("cutoff", 9000) * (0.75 + 0.35 * vel)
+    envhz = p.get("env", 0.0)
+    q = 0.707 + p.get("reso", 0.0) * 4
+    if envhz > 0:
+        t = _t(n)
+        cut = cut0 + envhz * vel * np.exp(-t / p.get("fdecay", 0.25))
+        L, R = env_lp(L, cut, q), env_lp(R, cut, q)
+    else:
+        b, a = _biquad("lp", cut0, q)
+        L, R = signal.lfilter(b, a, L), signal.lfilter(b, a, R)
+    return (np.stack([L, R]) * env * norm * vel * 0.55).astype(np.float32)
+
+
+def trancebass(p, f, vel, dur):
+    """Offbeat / rolling trance bass: two slightly detuned saws through a low-pass with a fast filter
+    envelope (the 'pluck' of each note) over a clean sine sub. Short notes; sidechain it to the kick."""
+    hold = _n(dur)
+    env = adsr(hold, 0.002, p.get("decay", 0.18), p.get("sustain_level", 0.6), p.get("release", 0.03))
+    n = len(env)
+    t = _t(n)
+    saw = _saw_stack(f, n, 2, p.get("detune", 7))
+    cut = p.get("cutoff", 260) + p.get("env", 2200) * vel * np.exp(-t / p.get("fdecay", 0.07))
+    x = env_lp(saw, cut, 0.707 + p.get("reso", 0.15) * 4)
+    sub = np.sin(2 * np.pi * f * t) * p.get("sub", 0.8)
+    x = soft((x * 0.8 + sub) * env, p.get("drive", 0.25))
+    return (x * vel * 0.55).astype(np.float32)
+
+
+def clubkick(p, vel, ps=0.0):
+    """Four-on-the-floor club kick (909 lineage): a two-stage pitch drop (click sweep + body drop), a short
+    hold, then a fast tail that ends cleanly so an offbeat or rolling bass can live between kicks."""
+    tune = p.get("tune", 50) * 2 ** (ps / 12)
+    length = p.get("length", 0.32)
+    n = _n(length)
+    t = _t(n)
+    punch = p.get("punch", 1.0)
+    f = tune * (1 + punch * (5.0 * np.exp(-t / 0.0035) + 1.4 * np.exp(-t / 0.028)))
+    body = np.sin(2 * np.pi * np.cumsum(f) / SR)
+    hold = p.get("hold", 0.045)
+    env = np.where(t < hold, 1.0, np.exp(-(t - hold) / p.get("tail", 0.085)))
+    fo = min(_n(0.03), n)
+    env[-fo:] *= np.linspace(1, 0, fo)
+    click = hp(noise(n), 2500) * np.exp(-t / 0.0012) * p.get("click", 0.5)
+    top = bp(noise(n), 3500, 12000) * np.exp(-t / 0.010) * p.get("top", 0.2)
+    x = body * env + click * 0.8 + top
+    x = soft(x.astype(np.float32), p.get("drive", 0.35))
+    return (x * vel ** 1.1).astype(np.float32)
+
+
+# ---------------------------------------------------------------- acoustic rock kit
+
+def _modes(freqs, amps, decays, n, chunk=24):
+    """Sum of decaying sinusoids (modal synthesis) with random phases."""
+    t = _t(n)
+    out = np.zeros(n, dtype=np.float32)
+    ph = RNG.random(len(freqs)) * 2 * np.pi
+    for s in range(0, len(freqs), chunk):
+        fr = np.asarray(freqs[s:s + chunk], dtype=np.float32)[:, None]
+        am = np.asarray(amps[s:s + chunk], dtype=np.float32)[:, None]
+        dc = np.asarray(decays[s:s + chunk], dtype=np.float32)[:, None]
+        out += (am * np.sin(2 * np.pi * fr * t[None, :] + ph[s:s + chunk, None].astype(np.float32))
+                * np.exp(-t[None, :] / dc)).sum(0)
+    return out
+
+
+MEMBRANE = np.array([1.0, 1.594, 2.136, 2.296, 2.653, 2.918, 3.156, 3.501])  # circular membrane mode ratios
+
+
+def kitkick(p, vel, ps=0.0):
+    """Rock kick (miked bass drum): a damped head with a small pitch bend, shell resonance and a hard
+    beater click. beater 0-1 = felt to plastic click; decay ~0.15-0.4 (pillow-damped to open)."""
+    tune = p.get("tune", 58) * 2 ** (ps / 12)
+    decay = p.get("decay", 0.2)
+    n = _n(decay * 4 + 0.06)
+    t = _t(n)
+    f = tune * (1 + 0.55 * vel * np.exp(-t / 0.010) + 0.10 * np.exp(-t / 0.06))
+    ph = 2 * np.pi * np.cumsum(f) / SR
+    head = (np.sin(ph) * np.exp(-t / decay) + 0.22 * np.sin(ph * 1.594 + 1) * np.exp(-t / (decay * 0.3))
+            + 0.10 * np.sin(ph * 2.136 + 2) * np.exp(-t / (decay * 0.18)))
+    shell = bp(noise(n), 80, 220) * np.exp(-t / 0.05) * 0.5 * p.get("shell", 1.0)
+    beater = p.get("beater", 0.6)
+    click = (bp(noise(n), 1800, 7000) * np.exp(-t / 0.0022) * 1.2 + np.sin(2 * np.pi * 3200 * t) * np.exp(-t / 0.0015) * 0.5)
+    click = click * beater * (0.4 + 0.6 * vel)
+    x = head + shell + click
+    x = soft(x.astype(np.float32), p.get("drive", 0.15))
+    return (x * vel ** 1.15 * 0.95).astype(np.float32)
+
+
+def kitsnare(p, vel, ps=0.0):
+    """Rock snare: a tuned batter head (membrane modes) plus the wires' rattle, which follows the head,
+    and the stick. wires 0-1, rim 0-1 (rimshot crack), tune ~170-260 Hz, decay (wire ring)."""
+    tone = p.get("tune", 195) * 2 ** (ps / 12)
+    dec = p.get("decay", 0.2)
+    n = _n(max(0.5, dec * 4))
+    t = _t(n)
+    fr = tone * MEMBRANE[:6] * (1 + 0.025 * vel * np.exp(-0.0))  # slight sharpening on hard hits
+    am = np.array([1.0, 0.65, 0.5, 0.35, 0.28, 0.2])
+    dc = np.array([0.09, 0.06, 0.045, 0.04, 0.03, 0.025]) * p.get("body", 1.0)
+    head = _modes(fr, am, dc, n)
+    head_env = np.exp(-t / 0.05)
+    wires = bp(noise(n), 1500, 8500, 2) * (np.minimum(t / 0.002, 1) * np.exp(-t / (dec * (0.6 + 0.4 * vel))))
+    wires = wires + bp(noise(n), 400, 1800) * np.exp(-t / 0.04) * 0.25
+    rim = p.get("rim", 0.3)
+    stick = (hp(noise(n), 2000) * np.exp(-t / 0.0015) * 0.8
+             + rim * (np.sin(2 * np.pi * 920 * t) + 0.7 * np.sin(2 * np.pi * 1630 * t)) * np.exp(-t / 0.018) * 0.6)
+    x = head * (0.8 - 0.2 * rim) + wires * p.get("wires", 0.75) * (0.7 + 0.5 * vel) + stick * (0.5 + 0.5 * vel)
+    x = x * (1 + 0.3 * head_env)
+    x = soft(x.astype(np.float32), p.get("drive", 0.12))
+    if vel < 0.7:  # soft hits (ghosts) are darker
+        x = lp(x, 3000 + 12000 * vel)
+    return (x * vel ** 1.1 * 0.55).astype(np.float32)
+
+
+def kittom(p, vel, ps=0.0):
+    """Rock tom: membrane modes that drop slightly in pitch as the head relaxes, plus the stick.
+    tune ~ 80 (floor) .. 200 Hz (rack); decay 0.3-0.8."""
+    f0 = p.get("tune", 110) * 2 ** (ps / 12)
+    decay = p.get("decay", 0.5)
+    n = _n(decay * 4)
+    t = _t(n)
+    bend = 1 + 0.12 * vel * np.exp(-t / 0.05)
+    ph = 2 * np.pi * np.cumsum(f0 * bend) / SR
+    x = np.zeros(n, dtype=np.float32)
+    for r, g, d in zip(MEMBRANE[:5], (1.0, 0.45, 0.3, 0.22, 0.15), (1.0, 0.5, 0.35, 0.3, 0.25)):
+        x += (g * np.sin(ph * r + RNG.random() * 6) * np.exp(-t / (decay * d))).astype(np.float32)
+    x += bp(noise(n), 600, 6000) * np.exp(-t / 0.004) * 0.35 * (0.5 + vel)
+    x += bp(noise(n), 150, 900) * np.exp(-t / 0.03) * 0.15
+    return (soft(x, 0.1) * vel ** 1.1 * 0.7).astype(np.float32)
+
+
+def _cymbal_partials(n_part, lo, hi, tilt):
+    fr = np.exp(RNG.uniform(np.log(lo), np.log(hi), n_part))
+    am = (fr / lo) ** (-tilt) * RNG.uniform(0.4, 1.0, n_part)
+    return fr, am
+
+
+def kithat(p, vel, ps=0.0):
+    """Hi-hat (two plates): open 0 = closed, ~0.4 = half-open sizzle, 1 = open. pedal true = the foot 'chick'.
+    Use one track per articulation; give the open track "choke_by": "<closed track>"."""
+    k = 2 ** (ps / 12) * p.get("tune", 1.0)
+    if p.get("pedal"):
+        n = _n(0.12)
+        t = _t(n)
+        x = bp(noise(n), 700, 5000) * np.exp(-t / 0.012) + bp(noise(n), 5000, 12000) * np.exp(-t / 0.02) * 0.4
+        return (x * vel * 0.8).astype(np.float32)
+    op = float(p.get("open", 0.0))
+    decay = p.get("decay", 0.03 + 1.1 * op ** 1.6)
+    n = _n(min(decay * 4 + 0.03, 4.0))
+    t = _t(n)
+    fr, am = _cymbal_partials(48, 2800 * k, 15500, 0.35)
+    metal = _modes(fr, am, RNG.uniform(0.5, 1.0, 48) * decay, n) * 0.06
+    nz = hp(noise(n), 5500) * np.exp(-t / decay)
+    if op > 0.2:  # loose plates rattle against each other
+        nz = nz * (1 + 0.35 * op * np.sin(2 * np.pi * 23 * t + RNG.random() * 6))
+    tip = bp(noise(n), 3000, 9000) * np.exp(-t / 0.0025) * 0.8
+    x = (metal + nz * 0.6) * (1 - 0.35 * op) + tip * (0.6 + 0.4 * vel)
+    x = hp(x, p.get("tone", 3500))
+    if vel < 0.7:
+        x = lp(x, 7000 + 12000 * vel)
+    return (x * vel * 0.9).astype(np.float32)
+
+
+_WASH = {}
+
+
+def _wash(key, n, lo, hi, decay, tilt, n_part, variants=4):
+    """Dense cymbal wash: band-split noise where each band has its own decay (highs die first) plus
+    inharmonic partials for the metallic pitch. Cached in a few variants per sound (it is costly and the
+    velocity layers only change level and brightness)."""
+    lst = _WASH.setdefault(key, [])
+    if len(lst) >= variants:
+        i = _WASH.setdefault(("_i",) + key, [0])
+        i[0] += 1
+        return lst[i[0] % variants]
+    t = _t(n)
+    nz = noise(n)
+    edges = np.geomspace(lo, min(hi, SR * 0.44), 19)
+    x = np.zeros(n, dtype=np.float32)
+    for e0, e1 in zip(edges[:-1], edges[1:]):
+        fc = np.sqrt(e0 * e1)
+        band = bp(nz, e0, e1, 2)
+        tau = decay * (fc / 1000) ** -0.35
+        x += band * ((fc / 1000) ** (-tilt) * (0.55 * np.exp(-t / (0.12 * tau)) + 0.45 * np.exp(-t / tau))).astype(np.float32)
+    fr, am = _cymbal_partials(n_part, lo, hi, tilt)
+    dc = decay * RNG.uniform(0.3, 1.0, n_part) * (fr / 1000) ** -0.3
+    x = x * 0.5 + _modes(fr, am, dc, n) * (0.6 / np.sqrt(n_part)) * (0.4 + 0.6 * np.exp(-t / (0.3 * decay)))
+    lst.append(x)
+    return x
+
+
+def kitride(p, vel, ps=0.0):
+    """Ride cymbal: a defined stick 'ping' over a long wash. bell 0-1 plays on the bell (louder,
+    pitched, cuts through a loud chorus); decay ~2-5 s."""
+    k = 2 ** (ps / 12) * p.get("tune", 1.0)
+    decay = p.get("decay", 3.0)
+    n = _n(min(decay * 1.6, 6))
+    t = _t(n)
+    wash = _wash(("ride", decay, k), n, 350 * k, 15000, decay, 0.35, 120) * 0.35
+    ping = (bp(noise(n), 3000, 9000) * np.exp(-t / 0.04) * 0.6 + bp(noise(n), 7000, 15000) * np.exp(-t / 0.007) * 0.6
+            + _modes(5200 * k * np.array([1.0, 1.37, 1.73]), [0.5, 0.35, 0.25], [0.25, 0.2, 0.15], n) * 0.4)
+    bell = p.get("bell", 0.0)
+    if bell > 0:
+        bf = 680 * k * np.array([1.0, 1.51, 2.09, 2.76, 3.55])
+        ping = ping + _modes(bf, [1, 0.8, 0.6, 0.4, 0.3], [1.2, 0.9, 0.7, 0.5, 0.4], n) * 0.35 * bell
+    x = hp(wash * (0.5 + 0.5 * vel) + ping * (0.5 + 0.5 * vel), 300)
+    if vel < 0.7:
+        x = lp(x, 6000 + 14000 * vel)
+    return (x * vel * 0.7).astype(np.float32)
+
+
+def kitcrash(p, vel, ps=0.0):
+    """Crash cymbal: a broadband bloom with body from ~300 Hz up (the old `crash` is a thin hiss above
+    4 kHz). decay ~1.5-3.5 s; tone tilts it darker (<1) or brighter (>1)."""
+    k = 2 ** (ps / 12) * p.get("tune", 1.0)
+    decay = p.get("decay", 2.4)
+    tone = p.get("tone", 1.0)
+    n = _n(min(decay * 1.8, 6))
+    t = _t(n)
+    wash = _wash(("crash", decay, k, tone), n, 300 * k, 16000, decay, 0.25 / tone, 160)
+    bloom = np.minimum(t / 0.008, 1)
+    hit = bp(noise(n), 1500, 12000) * np.exp(-t / 0.012) * 0.7
+    x = wash * bloom + hit * vel
+    x = hp(x, 250)
+    if vel < 0.7:
+        x = lp(x, 6000 + 14000 * vel)
+    return (x * vel * 0.65).astype(np.float32)
+
+
+# ---------------------------------------------------------------- guitars and bass (string models)
+
+def ks_string(f, n, t60, exc, s=0.5):
+    """Karplus-Strong string with a fractional (all-pass tuned) delay, so chords stay in tune at any pitch.
+    t60 = seconds to decay 60 dB (independent of pitch); s = loop low-pass (0.5 dark .. 0.15 bright)."""
+    P = SR / f
+    N = max(2, int(P - s - 0.1))
+    d = P - s - N
+    C = (1 - d) / (1 + d)
+    g = 10 ** (-3 / (max(t60, 0.01) * f))
+    a = np.zeros(N + 3)
+    a[0], a[1] = 1.0, C
+    a[N] -= g * (1 - s) * C
+    a[N + 1] -= g * ((1 - s) + s * C)
+    a[N + 2] -= g * s
+    return signal.lfilter([1.0, C], a, exc[:n] if len(exc) >= n else np.pad(exc, (0, n - len(exc)))).astype(np.float32)
+
+
+def _pick(f, n, vel, bright, pos):
+    """Pick excitation: a short noise burst, brighter for harder picking, comb-filtered by the pick position."""
+    P = SR / f
+    L = max(4, int(P))
+    e = noise(L) * np.hanning(L).astype(np.float32)
+    e = lp(e, 1200 + 9000 * bright * (0.4 + 0.6 * vel))
+    D = max(1, int(P * pos))
+    e2 = e.copy()
+    e2[D:] -= e[:-D]
+    out = np.zeros(n, dtype=np.float32)
+    out[:min(n, L)] = e2[:min(n, L)]
+    return out
+
+
+def _guitar_note(p, f, vel, dur, clean):
+    mute = float(p.get("mute", 0.0))
+    rel = 0.06 if mute < 0.5 else 0.03
+    n = _n(dur + rel)
+    t60 = p.get("sustain", 4.0 if not clean else 2.5) * (220 / f) ** 0.3
+    t60 = t60 * (1 - mute) + 0.14 * mute
+    s = 0.5 - 0.3 * p.get("bright", 0.6) * (1 - mute)
+    exc = _pick(f, n, vel, p.get("bright", 0.6) * (1 - 0.7 * mute), p.get("pick_pos", 0.12))
+    y = ks_string(f, n, t60, exc, s)
+    pu = p.get("pickup", 0.1 if not clean else 0.22)  # bridge pickup ~0.1 (bite) .. neck ~0.25 (round)
+    D = max(1, int(SR / f * pu))
+    y = y - np.concatenate([np.zeros(D, dtype=np.float32), y[:-D]]) * 0.5
+    if mute > 0:
+        y = lp(y, 5000 - 3800 * mute)
+    h = _n(dur)
+    if h < n:
+        y[h:] *= np.exp(-np.arange(n - h) / _n(rel / 4))
+    return (y * vel * 0.6).astype(np.float32)
+
+
+def eguitar(p, f, vel, dur):
+    """Electric guitar string (the amp is applied to the whole track afterwards, so chords distort
+    together like a real amp). Use chord voicings "power" or "guitar"."""
+    return _guitar_note(p, f, vel, dur, clean=False)
+
+
+def cleanguitar(p, f, vel, dur):
+    """Clean electric guitar string (neck pickup); the track gets a clean amp and stereo chorus."""
+    return _guitar_note(p, f, vel, dur, clean=True)
+
+
+def _cab(x, dark=0.5):
+    """4x12-style cabinet: no lows below ~80 Hz, a low resonance, a 400 Hz dip, presence, steep top roll-off."""
+    x = hp(x, 80, 2)
+    x = peq(x, 110, 4.0, 1.0)
+    x = peq(x, 220, 2.0, 0.8)
+    x = peq(x, 450, -3.0, 1.2)
+    x = peq(x, 250, 2.5, 0.7)
+    x = peq(x, 2400, 2.5, 1.2)
+    x = lp(lp(x, 5200 - 2200 * dark, 2), 6500 - 2000 * dark, 2)
+    return x
+
+
+def guitar_amp(p, x):
+    """Amp for a summed `eguitar` track: tight pre-EQ, two clipping stages, tone stack, cabinet."""
+    drive = float(p.get("drive", 0.7))
+    x = hp(x, 110, 2)
+    x = x + bp(x, 500, 1500) * (0.25 * drive)  # overdrive mid hump before the clipping
+    g = 10 ** ((6 + 40 * drive) / 20)
+    y = np.tanh(g * x + 0.08) - np.tanh(0.08)
+    y = lp(y, 7000)
+    y = np.tanh(y * (1 + 3 * drive)) / np.tanh(1 + 3 * drive)
+    y = peq(y, 750, -3 * p.get("scoop", 0.3), 0.8)
+    y = _cab(y, p.get("dark", 0.4))
+    return (y * 0.5).astype(np.float32)
+
+
+def chorus_stereo(x, rate=0.8, depth_ms=2.2, base_ms=7.0, mix=0.5):
+    n = len(x)
+    t = np.arange(n) / SR
+    idx = np.arange(n, dtype=np.float64)
+    outs = []
+    for phs in (0.0, np.pi):
+        d = (base_ms + depth_ms * np.sin(2 * np.pi * rate * t + phs)) / 1000 * SR
+        wet = np.interp(idx - d, idx, x, left=0.0)
+        outs.append(x * (1 - mix * 0.5) + wet * mix)
+    return np.stack(outs).astype(np.float32)
+
+
+def clean_amp(p, x):
+    """Clean amp for a summed `cleanguitar` track: slight tube compression, a bright cab, stereo chorus."""
+    x = hp(x, 90, 2)
+    y = np.tanh(x * (1.5 + 4 * p.get("drive", 0.1))) / np.tanh(1.5 + 4 * p.get("drive", 0.1))
+    y = peq(y, 3000, 2.0, 0.9)
+    y = peq(y, 220, 3.0, 0.7)
+    y = lp(y, 9000, 2)
+    ch = p.get("chorus", 0.5)
+    if ch > 0:
+        return chorus_stereo(y, p.get("chorus_rate", 0.8), 2.5 * ch + 0.5, 7.0, 0.3 + 0.4 * ch) * 0.6
+    return (y * 0.6).astype(np.float32)
+
+
+def ebass(p, f, vel, dur):
+    """Electric bass guitar: a long-sustaining string, picked (pick 1) or fingered (pick 0), with a little
+    fundamental reinforcement like a DI. mute 0-1 = palm-muted. Play roots in 8ths that follow the kick."""
+    mute = float(p.get("mute", 0.0))
+    rel = 0.04
+    n = _n(dur + rel)
+    pick = p.get("pick", 0.7)
+    t60 = p.get("sustain", 2.5) * (1 - 0.85 * mute)
+    exc = _pick(f, n, vel, 0.25 + 0.6 * pick, 0.18 - 0.08 * pick)
+    y = ks_string(f, n, t60, exc, 0.5 - 0.2 * pick)
+    t = _t(n)
+    y = y / (np.abs(y[:_n(0.05)]).max() + 1e-6) * 0.6
+    y += np.sin(2 * np.pi * f * t) * np.exp(-t / (t60 * 0.5)) * 0.15 * np.minimum(t / 0.004, 1)
+    if mute > 0:
+        y = lp(y, 2500 - 1700 * mute)
+    h = _n(dur)
+    if h < n:
+        y[h:] *= np.exp(-np.arange(n - h) / _n(rel / 4))
+    return (y * vel * 0.75).astype(np.float32)
+
+
+def bass_amp(p, x):
+    y = hp(x, 35, 2)
+    dr = p.get("drive", 0.2)
+    y = np.tanh(y * (1 + 4 * dr)) / np.tanh(1 + 4 * dr)
+    y = peq(y, 180, 4.0, 0.7)  # the growl of the 2nd/3rd harmonics that carries a bass on small speakers
+    y = lp(y, p.get("tone", 3500), 2)
+    return y.astype(np.float32)
+
+
+# ---------------------------------------------------------------- vocal-like lead
+
+FORMANTS = {  # (F1..F5 Hz, bandwidths Hz); Csound formant tables (after Peterson & Barney era measurements)
+    "soprano": {"ah": ([800, 1150, 2900, 3900, 4950], [80, 90, 120, 130, 140]),
+                "eh": ([350, 2000, 2800, 3600, 4950], [60, 100, 120, 150, 200]),
+                "ee": ([270, 2140, 2950, 3900, 4950], [60, 90, 100, 120, 120]),
+                "oh": ([450, 800, 2830, 3800, 4950], [40, 80, 100, 120, 120]),
+                "oo": ([325, 700, 2700, 3800, 4950], [50, 60, 170, 180, 200])},
+    "alto": {"ah": ([800, 1150, 2800, 3500, 4950], [80, 90, 120, 130, 140]),
+             "eh": ([400, 1600, 2700, 3300, 4950], [60, 80, 120, 150, 200]),
+             "ee": ([350, 1700, 2700, 3700, 4950], [50, 100, 120, 150, 200]),
+             "oh": ([450, 800, 2830, 3500, 4950], [70, 80, 100, 130, 135]),
+             "oo": ([325, 700, 2530, 3500, 4950], [50, 60, 170, 180, 200])},
+    "tenor": {"ah": ([650, 1080, 2650, 2900, 3250], [80, 90, 120, 130, 140]),
+              "eh": ([400, 1700, 2600, 3200, 3580], [70, 80, 100, 120, 120]),
+              "ee": ([290, 1870, 2800, 3250, 3540], [40, 90, 100, 120, 120]),
+              "oh": ([400, 800, 2600, 2800, 3000], [40, 80, 100, 120, 120]),
+              "oo": ([350, 600, 2700, 2900, 3300], [40, 60, 100, 120, 120])},
+}
+
+
+def _vowel(voice, name):
+    tab = FORMANTS.get(voice, FORMANTS["alto"])
+    F, B = tab.get(name, tab["ah"])
+    return np.array(F, dtype=np.float64), np.array(B, dtype=np.float64)
+
+
+def _tract(freqs, F, B, widen=1.4):
+    """Cascade vocal-tract magnitude at the given frequencies (array) for formants F, bandwidths B."""
+    h = np.ones_like(freqs)
+    for Fi, Bi in zip(F, B * widen):
+        r = freqs / Fi
+        h = h / np.sqrt((1 - r * r) ** 2 + (freqs * Bi / (Fi * Fi)) ** 2)
+    return h
+
+
+def vox_line(p, notes, total_n):
+    """Wordless solo voice ('ooh'/'ah'): additive glottal source shaped by a 5-formant vocal tract that stays
+    put while the pitch moves, so glides and vibrato sound sung. Monophonic, legato with `~` glides."""
+    out = np.zeros(total_n, dtype=np.float32)
+    voice = p.get("voice", "alto")
+    Fa, Ba = _vowel(voice, p.get("vowel", "ah"))
+    Fb, Bb = _vowel(voice, p.get("vowel2", p.get("vowel", "ah")))
+    morph = p.get("morph", 0.6)
+    vdepth, vrate, vdelay = p.get("vibrato", 0.3), p.get("vib_rate", 5.3), p.get("vib_delay", 0.22)
+    glide_s = p.get("glide_ms", 90) / 1000
+    breath = p.get("breath", 0.25)
+    bright = p.get("bright", 0.6)
+    ring = p.get("ring", 0.5)
+    prev_f, prev_phase = None, None
+    D = 64
+    for i, nt in enumerate(notes):
+        start = nt["t0"]
+        if start >= total_n:
+            break
+        nxt = notes[i + 1]["t0"] if i + 1 < len(notes) else None
+        next_glides = nxt is not None and notes[i + 1].get("glide")
+        rel = p.get("release", 0.14)
+        length = nt["n"] + _n(rel)
+        if nxt is not None:
+            length = min(length, nxt - start + (0 if next_glides else _n(0.006)))
+        length = int(min(max(length, 32), total_n - start))
+        t = _t(length).astype(np.float64)
+        glide = bool(nt.get("glide")) and prev_f is not None
+        f = np.full(length, nt["f"])
+        if glide:
+            f = prev_f * (nt["f"] / prev_f) ** np.clip(t / glide_s, 0, 1)
+        else:  # singers scoop up into a fresh note
+            f = f * 2 ** (-p.get("scoop", 0.5) * np.exp(-t / 0.045) / 12)
+        vib = vdepth * np.sin(2 * np.pi * vrate * t + RNG.random() * 6) * np.clip((t - vdelay) / 0.35, 0, 1)
+        drift = np.interp(t, np.linspace(0, t[-1] + 1e-3, 6), RNG.normal(0, 0.06, 6))
+        f = f * 2 ** ((vib + drift) / 12)
+        ph = (prev_phase if (glide and prev_phase is not None) else 0.0) + 2 * np.pi * np.cumsum(f) / SR
+        K = int(min(9500, SR * 0.42) / max(f.min(), 40))
+        K = max(1, min(K, 60))
+        td = t[::D]
+        w = np.clip(td / max(morph, 1e-3), 0, 1)[:, None] if p.get("vowel2") else np.zeros((len(td), 1))
+        Fd = Fa[None, :] * (1 - w) + Fb[None, :] * w
+        Bd = Ba[None, :] * (1 - w) + Bb[None, :] * w
+        fd = f[::D]
+        tilt = 1.15 - 0.6 * bright * nt["vel"]
+        x = np.zeros(length)
+        amps = np.zeros((K, len(td)))
+        for k in range(1, K + 1):
+            fk = k * fd
+            h = np.ones(len(td))
+            for j in range(5):
+                r = fk / Fd[:, j]
+                h = h / np.sqrt((1 - r * r) ** 2 + (fk * Bd[:, j] * 1.4 / (Fd[:, j] ** 2)) ** 2)
+            sf_ = 1 + ring * 4 * np.exp(-((fk - 2900) / 700) ** 2)  # singer's formant (the ring that carries)
+            amps[k - 1] = h * sf_ * k ** -tilt * (fk < 9500)
+        norm = np.sqrt((amps[:, :8] ** 2).sum(0)).mean() + 1e-9 if amps.shape[1] else 1.0
+        idx = np.arange(length) / D
+        for k in range(1, K + 1):
+            a = np.interp(idx, np.arange(len(td)), amps[k - 1])
+            x += a * np.sin(k * ph)
+        x = x / norm
+        air = noise(length)
+        F0 = Fa
+        air = (bp(air, F0[0] * 0.8, F0[0] * 1.25) + bp(air, F0[1] * 0.85, F0[1] * 1.2) * 0.7
+               + bp(air, 2500, 7000) * 0.5) * breath * 0.5
+        env = adsr(min(nt["n"], length), p.get("attack", 0.06), 0.25, p.get("sustain_level", 0.85), rel)[:length]
+        if len(env) < length:
+            env = np.pad(env, (0, length - len(env)))
+        if glide:
+            env = np.maximum(env, 0.85 * (np.arange(length) < nt["n"]))
+            h0 = min(nt["n"], length)
+            env[h0:] = 0.85 * np.exp(-np.arange(length - h0) / _n(rel / 5))
+        shimmer = 1 + 0.04 * np.sin(2 * np.pi * 3.1 * t + RNG.random() * 6)
+        y = (x * 0.5 * shimmer + air) * env * nt["vel"]
+        if not glide:
+            fade = min(64, length)
+            y[:fade] *= np.linspace(0, 1, fade)
+        if nxt is not None and not next_glides:
+            fo = min(_n(0.006), length)
+            y[-fo:] *= np.linspace(1, 0, fo)
+        out[start:start + length] += y.astype(np.float32)
+        j = (nxt - start) if nxt is not None else None
+        prev_phase = float(ph[j - 1]) if (j is not None and 0 < j <= length) else None
+        prev_f = nt["f"]
+    return out
+
+
+_mono_voice_base = mono_voice
+
+
+def mono_voice(kind, p, notes, total_n):  # noqa: F811  (extends the original with "vox")
+    if kind == "vox":
+        return vox_line(p, notes, total_n)
+    return _mono_voice_base(kind, p, notes, total_n)
+
+
+def pitch_riser(sec):
+    """Build-up riser: detuned saws sweeping up three octaves through an opening filter, plus noise."""
+    n = _n(sec)
+    t = _t(n)
+    u = t / sec
+    f = 110 * 2 ** (3 * u ** 1.6)
+    x = np.zeros(n, dtype=np.float32)
+    for c in (-18, -6, 6, 18):
+        x += polyblep_saw(f * 2 ** (c / 1200), n)
+    x = env_lp(hp(x, 150), 400 + 9000 * u ** 2)
+    x = x * 0.25 + sweep_noise(n, 500, 10000) * 0.6
+    return (x * u ** 2).astype(np.float32)
+
+
+DRUMS.update(clubkick=clubkick, kitkick=kitkick, kitsnare=kitsnare, kittom=kittom, kithat=kithat, kitride=kitride,
+             kitcrash=kitcrash)
+TONAL.update(supersaw=supersaw, trancebass=trancebass, eguitar=eguitar, cleanguitar=cleanguitar, ebass=ebass)
+MONO.add("vox")
+# whole-track processors applied to the summed track before gain/pan (an amp that sees the whole chord)
+POST = {"eguitar": guitar_amp, "cleanguitar": clean_amp, "ebass": bass_amp}
+# drums that cycle through `rr` slightly different hits (round robin), so repeated notes aren't identical
+ROUND_ROBIN = {"kitkick", "kitsnare", "kittom", "kithat", "kitride", "kitcrash"}

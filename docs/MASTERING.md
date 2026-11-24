@@ -18,17 +18,26 @@ Session 001 ("Bleachers") sounded clunky on MacBook speakers. Analysis showed th
 |---|---|
 | 0. Analyse | Integrated LUFS, true peak (4x), 1/3-octave long-term spectrum (gated to the loud parts) |
 | 1. Clean-up | 28 Hz 8th-order high-pass; side channel high-passed below 120 Hz (linear phase) so the low end is mono |
-| 2. Tonal EQ | Two-pass linear-phase EQ that moves the spectrum toward a beat target curve, aligned on 200 Hz-5 kHz. Strength set by `--eq`; at most -8/+4 dB per band in total |
+| 2. Tonal EQ | Two-pass linear-phase EQ that moves the spectrum toward a genre target curve (`--target`), aligned on 200 Hz-5 kHz. Strength set by `--eq`; at most -8/+4 dB per band in total |
 | 3. Multiband | 4 linear-phase bands (120 / 600 / 4000 Hz crossovers) that sum back perfectly; each compresses only its own loudest peaks (threshold from its 95th percentile) |
 | 4. Translation | 55-150 Hz bass body to tanh saturation to a 160-700 Hz band-pass, mixed in (`--translate`) |
 | 5. Glue | 2:1, 30 ms attack, 200 ms release, about 1-2 dB of reduction |
 | 6. Clip + limit | Soft clipper (4x) into a look-ahead true-peak limiter running 4x oversampled, ceiling `--tp` |
-| 7. Loudness | The input drive is solved iteratively so integrated loudness lands on `--lufs` (±0.15 LU) |
+| 7. Loudness | The input drive is solved iteratively so integrated loudness lands on `--lufs` (±0.15 LU). A true-peak guard then turns the master down if the 4x down-sampling recreated inter-sample peaks above `--tp` (reported as `tp_guard_db`; it never acts on a master that already meets the ceiling) |
 | 8. QC | LUFS, true peak, PLR, loudness range, low-end L/R correlation, laptop loss (loudness change after a 180 Hz high-pass), remaining tonal deviations, warnings; before/after picture |
 
 Defaults: `--lufs -11 --tp -1 --eq 0.7 --translate 0.5` (session 001 used `--eq 0.9`).
 
-The target curve is in `TARGET_ANCHORS` (dB relative to 1 kHz per 1/3 octave). It is a hand-tuned balance for modern 808-driven beats, not measured from references. Reference matching is a good next step.
+The target curves are in `TARGETS` (dB relative to 1 kHz per 1/3 octave; `beat` is the original `TARGET_ANCHORS`). They are hand-tuned, not measured from references. Only their shape matters: the EQ aligns each curve to the mix on 200 Hz-5 kHz. Reference matching is a good next step.
+
+## Genre targets (`--target`)
+| Target | Shape (dB rel. 1 kHz at 31.5 / 50 / 63 / 100 / 250 / 2k / 4k / 8k / 16k Hz) | Why | Suggested settings |
+|---|---|---|---|
+| `beat` (default) | +3 / +6.5 / +6.5 / +5 / +1.5 / -2 / -5 / -8.5 / -16 | 808 beats: a sustained sub-forward low end that is not sub-dominated | `--lufs -10.5` |
+| `trance` | -4 / +5 / +5.5 / +4 / +1 / -1.5 / -3.5 / -6.5 / -13 | a short club kick and rolling bass instead of a sustained 808 (less 31-40 Hz, a 50-80 Hz punch); dense bright supersaws, hats and long reverbs, so the top falls more slowly | `--target trance --lufs -10 --translate 0.4` |
+| `rock` | -7 / +0.5 / +2.5 / +3.5 / +2 / -1 / -3.5 / -7 / -15 | kick and bass guitar live at 60-250 Hz with little true sub; guitars, snare body and toms fill 100 Hz-3 kHz; cymbals keep the top open | `--target rock --lufs -10 --translate 0.3` |
+
+Loudness: club trance masters run -9 to -7 LUFS and streaming masters -12 to -10; charting rock averaged about -8 LUFS in 2025 (see `docs/TRANCE.md`, `docs/POP_ROCK.md`). Streaming normalizes everything to about -14 anyway, and this limiter can't go much past -9.5 cleanly, so -10 is the suggestion for both. Pop rock relies on verse-to-chorus contrast: don't trade it for loudness. The rock target lifts up to +4 dB at 100-315 Hz if the guitars and bass are thin there; the synthesized guitars are, so add body in the mix first.
 
 ## Sources
 - Spotify: Loudness normalization: https://support.spotify.com/artists/article/loudness-normalization/

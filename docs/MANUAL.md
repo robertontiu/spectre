@@ -10,10 +10,11 @@ python3 engine/studio.py listen --bars 9-12  # zoom: hi-res spectrogram + onset 
 python3 engine/studio.py listen --section hook1
 python3 engine/studio.py listen --mono / --lowpass    # squint checks (combine with --bars)
 python3 engine/studio.py listen --wav renders/solo_808.wav --bars 1-4   # listen to a solo render
-python3 engine/studio.py master [vNNN] [--lufs -11 --tp -1 --eq 0.9 --translate 0.5]
+python3 engine/studio.py master [vNNN] [--lufs -11 --tp -1 --eq 0.9 --translate 0.5 --target beat|trance|rock]
         # FINAL STEP: masters the premaster of vNNN -> renders/vNNN.master.wav/.mp3/.png/.report.json
 ```
-Every render also writes `renders/vNNN.premaster.wav` (the raw mix bus). The quick master inside `render` is only for listening while you work. The release master comes from `master`, which applies sub-sonic cleanup, mono low end, two-pass linear-phase tonal EQ toward a beat target curve, gentle 4-band compression, bass harmonics for small speakers, glue compression, and a soft clip into a 4x-oversampled true-peak limiter. It reports LUFS, true peak, PLR, loudness range, laptop-speaker loss and remaining tonal deviations. If the report shows the EQ hitting its 8 dB limit or the limiter working hard (over 6 dB), fix the mix rather than the master.
+Every render also writes `renders/vNNN.premaster.wav` (the raw mix bus). The quick master inside `render` is only for listening while you work. The release master comes from `master`, which applies sub-sonic cleanup, mono low end, two-pass linear-phase tonal EQ toward a genre target curve (`--target`: `beat` for 808 beats, the default; `trance`; `rock`), gentle 4-band compression, bass harmonics for small speakers, glue compression, and a soft clip into a 4x-oversampled true-peak limiter. It reports LUFS, true peak, PLR, loudness range, laptop-speaker loss and remaining tonal deviations. If the report shows the EQ hitting its 8 dB limit or the limiter working hard (over 6 dB), fix the mix rather than the master.
+Suggested settings per genre: beats `--lufs -10.5` (default target); trance `--target trance --lufs -10 --translate 0.4`; pop rock `--target rock --lufs -10 --translate 0.3`. Louder than about -9.5 LUFS gains little: a true-peak guard turns the master down if inter-sample peaks would pass `--tp`, and the report then shows `tp_guard_db`.
 Always work from inside your session folder with `BEAT_DIR` set to it: `cd sessions/NNN-name && export BEAT_DIR=$PWD`, then call the engine as `python3 ../../engine/studio.py ...` (the commands above are written relative to the repo root for readability). After `listen`, open the printed image with the Read tool. That image plus the printed numbers are your ears.
 
 How to read the ears:
@@ -52,7 +53,8 @@ How to read the ears:
  "roll_pitch": 0,                                  // semitones a roll climbs (+) or falls (-)
  "legato": 0.95, "choke": false,
  "send_reverb": 0.0, "send_delay": 0.0,
- "sidechain": {"source": "kick", "depth": 0.6, "release_ms": 120},
+ "sidechain": {"source": "kick", "depth": 0.6, "release_ms": 120},   // works on any track, from any drum track
+ "choke_by": "hat",                                // another track's hits cut this track's ring (open hat choked by the closed hat)
  "fx": [ {"type": "...", ...}, ... ],
  "mute": false}
 ```
@@ -64,7 +66,19 @@ Instrument types and their main params (all optional):
 - **Textures** (continuous while a pattern lists them with the value `"on"`): `vinyl` (density), `tape`, `rain`
 - Any tonal instrument accepts `"transpose": semitones`.
 
-FX types (in order): `hpf` {hz}, `lpf` {hz}, `eq` {hz, gain_db, q}, `lowshelf`/`highshelf` {hz, gain_db}, `comp` {threshold_db, ratio, attack_ms, release_ms}, `drive` {db}, `sat` {amount}, `bitcrush` {bits}, `srr` {hz}, `lofi` {amount 0-1: wow/flutter, sample-rate, dust}, `chorus` {rate, depth, mix}, `phaser`, `tremolo` {rate, depth}, `delay` {beats, feedback, mix}, `reverb` {size, mix}, `pitch` {semitones}, `width` {amount}, `gain` {db}
+**Trance** (see `docs/TRANCE.md`; example project `examples/trance-test.json`):
+- `clubkick` (drum): four-on-the-floor club kick. tune Hz 45-60 (default 50), punch 0-2 (pitch drop), click 0-1, top 0-1 (909-style noise top), drive, hold s (0.045), tail s (0.085; short so the bass rolls between kicks), length s (0.32).
+- `supersaw` (polyphonic, **stereo**): the JP-8000-style supersaw for leads, chords, plucks and pads. voices (7), detune cents (25; under 10 thin, over 30 out of tune), mix 0-1 (side voices vs centre, 0.7), spread 0-1 (stereo width of the side voices, 0.8), cutoff Hz (9000), reso 0-1, env Hz (filter envelope, 0 = off), fdecay s, attack, decay, sustain_level, release. `pan` acts as balance. Pluck: `"sustain_level": 0, "decay": 0.15, "cutoff": 900, "env": 6000, "fdecay": 0.07`. Pad: `"attack": 1.2, "release": 2.0, "cutoff": 2500`. High-pass chords (`hpf` 200-300).
+- `trancebass` (polyphonic, short notes): offbeat/rolling bass, two detuned saws through a plucky filter over a sine sub. cutoff Hz (260), env Hz (2200), fdecay s (0.07), reso, sub 0-1 (0.8), detune, drive, decay, sustain_level, release. Play it with chord stabs and `"voicing": "root"` and sidechain it to the kick: offbeat `"..x...x...x...x."` stab_len 2, rolling `".xxx.xxx.xxx.xxx"` stab_len 1.
+
+**Pop rock** (see `docs/POP_ROCK.md`; example project `examples/poprock-test.json`):
+- Acoustic kit (drums; each repeated hit cycles through `rr` slightly different variants, default 4, so it doesn't machine-gun): `kitkick` (tune 50-65, decay 0.15-0.4, beater 0-1 felt to plastic click, shell, drive), `kitsnare` (tune 170-260, wires 0-1, rim 0-1 rimshot crack, decay = wire ring, body, drive; soft hits get darker), `kittom` (tune ~150-200 rack, 80-100 floor; decay 0.3-0.8), `kithat` (open 0 closed, ~0.4 half-open sizzle, 0.7-1 open; pedal true = foot chick; decay, tone, tune), `kitride` (decay 2-5, bell 0-1), `kitcrash` (decay 1.5-3.5, tone <1 darker >1 brighter; the old `crash` is a thin hiss above 4 kHz). Use one track per articulation (closed hat, open hat with `"choke_by"`, pedal hat).
+- `eguitar` (polyphonic): electric guitar. Each note is a plucked string; the **amp runs on the whole track afterwards**, so chords distort together like a real amp. drive 0-1 (0.7; 0.3-0.5 crunch, 0.7-0.9 rock rhythm), mute 0-1 (palm mute; 0.7-0.9 = chug), dark 0-1 (cabinet darkness, 0.4), scoop 0-1 (mid cut), pickup 0.08-0.25 (bridge bite to neck warmth, 0.1), bright 0-1 (pick), pick_pos, sustain s. Use voicings `power` or `guitar` and stab `strum`. Double-track: two `eguitar` tracks at pan -0.85/0.85 with different drive, dark, pickup or voicings.
+- `cleanguitar` (polyphonic, **stereo** after its amp): clean electric guitar (neck pickup) through a clean amp and stereo chorus. chorus 0-1 (0.5), chorus_rate Hz, drive 0-0.3, bright, pickup, mute, sustain. Arpeggios: `"style": "arp", "voicing": "guitar"`.
+- `ebass` (polyphonic, play one note at a time): electric bass guitar. pick 0-1 (fingers to pick, 0.7), mute 0-1 (palm mute), drive 0-1 (0.2), tone Hz (amp low-pass, 3500), sustain s. Roots with stabs and `"voicing": "root"`, `register` D2-E2, `legato` 0.9.
+- `vox` (monophonic with glide): wordless vocal-like lead ("ooh"/"ah") for the sung melody. An additive voice through a 5-formant vocal tract that stays put while the pitch moves, so glides and vibrato sound sung. voice `soprano` / `alto` (default) / `tenor`, vowel `ah` `eh` `ee` `oh` `oo`, vowel2 + morph s (each note moves from vowel to vowel2), vibrato semitones (0.3), vib_rate (5.3), vib_delay s (0.22), scoop semitones (0.5: singers slide up into a fresh note), glide_ms (90, for `~` notes), breath 0-1 (0.25), bright 0-1 (0.6), ring 0-1 (singer's formant around 2.9 kHz, 0.5), attack, release, sustain_level. Write phrases with breaths (rests) between them; `~` glides; reverb and delay sends.
+
+FX types (in order): `hpf` {hz}, `lpf` {hz}, `eq` {hz, gain_db, q}, `lowshelf`/`highshelf` {hz, gain_db}, `comp` {threshold_db, ratio, attack_ms, release_ms}, `drive` {db}, `sat` {amount}, `bitcrush` {bits}, `srr` {hz}, `lofi` {amount 0-1: wow/flutter, sample-rate, dust}, `chorus` {rate, depth, mix}, `phaser`, `tremolo` {rate, depth}, `delay` {beats, feedback, mix}, `reverb` {size, mix}, `pitch` {semitones}, `width` {amount}, `gain` {db}, `gate` {pattern, bars, depth 0-1, duty 0-1, smooth_ms} (trance gate: a step pattern from bar 1, string length / bars = grid like drum steps; `x`/`X` open, `o` half, `1`-`9` level, `.` closed; each open step stays open for `duty` of the step, e.g. `{"type": "gate", "pattern": "x.xx.xx.x.xx.x.x", "depth": 0.85, "duty": 0.75}`), `room` {size 0-1, mix, damping} (small-room early reflections plus a short tail: put it on each acoustic kit piece so the kit sounds like one room)
 
 ### PATTERN
 A pattern is a set of parts for several tracks, `bars` long. Sections loop patterns.
@@ -82,7 +96,8 @@ A pattern is a set of parts for several tracks, `bars` long. Sections loop patte
 - **Chords** (polyphonic tracks): `{"chords": "Fm9:16 Dbmaj7:16 Bbm9:8 C7b9:8", "style": "sustain", "register": "Ab4", "voicing": "keys", "vel": 0.7}`
   Lengths in 16ths (16 = one bar). `-:8` = rest. Slash chords work (`Ab/C`). The hand voice-leads between chords.
   style: `sustain`, `strum` (strum_ms), `stabs` (with `"rhythm": "x..x..x...x....."` per bar, `stab_len`; the string length sets the grid like drum steps, so 12 characters = 8th-note triplets), `arp` (`rate` in 16ths, `pattern` up/down/updown/random, `octaves`).
-  voicing: `keys` (left-hand root plus right-hand close voicing), `close`, `spread`.
+  voicing: `keys` (left-hand root plus right-hand close voicing), `close`, `spread`. Instrument shapes (no voice leading; the lowest note lands within a tritone of `register`): `root` (just the root: bass lines), `octave` (root + octave), `power` (root, fifth, octave: guitar power chord), `guitar` (an open-chord shape: root, fifth, octave, third and any 7th/9th above, up to 6 notes).
+  Strumming (guitars): stabs accept `"strum": "down" | "up" | "alt"`, `strum_ms` (time across the strings, default 12) and `strum_grid` (8 or 16: with `alt`, hits on the grid's on-beats strum down, the others up). Up-strokes start on the top string, are lighter, and skip the two lowest strings of big chords. `"style": "strum"` takes `"strum_dir"` the same way.
   Qualities: "", m, maj7, m7, 7, m9, maj9, 9, add9, madd9, 6, m6, sus2, sus4, 7sus4, dim, dim7, m7b5, aug, 7b9, 7#9, m7b9, 11, m11, 13, maj13, 6/9, maj7#11, 7b13, mmaj7, m(maj9), 5
 - **Texture**: `"vinyl": "on"`
 
@@ -90,9 +105,9 @@ A pattern is a set of parts for several tracks, `bars` long. Sections loop patte
 ```json
 {"name": "hook1", "bars": 8, "play": ["keysA", "beatB", "bassA"],
  "fill": {"pattern": "fillA"},                       // replaces those tracks in the last bar(s) of the section
- "auto": {"keys": {"lpf": [600, 8000], "gain_db": [-6, 0], "mute": false}},   // ramps across the section
+ "auto": {"keys": {"lpf": [600, 8000], "hpf": [20, 800], "gain_db": [-6, 0], "mute": false}},   // ramps across the section
  "enter": {"impact": 0.8, "crash": 0.6, "downlifter": 2},                       // on the first downbeat (downlifter in beats)
- "exit":  {"riser": 4, "reverse": 2,                                            // ending exactly at the section end (beats)
+ "exit":  {"riser": 4, "reverse": 2, "rise": 16,                                // ending exactly at the section end (beats); rise = pitched build riser
            "cut": {"tracks": ["kick", "808"], "beats": 1},                       // drop-out before the next section ("all" for every track)
            "lpf": {"tracks": ["keys"], "beats": 4, "to_hz": 400},
            "tapestop": 2, "silence": 1}}
@@ -101,6 +116,8 @@ Note: an exit `cut` only silences its own window; 808 and reverb tails can ring 
 Section names must be unique. Bars per section should be multiples of 4 (2 for short breaks).
 
 ## Tips from the bench
+- Trance: `"swing": 0.5` and `humanize_ms` 0-1 on drums and bass (machine-tight is the style). Sidechain bass, chords and pads to the kick (bass depth 0.8-0.9 / release 80-110 ms, chords 0.5-0.7 / 140-180 ms). A build: snare roll pattern, `"exit": {"rise": 16, "riser": 8, "cut": {"tracks": "all", "beats": 1}}` and `auto` `hpf` sweeps on the music. The breakdown has no kick: leave the kick's pattern out (a muted pattern still sends sidechain triggers).
+- Pop rock: `humanize_ms` 4-8 on kit pieces, `push_ms` +3..+6 on the snare for a laid-back backbeat, `room` on kit pieces plus a shared reverb send. Guitars and bass are thin at 100-300 Hz: add body with `eq`/`lowshelf` there before mastering (the rock target expects it). Kick and bass guitar want different homes (kick body 60-80 Hz with `eq`, bass growl 150-250 Hz).
 - Melodic and pad instruments sit far below drums by default; raise `gain_db` in steps of 2-3 dB.
 - Hats live and die by `dyn`, `humanize_ms`, swing and rolls. The 808 should almost always sidechain to the kick or follow it.
 - High-pass melodic tracks (`hpf` 120-200) so the 808 owns the low end.
@@ -109,4 +126,4 @@ Section names must be unique. Bars per section should be multiples of 4 (2 for s
 - The ears' "no contrast" warning only compares loudness, band levels and onset density; a purely rhythmic or textural change between sections can trip it. Check with a zoom before acting on it.
 - The key detector reads modal material (Dorian, Romanian minor, Hijaz) as the nearest major/minor key; trust your own mode. In the zoom timing roll, row labels can look shifted by one track when several drum tracks share a hit; identify rows by their timing.
 - `gain_db` acts before the track's fx: on tracks with heavy drive, saturation flattens the change; use a `gain` fx at the end of the chain to change the post-drive level.
-- A render is about 20 s; an overview listen about 25 s. Zoom listens are faster.
+- A render is about 20 s; an overview listen about 25 s. Zoom listens are faster. Projects with many acoustic cymbals or long distorted guitar parts render slower (the first cymbal hits are costly; later ones are cached).

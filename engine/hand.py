@@ -49,8 +49,42 @@ def parse_chord(sym):
     return root % 12, QUALITIES[q], bass
 
 
+def fixed_voicing(root, ivs, center, style, bass_pc=None):
+    """Instrument-shaped voicings (no voice leading): the lowest note lands within a tritone of center.
+    root = just the root (bass lines); octave = root + octave; power = root, fifth, octave (guitar power chord);
+    guitar = an open-chord shape: root, fifth, octave, third (and 7th/9th) above, fifth, double octave."""
+    lb = bass_pc if bass_pc is not None else root
+    low = center + ((lb - center) % 12)
+    if low - center > 6:
+        low -= 12
+    if style == "root":
+        return [low]
+    if style == "octave":
+        return [low, low + 12]
+    r = low if bass_pc is None else low + ((root - low) % 12)
+    fifth = next((i for i in (7, 6, 8) if i in ivs), 7)
+    if style == "power":
+        return sorted({low, r + fifth, r + 12})
+    third = next((i for i in (4, 3, 2, 5) if i in ivs), None)
+    ext = [i % 12 for i in ivs if i not in (0, 2, 3, 4, 5, 6, 7, 8)]
+    notes = {low, r + fifth, r + 12}
+    if third is not None:
+        notes.add(r + 12 + third)
+    notes.add(r + 12 + fifth)
+    for e in ext:
+        notes.add(r + 12 + e)
+    if not ext:
+        notes.add(r + 24)
+    return sorted(notes)[:6]
+
+
+FIXED_VOICINGS = ("root", "octave", "power", "guitar")
+
+
 def voice_chord(root, ivs, center, prev, style, bass_pc=None):
     """Return midi notes. Voice-leads from prev; keeps the upper structure near center."""
+    if style in FIXED_VOICINGS:
+        return fixed_voicing(root, ivs, center, style, bass_pc)
     upper_ivs = ivs[1:] if style in ("spread", "keys") and len(ivs) >= 3 else ivs
     pcs = [(root + i) % 12 for i in upper_ivs]
     cands = []
@@ -238,12 +272,29 @@ class Hand:
                 continue
             else:
                 raise ValueError(f"unknown chord style '{style}'")
+            strum = spec.get("strum") if style == "stabs" else spec.get("strum_dir") if style == "strum" else None
             for (hp_, hl) in hits:
                 base = self.humanize(self.step_time(hp_), tr)
+                if strum:  # guitar strumming: down (low to high) or up (high to low, top strings only, lighter)
+                    if strum == "alt":
+                        up = int(round(hp_ / (16.0 / spec.get("strum_grid", 8)))) % 2 == 1
+                    else:
+                        up = strum == "up"
+                    sm = spec.get("strum_ms", 28 if style == "strum" else 12) * (1 + 0.15 * self.rng.normal()) / 1000.0
+                    order = notes[::-1] if up else notes
+                    if up and len(order) >= 5:
+                        order = order[:-2]
+                    for j, n in enumerate(order):
+                        off = j * sm
+                        v = vel0 * (0.82 if up else 1.0) * (1.05 if j == 0 else 0.9)
+                        ev.append(dict(t=t0 + base + off, midi=n, dur=hl * self.six * 0.97 - off, vel=self.vel(v, tr)))
+                    continue
                 for j, n in enumerate(notes):
                     off = 0.0
                     if style == "strum":
                         off = j * spec.get("strum_ms", 28) / 1000.0
+                    elif voicing in ("root", "octave"):
+                        off = 0.0  # bass lines: no chord spread
                     else:
                         off = abs(self.rng.normal(0, 0.006))
                     v = vel0 * (1.08 if j == len(notes) - 1 else 0.95 if j == 0 else 0.86)

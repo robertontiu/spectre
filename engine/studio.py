@@ -26,6 +26,9 @@ DEFAULT_GAIN = {"kokle": -7, "dudas": -13, "tridksnis": -12, "trembita": -9, "li
                 "snap": -8, "tom": -6, "crash": -14, "cowbell": -14, "808": -2, "bass": -4, "lead": -12,
                 "ep": -9, "piano": -8, "pad": -14, "strings": -13, "choir": -14, "bell": -14, "musicbox": -12,
                 "pluck": -10, "organ": -14, "sine": -10, "vinyl": -6, "tape": -6, "rain": -10}
+DEFAULT_GAIN.update({"supersaw": -12, "trancebass": -6, "clubkick": -1, "kitkick": -2, "kitsnare": -2, "kittom": -6,
+                     "kithat": -15, "kitride": -17, "kitcrash": -16, "eguitar": -11, "cleanguitar": -11, "ebass": -6,
+                     "vox": -9})
 
 
 # ------------------------------------------------------------------ helpers
@@ -57,6 +60,47 @@ def wow_flutter(st, amount):
     d = (0.0015 * amount * np.sin(2 * np.pi * 0.45 * t) + 0.0003 * amount * np.sin(2 * np.pi * 6.3 * t)) * SR
     idx = np.clip(np.arange(n) - d - 0.002 * SR * amount, 0, n - 1)
     return np.stack([np.interp(idx, np.arange(n), ch) for ch in st]).astype(np.float32)
+
+
+def gate_curve(n, bpm, pattern, bars=1, depth=1.0, duty=0.8, smooth_ms=3.0):
+    """Trance gate: a step pattern repeating from bar 1 (string length / bars = grid, like drum steps).
+    Open steps (x, X, o, digits = level) stay open for `duty` of the step, then close to 1 - depth."""
+    s = re.sub(r"[\s|]", "", pattern)
+    steps = len(s)
+    bar_n = 4 * 60.0 / bpm * SR
+    step_n = bar_n * bars / steps
+    lv = np.array([0.0 if c in ".-_" else {"X": 1.0, "x": 1.0, "o": 0.55, "g": 0.35}.get(c, int(c) / 9 if c.isdigit() else 1.0)
+                   for c in s])
+    pos = np.arange(n) / step_n
+    k = np.floor(pos).astype(np.int64)
+    frac = pos - k
+    level = lv[k % steps] * (frac < duty)
+    g = (1 - depth) + depth * level
+    w = max(1, int(smooth_ms / 1000 * SR))
+    if w > 1:
+        from scipy.ndimage import uniform_filter1d
+        g = uniform_filter1d(g, w)
+    return g.astype(np.float32)
+
+
+def room_fx(st, size=0.3, mix=0.25, damp=0.5):
+    """Small-room ambience: early reflections (multi-tap, filtered) plus a short tail. For acoustic drums."""
+    taps = [(0.0071, 0.55, -0.3), (0.0113, 0.45, 0.35), (0.0167, 0.38, -0.5), (0.0229, 0.3, 0.55), (0.0311, 0.24, -0.15),
+            (0.0397, 0.18, 0.25)]
+    n = st.shape[1]
+    mono = st.mean(0)
+    er = np.zeros((2, n), dtype=np.float32)
+    k = 0.5 + 1.2 * size
+    for d, g, pan in taps:
+        i = int(d * k * SR)
+        if i >= n:
+            continue
+        er[0, i:] += mono[:n - i] * g * (1 - pan) * 0.7
+        er[1, i:] += mono[:n - i] * g * (1 + pan) * 0.7
+    er = pb.Pedalboard([pb.HighpassFilter(150), pb.LowpassFilter(9000 - 5000 * damp)])(er, SR)
+    tail = pb.Pedalboard([pb.Reverb(0.15 + 0.35 * size, damp, 1.0, 0.0, 1.0), pb.HighpassFilter(200)])(st, SR)
+    wet = er + tail * 0.6
+    return (st * (1 - mix * 0.5) + wet * mix).astype(np.float32)
 
 
 def apply_fx(st, fx_list, bpm):
@@ -102,6 +146,14 @@ def apply_fx(st, fx_list, bpm):
             chain.append(pb.PitchShift(fx.get("semitones", 0)))
         elif k == "srr":
             chain.append(pb.Resample(fx.get("hz", 16000), pb.Resample.Quality.ZeroOrderHold))
+        elif k in ("gate", "room"):
+            st = flush(st)
+            if k == "gate":
+                st = st * gate_curve(st.shape[1], bpm, fx.get("pattern", "x.x.x.x.x.x.x.x."), fx.get("bars", 1),
+                                     fx.get("depth", 1.0), fx.get("duty", 0.8), fx.get("smooth_ms", 3.0))
+            else:
+                st = room_fx(st, fx.get("size", 0.3), fx.get("mix", 0.25), fx.get("damping", 0.5))
+            st = st.astype(np.float32)
         elif k in ("lofi", "tremolo", "sat", "width"):
             st = flush(st)
             if k == "lofi":
@@ -152,6 +204,22 @@ def block_lpf(st, a, b, f0, f1):
     for s in range(a, b, B):
         fr = f0 * (f1 / f0) ** ((s - a) / max(b - a, 1))
         sos = signal.butter(2, min(max(fr, 30), SR * 0.45), btype="low", fs=SR, output="sos")
+        e = min(s + B, b)
+        for c in range(2):
+            y, zis[c] = signal.sosfilt(sos, st[c, s:e], zi=zis[c])
+            st[c, s:e] = y
+    return st
+
+
+def block_hpf(st, a, b, f0, f1):
+    """Sweep a high-pass from f0 to f1 over samples [a,b) (in place). Trance builds thin the music out this way."""
+    from scipy import signal
+    a, b = max(0, a), min(st.shape[1], b)
+    B = 1024
+    zis = [np.zeros((1, 2)), np.zeros((1, 2))]
+    for s in range(a, b, B):
+        fr = f0 * (f1 / f0) ** ((s - a) / max(b - a, 1))
+        sos = signal.butter(2, min(max(fr, 10), SR * 0.45), btype="high", fs=SR, output="sos")
         e = min(s + B, b)
         for c in range(2):
             y, zis[c] = signal.sosfilt(sos, st[c, s:e], zi=zis[c])
@@ -273,11 +341,15 @@ def render_track(name, tr, evs, holds, total_n, bpm):
     typ = tr["inst"]["type"]
     p = tr["inst"]
     mono = np.zeros(total_n, dtype=np.float32)
+    st_buf = None
     if typ in DRUM_TYPES:
         fn = I.DRUMS[typ]
         cache = {}
-        for e in sorted(evs, key=lambda e: e["t"]):
+        rr = int(p.get("rr", 4)) if typ in getattr(I, "ROUND_ROBIN", ()) else 0
+        for j, e in enumerate(sorted(evs, key=lambda e: e["t"])):
             key = (round(e["vel"] * 24), round(e.get("ps", 0) * 4))
+            if rr > 1:  # round-robin kit pieces: 12 velocity layers x rr variants
+                key = (2 * round(e["vel"] * 12), key[1], j % rr)
             if key not in cache:
                 cache[key] = fn(p, key[0] / 24, key[1] / 4)
             x = cache[key]
@@ -300,6 +372,12 @@ def render_track(name, tr, evs, holds, total_n, bpm):
             i = max(0, int(e["t"] * SR))  # hits pushed before 0:00 play at 0:00
             if i >= total_n:
                 continue
+            if x.ndim == 2:  # stereo instruments (supersaw)
+                if st_buf is None:
+                    st_buf = np.zeros((2, total_n), dtype=np.float32)
+                m = min(x.shape[1], total_n - i)
+                st_buf[:, i:i + m] += x[:, :m]
+                continue
             m = min(len(x), total_n - i)
             mono[i:i + m] += x[:m]
     elif typ in I.TEXTURES:
@@ -313,8 +391,19 @@ def render_track(name, tr, evs, holds, total_n, bpm):
             mono = src * g
     else:
         raise ValueError(f"track '{name}': unknown instrument type '{typ}'")
+    post = getattr(I, "POST", {}).get(typ)
+    if post is not None:  # whole-track processor (guitar amp): sees the summed chord, like a real amp
+        y = post(p, mono)
+        if y.ndim == 2:
+            st_buf = y if st_buf is None else st_buf + y
+            mono = np.zeros(total_n, dtype=np.float32)
+        else:
+            mono = y
     gain = DEFAULT_GAIN.get(typ, -10) + tr.get("gain_db", 0)
     st = pan_stereo(mono * db(gain), tr.get("pan", 0)).astype(np.float32)
+    if st_buf is not None:  # stereo sources: pan acts as balance
+        a = (float(np.clip(tr.get("pan", 0), -1, 1)) + 1) * np.pi / 4
+        st = st + (st_buf * db(gain) * np.array([[np.cos(a)], [np.sin(a)]]) * np.sqrt(2)).astype(np.float32)
     if tr.get("width"):
         st = widen(st, tr["width"])
     st = apply_fx(st, tr.get("fx"), bpm)
@@ -345,6 +434,21 @@ def render(P, solo=None, out_prefix=None, quiet=False):
         if tr.get("mute"):
             continue
         st = render_track(name, tr, events[name], holds[name], total_n, P["bpm"])
+        # choke: another track's hits cut this track's ring (closed hat chokes the open hat)
+        cb = tr.get("choke_by")
+        if cb and cb in events:
+            own = np.sort(np.array([e["t"] for e in events[name]] or [1e9]))
+            ranges = []
+            for e in events[cb]:
+                tc = e["t"]
+                k = np.searchsorted(own, tc + 0.012)
+                prev_own = own[k - 1] if k > 0 else None
+                if prev_own is None or prev_own > tc - 0.012:
+                    continue  # nothing of ours ringing (or we hit together)
+                nxt = own[k] if k < len(own) else total_n / SR
+                ranges.append((int(tc * SR), int(nxt * SR) - int(0.002 * SR)))
+            if ranges:
+                st *= fade_gate(total_n, ranges, fade=0.008)
         # sidechain ducking from another track's hit times
         sc = tr.get("sidechain")
         if sc and sc.get("source") in events:
@@ -376,6 +480,10 @@ def render(P, solo=None, out_prefix=None, quiet=False):
                 if lpf:
                     f0, f1 = (lpf if isinstance(lpf, list) else [lpf, lpf])
                     st = block_lpf(st, a, b, f0, f1)
+                hpf = au.get("hpf")
+                if hpf:
+                    f0, f1 = (hpf if isinstance(hpf, list) else [hpf, hpf])
+                    st = block_hpf(st, a, b, max(f0, 10), max(f1, 10))
             ex = sec.get("exit") or {}
             cut = ex.get("cut")
             if cut and (name in cut.get("tracks", []) or (cut.get("tracks") == "all")):
@@ -414,6 +522,9 @@ def render(P, solo=None, out_prefix=None, quiet=False):
             if ex.get("reverse"):
                 x = I.reverse_cymbal(ex["reverse"] * beat)
                 put(x, b - len(x), db(-12))
+            if ex.get("rise"):
+                x = I.pitch_riser(ex["rise"] * beat)
+                put(x, b - len(x), db(-18))
         mix += fxb * 0.9
         rev_bus += fxb * 0.4
         if np.any(rev_bus):
@@ -518,6 +629,7 @@ def main():
     m.add_argument("--tp", type=float, default=-1.0)
     m.add_argument("--eq", type=float, default=0.7)
     m.add_argument("--translate", type=float, default=0.5)
+    m.add_argument("--target", default="beat", help="tonal target curve: beat (808 beats, default), trance, rock")
     a = ap.parse_args()
     if a.cmd == "render":
         cmd_render(a)
@@ -528,7 +640,7 @@ def main():
         if not os.path.exists(pre):
             raise SystemExit(f"no premaster for {v}: re-render it (studio.py render renders/{v}.project.json)")
         subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "master.py"), pre,
-                        "--lufs", str(a.lufs), "--tp", str(a.tp), "--eq", str(a.eq), "--translate", str(a.translate)], check=True)
+                        "--lufs", str(a.lufs), "--tp", str(a.tp), "--eq", str(a.eq), "--translate", str(a.translate), "--target", a.target], check=True)
         out = pre.replace(".premaster.wav", ".master.wav")
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", out, "-b:a", "320k", out.replace(".wav", ".mp3")], check=True)
         print("mp3:", out.replace(".wav", ".mp3"))

@@ -28,7 +28,9 @@ It is a sibling experiment to [Teodor](https://github.com/robertontiu/teodor), a
 ```
 engine/
   instruments.py  synthesized instruments: drums, 808/bass/lead (mono, glide), keys, pads, strings, choir, bells,
-                  plucks, organ, textures (vinyl, tape, rain), transition fx (riser, impact, reverse cymbal)
+                  plucks, organ, folk instruments, textures (vinyl, tape, rain), transition fx (riser, impact, reverse cymbal,
+                  pitch riser); trance (clubkick, supersaw, trancebass); pop rock (acoustic kit, eguitar, cleanguitar,
+                  ebass, vox: a wordless formant voice)
   hand.py         the hand: step/note/chord notation parser, swing, humanization, voicing, rolls, arps
   studio.py       project loader, arrangement scheduler, track rendering, fx, sends, sidechain, section
                   automation and transitions, quick master, CLI (render / listen / master)
@@ -52,6 +54,7 @@ sessions/
                   README.md with the result
 examples/
   engine-test.json  a small project that exercises most engine features (render it to smoke-test changes)
+  trance-test.json, poprock-test.json  small projects that exercise the trance and pop rock sounds
 ```
 
 ## 3. Setup
@@ -98,7 +101,7 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 1. **The ears can't hear attitude.** Structure reads well on spectrograms; timbre and emotional "bite" don't. Session 001 aimed for defiance and came across as longing. Ideas: an audio-capable model as a critic ("describe what you hear, without naming emotions"), CLAP-style embeddings as a weak signal, or a human checkpoint ear after the loop stage.
 2. **Synth timbres lean soft.** No real samples. Real drum one-shots or sample packs (the user would provide them; the sandbox network is restricted) would raise quality a lot.
 3. **No vocals.** A generative model as a "session musician" (stems on demand) is the planned v2 for metal and pop.
-4. **Mastering targets** are a single curve tuned for 808-driven beats. Genre-specific targets and reference-track matching would help.
+4. **Mastering targets** are hand-tuned curves per genre (`--target beat|trance|rock`). Reference-track matching would help.
 5. **Speed.** A full-length render takes 20-45 s. Per-track caching would make the loop faster.
 
 ## 7. Git
