@@ -22,6 +22,7 @@ STUDIO NOTES FOR TRANCE (from the engineer who built the sounds; details in MANU
 - Master with `studio.py master vNNN --genre trance`. Don't push louder than -10: the true-peak guard will turn it down.
 - Nothing has been checked by a human ear: judge the timbres hard, and if a sound reads cheap, change its settings or layer it rather than living with it.
 
+- The mastering curve for trance is measured from commercial electronic records (Pestana et al. 2013). The engine's own test project overloaded 40-63 Hz by 15-18 dB against every measured genre (clubkick tuned to 50 Hz plus the bass), so the master's EQ had to cut at its limit. Get the low end right in the MIX: tune the kick and bass, cut sub where they pile up, and check the master report's `eq_at_limit` bands; the goal is a master whose EQ moves stay well inside their limits.
 LESSONS FROM PAST SESSIONS (read /home/claude/spectre/docs/LESSONS.md, especially "Across genres"; the artist's favourites are sessions/005-fuck-war and sessions/006-revolution, study their journals: the hook as the statement, subtraction, a dramaturgy instead of a mood):
 - The feeling has to live in the SOUND itself (timbre, density, width, rhythm, cuts), not only in note choices.
 - Low-end discipline: in four-on-the-floor music the kick and the bass must take turns (tune them, sidechain the bass and the pads to the kick); weight comes from the kick's punch and the bass's mid harmonics, not piled-up sub. High-pass everything else. Use the master report as feedback: if its EQ cuts hard, fix the mix.

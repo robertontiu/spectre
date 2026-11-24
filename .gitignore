@@ -9,3 +9,4 @@ __pycache__/
 .DS_Store
 site/tracks/*.mp3
 player/tracks/*.mp3
+.claude/settings.local.json
