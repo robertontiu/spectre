@@ -1,0 +1,6 @@
+ZOOM 25.3-37.0s  LUFS -15.8
+  sop          16 events  timing vs 16th grid: mean  -0.0 ms, spread  0.0 ms  velocity 0.85-0.85
+  alto         15 events  timing vs 16th grid: mean +14.1 ms, spread  0.4 ms  velocity 0.85-0.85
+  organ_door    7 events  timing vs 16th grid: mean  +5.3 ms, spread  5.6 ms  velocity 0.50-0.63
+  organ        18 events  timing vs 16th grid: mean  -2.3 ms, spread  7.9 ms  velocity 0.35-0.52
+image: /home/claude/spectre/sessions/012-reunion/ear_zoom.png

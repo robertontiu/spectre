@@ -1,0 +1,4 @@
+ZOOM 3.2-15.8s  LUFS -17.9
+  caller       15 events  timing vs 16th grid: mean +38.7 ms, spread  0.0 ms  velocity 0.85-0.85
+  bell_st       1 events  timing vs 16th grid: mean -15.9 ms, spread  0.0 ms  velocity 0.38-0.38
+image: /home/claude/spectre/sessions/012-reunion/ear_zoom.png
