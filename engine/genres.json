@@ -141,5 +141,37 @@
       "loudness: folk masters -14 to -10 LUFS, LRA at least 6 LU (https://www.sageaudio.com/articles/mastering-for-folk-music); acoustic genres near -16 (RoEx, advice); chart average -8.3 (iZotope 2024)",
       "tonal balance: acoustic genres show a natural top-end decay; folk has the lowest spectral centroid, 603 Hz (Pestana et al. 2013); `rock` is the measured curve with the steepest top of the three available"
     ]
+  },
+  "caroling": {
+    "name": "American Christmas caroling: a carolers' choir (upper voices), handbells, brass, organ, strings; acoustic, no drum kit",
+    "doc": "docs/CAROLING.md",
+    "status": "researched 2026-11-24 for session 012; the tonal target reuses the measured `rock` curve (no choral or folk curve is measured yet), loudness from the Billboard Holiday 100 measurements (iZotope 2025) and a catalogue estimate of choral and a cappella Christmas albums (AcousticBrainz)",
+    "master": {
+      "target": "rock",
+      "lufs": -14.0,
+      "tp": -1.0,
+      "eq": 0.5,
+      "translate": 0.2,
+      "mono_below": 120.0
+    },
+    "length": "2:00-3:30, typically 2:20-3:15 (one carol, a few verses; medleys and concert anthems run longer)",
+    "form": "strophic: verses of 4 or 8 phrases (each 2 or 4 bars) with a refrain or chorus; 2-4 verses; variation by texture between verses (unison, harmony, a descant, a key lift, a bells or brass interlude), an intro of the last phrase or a bell peal, a held or ritardando ending",
+    "tempo": "felt pulse about 50-60 per dotted quarter in 6/8 carols, quarter = 84-112 in duple and triple carols; slow carols lower; rubato and a final ritardando",
+    "meter": "3/4, 6/8 or 4/4; no backbeat; a 3-beat carol bar = 12 steps (4 carol bars = 3 engine bars)",
+    "change_rate": "by verse and phrase: something changes every verse (4-8 carol bars), dynamics and texture inside a verse follow the words",
+    "role": "the carolers carry the tune as a choir texture (voices as instruments: wordless or short refrain fragments, a call at the door); bells, brass and organ answer and fill; no lead vocal carrying verses",
+    "hand_tuned": [
+      "target curve: `rock` reused (the steepest measured top; not measured on choral or acoustic Christmas records)",
+      "lufs -14: a choice between the Holiday 100 average (-12.9) and choral albums (about -19 to -23, estimated)",
+      "eq 0.5: lighter than other genres because the curve is not measured on this music",
+      "translate 0.2: little bass-harmonic enhancement (no bass instrument leads)",
+      "change_rate (craft, from the strophic form)"
+    ],
+    "sources": [
+      "length: MusicBrainz track lengths of five Christmas choral and a cappella albums (Ray Conniff Singers, Here We Come A-Caroling, 1965: median 2:25; Pentatonix 2014: 3:05; Straight No Chaser 2008: 3:13; Chanticleer 2010: 2:39; King's College 1986: 3:10), docs/CAROLING.md",
+      "loudness: Billboard Holiday 100 (week of 6 Dec 2025), 10 songs: average -12.9 LUFS integrated, range -8.8 to -23.3, LRA 7.0 LU (https://www.izotope.com/community/blog/holiday-songs-lufs-2025); AcousticBrainz ReplayGain of the albums above, calibrated on Spectre's own masters (LUFS = -23.7 - RG, about +-1 dB): a cappella pop about -12 to -14, choral and caroling albums about -19 to -23 (docs/CAROLING.md)",
+      "form and tempo: hymnal settings (Hutchins, Carols Old and Carols New, Boston 1916; Bramley & Stainer 1871), Mutopia MIDI tempo marks, AcousticBrainz tempo estimates (docs/CAROLING.md)",
+      "tonal balance: acoustic genres show a natural top-end decay (Pestana et al. 2013); docs/MASTERING.md"
+    ]
   }
 }
