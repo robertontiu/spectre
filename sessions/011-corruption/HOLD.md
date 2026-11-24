@@ -1,1 +1,1 @@
-On hold: waiting for a verified score or recording of the anthem melody (all score sources were blocked from this machine). Start the producer only once the melody is transcribed from a source and recorded in docs/ROMANIAN.md.
+On hold: runs after session 010 (joc țigănesc). Robert permits downloading a MIDI file and a recording of the anthem online (the melody is public domain); transcribe and verify the melody from them, record the sources in docs/ROMANIAN.md, then delete this file and start the producer.

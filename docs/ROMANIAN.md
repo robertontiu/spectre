@@ -42,7 +42,7 @@ The hustle: grinding, working hard to make it, underground, not happy but not de
 - Uneven (aksak) Romanian rhythms: https://folkdancefootnotes.org/dance/dance-information/romanian-dance-rhythms-uneven/
 - Geamparale in 7/16 (Theodor Vasilescu): https://sfdh.us/encyclopedia/romanian_dance_and_music.html
 
-## Anthem: "Deșteaptă-te, române!" (researched 2026-11-24 for session 010)
+## Anthem: "Deșteaptă-te, române!" (researched 2026-11-24 for Session 011)
 Romania's national anthem. What a producer needs to quote it with respect: where the melody comes from, what the law says, what it means to people, and what is known about the music. Not legal advice.
 
 ### Origin and status
