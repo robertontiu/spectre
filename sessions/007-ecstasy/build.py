@@ -19,6 +19,8 @@ tracks = {
     # 6 dB under the kick. Until v028 it was:
     # {"inst": {"type": "clap", "tone": 1200, "decay": 0.2, "spread": 0.6}, "humanize_ms": 1, "send_reverb": 0.25,
     #  "gain_db": 10, "width": 0.4, "fx": [{"type": "sat", "amount": 0.5}, {"type": "highshelf", "hz": 10000, "gain_db": -5}, {"type": "gain", "db": -2.5}]}
+    # v030 (owner's request): the same handclap track with handclap model 2 (the engine default since 2026-11-24, fitted to
+    # recorded claps: longer dense tail, body, darker top). v029 is reproduced exactly by adding "model": 1 to "inst".
     "clap": {"inst": {"type": "handclap", "clappers": 5, "spread_ms": 9, "room": 0.3}, "humanize_ms": 1, "send_reverb": 0.25,
              "gain_db": -7, "width": 0.4, "fx": [{"type": "hpf", "hz": 250}]},
     "ohat": {"inst": {"type": "openhat", "decay": 0.1, "tone": 8500}, "humanize_ms": 1, "pan": 0.12, "gain_db": 8,
