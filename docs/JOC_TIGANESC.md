@@ -105,6 +105,12 @@ Weddings have singers (the band above had a female vocalist) and shouts: dancers
 - Section `"bpm"`: a number or `[from, to]` for a tempo ramp (the accelerando of the last round). 2/4: one pattern bar = two bars of 2/4.
 - A/B renders and spectrograms: `examples/joc/` (old `fiddle` against the new `violin`, the articulations one by one, the band at quarter = 110, the old `cleanguitar` against `acguitar`, an accelerando from 100 to 140, the phrase at quarter = 50).
 
+## What session 010 ("Unison") learned
+- **Tempo:** quarter = 50 worked as a metred slow-dance door (bass on the beat, the chop on the afterbeat), not a lament; the dance then ran 100 → 140 in steps between rounds and ramps where the room gets up and in the last round. The climb itself carried the wedding's lift.
+- **"Rece":** `acguitar` almost dry, `violin` `cold` 0.45 with more bow noise, a short small room and no delay read as cold without losing the lăutar vibrato on long notes. Still an interpretation; check it with the brief's author.
+- **Violin idiom in the engine:** hand-check double stops for playability (`d=` accepts impossible pairs; a same-pitch unison renders well); mark 16ths `nv` at slow tempos; velocity goes after the articulations (`step:note:len/art:vel`).
+- **Mix:** body comes from the sources (guitar body EQ, bass drive, the toba tuned and notched away from the bass notes); the dry band's top end stays 5-6 dB under the borrowed rock curve above 10 kHz, and that is the band, not a fault. A measured folk/acoustic curve is still open.
+
 ## Sources
 - Wikipedia, "Romanian folk violin": https://en.wikipedia.org/wiki/Romanian_folk_violin (read via the mirror https://wiki.krisyotam.com/content/wikipedia_en_all_nopic_2026-03/Romanian_folk_violin)
 - Wikipedia, "Lăutărească music": https://en.wikipedia.org/wiki/L%C4%83ut%C4%83reasc%C4%83_music (mirror: https://wiki.krisyotam.com/content/wikipedia_en_all_nopic_2026-03/L%C4%83ut%C4%83reasc%C4%83_music)

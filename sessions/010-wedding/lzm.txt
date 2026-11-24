@@ -1,0 +1,11 @@
+ZOOM 173.8-188.0s  LUFS -8.4
+  vln          64 events  timing vs 16th grid: mean  -1.5 ms, spread  2.8 ms  velocity 0.66-1.00
+  gtr         270 events  timing vs 16th grid: mean  +8.5 ms, spread  6.2 ms  velocity 0.58-1.00
+  bass         38 events  timing vs 16th grid: mean  -0.1 ms, spread  1.1 ms  velocity 0.73-0.96
+  toba         22 events  timing vs 16th grid: mean  -0.2 ms, spread  1.2 ms  velocity 0.27-0.89
+  cinel        18 events  timing vs 16th grid: mean  +0.0 ms, spread  1.2 ms  velocity 0.41-0.94
+  both         12 events  timing vs 16th grid: mean  -0.2 ms, spread  1.2 ms  velocity 0.71-1.00
+  snare        57 events  timing vs 16th grid: mean  -0.0 ms, spread 14.4 ms  velocity 0.28-0.98
+  snap         30 events  timing vs 16th grid: mean  -0.4 ms, spread  2.1 ms  velocity 0.71-0.92
+  clap         34 events  timing vs 16th grid: mean  -0.2 ms, spread  2.1 ms  velocity 0.66-1.00
+image: /home/claude/spectre/sessions/010-wedding/ear_zoom_mono.png

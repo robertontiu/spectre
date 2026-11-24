@@ -1,0 +1,29 @@
+PHONE: v019.wav  speaker model: HP 280 Hz, +4 dB at 3 kHz, LP 12 kHz  target: rock (genre joc)
+  6-12 kHz vs 1-2.8 kHz -17.5 dB = -5.2 dB vs the target   5-16 kHz -1.0 dB vs the target   flatness 4-16 kHz 0.01 (1 = white noise)   noise-likeness 4-16 kHz 0.57 (slope removed; 1 = noise, 0 = tones)
+  worst 3 s at 163.8 s: 6-12 kHz -3.1 dB vs the target, flatness 0.02
+  section        level  6-12k vs target  flatness
+  prelude        -10.5        -6.3        0.00
+  rarA            -9.9        -6.3        0.00
+  rarB            -8.5        -5.8        0.00
+  ridicare        -6.9        -4.6        0.01
+  r1A             -6.1        -7.8        0.00
+  r1A2            -6.1        -5.6        0.02
+  r1B             -5.6        -5.2        0.01
+  r1B2            -5.5        -5.5        0.01
+  int1            -5.1        -4.7        0.01
+  r2A             -4.4        -5.8        0.02
+  r2A2            -4.2        -6.0        0.02
+  r2B             -3.3        -4.9        0.01
+  r2B2            -3.8        -4.6        0.02
+  int2            -3.9        -3.8        0.01
+  r3C             -3.2        -4.6        0.02
+  r3C2            -2.5        -4.9        0.02
+  r3A             -2.6        -4.5        0.01
+  r3B             -2.8        -5.4        0.02
+  int3            -3.3        -3.9        0.01
+  r4U             -2.8        -5.8        0.00
+  r4U2            -1.8        -4.5        0.02
+  peakA           -1.5        -4.5        0.02
+  peakB            0.0        -5.6        0.01
+  end             -3.7        -5.9        0.00
+  tail           -35.6       -11.4        0.00
