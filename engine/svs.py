@@ -27,6 +27,7 @@ SR = 44100
 PAD_MS = 500.0  # OpenUtau: room for the consonants before the first note
 HEAD_FR = TAIL_FR = 8
 VERSION = 2  # bump when the rendering changes: part of every phrase cache key
+LANG_VERSION = 1  # bump when a non-English G2P (lang_es.py) changes: part of those phrases' cache keys
 HERE = os.path.dirname(os.path.abspath(__file__))
 SVS_DIR = os.path.expanduser(os.environ.get("SPECTRE_SVS_DIR", "~/.cache/spectre/svs"))
 PHRASES = os.path.join(SVS_DIR, "phrases")
@@ -185,6 +186,7 @@ class Bank:
         self.words = {}
         for fn in ("dsdict-en.yaml", "dsdict-en-tgm.yaml"):
             self.words.update(_entries(os.path.join(self.dur_dir, fn)))
+        self.lang_words = {}  # lang -> the bank's own dictionary for that language (dsdict-<lang>.yaml), loaded on use
         voc = info.get("vocoder")
         vy = os.path.join(SVS_DIR, os.path.dirname(voc), "vocoder.yaml") if voc else os.path.join(
             self.root, "dsvocoder", "vocoder.yaml")
@@ -228,7 +230,15 @@ class Bank:
         return self.types.get(ph) in ("semivowel", "liquid")
 
     # -------------------------------------------------------------------------------------------- words
-    def g2p(self, word):
+    def g2p(self, word, lang="en", prev=None):
+        if lang == "es":
+            import lang_es
+            if "es" not in self.lang_words:
+                self.lang_words["es"] = _entries(os.path.join(self.dur_dir, "dsdict-es.yaml"))
+            w = lang_es._clean(word)
+            if w in self.lang_words["es"]:
+                return list(self.lang_words["es"][w])
+            return lang_es.g2p(word, prev) or None
         w = word.lower().strip(",.!?;:'\"")
         if w in self.words:
             return list(self.words[w])
@@ -243,10 +253,25 @@ class Bank:
             return None
         return ["".join(c for c in ph if not c.isdigit()).lower() for ph in prons[0]]
 
-    def syllables(self, word, n):
+    def syllables(self, word, n, lang="en", prev=None):
         """A word's phonemes cut into n syllables (one vowel each). Consonants between two vowels: one goes to the
-        next syllable, the rest stay with the previous one. Falls back to each hyphen part spelled on its own."""
+        next syllable, the rest stay with the previous one (Spanish: lang_es.syllables). Falls back to each hyphen
+        part spelled on its own."""
         parts = [x for x in word.split("-") if x]
+        if lang == "es":
+            import lang_es
+            whole = self.g2p("".join(parts), "es", prev)
+            cut = lang_es.syllables(whole, n) if whole else None
+            if cut:
+                return cut
+            out, pv = [], prev
+            for x in parts[:n]:
+                ph = self.g2p(x, "es", pv) or ["a"]
+                out.append(ph)
+                pv = ph[-1]
+            if len(parts) != n:
+                _warn(f"word {word!r}: {n} notes but the Spanish syllables don't match; hyphenate it (co-ra-zon)")
+            return out + [["a"]] * (n - len(out))
         whole = self.g2p("".join(parts))
         if whole:
             vi = [i for i, ph in enumerate(whole) if self.is_vowel(ph)]
@@ -442,6 +467,9 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
     velocity = float(p.get("velocity", v.get("velocity", 1.0)))
     steps = int(p.get("svs_steps", 20))
     groups = _groups(p, notes)
+    lang = str(p.get("lang") or v.get("lang") or "en")
+    if lang != "en" and lang not in info.get("languages", ["en"]):
+        _warn(f"voice {v['id']!r} (bank {bank_name}) has no {lang!r} data; languages: {info.get('languages', ['en'])}")
     y = np.zeros(total_n + SR, dtype=np.float32)
     rng = np.random.default_rng(seed)
     prev_end = -1e9
@@ -465,7 +493,8 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
         br = breath and (ns[0][0] - prev_end) / 1000 >= breath_after
         pseed = int(_key("seed", seed, words, ns)[:8], 16)
         key = _key(VERSION, bank_name, info.get("vocoder"), mode, mix, gender, velocity, steps, br, detune_cents,
-                   words, [(round(a, 1), round(d, 1), m, k) for a, d, m, k in ns], pseed)
+                   words, [(round(a, 1), round(d, 1), m, k) for a, d, m, k in ns], pseed,
+                   *(() if lang == "en" else ("lang", lang, LANG_VERSION)))
         path = os.path.join(PHRASES, key[:2], key + ".npz")
         if os.path.exists(path):
             z = np.load(path)
@@ -475,10 +504,19 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
                 bank = Bank.get(bank_name, banks)
             phs = []
             done = {}
-            for word, si, n in words:
-                if (word, n) not in done:
-                    done[(word, n)] = bank.syllables(word, n)
-                phs.append(done[(word, n)][si])
+            prev = None  # last phoneme of the previous word in this phrase (Spanish connected-speech allophones)
+            for wi, (word, si, n) in enumerate(words):
+                if lang == "en":
+                    if (word, n) not in done:
+                        done[(word, n)] = bank.syllables(word, n)
+                    phs.append(done[(word, n)][si])
+                    continue
+                if wi > 0 and si == 0:
+                    prev = phs[-1][-1] if phs and phs[-1] else prev
+                kk = (word, n, prev)
+                if kk not in done:
+                    done[kk] = bank.syllables(word, n, lang, prev)
+                phs.append(done[kk][si])
             wav, t0, _ = bank.render(phs, ns, mode, pseed, steps=steps, gender=gender, velocity=velocity,
                                      breath=br, detune_cents=detune_cents, mix=mix)
             os.makedirs(os.path.dirname(path), exist_ok=True)

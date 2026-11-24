@@ -39,6 +39,7 @@ engine/
                   source, consonant onsets for chops); see docs/MANUAL.md "Voices"
   svs.py          `singer` `source: "svs"`: a singing voice synthesizer (DiffSinger voicebanks, ONNX, CPU; OpenUtau's code
                   path, seeded and phrase-cached, deterministic); banks in ~/.cache/spectre/svs (never in git)
+  lang_es.py      Spanish letters to DiffSinger phonemes for svs voices with `"lang": "es"` (Hanami; docs/voice/languages/es.md)
   voices.json     the svs voice catalogue: ids, banks, licences and credit lines, tags (docs/voice/VOICES.md)
   tts_words.py    the word sampler for `singer` `source: "tts"`: Kokoro TTS (local, Apache 2.0) speaks each word
                   neutrally (whole phrases, or single words) into a cache (~/.cache/spectre/words), WORLD analysis, syllable segmentation (phrases aligned to the words by DTW)

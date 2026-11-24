@@ -9,7 +9,17 @@
    "url": "https://lottev.moe/ (v1.0 release post; MediaFire)",
    "vocoder": "potluck/dsvocoder/potluck_pc-nsf_lite.onnx",
    "licence": "Team L❤VE Voicebank License + Terms of Use: any creative use, commercial included, without permission; credit Lotte V; do not redistribute or sell the files or claim the voice; no political, hateful or illegal use. Its own vocoder is CC BY-NC-SA, so the engine uses the Potluck vocoder.",
-   "credit": "Vocals: Hoshino Hanami (DiffSinger voicebank by Lotte V, lottev.moe), Potluck Vocoder by tigermeat (https://github.com/mrtigermeat/potluck-vocoder, licence: see repo)"
+   "credit": "Vocals: Hoshino Hanami (DiffSinger voicebank by Lotte V, lottev.moe), Potluck Vocoder by tigermeat (https://github.com/mrtigermeat/potluck-vocoder, licence: see repo)",
+   "languages": [
+    "en",
+    "ja",
+    "de",
+    "ko",
+    "es",
+    "zh",
+    "fr"
+   ],
+   "languages_note": "recorded data per the bank's readme: English about 2 h, Japanese 40 min, German 17 min, Korean 11 min, Spanish 7 min, Mandarin 6 min, French 3 min (Latin 5 min without a dictionary); Spanish via `\"lang\": \"es\"` (engine/lang_es.py plus the bank's dsdict-es.yaml, MIT); other languages are not wired in the engine"
   },
   "leona": {
    "name": "LEONA -Ubasti- AI for DiffSinger v0.0.1b (beta)",
@@ -18,7 +28,11 @@
    "url": "https://github.com/lottev1991/LotteV-Voicebank-Update-Repo/releases/tag/v0.0.1b-leona",
    "vocoder": "potluck/dsvocoder/potluck_pc-nsf_lite.onnx",
    "licence": "Voicebank CC BY 4.0 plus Lotte V's Terms of Use (as Hanami: credit, no redistribution, no political/hateful use). Its own vocoder is CC BY-NC-SA, so the engine uses the Potluck vocoder.",
-   "credit": "Vocals: LEONA (DiffSinger voicebank by Lotte V, lottev.moe, CC BY 4.0), Potluck Vocoder by tigermeat (https://github.com/mrtigermeat/potluck-vocoder, licence: see repo)"
+   "credit": "Vocals: LEONA (DiffSinger voicebank by Lotte V, lottev.moe, CC BY 4.0), Potluck Vocoder by tigermeat (https://github.com/mrtigermeat/potluck-vocoder, licence: see repo)",
+   "languages": [
+    "en"
+   ],
+   "languages_note": "ships English and Japanese dictionaries only; its phoneme set lacks the Spanish symbols (bh, dh, gh, rx, rr, tx, kx, px, l1, ...): no Spanish"
   }
  },
  "voices": [
@@ -184,6 +198,90 @@
    "audition": "examples/vocals/svs/voices/hanami-dark.mp3"
   },
   {
+   "id": "hanami-es",
+   "bank": "hanami",
+   "mode": "Root",
+   "gender": 0.0,
+   "lang": "es",
+   "range": "A3-D5 (usable G3-F5; most data G3-D5, peak G4)",
+   "range_midi": [
+    55,
+    77
+   ],
+   "tags": {
+    "gender": "female",
+    "register": "mezzo-soprano / pop alto-soprano",
+    "language": "Spanish (Latin American: seseo, yeismo)",
+    "timbre": [
+     "warm",
+     "clear",
+     "natural",
+     "medium-bright"
+    ],
+    "emotions": [
+     "tender",
+     "sincere",
+     "warm",
+     "nostalgic",
+     "hopeful"
+    ],
+    "genres": [
+     "Latin pop",
+     "bolero and bachata lines",
+     "ballad"
+    ],
+    "bad_at": [
+     "a native accent: 7 minutes of Spanish data, words can sound slightly foreign",
+     "male parts",
+     "grit"
+    ]
+   },
+   "settings": "hanami Root singing Spanish: `\"lang\": \"es\"` (set by this id); write the lyrics hyphenated by Spanish syllables (co-ra-zón); see docs/voice/languages/es.md",
+   "audition": "examples/vocals/svs/voices/hanami-es.mp3"
+  },
+  {
+   "id": "hanami-es-soft",
+   "bank": "hanami",
+   "mode": "Nectar",
+   "gender": 0.0,
+   "lang": "es",
+   "range": "A3-C5 (soft modes thin out on top)",
+   "range_midi": [
+    55,
+    77
+   ],
+   "tags": {
+    "gender": "female",
+    "register": "mezzo-soprano / pop",
+    "language": "Spanish (Latin American: seseo, yeismo)",
+    "timbre": [
+     "soft",
+     "dark",
+     "airy",
+     "breathy"
+    ],
+    "emotions": [
+     "intimate",
+     "tender",
+     "longing",
+     "melancholy"
+    ],
+    "genres": [
+     "bolero",
+     "romantic ballad",
+     "Latin acoustic pop",
+     "lo-fi"
+    ],
+    "bad_at": [
+     "cutting through dense mixes",
+     "energy",
+     "a native accent (as hanami-es)"
+    ]
+   },
+   "settings": "hanami Nectar singing Spanish (`\"lang\": \"es\"`); 1-2 dB more level or a quieter bed than the other modes",
+   "audition": "examples/vocals/svs/voices/hanami-es-soft.mp3"
+  },
+  {
    "id": "leona",
    "bank": "leona",
    "mode": "Core",
@@ -304,6 +402,7 @@
   "gender": "-1..1 (0): formant shift; negative = formants down (darker, larger, older), positive = up (brighter, younger). Measured on hanami: -0.5 F1/F2 617/987 -> 498/1009 Hz. Not a male voice: at -1 an octave down it stays a low female voice (examples/vocals/svs/voices/ctl-hanami-male-fake.mp3).",
   "velocity": "0.5..2 (1): consonant speed; small effect on these banks",
   "mix": "a voice entry may give \"mix\": {mode: weight} instead of \"mode\" to blend vocal modes (speaker embeddings interpolated)",
-  "not available": "these banks have no breathiness, tension, voicing or energy controls (their models were trained without them)"
+  "not available": "these banks have no breathiness, tension, voicing or energy controls (their models were trained without them)",
+  "lang": "\"en\" (default) or \"es\" (Hanami only): the language the lyrics are read in. A voice id may set it (hanami-es, hanami-es-soft); a track's `lang` overrides it. Spanish: engine/lang_es.py, docs/voice/languages/es.md"
  }
 }

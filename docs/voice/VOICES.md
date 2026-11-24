@@ -2,7 +2,7 @@
 
 The voices the producer can choose for sung words (docs/MANUAL.md "Voices"). Pick one with `"voice": "<id>"`. The same data is machine-readable in `engine/voices.json`: tags, range, licence and credit. Auditions are in `examples/vocals/svs/voices/<id>.mp3`. Each audition is the same two bars, dry: "here you are, round and round", F#4-B4 at 100 bpm. `examples/vocals/svs/voices.py` rebuilds the auditions and the measurements.
 
-**Voices are instruments** (standing rule 12): short lines, hooks, calls, refrain fragments and choir textures, never a sung song.
+**Voices are instruments** (standing rule 14): short lines, hooks, calls, refrain fragments and choir textures, never a sung song.
 
 ## Licences and credit (read before using a voice)
 
@@ -29,6 +29,8 @@ How to read the measurements: they are taken on the dry audition (pyworld analys
 | `hanami-power` | Hanami / Fragrance | bright, firm, open, forward | joyful, anthemic, confident; pop rock choruses, trance/EDM hooks, calls over dense mixes | intimacy, whisper | -5.7 | 0.06 | 958/1501 | 27 | correct |
 | `hanami-soft` | Hanami / Nectar | soft, dark, airy | intimate, melancholy, dreamy, longing; lo-fi, ambient, ballad, dream pop, choir pads | cutting through guitars or saws; energy | -19.3 | 0.10 | 511/1024 | 39 | correct |
 | `hanami-dark` | Hanami / Root, gender -0.5 | dark, rounded, covered (formants lowered) | solemn, mournful, mysterious, reverent; folk lament, dark ambient, choir alto, cinematic | bright pop; diction in dense mixes | -28.4 | 0.10 | 498/1009 | 32 | wrong ("here's a round-and-down") |
+| `hanami-es` | Hanami / Root, **Spanish** (`"lang": "es"`) | female, warm, clear, natural; Latin American Spanish | tender, sincere, warm, nostalgic; Latin pop, bolero and bachata lines, ballad | a native accent (7 min of Spanish data), male parts, grit | | | | | Spanish: 96% of words ("Spanish" below) |
+| `hanami-es-soft` | Hanami / Nectar, **Spanish** (`"lang": "es"`) | soft, dark, airy; Latin American Spanish | intimate, tender, longing; bolero, romantic ballad, Latin acoustic pop | dense mixes, energy, a native accent | | | | | Spanish: 96% of words |
 | `leona` | LEONA / Core (beta) | bright, light, youthful, character/cute | playful, cheeky, sunny, excited; anime-style hooks, hyperpop, chiptune, trance | mature, serious or sad lines; natural adult pop | -3.2 | 0.05 | 801/1397 | 18 | correct |
 | `leona-power` | LEONA / CatNip (beta) | brightest, hard, edgy | energetic, excited, bratty, triumphant; EDM/trance drops, hyperpop, rock calls | tenderness, warmth | +1.6 | 0.05 | 906/1318 | 18 | slurred ("hear you around") |
 | `leona-soft` | LEONA / CatNap (beta) | soft, breathy, airy, dark | wistful, tender, fragile; lo-fi, dream pop, ambient, choir pads | dense mixes, energy | -17.0 | 0.18 | 526/1030 | 33 | slurred ("hear you around") |
@@ -37,6 +39,24 @@ How to read the measurements: they are taken on the dry audition (pyworld analys
 - Hanami: the training data sits at G3-D5 (most of it C4-A#4, peak G4; `midi_distribution.jpg` in the bank). Write A3-D5. A fifth lower (B3-E4) and a fifth higher (C#5-F#5) both still transcribe correctly (`ctl-hanami-low`, `ctl-hanami-high`). The engine warns outside G3-F5.
 - LEONA: trained together with Hanami's data. The range is assumed to be the same, not measured; the engine warns outside A3-F5.
 - Both are female voices. Writing them an octave lower does not make a male voice.
+
+## Spanish (`hanami-es`, `hanami-es-soft`; searched and checked 2026-11-24)
+
+**What sings Spanish.** Hoshino Hanami is officially trilingual and more: its readme lists the languages "for which actual data has been recorded": English (about 2 h), Japanese (40 min), German (17 min), Korean (11 min), **Spanish (about 7 min)**, Mandarin (6 min), Latin (5 min, no dictionary), French (3 min); "No external data has been used for training. Due to this, some of the data might have a bit of an accent." The bank ships a Spanish dictionary (`dsdur/dsdict-es.yaml`, identical to the one in Lotte V's [update repo](https://github.com/lottev1991/LotteV-Voicebank-Update-Repo/tree/main/dsdict), commit b866687, 2024-09-30) and the Spanish phonemes are in the repo's [Phoneme_chart.md](https://github.com/lottev1991/LotteV-Voicebank-Update-Repo/blob/main/Phoneme_chart.md) (a e i o u1; bh dh gh; px tx kx; rx rr; l1 ny ch x j th zh h; glides y w I1 U1). The dictionary lists only exceptions (numbers, names, about 280 words with consonantal "y"); the engine reads every other word with its own Spanish G2P, `engine/lang_es.py` (rules and sources: [languages/es.md](languages/es.md)), which matches the dictionary on 269 of its 278 Spanish words. **LEONA can't sing Spanish:** it ships English and Japanese dictionaries only and its phoneme set (71 symbols) lacks the Spanish ones.
+
+**Licence.** The same as `hanami` (table above): the Team L❤VE Voicebank License and Lotte V's Terms of Use allow any creative use, commercial included, with credit, no political, hateful or illegal use; the terms are published in Spanish too ([ToU_ES.md](https://github.com/lottev1991/LotteV-Voicebank-Update-Repo/blob/main/ToU_ES.md), a machine translation; the English text rules). The dictionaries are MIT (`__License/LICENSE_dictionaries.txt`). Credit line: the `hanami` one. Fit for CC BY tracks under the same conditions as the English voice.
+
+**Pronunciation, measured** (`examples/vocals/svs/spanish.py`; five lines, 92 bpm, E4-B4, dry; Whisper small, multilingual, forced to Spanish for word accuracy, and once with language detection; results in `examples/vocals/svs/spanish.json`, auditions `voices/hanami-es.mp3`, `voices/hanami-es-soft.mp3`):
+
+| voice | word accuracy | heard as Spanish | the only miss |
+|---|---|---|---|
+| `hanami-es` | **96%** (27/28 words) | 5 of 5 lines (p 0.40-0.97) | "guardo" heard as "cuarto" |
+| `hanami-es-soft` | **96%** (27/28) | 4 of 5 (one line as Italian, p 0.41) | "guardo" heard as "cuarto" |
+| control: `hanami` with the English path (cmudict) | 4% | 0 of 5 | most words sung as "ah" ("Cut up all abroad to number") |
+
+Lines: "cada palabra lleva tu nombre", "quiero quedarme aquí contigo", "guardo tu voz en el papel", "mi corazón no sabe esperar", "te escribo con la luz de la mañana". Verdict: proper Spanish by machine measure; the accent still needs the owner's ear (and ideally a native speaker's). A word-initial voiced stop before a glide ("gu-") can be heard voiceless; prefer other words on exposed notes or check them.
+
+**Searched for other Spanish DiffSinger voices (2026-11-24): none usable.** Web searches (English and Spanish) for Spanish DiffSinger voicebanks, multilingual banks and OpenUtau Spanish phonemizers found no other bank with published terms that allow commercial use: Apollo DS and Aurelian Silva DS (multilingual, no stated terms; see "What is missing" below), community banks on personal sites without terms (the Lenz Blair page on furloidnia.com could not be opened here), and the non-commercial banks already listed below. OpenUtau's Spanish phonemizers are code (the engine has its own G2P), not voices.
 
 ## Controls (what they can and can't fake)
 

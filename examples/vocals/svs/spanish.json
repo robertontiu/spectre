@@ -1,0 +1,133 @@
+{
+ "hanami-es": {
+  "voice": "hanami-es",
+  "params": {},
+  "word_accuracy": 0.964,
+  "lines": [
+   {
+    "lyrics": "cada palabra lleva tu nombre",
+    "heard": "Cada palabra lleva tu nombre",
+    "words": 1.0,
+    "detected": "es",
+    "detected_p": 0.4
+   },
+   {
+    "lyrics": "quiero quedarme aquí contigo",
+    "heard": "Quiero quedarme aquí contigo",
+    "words": 1.0,
+    "detected": "es",
+    "detected_p": 0.97
+   },
+   {
+    "lyrics": "guardo tu voz en el papel",
+    "heard": "Cuarto tu voz en el papel",
+    "words": 0.833,
+    "detected": "es",
+    "detected_p": 0.63
+   },
+   {
+    "lyrics": "mi corazón no sabe esperar",
+    "heard": "Mi corazón no sabe esperar",
+    "words": 1.0,
+    "detected": "es",
+    "detected_p": 0.96
+   },
+   {
+    "lyrics": "te escribo con la luz de la mañana",
+    "heard": "Te escribo con la luz de la mañana",
+    "words": 1.0,
+    "detected": "es",
+    "detected_p": 0.91
+   }
+  ],
+  "detected_spanish": 5
+ },
+ "hanami-es-soft": {
+  "voice": "hanami-es-soft",
+  "params": {},
+  "word_accuracy": 0.964,
+  "lines": [
+   {
+    "lyrics": "cada palabra lleva tu nombre",
+    "heard": "Cada palabra lleva tu nombre.",
+    "words": 1.0,
+    "detected": "es",
+    "detected_p": 0.48
+   },
+   {
+    "lyrics": "quiero quedarme aquí contigo",
+    "heard": "Quiero quedarme aquí contigo",
+    "words": 1.0,
+    "detected": "es",
+    "detected_p": 0.93
+   },
+   {
+    "lyrics": "guardo tu voz en el papel",
+    "heard": "Cuarto tu voz en el papel",
+    "words": 0.833,
+    "detected": "it",
+    "detected_p": 0.41
+   },
+   {
+    "lyrics": "mi corazón no sabe esperar",
+    "heard": "Mi corazón no sabe esperar",
+    "words": 1.0,
+    "detected": "es",
+    "detected_p": 0.96
+   },
+   {
+    "lyrics": "te escribo con la luz de la mañana",
+    "heard": "Te escribo con la luz de la mañana",
+    "words": 1.0,
+    "detected": "es",
+    "detected_p": 0.94
+   }
+  ],
+  "detected_spanish": 4
+ },
+ "ctl-hanami-es-english-g2p": {
+  "voice": "hanami",
+  "params": {
+   "lang": "en"
+  },
+  "word_accuracy": 0.036,
+  "lines": [
+   {
+    "lyrics": "cada palabra lleva tu nombre",
+    "heard": "Cut up all abroad to number",
+    "words": -0.2,
+    "detected": "en",
+    "detected_p": 0.68
+   },
+   {
+    "lyrics": "quiero quedarme aquí contigo",
+    "heard": "Oh, rock you, diamond, uh, gondigo",
+    "words": -0.5,
+    "detected": "ja",
+    "detected_p": 0.4
+   },
+   {
+    "lyrics": "guardo tu voz en el papel",
+    "heard": "I do, do, I am a Paula",
+    "words": -0.167,
+    "detected": "en",
+    "detected_p": 0.5
+   },
+   {
+    "lyrics": "mi corazón no sabe esperar",
+    "heard": "Mi corona, ¡Sami Eza!",
+    "words": 0.2,
+    "detected": "ja",
+    "detected_p": 0.45
+   },
+   {
+    "lyrics": "te escribo con la luz de la mañana",
+    "heard": "Tía es abogada, la luz de la lana",
+    "words": 0.5,
+    "detected": "en",
+    "detected_p": 0.61
+   }
+  ],
+  "detected_spanish": 0
+ }
+}
