@@ -31,5 +31,49 @@ For sessions that make hip hop beats: boom-bap, hardcore and aggressive rap, and
 - **Distortion and the top end.** Driving snares, claps and hats adds noise at 4-12 kHz, the part that sounds like static on a phone (in 002, about 95% of the 4-12 kHz energy was the snare hits). Drive the body, then shelve or low-pass the top; run `listen --phone --genre hiphop` before mastering.
 - **The low end against the measured curve.** The remasters of 001-005 still sat 7-10 dB over the hip-hop curve at 40 Hz and the master cut there at its limit (docs/MASTERING.md). Get the 808's weight from saturation and its second harmonic (`tone`), tune the kick away from the 808 (002: kick at 62 Hz, 808 notched), and vary the 808's notes so the low end is even (005).
 
+## Mixing the voice (researched 2026-11-24)
+A Spectre beat leaves the verses to a rapper who isn't there; its own voices are instruments: a sung or chanted hook fragment, ad-libs and shouts, chops, a choir pad. The principles for every genre, the choir research and the check procedure are in [docs/voice/MIXING.md](voice/MIXING.md). Values marked *(hand-tuned)* are Spectre's starting points. Reminder: the svs voices may not be used on a political subject (session 011); use `vox2` or the `tts` singer there.
+
+**What the research says**
+- **Up front and dry-ish, the measured way:** rap leads sit 3.2 dB over the accompaniment on average, second only to country ([Gerdes & Siedenburg 2023](https://www.geidai.ac.jp/~marui/course_enshu_2024/gerdes_siedenburg_202304.pdf)). The vocal must not sit so low that the kick drowns it nor so high that the 808s lose their impact ([Evan LaRay, Sound On Sound](https://www.soundonsound.com/techniques/inside-track-cardi-b-bodak-yellow)).
+- **A documented hook chain** ("Bodak Yellow"): high-pass around 100 Hz, -3 dB at 300 Hz for mud, -3 dB at 4 kHz for a piercing frequency, a fast FET compressor on peaks, a de-esser at 4.27 kHz; on the vocal bus a second de-esser, another compressor, a multiband lifting the highs and holding the lows, saturation and a limiter; a parallel bus compressed heavily with a 5 kHz boost and an exciter. The main delay is a quarter note, 9 dB down; the reverb is set "tight"; the long effect (a hall of 7 s behind 15 ms) lives on separate effect tracks with an 8th-note ping-pong delay, not on the lead (LaRay, above).
+- **Hook against verse, doubles, ad-libs** (the same session): only the hook gets the stereo delay, to separate it from the verse; doubles are compressed, lose their highs and everything under 200 Hz, and get a delay that puts them in another space than the lead; ad-libs get distortion, auto-panning and reverb.
+- **A lead chain a decade earlier** (Jay-Z, mixed by Young Guru): tube compression twice, a Lexicon 480 reverb and a quarter-note delay, the ad-libs treated like the lead; he leaves the stereo bus to mastering ([Sound On Sound](https://www.soundonsound.com/techniques/secrets-mix-engineers-young-guru)).
+- **Voices as percussion and crowd:** a repeated "Hey" used "almost as percussion" got a high-pass and about 3 kHz of boost; a vocal swirl got delay only; crowd responses were grouped, high-passed around 100 Hz and given 8 kHz (Young Guru, above). That is how a beat treats a voice that is not the rapper.
+- **Mastering:** the loudest of Spectre's vocal contexts after trance: chart hip hop sits around -8 LUFS with about 3.5 dB of limiter gain reduction (Configuration). The limiter works on every kick and 808 note, so a voice sitting on those beats is ducked by the master and its reverb comes up between them: keep sends small and check words on the master. Hip hop is the narrowest genre measured (Configuration): the hook voice lives in the centre, and width comes from doubles and ad-libs.
+
+**Starting chains** (*hand-tuned* from the documented chains; the engine has no de-esser, parallel bus or multiband):
+```json
+"mix": {"reverb": {"size": 0.5, "damping": 0.6, "return_db": -8, "lpf": 6000},
+        "delay":  {"beats": 1, "feedback": 0.25, "return_db": -9, "lpf": 3500}},
+
+"hook":  {"inst": {"type": "singer", "source": "svs", "voice": "hanami", "double": 0.2, "double_pan": 0.7,
+                   "inhale": 0.2, "svs_fade_in_ms": 15, "svs_fade_out_ms": 100},
+          "send_reverb": 0.08, "reverb_predelay_ms": 40, "send_delay": 0.06,
+          "fx": [{"type": "hpf", "hz": 100}, {"type": "eq", "hz": 300, "gain_db": -3, "q": 0.9},
+                 {"type": "eq", "hz": 800, "gain_db": -2, "q": 0.9}, {"type": "comp", "threshold_db": -24, "ratio": 4},
+                 {"type": "sat", "amount": 0.15}, {"type": "highshelf", "hz": 8000, "gain_db": 3},
+                 {"type": "gain", "db": 8}]},
+
+"adlib": {"inst": {"...": "hanami-power or leona-power (or tts male); one word or a shout"},
+          "pan": 0.5, "send_reverb": 0.25, "send_delay": 0.3,
+          "fx": [{"type": "hpf", "hz": 200}, {"type": "lpf", "hz": 6000}, {"type": "drive", "db": 6},
+                 {"type": "comp", "threshold_db": -24, "ratio": 5}]},
+
+"chop":  {"inst": {"...": "any voice; short syllables, pitch or formant moved"},
+          "fx": [{"type": "hpf", "hz": 200}, {"type": "eq", "hz": 3000, "gain_db": 3, "q": 0.8},
+                 {"type": "comp", "threshold_db": -24, "ratio": 5}], "send_delay": 0.15}
+```
+- **The hook fragment:** dry and close (reverb is distance; `size` 0.5 is 1.15 s, sends under 0.1), a quarter-note delay well under the voice, 4:1 with a little saturation, the 300 Hz cut from the documented chain. Level 1-3 LU over the beat's music without the 808 and kick, and never over the kick's peaks *(hand-tuned from the measured 3.2 dB)*. If a rapper is meant to use the beat, the hook fragment is a guide: keep 300 Hz-3 kHz free in the verses (Configuration, "Role") and put the voice only where a hook would be.
+- **Ad-libs and shouts:** off-centre, darker and dirtier than the hook, with the long effects; 4-8 LU under the hook.
+- **Doubles:** `double` 0.2-0.3 on the hook; a separate double track gets `hpf` 200 and a high cut.
+- **Chops:** percussion made of voice: high-pass, a 3 kHz bell, heavy compression, a delay for bounce; no reverb needed. Soul-sample-style pitched chops: `{"type": "pitch", "semitones": 3}` to 5 on a short phrase, low-passed.
+- **Choir pads** (the dark-trap or drill choir): MIXING.md "Choir and ensemble voices": vowels only, `svs_vibrato` 0.3-0.5, `hanami-dark` and the soft voices, `hpf` 250, 8-10 LU under the 808, sidechained to the kick.
+- **808 and voice:** an 808's harmonics and saturation reach into 200-600 Hz, the voice's body. Cut the voice there (the 300 Hz move), not the 808.
+
+**How to check:** MIXING.md "Checking a voice": Whisper on the hook line in the mix and on the master, the vocal-versus-band loudness from a render with the voice tracks muted, and `listen --phone --genre hiphop` (a phone has no 808: the voice-to-beat balance changes most there, so the hook must not become shouting on a phone).
+
+**Unsourced here:** the levels of ad-libs, chops and pads; everything about a choir in a beat; the sends.
+
 ## Unsourced in this brief
 The 85-100 window for a hard boom-bap pocket (inside the measured ranges, but chosen by craft), the rate of change, the aggression cues beyond the emotion research in CRAFT.md, and the "two pockets" framing.

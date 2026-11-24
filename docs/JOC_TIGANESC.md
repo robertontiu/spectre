@@ -99,6 +99,38 @@ From a three-day Romani village wedding documented by Beissinger ([Folklorica 20
 ## Vocals
 Weddings have singers (the band above had a female vocalist) and shouts: dancers and musicians call out (*strigături*), and the lăutar violin hold leaves the voice free "for calls to dancers" ([Romanian folk violin](https://en.wikipedia.org/wiki/Romanian_folk_violin)). A voice is optional. Engine limits: the natural `singer` `"source": "tts"` (Kokoro) speaks English, not Romanian (a Romanian word will come out with English or another language's pronunciation); eSpeak NG has a Romanian voice but sounds robotic. If a voice is used, keep it to a few short calls or wordless lines, and check that they read as the room, not as a gimmick.
 
+## Mixing the voice (researched 2026-11-24)
+A voice in a joc is a call, a shout or a short wordless line, never the lead: the violin leads. The principles for every genre and the check procedure are in [docs/voice/MIXING.md](voice/MIXING.md). Values marked *(hand-tuned)* are Spectre's starting points. No engineer's account with settings for a lăutar or Romanian folk vocal was found; the sources are ethnographic.
+
+**What the research says**
+- **What voices do over a dance.** *Strigături* are rhythmic shouts in rhyming verse, "an integral part of Romanian folk dances in all zones except Banat": shouted by the dancers, their cadence "the same as the cadence of the steps", usually eight syllables a line, by one person, by a group in unison, or as a dialogue between two groups. A *comandă* is a single word or short shout from the dance leader that signals a change of figure, found mainly in the south ([Eliznik](https://eliznik.org.uk/traditions-in-romania/traditional-dance/strigaturi-and-comanda/)). So the idiomatic voice is spoken-chanted, in the room with the dancers, on the dance's rhythm; a sung lead line belongs to the song genres, not to the joc.
+- **The space musicians ask for.** Rom lăutari recording at home asked the ethnomusicologist to add reverb, "typically a 'plate' reverb with a long audible tail", which they felt "opened" the sound; a proper recording is "clean and well arranged", made without an audience, and studio tricks (layering, edits) are normal ([Stoichiță 2024, Journal of Sonic Studies](https://researchcatalogue.net/view/2623369/2623376)). Wedding bands play amplified (the same source recorded one from 200 m away). The polished, reverberant studio sound is the tradition's own taste, not a foreign gloss.
+- **Level:** nothing measured for folk. In a band where the primaș leads, a call sits with the accompaniment, under the violin.
+- **Mastering:** folk masters -14 to -10 LUFS with a loudness range of at least 6 LU (Configuration); at `joc`'s -11 the master barely touches a short call. The borrowed `rock` curve is the risk: don't brighten a voice to satisfy it (MIXING.md, "What Spectre's master does to a voice").
+
+**What the engine can sing here.** Romanian sung words are not supported yet (docs/voice/languages/ro.md: no voice was trained on Romanian; the Hanami phoneme mapping is an experiment awaiting a native listener; the svs voices are female and may not be used on a political subject). So today: wordless lines and shouts on open vowels (`vox2`, or an svs voice on "ah" or "hey": the svs voices read English words from their dictionary and sing an unknown word as "ah", with a render warning), or no voice.
+
+**Starting chains** (*hand-tuned*):
+```json
+"mix": {"reverb": {"size": 0.6, "damping": 0.5, "return_db": -6, "lpf": 7000}},
+
+"strigat": {"inst": {"type": "singer", "source": "svs", "voice": "hanami-power", "svs_vibrato": 0.3,
+                     "svs_fade_in_ms": 5, "svs_fade_out_ms": 40},
+            "pan": 0.3, "send_reverb": 0.15, "reverb_predelay_ms": 30, "push_ms": 0,
+            "fx": [{"type": "hpf", "hz": 150}, {"type": "eq", "hz": 800, "gain_db": -2, "q": 0.9},
+                   {"type": "comp", "threshold_db": -22, "ratio": 3}, {"type": "highshelf", "hz": 8000, "gain_db": 2}]},
+
+"doina":   {"inst": {"...": "hanami or hanami-soft on 'ah', long notes, svs_vibrato 1"},
+            "send_reverb": 0.3, "reverb_predelay_ms": 60,
+            "fx": [{"type": "hpf", "hz": 110}, {"type": "eq", "hz": 800, "gain_db": -2.5, "q": 0.9},
+                   {"type": "highshelf", "hz": 8000, "gain_db": 3}]}
+```
+- **Shouts and calls (`strigat`):** short notes on the dance's rhythm, one pitch or a narrow chant, off-centre like a dancer in the room, 3-6 LU under the violin and never in its phrases' peaks; several shouters = several tracks with other `seed`s and voices, all at `push_ms` 0 if they shout words together (MIXING.md, choirs). The plate the musicians ask for is `size` 0.6-0.75 (1.4-2.1 s) on the bus, shared with the violin.
+- **A wordless slow line (`doina`, for a rar opening):** the one place a voice may carry a phrase: more reverb behind a pre-delay, natural vibrato, level with the violin or handing over to it.
+- **No doubles, no delay throws, no chops:** none of them belongs to the idiom (editorial).
+
+**How to check:** a wordless call has nothing to transcribe; measure the vocal-versus-band loudness (MIXING.md "Checking a voice") and look at the violin's phrase peaks in the zoom view to see that the call sits in the gaps. If the Romanian mapping is approved later, check words with Whisper `small` forced to Romanian as `examples/vocals/svs/romanian.py` does.
+
 ## Engine mapping (details in docs/MANUAL.md, "Lăutar band", "Tempo changes", "Other meters")
 - `violin` (bowed waveguide, modal body, articulations after the length: `/g-1`, `/m+1`, `/tr+1`, `/ftr+1`, `/sl-3`, `/fall-3`, `/turn`, `/d=D4`, `/h`, `/pz`, `/sp`, `/trem`, `/s`, `/acc`, `cold` 0-1).
 - `acguitar` (nylon by default, dry; `chop` for the țiitură), `ebass`, `toba` (boom, cinel, both, rim), `kitsnare`, `darbuka`, `handclap`, `snap`.
