@@ -35,7 +35,7 @@ engine/
                   TTS, then laid on the melody with the WORLD vocoder) and `vox2` (improved wordless voice: LF glottal
                   source, consonant onsets for chops); see docs/MANUAL.md "Voices"
   tts_words.py    the word sampler for `singer` `source: "tts"`: Kokoro TTS (local, Apache 2.0) speaks each word
-                  neutrally into a cache (~/.cache/spectre/words), WORLD analysis, syllable segmentation
+                  neutrally (whole phrases, or single words) into a cache (~/.cache/spectre/words), WORLD analysis, syllable segmentation (phrases aligned to the words by DTW)
   hand.py         the hand: step/note/chord notation parser, swing, humanization, voicing, rolls, arps
   studio.py       project loader, arrangement scheduler, track rendering, fx, sends, sidechain, section
                   automation and transitions, quick master, CLI (render / listen / master)

@@ -311,3 +311,92 @@ def syllables(word, n_syl, p):
         on, nu, co = _parts(ws, 0, len(ws["f0"]))
         out.append(dict(w=ws, on=on, nu=nu, co=co))
     return out
+
+
+def _feats(w):
+    """Per-frame features for alignment: 24 log band energies of the spectral envelope (mel-like spacing up to
+    8 kHz), voicing and level."""
+    fr = w["freqs"]
+    edges = 700 * (10 ** (np.linspace(np.log10(1 + 80 / 700), np.log10(1 + 8000 / 700), 25)) - 1)
+    lsp = np.log(w["sp"] + 1e-20)
+    bands = np.stack([lsp[:, (fr >= a) & (fr < b)].mean(1) for a, b in zip(edges[:-1], edges[1:])], 1)
+    return np.concatenate([bands, 3.0 * (w["f0"] > 0)[:, None], (w["r"] / 4.0)[:, None]], 1)
+
+
+def _dtw_map(A, B):
+    """Dynamic time warping of feature sequences A (m frames) onto B (n frames): for each frame of A, the mean B
+    frame it aligns to."""
+    mu, sd = np.concatenate([A, B]).mean(0), np.concatenate([A, B]).std(0) + 1e-6
+    A, B = (A - mu) / sd, (B - mu) / sd
+    m, n = len(A), len(B)
+    C = np.sqrt(((A[:, None, :] - B[None, :, :]) ** 2).sum(2))
+    D = np.full((m + 1, n + 1), np.inf)
+    D[0, 0] = 0.0
+    for i in range(1, m + 1):
+        row = D[i]
+        prev = D[i - 1]
+        diag = np.minimum(prev[:-1], prev[1:])  # (i-1, j-1) and (i-1, j)
+        for j in range(1, n + 1):
+            row[j] = C[i - 1, j - 1] + min(diag[j - 1], row[j - 1])
+    i, j = m, n
+    acc = [[] for _ in range(m)]
+    while i > 0 and j > 0:
+        acc[i - 1].append(j - 1)
+        k = np.argmin([D[i - 1, j - 1], D[i - 1, j], D[i, j - 1]])
+        if k == 0:
+            i, j = i - 1, j - 1
+        elif k == 1:
+            i -= 1
+        else:
+            j -= 1
+    return np.array([np.mean(a) if a else np.nan for a in acc])
+
+
+def phrase_syllables(words, p):
+    """Phrase mode: the TTS speaks the whole phrase (the words between two rests) in one go, so the joins between
+    words keep their natural linking ('here-you', 'round-and'); the phrase is then cut into its syllables. words: the
+    lyric words in order (hyphens mark syllables). How it cuts: each word is also spoken alone (cached), its syllable
+    cuts found as in word mode, and the words in a row are aligned to the phrase by dynamic time warping on their
+    spectral envelopes and voicing; every syllable and word boundary is mapped through that alignment onto the
+    phrase and moved to the deepest vowel-strength dip within 20 ms. Returns the analysed syllables in order (same
+    form as syllables()), or None when the phrase doesn't segment cleanly (the caller then falls back to word mode)."""
+    voice = kokoro_voice(p)
+    speed = float(p.get("tts_speed", 0.9))
+    pieces = [[s for s in wd.split("-") if s] for wd in words]
+    N = sum(len(x) for x in pieces)
+    text = " ".join("".join(x) for x in pieces)
+    w = analyze(text, voice, speed)
+    nF = len(w["f0"])
+    if nF < 4 * N:
+        return None
+    feats, bounds, t = [], [], 0
+    for x in pieces:
+        ww = analyze("".join(x), voice, speed)
+        rng = _split(ww, len(x)) if len(ww["f0"]) > 6 else None
+        if rng is None:
+            n = len(ww["f0"])
+            rng = [(int(n * k / len(x)), int(n * (k + 1) / len(x))) for k in range(len(x))]
+        if t > 0:
+            bounds.append(t)  # the word boundary
+        bounds += [t + a for a, _ in rng[1:]]  # syllable boundaries inside the word
+        feats.append(_feats(ww))
+        t += len(ww["f0"])
+    mp = _dtw_map(np.concatenate(feats), _feats(w))
+    v = np.where(w["f0"] > 0, w["v"], w["v"].min() - 10)
+    vs = np.convolve(v, np.ones(3) / 3, mode="same")
+    cuts = [0]
+    for b in bounds:
+        c = int(round(mp[min(b, len(mp) - 1)]))
+        lo, hi = max(cuts[-1] + 3, c - 4), min(nF - 3, c + 5)
+        c = lo + int(np.argmin(vs[lo:hi])) if hi > lo else max(cuts[-1] + 3, min(c, nF - 3))
+        cuts.append(c)
+    cuts.append(nF)
+    if any(b - a < 3 for a, b in zip(cuts[:-1], cuts[1:])):
+        return None
+    out = []
+    for a, b in zip(cuts[:-1], cuts[1:]):
+        on, nu, co = _parts(w, a, b)
+        out.append(dict(w=w, on=on, nu=nu, co=co))
+    fin = final_consonants("".join(pieces[-1]), "en-gb" if voice[:1] == "b" else "en-us")
+    out[-1] = _voiced_coda(_cap_coda(out[-1], fin), fin)
+    return out

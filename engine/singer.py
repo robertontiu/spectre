@@ -224,8 +224,12 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False):
                 tok = ("oo", 0, 1)
                 _warn("a melisma '_' with no syllable before it sings 'oo'")
             groups.append(dict(tok=tok, notes=[nt]))
+    if p.get("source") == "tts" and p.get("tts_mode", "phrase") == "phrase":
+        _phrase_syllables(p, groups)
     wcache = {}
     for g in groups:
+        if "syl" in g:  # set by phrase mode
+            continue
         wd, si, n = g["tok"]
         if (wd, n) not in wcache:
             try:
@@ -313,6 +317,41 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False):
     return src_w, src_i, tgt, vel, start, fresh, groups, cons
 
 
+def _phrase_syllables(p, groups):
+    """`tts` phrase mode: split the sung syllables into phrases at rests of at least `phrase_gap_s` (0.3 s; only
+    between words), have the TTS speak each phrase in one go, and give each syllable its segment of the phrase.
+    A phrase that doesn't segment cleanly falls back to word mode (with a warning)."""
+    import tts_words
+    gap = float(p.get("phrase_gap_s", 0.3)) * SR
+    phrases, cur, prev_end = [], [], None
+    for gi, g in enumerate(groups):
+        si = g["tok"][1]
+        g0 = g["notes"][0]["t0"]
+        if cur and si == 0 and prev_end is not None and g0 - prev_end >= gap:
+            phrases.append(cur)
+            cur = []
+        cur.append(gi)
+        prev_end = g["notes"][-1]["t0"] + g["notes"][-1]["n"]
+    if cur:
+        phrases.append(cur)
+    for ph in phrases:
+        toks = [groups[gi]["tok"] for gi in ph]
+        if toks[0][1] != 0 or toks[-1][1] != toks[-1][2] - 1:
+            continue  # a phrase must hold whole words
+        words = [t[0] for t in toks if t[1] == 0]
+        try:
+            sy = tts_words.phrase_syllables(words, p)
+        except Exception as e:  # pragma: no cover
+            _warn(f"phrase mode failed for '{' '.join(words)}': {e}")
+            sy = None
+        if sy is None or len(sy) != len(ph):
+            _warn(f"couldn't cut the spoken phrase '{' '.join(words)}' into {len(ph)} syllables; singing it word by "
+                  "word")
+            continue
+        for gi, s_ in zip(ph, sy):
+            groups[gi]["syl"] = s_
+
+
 def _pitch_curve(p, tgt, start, fresh, rng, detune_cents=0.0):
     """Sung pitch per frame (Hz) from the note targets: scoop, glide, vibrato, drift, jitter; `tune` pulls toward
     the exact note."""
@@ -333,22 +372,47 @@ def _pitch_curve(p, tgt, start, fresh, rng, detune_cents=0.0):
     # transition smoothing: natural portamento (glide_ms) vs hard-tune (retune_ms); a fresh (non-glide) note
     # jumps to its pitch (then scoops), a `~` note glides from the previous one
     glide_ms = p.get("glide_ms", 70) * (1 - tune) + p.get("retune_ms", 15) * tune
-    a1 = 1.0 / max(1.0, glide_ms / FP)
-    sm = filled.copy()
-    for i in range(1, nF):
-        if filled[i] != filled[i - 1] and fresh[i]:
-            sm[i] = filled[i]
-        else:
-            sm[i] = sm[i - 1] + a1 * (filled[i] - sm[i - 1])
+    port = float(p.get("portamento_ms", 0) or 0)
+    rng2 = np.random.default_rng(_seed("sung", p.get("seed", 1), detune_cents))  # only the options below draw from it
+    if port > 0:
+        # sung transitions: every note change glides like a singer's (a damped second-order move, so the pitch can
+        # overshoot a little and settle) over about portamento_ms (blended toward retune_ms by `tune`)
+        T = (port * (1 - tune) + p.get("retune_ms", 15) * tune) / 1000.0
+        os_ = float(np.clip(p.get("overshoot", 0.08), 1e-3, 0.5))
+        zeta = -np.log(os_) / np.sqrt(np.pi ** 2 + np.log(os_) ** 2)
+        # a short note can't spend its length gliding: each glide takes at most 35% of its note
+        Tn = np.full(nF, T)
+        ch = [0] + [i for i in range(1, nF) if filled[i] != filled[i - 1]] + [nF]
+        for a_, b_ in zip(ch[:-1], ch[1:]):
+            Tn[a_:b_] = min(T, 0.35 * (b_ - a_) * FP / 1000)
+        wn_ = 1.8 / np.maximum(Tn, 0.01)
+        dt = FP / 1000
+        sm = filled.copy()
+        x, v = filled[0], 0.0
+        for i in range(nF):
+            wn = wn_[i]
+            v += dt * (wn * wn * (filled[i] - x) - 2 * zeta * wn * v)
+            x += dt * v
+            sm[i] = x
+    else:
+        a1 = 1.0 / max(1.0, glide_ms / FP)
+        sm = filled.copy()
+        for i in range(1, nF):
+            if filled[i] != filled[i - 1] and fresh[i]:
+                sm[i] = filled[i]
+            else:
+                sm[i] = sm[i - 1] + a1 * (filled[i] - sm[i - 1])
     # scoop up into fresh notes (off by default: a scoop on every syllable, together with the formant sweep of the
     # onset consonant, reads as a bird-like chirp on high notes; use it on a few long notes)
     scoop = p.get("scoop", 0.0) * (1 - tune)
     env = np.zeros(nF)
     idx = np.where(start)[0]
     tt = np.arange(nF) * FP / 1000
+    some = float(p.get("scoop_some", 1.0))  # the share of notes that get the scoop (chosen at random)
     for a in idx:
         L = min(nF - a, int(0.25 / (FP / 1000)))
-        env[a:a + L] = np.maximum(env[a:a + L], np.exp(-tt[:L] / 0.05))
+        wgt = 1.0 if some >= 1 else float(rng2.random() < some)
+        env[a:a + L] = np.maximum(env[a:a + L], wgt * np.exp(-tt[:L] / 0.05))
     # vibrato, delayed after each fresh note
     since = np.zeros(nF)
     c = 1e9
@@ -357,10 +421,38 @@ def _pitch_curve(p, tgt, start, fresh, rng, detune_cents=0.0):
         since[i] = c
     vdepth, vrate, vdelay = p.get("vibrato", 0.25), p.get("vib_rate", 5.2), p.get("vib_delay", 0.25)
     rate = vrate * (1 + 0.06 * np.interp(tt, np.linspace(0, tt[-1] + 1e-3, 16), rng.normal(0, 1, 16)))
+    vmin, vary, vlate = float(p.get("vib_min_s", 0)), float(p.get("vib_vary", 0)), float(p.get("vib_late", 0))
+    venv = None
+    if vmin > 0 or vary > 0 or vlate > 0:
+        # sung vibrato: only on notes at least vib_min_s long, starting late (after vib_delay or vib_late of the
+        # note, whichever is later) and easing in over 0.3 s, each note with its own depth and rate (vib_vary)
+        venv = np.zeros(nF)
+        rmul = np.ones(nF)
+        bounds = list(idx) + [nF]
+        for k, a in enumerate(idx):
+            b = bounds[k + 1]
+            z = np.where(tgt[a:b] <= 0)[0]
+            e = a + (int(z[0]) if len(z) else b - a)
+            dur = (e - a) * FP / 1000
+            depth = 1.0 + vary * rng2.uniform(-1, 1)
+            rmul[a:b] = 1.0 + 0.12 * vary * rng2.uniform(-1, 1)
+            if dur < vmin:
+                continue
+            d0 = max(vdelay, vlate * dur)
+            tl = (np.arange(e - a) * FP / 1000 - d0) / 0.3
+            venv[a:e] = depth * np.clip(tl, 0, 1)
+        rate = rate * rmul
     vph = 2 * np.pi * np.cumsum(rate) * FP / 1000 + rng.random() * 6
-    vib = vdepth * np.sin(vph) * np.clip((since - vdelay) / 0.4, 0, 1)
+    if venv is None:
+        vib = vdepth * np.sin(vph) * np.clip((since - vdelay) / 0.4, 0, 1)
+    else:
+        vib = vdepth * np.sin(vph) * venv
     drift = np.interp(tt, np.linspace(0, tt[-1] + 1e-3, max(4, int(tt[-1] * 2))),
                       rng.normal(0, 0.08, max(4, int(tt[-1] * 2)))) * (1 - tune)
+    dc = float(p.get("drift_cents", 0))
+    if dc > 0:  # a slow wander of its own (about 0.7 points a second), scaled by 1 - `tune`
+        k = max(4, int(tt[-1] * 0.7) + 2)
+        drift = drift + np.interp(tt, np.linspace(0, tt[-1] + 1e-3, k), rng2.normal(0, dc / 100.0, k)) * (1 - tune)
     jit = signal.lfilter([0.3], [1, -0.7], rng.normal(0, p.get("jitter", 0.04), nF))
     m = sm - scoop * env + vib + drift + jit + detune_cents / 100.0
     return 440.0 * 2 ** ((m - 69) / 12)
@@ -535,9 +627,15 @@ def _tts_voice(p, f0, sp, ap, voiced, amp, f_out, src_w, src_i, total_n):
     return np.pad(y, (0, max(0, total_n - len(y))))[:total_n]
 
 
-TTS_DEFAULTS = {  # `source: "tts"` starts from a natural voice: less added wobble, more tuning
-    "tune": 0.7, "retune_ms": 40, "vibrato": 0.18, "jitter": 0.01, "shimmer": 0.02, "breath": 0.15, "inhale": 0.15,
-    "linger": 1.4, "micro": 0.5, "coartic_ms": 30,
+TTS_DEFAULTS = {  # `source: "tts"`: sung, not tuned (the first defaults, which read as autotune, are TTS_TUNED)
+    "tune": 0.3, "retune_ms": 120, "portamento_ms": 80, "overshoot": 0.08, "scoop": 0.35, "scoop_some": 0.35,
+    "vibrato": 0.28, "vib_delay": 0.3, "vib_late": 0.35, "vib_min_s": 0.45, "vib_vary": 0.35, "drift_cents": 6,
+    "micro": 0.8, "loose_ms": 12, "jitter": 0.01, "shimmer": 0.02, "breath": 0.15, "inhale": 0.15, "linger": 1.4,
+    "coartic_ms": 30,
+}
+TTS_TUNED = {  # the first `tts` defaults (2026-11-24): fast retune, flat held notes; for a deliberately tuned vocal
+    "tune": 0.7, "retune_ms": 40, "portamento_ms": 0, "scoop": 0.0, "scoop_some": 1.0, "vibrato": 0.18,
+    "vib_delay": 0.25, "vib_late": 0, "vib_min_s": 0, "vib_vary": 0, "drift_cents": 0, "micro": 0.5, "loose_ms": 0,
 }
 
 
@@ -609,7 +707,7 @@ def sing(p, notes, total_n):
     elif notes and len(hi) > 0.25 * len(notes):
         _warn(f"{len(hi)} of {len(notes)} sung notes are above E5: up there the harmonics are too far apart to carry "
               "the vowels, so words turn into chirps; sing the line an octave lower (A3-D5 reads best)")
-    main = _take(p, notes, total_n, _seed("singer", seed, 0))
+    main = _take(p, notes, total_n, _seed("singer", seed, 0), time_jit_ms=float(p.get("loose_ms", 0)))
     norm = _norm(main)
     dbl = float(p.get("double", 0.0))
     if dbl <= 0:

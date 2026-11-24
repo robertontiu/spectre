@@ -1,9 +1,13 @@
 """Builds the `singer` source "tts" A/B in this folder (run from anywhere: python3 examples/vocals/tts/build.py [a b c d]).
 
-a  the TTS word sampler speaking the line neutrally
-b  the same line autotuned onto a simple mid-register melody (dry, no effects)
-c  the "Here You Are" chorus (session 009) with the hook sung an octave below the original (F#4-B4 range), as a lead
-d  a hard-tuned trance variant of the line over a short 138 bpm loop
+a   the TTS word sampler speaking the line neutrally
+b   the same line on a simple mid-register melody, dry, with the first (tuned) settings
+b1  the same, dry, with the sung (natural) defaults, phrase mode
+b2  per-word vs per-phrase speaking, same line, natural tuning, dry (word mode first, then phrase mode)
+c1/c2/c3  the "Here You Are" pre-chorus and chorus (session 009) with the hook sung an octave below the original as a
+    lead, mastered (`master --genre rock`): natural, medium and the first tuned settings, all in phrase mode, same
+    voice, level and effects
+d   a hard-tuned trance variant of the line over a short 138 bpm loop
 Works on /tmp copies; never touches the session. Needs ffmpeg and the setup in AGENTS.md.
 """
 import copy
@@ -40,6 +44,15 @@ def mp3(y, name, kbps=128, normalize=True):
     print(dst, os.path.getsize(dst) // 1024, "KB")
 
 
+def studio(args, d):
+    """Run the engine in d, after waiting for any other studio.py job to finish (renders must not overlap)."""
+    import time
+    while subprocess.run(["pgrep", "-f", "engine/studio.py"], capture_output=True).stdout.strip():
+        time.sleep(5)
+    subprocess.run([sys.executable, os.path.join(REPO, "engine", "studio.py")] + args, cwd=d,
+                   env=dict(os.environ, BEAT_DIR=d), check=True)
+
+
 def notes_at(bpm, spec):
     """'F#4:4 A4:4 ...' (lengths in 16ths, played back to back, '-' rests) -> singer notes."""
     from hand import note_to_midi
@@ -59,10 +72,26 @@ def a():
     mp3(np.concatenate([np.zeros(SR // 4), x, np.zeros(SR // 2)]), "a-tts-speaks")
 
 
+B_MELODY = "F#4:4 A4:4 B4:8 A4:4 F#4:2 A4:10"
+
+
 def b():
-    notes, n = notes_at(100, "F#4:4 A4:4 B4:8 A4:4 F#4:2 A4:10")
-    y = singer.sing({"source": "tts", "voice": "female", "lyrics": LINE, "inhale": 0}, notes, n)
+    notes, n = notes_at(100, B_MELODY)
+    y = singer.sing(dict(singer.TTS_TUNED, source="tts", voice="female", lyrics=LINE, inhale=0, tts_mode="word"),
+                    notes, n)
     mp3(y, "b-tts-autotuned-dry")
+
+
+def b1():
+    notes, n = notes_at(100, B_MELODY)
+    mp3(singer.sing({"source": "tts", "voice": "female", "lyrics": LINE, "inhale": 0}, notes, n), "b1-natural-dry")
+
+
+def b2():
+    notes, n = notes_at(100, B_MELODY)
+    yw = singer.sing({"source": "tts", "voice": "female", "lyrics": LINE, "inhale": 0, "tts_mode": "word"}, notes, n)
+    yp = singer.sing({"source": "tts", "voice": "female", "lyrics": LINE, "inhale": 0, "tts_mode": "phrase"}, notes, n)
+    mp3(np.concatenate([yw, np.zeros(int(0.5 * SR), dtype=yw.dtype), yp]), "b2-word-vs-phrase")
 
 
 def _session_copy():
@@ -74,8 +103,8 @@ def _session_copy():
 
 
 VOCAL_DB = float(os.environ.get("VOCAL_DB", 13))  # post-compressor level of the sung lead in (c)
-SING_TRACK = {"inst": {"type": "singer", "source": "tts", "voice": "female", "tune": 0.75, "breath": 0.15,
-                       "double": 0.35, "seed": 3},
+SING_TRACK = {"inst": {"type": "singer", "source": "tts", "voice": "female", "breath": 0.15, "double": 0.35,
+                       "seed": 3},
               "humanize_ms": 0, "gain_db": 12, "send_reverb": 0.22, "send_delay": 0.12,
               "fx": [{"type": "hpf", "hz": 150}, {"type": "eq", "hz": 500, "gain_db": 3, "q": 0.8},
                      {"type": "eq", "hz": 3000, "gain_db": -3, "q": 0.9},
@@ -84,12 +113,20 @@ HOOK_LYRICS = ("here you are, round and round / hold on tight, round we go / "
                "here you are, round and round / and you stay on the ride").replace("/", " ")
 
 
-def c(gain_db=None):
+VARIANTS = {  # pitch and phrasing only: the voice, effects and level are the same in all three
+    "c1-natural": {},  # the `tts` defaults: tune 0.3, retune 120 ms, ~90 ms glides, late varied vibrato, drift
+    "c2-medium": {"tune": 0.5, "retune_ms": 90, "portamento_ms": 70, "scoop_some": 0.2, "vib_late": 0.3},
+    "c3-current": dict(singer.TTS_TUNED, tune=0.75),  # the first settings (the version that read as autotuned)
+}
+
+
+def c(gain_db=None, variant="c1-natural"):
     d = _session_copy()
     pj = json.load(open(os.path.join(d, "project.json")))
     tr = copy.deepcopy(SING_TRACK)
     if gain_db is not None:
         tr["gain_db"] = gain_db
+    tr["inst"].update(VARIANTS[variant])
     pj["tracks"]["sing"] = tr
     pj["patterns"]["hookSing"] = {"bars": 8, "sing": {"notes": pj["patterns"]["hookD"]["voxD"], "lyrics": HOOK_LYRICS}}
     sec = next(s for s in pj["arrangement"] if s["name"] == "chorus1")
@@ -98,8 +135,7 @@ def c(gain_db=None):
     sec["play"] = [x for x in sec["play"] if x != "hook"] + ["hookSing"]  # the sung hook replaces the vox lead
     pj["arrangement"] = [copy.deepcopy(pre), sec, {"name": "tail", "bars": 2, "play": []}]
     json.dump(pj, open(os.path.join(d, "project.json"), "w"), indent=1)
-    env = dict(os.environ, BEAT_DIR=d)
-    subprocess.run([sys.executable, os.path.join(REPO, "engine", "studio.py"), "render"], cwd=d, env=env, check=True)
+    studio(["render"], d)
     return d
 
 
@@ -117,8 +153,8 @@ def d_():
                        "sidechain": {"source": "kick", "depth": 0.85, "release_ms": 95}},
               "pad": {"inst": {"type": "supersaw", "attack": 0.4, "release": 1.2, "cutoff": 2600}, "gain_db": -6,
                       "sidechain": {"source": "kick", "depth": 0.6, "release_ms": 160}, "fx": [{"type": "hpf", "hz": 250}]},
-              "sing": {"inst": {"type": "singer", "source": "tts", "voice": "female", "tune": 1.0, "retune_ms": 6,
-                                "vibrato": 0.0, "double": 0.7, "formant": 0.5, "seed": 5},
+              "sing": {"inst": dict(singer.TTS_TUNED, type="singer", source="tts", voice="female", tune=1.0,
+                                    retune_ms=6, vibrato=0.0, double=0.7, formant=0.5, seed=5, tts_mode="word"),
                        "gain_db": 2, "humanize_ms": 0, "send_reverb": 0.35, "send_delay": 0.25,
                        "sidechain": {"source": "kick", "depth": 0.25, "release_ms": 120},
                        "fx": [{"type": "hpf", "hz": 180}, {"type": "eq", "hz": 3200, "gain_db": 3, "q": 0.8},
@@ -138,21 +174,21 @@ def d_():
                   "delay": {"beats": 0.75, "feedback": 0.35, "return_db": -8, "lpf": 4000}},
           "master": {"lufs": -10, "sat": 0.1, "glue": True}}
     json.dump(pj, open(os.path.join(d, "project.json"), "w"), indent=1)
-    env = dict(os.environ, BEAT_DIR=d)
-    subprocess.run([sys.executable, os.path.join(REPO, "engine", "studio.py"), "render"], cwd=d, env=env, check=True)
+    studio(["render"], d)
     y, _ = sf.read(os.path.join(d, "renders", "v001.wav"))
     mp3(y.T, "d-tts-hardtuned-trance-138", kbps=112)
 
 
 if __name__ == "__main__":
-    which = sys.argv[1:] or ["a", "b", "c", "d"]
+    which = sys.argv[1:] or ["a", "b", "b1", "b2", "c1-natural", "c2-medium", "c3-current", "d"]
     for w in which:
-        if w == "c":
-            d = c()
-            # the release master (not the quick master inside render), pop rock target
-            subprocess.run([sys.executable, os.path.join(REPO, "engine", "studio.py"), "master", "v001", "--genre",
-                            "rock"], cwd=d, env=dict(os.environ, BEAT_DIR=d), check=True)
+        if w in VARIANTS:
+            d = c(variant=w)
+            studio(["master", "v001", "--genre", "rock"], d)  # the release master, pop rock target
             y, _ = sf.read(os.path.join(d, "renders", "v001.master.wav"))
-            mp3(y.T, "c-here-you-are-chorus-tts-octave-down", kbps=88, normalize=False)
+            keep = os.path.join(TMP, w)
+            shutil.rmtree(keep, ignore_errors=True)
+            shutil.copytree(d, keep)  # kept for measurement
+            mp3(y.T, w, kbps=88, normalize=False)
         else:
-            {"a": a, "b": b, "d": d_}[w]()
+            {"a": a, "b": b, "b1": b1, "b2": b2, "d": d_}[w]()
