@@ -7,8 +7,8 @@
 | Feeling | Anger held in the jaw at a rot inside something loved |
 | Length / tempo / key | 3:26 (76 bars), 90 bpm, swing 0.58 (hardcore boom-bap pocket), G minor (natural minor) with a foreign A♭ as the rot |
 | Anthem | "Deșteaptă-te, române!": melody by Anton Pann (1839), words by Andrei Mureșanu (1848), both public domain. Quoted in fragments only, exactly as in the verified melody (docs/ROMANIAN.md, "Anthem" > "Verified melody", checked against the official score in the annex of Law 75/1994, a CC BY-SA score, a MIDI file and a recording), with harmony of Spectre's own. No words are sung |
-| Iterations | 27 journal entries, 21 renders; resumed once after a server restart |
-| Master | `studio.py master v021 --genre hiphop` (master v2): -10.6 LUFS, -1.03 dBTP (MP3 -0.79), PLR 9.5, LRA 4.7 LU, width -15.6 LU, laptop loss -1.8 dB, top end within 0.9 dB of the measured curve, phone check clean, no warnings |
+| Iterations | 28 journal entries, 22 renders; resumed once after a server restart; v022 fixed the intro quote, which first ended on the next line's upbeat ("bar-") |
+| Master | `studio.py master v021 --genre hiphop` (master v2): -10.6 LUFS, -1.03 dBTP (MP3 -0.77), PLR 9.6, LRA 5.2 LU, width -15.7 LU, laptop loss -1.9 dB, top end within 0.8 dB of the measured curve, phone check clean, no warnings |
 
 ## How it carries the feeling
 - **Two sound worlds.** The country: piano, strings and a wordless choir in a room, played slightly late, like people. Corruption: one foreign semitone (A♭ against the home note G), dry, bitcrushed and locked to the grid.
@@ -18,7 +18,7 @@
 - **Wrong feelings kept out:** cheap shock (the damage has one cause and grows), mocking the anthem (every clean quote is exact; the damage is corruption's work, never a joke), generic rage (drive without volume), nationalist pride (no march, no triumph, no enemy people).
 
 ## Song form
-- **Intro (8):** strings on G minor from the first beat; the clean piano plays the pickup and bars 1-6; the A♭ hum creeps in under bar 7; a dry meter ticks in bar 8
+- **Intro (8):** strings on G minor from the first beat; the clean piano plays the first two lines, ending on "-ră" (te-adânciră), which rings into the hum; the A♭ hum creeps in under bar 7; a dry meter ticks in bar 8
 - **Verse 1 (8 + 8):** the swung beat and 808; the anthem's opening fourth (D-G, "Deș-teap-") chopped on lo-fi piano across every bar line; then an open hat, the 808 starts sliding into A♭, the rot ticks in 8ths
 - **Hook 1 (8):** the clean quote, twice, over the full beat, strings in Spectre's own harmony
 - **Verse 2 (8 + 4 + 4):** driven kick and saturated snare, the chop bitcrushed, the rot in 16ths, the 808 on A♭; then subtraction (beat, 808 and rot only); then the crushed chop returns
