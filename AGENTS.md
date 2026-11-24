@@ -31,8 +31,11 @@ engine/
                   plucks, organ, folk instruments, textures (vinyl, tape, rain), transition fx (riser, impact, reverse cymbal,
                   pitch riser); trance (clubkick, supersaw, trancebass); pop rock (acoustic kit, eguitar, cleanguitar,
                   ebass, vox: a wordless formant voice); handclap (several hands out of time; replaces the old clap)
-  singer.py       voices: `singer` (sings words: eSpeak NG + WORLD vocoder, every sound synthesized) and `vox2`
-                  (improved wordless voice: LF glottal source, consonant onsets for chops); see docs/MANUAL.md "Voices"
+  singer.py       voices: `singer` (sings words: words from eSpeak NG or, with `source: "tts"`, sampled from a local
+                  TTS, then laid on the melody with the WORLD vocoder) and `vox2` (improved wordless voice: LF glottal
+                  source, consonant onsets for chops); see docs/MANUAL.md "Voices"
+  tts_words.py    the word sampler for `singer` `source: "tts"`: Kokoro TTS (local, Apache 2.0) speaks each word
+                  neutrally into a cache (~/.cache/spectre/words), WORLD analysis, syllable segmentation
   hand.py         the hand: step/note/chord notation parser, swing, humanization, voicing, rolls, arps
   studio.py       project loader, arrangement scheduler, track rendering, fx, sends, sidechain, section
                   automation and transitions, quick master, CLI (render / listen / master)
@@ -57,18 +60,25 @@ tools/
 sessions/
   NNN-name/       one folder per session: project.json, journal.md, mastered mp3, ear and master images,
                   README.md with the result
+models/
+  tts/kokoro/     Kokoro v1.0 TTS model files for `singer` `source: "tts"` (the .onnx in git LFS; README with source,
+                  licence, size, checksums); may move out of the repo later (SPECTRE_TTS_DIR)
 examples/
+  vocals/         voice A/B renders (diagnostic/: the eSpeak singer; tts/: sampled words autotuned, with build.py)
   engine-test.json  a small project that exercises most engine features (render it to smoke-test changes)
   trance-test.json, poprock-test.json  small projects that exercise the trance and pop rock sounds
 ```
 
 ## 3. Setup
 
-Python 3.11+ (developed on 3.13), ffmpeg on PATH, and eSpeak NG for the `singer` voice (`apt install espeak-ng`; only projects that use `singer` need it).
+Python 3.11+ (developed on 3.13), ffmpeg on PATH, and eSpeak NG for the `singer` voice's eSpeak sources (`apt install espeak-ng`; only projects that use them need it).
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt   # includes kokoro-onnx (onnxruntime, phonemizer, espeakng-loader) for singer "tts"
+git lfs install && git lfs pull   # fetches models/tts/kokoro/kokoro-v1.0.onnx (325 MB, git LFS)
 ```
+
+Sung words (`singer` with `"source": "tts"`) use a local neural text-to-speech, Kokoro v1.0 (Apache 2.0), as a **word sampler only** (approved by the owner; everything else in Spectre stays synthesized). Its model files are versioned in `models/tts/kokoro/` (the 325 MB `kokoro-v1.0.onnx` in git LFS, `voices-v1.0.bin` 28 MB in plain git; source URL, licence and checksums in `models/tts/kokoro/README.md`); `SPECTRE_TTS_DIR` points the engine elsewhere if they move out of the repo. Generated words are cached in `~/.cache/spectre/words/` (`SPECTRE_WORDS_DIR` to move it): outside the repo, never committed, safe to delete (they regenerate deterministically on the next render). Only projects that use `"source": "tts"` need any of this.
 
 Smoke test (about 20 s to render, 25 s to listen):
 
@@ -105,12 +115,12 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 
 1. **The ears can't hear attitude.** Structure reads well on spectrograms; timbre and emotional "bite" don't. Session 001 aimed for defiance and came across as longing. Ideas: an audio-capable model as a critic ("describe what you hear, without naming emotions"), CLAP-style embeddings as a weak signal, or a human checkpoint ear after the loop stage.
 2. **Synth timbres lean soft.** No real samples. Real drum one-shots or sample packs (the user would provide them; the sandbox network is restricted) would raise quality a lot.
-3. **No vocals.** A generative model as a "session musician" (stems on demand) is the planned v2 for metal and pop.
+3. **Vocals are new and unproven.** `singer` with `source: "tts"` sings words sampled from a local TTS and autotuned (2026-11-24; awaiting the owner's listening verdict, A/B in `examples/vocals/tts/`); the eSpeak sources sound robotic. A generative model as a "session musician" (stems on demand) is the planned v2 for metal and pop.
 4. **Mastering targets** are per-genre configurations (`engine/genres.json`, `--genre trap|hiphop|trance|rock`, no default). The `hiphop`, `trance` and `rock` curves are measured from published genre spectra (Pestana et al. 2013; docs/MASTERING.md) but pool 1950-2010 records; the `trap` curve (`beat`, sessions 001-006) is hand-tuned. Measuring modern reference tracks per genre would help.
 5. **Speed.** A full-length render takes 20-45 s. Per-track caching would make the loop faster.
 
 ## 7. Git
 
 - Default branch `main`. Commit engine changes separately from session results.
-- Don't commit `renders/`, WAVs, `__pycache__`.
+- Don't commit `renders/`, WAVs, `__pycache__`, or the TTS word cache (`~/.cache/spectre/words`). Model files go under `models/` with a README (source, licence, size, checksum); files over 100 MB go through git LFS (`.gitattributes`).
 - MIT licensed (see `LICENSE`).

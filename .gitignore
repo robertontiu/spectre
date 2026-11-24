@@ -10,3 +10,7 @@ __pycache__/
 site/tracks/*.mp3
 player/tracks/*.mp3
 .claude/settings.local.json
+
+# singer source "tts": the per-word cache lives outside the repo (~/.cache/spectre/words); keep any local copy out too
+.cache/
+words_cache/

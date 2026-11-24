@@ -17,6 +17,10 @@ How it works (details and sources in docs/MANUAL.md, "Singer"):
    - `pulse`: WORLD's own pulse/noise excitation: a brighter, more processed (vocoder-like) voice; with `tune` 1
      and `retune_ms` near 0 it gives the hard-tuned club vocal.
    Formant shift, doubling (a second take, its own timing and pitch wobble, panned), breath and inhales on top.
+4. `"source": "tts"` (engine/tts_words.py): the words come from a local neural text-to-speech (Kokoro, Apache 2.0)
+   spoken neutrally and cached, instead of eSpeak; the same plan lays them on the notes, and WORLD resynthesizes the
+   spoken voice itself (its own envelope and aperiodicity: formants preserved, `formant` shifts them) on the melody's
+   pitch. The neural model only samples the words; tuning, timing, breath and doubling are the engine's.
 Intelligibility limits (docs/MANUAL.md "Register"): keep sung words at A3-D5 and about 1-3 syllables a second; above E5 the harmonics are too sparse to draw the vowels and syllables become chirps.
 """
 import functools
@@ -225,7 +229,11 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False):
         wd, si, n = g["tok"]
         if (wd, n) not in wcache:
             try:
-                wcache[(wd, n)] = _syllables(wd, n, voice_name, speed, epitch)
+                if p.get("source") == "tts":
+                    import tts_words
+                    wcache[(wd, n)] = tts_words.syllables(wd, n, p)
+                else:
+                    wcache[(wd, n)] = _syllables(wd, n, voice_name, speed, epitch)
             except Exception as e:  # pragma: no cover
                 _warn(f"could not speak '{wd}': {e}")
                 wcache[(wd, n)] = None
@@ -416,7 +424,9 @@ def _take(p, notes, total_n, seed, time_jit_ms=0.0, detune_cents=0.0):
                                                                            time_jit=time_jit_ms / FP, with_ids=True)
     f0 = _pitch_curve(p, tgt, start, fresh, rng, detune_cents)
     fft = pw.get_cheaptrick_fft_size(SR)
-    shift = 2 ** (p.get("formant", VOICES.get(p.get("voice", "female"), VOICES["female"])[1]) / 12)
+    mode = p.get("source", "breathy")
+    fdef = 0.0 if mode == "tts" else VOICES.get(p.get("voice", "female"), VOICES["female"])[1]
+    shift = 2 ** (p.get("formant", fdef) / 12)
     sp, ap, voiced, live, f_out = _interp_frames(src_w, src_i, fft // 2 + 1, SR, shift,
                                                  coartic_ms=float(p.get("coartic_ms", 40)))
     nF = len(src_w)
@@ -453,7 +463,11 @@ def _take(p, notes, total_n, seed, time_jit_ms=0.0, detune_cents=0.0):
     lvl = np.convolve(lvl, np.ones(4) / 4, mode="same")
     breath = float(p.get("breath", 0.3))
     shimmer = 1 + p.get("shimmer", 0.05) * signal.lfilter([0.3], [1, -0.7], rng.normal(0, 1, nF))
-    mode = p.get("source", "breathy")
+    if mode == "tts":
+        y = _tts_voice(p, f0, sp, ap, voiced, lvl * shimmer, f_out, src_w, src_i, total_n)
+        if p.get("inhale", 0.15) > 0:
+            y += _inhales(p, groups, total_n, rng) * p.get("inhale", 0.15)
+        return y
     # ---- noise part: consonant frication + breath, shaped by the word's envelope (WORLD, f0 = 0 -> all noise)
     hi = np.clip((f_out - 1200) / 2500, 0, 1)
     # `whisper` 0-1: an aspiration layer with the full vocal-tract shape (not high-passed like `breath`). On high
@@ -477,6 +491,48 @@ def _take(p, notes, total_n, seed, time_jit_ms=0.0, detune_cents=0.0):
     if p.get("inhale", 0.25) > 0:
         y += _inhales(p, groups, total_n, rng) * p.get("inhale", 0.25)
     return y
+
+
+def _micro(w):
+    """The spoken word's own small pitch movements (semitones): its f0 minus a 100 ms running median, voiced frames
+    only, clipped to +-0.6. Added back (scaled by `micro` and by 1 - `tune`) they keep a little of the human wobble that
+    a flat target pitch removes."""
+    if "micro" not in w:
+        f0 = w["f0"]
+        st = np.where(f0 > 0, 12 * np.log2(np.maximum(f0, 1) / 440.0), np.nan)
+        med = np.array([np.nanmedian(st[max(0, i - 10):i + 11]) if np.isfinite(st[i]) else 0.0
+                        for i in range(len(st))])
+        w["micro"] = np.clip(np.nan_to_num(st - med), -0.6, 0.6)
+    return w["micro"]
+
+
+def _tts_voice(p, f0, sp, ap, voiced, amp, f_out, src_w, src_i, total_n):
+    """`source: "tts"`: WORLD resynthesis of the spoken (TTS) voice itself on the sung pitch: its own spectral envelope
+    (formants preserved, or moved by `formant`) and aperiodicity (so consonants and breathiness stay natural), voiced
+    where the spoken word was voiced, one level per syllable, plus `breath` noise in the upper bands."""
+    import pyworld as pw
+    nF = len(f0)
+    tune = float(np.clip(p.get("tune", 0.7), 0, 1))
+    micro = float(p.get("micro", 0.5)) * (1 - tune)
+    dev = np.zeros(nF)
+    if micro > 0:
+        for f in range(nF):
+            w = src_w[f]
+            if w is not None:
+                dev[f] = _micro(w)[min(int(round(src_i[f])), len(w["f0"]) - 1)]
+        dev = np.convolve(dev, np.ones(3) / 3, mode="same") * micro
+    f0v = np.where(voiced > 0, f0 * 2 ** (dev / 12), 0.0)
+    hi = np.clip((f_out - 1500) / 3000, 0, 1)
+    ap_v = np.maximum(ap, float(p.get("breath", 0.15)) * 0.35 * hi[None, :])
+    sp_v = sp * (amp ** 2)[:, None] + 1e-16
+    y = pw.synthesize(np.ascontiguousarray(f0v), np.ascontiguousarray(sp_v), np.ascontiguousarray(ap_v), SR, FP)
+    return np.pad(y, (0, max(0, total_n - len(y))))[:total_n]
+
+
+TTS_DEFAULTS = {  # `source: "tts"` starts from a natural voice: less added wobble, more tuning
+    "tune": 0.7, "retune_ms": 40, "vibrato": 0.18, "jitter": 0.01, "shimmer": 0.02, "breath": 0.15, "inhale": 0.15,
+    "linger": 1.4, "micro": 0.5, "coartic_ms": 30,
+}
 
 
 def _additive(p, f0, sp, ap, amp, f_out, total_n):
@@ -538,7 +594,13 @@ def sing(p, notes, total_n):
         p["_lyrics"] = parse_lyrics(p["lyrics"])
     seed = p.get("seed", 1)
     hi = [nt for nt in notes if nt["f"] > 660.0]  # above E5
-    if notes and len(hi) > 0.25 * len(notes):
+    if p.get("source") == "tts":
+        for k, v in TTS_DEFAULTS.items():
+            p.setdefault(k, v)
+        if hi:
+            _warn(f"{len(hi)} of {len(notes)} sung notes are above E5: the spoken voice is moved up more than an octave "
+                  "there and its vowels thin into whistles; keep words at A3-D5")
+    elif notes and len(hi) > 0.25 * len(notes):
         _warn(f"{len(hi)} of {len(notes)} sung notes are above E5: up there the harmonics are too far apart to carry "
               "the vowels, so words turn into chirps; sing the line an octave lower (A3-D5 reads best)")
     main = _take(p, notes, total_n, _seed("singer", seed, 0))

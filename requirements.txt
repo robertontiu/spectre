@@ -6,3 +6,4 @@ pyloudnorm>=0.1.1
 librosa>=0.10
 matplotlib>=3.8
 pyworld>=0.3.4
+kokoro-onnx>=0.4  # singer source "tts" only: the word sampler (pulls onnxruntime, phonemizer, espeakng-loader)
