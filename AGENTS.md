@@ -30,7 +30,10 @@ engine/
   instruments.py  synthesized instruments: drums, 808/bass/lead (mono, glide), keys, pads, strings, choir, bells,
                   plucks, organ, folk instruments, textures (vinyl, tape, rain), transition fx (riser, impact, reverse cymbal,
                   pitch riser); trance (clubkick, supersaw, trancebass); pop rock (acoustic kit, eguitar, cleanguitar,
-                  ebass, vox: a wordless formant voice); handclap (several hands out of time; replaces the old clap)
+                  ebass, vox: a wordless formant voice); handclap (several hands out of time; replaces the old clap);
+                  lăutar band (acguitar: dry acoustic guitar with a modal body; toba: bass drum with a cymbal on top)
+  violin.py       the bowed violin (`violin`): a waveguide string bowed through a friction curve (numba), a modal violin
+                  body, articulations written after the note length (grace, mordent, trill, slides, double stops...)
   singer.py       voices: `singer` (sings words: words from eSpeak NG or, with `source: "tts"`, sampled from a local
                   TTS, then laid on the melody with the WORLD vocoder) and `vox2` (improved wordless voice: LF glottal
                   source, consonant onsets for chops); see docs/MANUAL.md "Voices"
@@ -64,6 +67,7 @@ models/
   tts/kokoro/     Kokoro v1.0 TTS model files for `singer` `source: "tts"` (the .onnx split in 7 parts; README with source,
                   licence, size, checksums); may move out of the repo later (SPECTRE_TTS_DIR)
 examples/
+  joc/            lăutar band A/B (old fiddle vs violin, the violin's articulations, acguitar, toba, a tempo ramp; build.py)
   vocals/         voice A/B renders (diagnostic/: the eSpeak singer; tts/: sampled words autotuned, with build.py)
   engine-test.json  a small project that exercises most engine features (render it to smoke-test changes)
   trance-test.json, poprock-test.json  small projects that exercise the trance and pop rock sounds

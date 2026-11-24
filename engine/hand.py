@@ -202,6 +202,10 @@ class Hand:
                 raise ValueError(f"note token '{tok}' must be step:note:len[~][!|.]")
             step = float(parts[0])
             lenstr = parts[2]
+            art = None
+            if "/" in lenstr:  # articulations for instruments that read them (violin): "4~/g-1,tr+1"
+                lenstr, artstr = lenstr.split("/", 1)
+                art = [a for a in artstr.split(",") if a]
             glide = "~" in lenstr
             accent = 1.15 if "!" in lenstr else (0.6 if lenstr.endswith(".") else 1.0)
             ln = float(re.sub(r"[~!.]+$", "", lenstr.replace("~", "")))
@@ -211,6 +215,8 @@ class Hand:
             t = self.humanize(self.step_time(step, tr.get("swing", self.swing)), tr)
             ev.append(dict(t=t0 + t, midi=note_to_midi(parts[1]), dur=ln * self.six * tr.get("legato", 0.95),
                            vel=self.vel(v, tr), glide=glide))
+            if art:
+                ev[-1]["art"] = art
         return ev
 
     # ---------------- chords

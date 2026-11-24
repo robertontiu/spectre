@@ -132,6 +132,9 @@ def listen(a, renders):
     if a.bars:
         b0, b1 = [int(v) for v in a.bars.split("-")]
         t0, t1, zoom = (b0 - 1) * bar, b1 * bar, True
+        if meta.get("grid16"):  # tempo-mapped render: bars start where the tempo map puts them
+            g = meta["grid16"]
+            t0, t1 = g[min((b0 - 1) * 16, len(g) - 1)], g[min(b1 * 16, len(g) - 1)]
     meter = pyln.Meter(SR)
     mono = st.mean(0)
     tag = ("_mono" if a.mono else "") + ("_lowpass" if a.lowpass else "")
@@ -206,12 +209,16 @@ def listen(a, renders):
     M = librosa.feature.melspectrogram(y=seg, sr=SR, n_fft=2048, hop_length=256, n_mels=160, fmax=16000)
     librosa.display.specshow(librosa.power_to_db(M, ref=np.max), sr=SR, hop_length=256, x_axis="time", y_axis="mel",
                              fmax=16000, ax=axs[0], cmap="magma")
-    axs[0].set_title(f"mel spectrogram {t0:.1f}-{t1:.1f}s (bars {int(t0 / bar) + 1}-{int(round(t1 / bar))})", fontsize=8, loc="left")
+    if meta.get("grid16"):  # tempo-mapped: bar numbers from the real grid
+        g16 = np.asarray(meta["grid16"])
+        bar_lbl = f"{int(np.argmin(np.abs(g16 - t0))) // 16 + 1}-{int(np.argmin(np.abs(g16 - t1))) // 16}"
+    else:
+        bar_lbl = f"{int(t0 / bar) + 1}-{int(round(t1 / bar))}"
+    axs[0].set_title(f"mel spectrogram {t0:.1f}-{t1:.1f}s (bars {bar_lbl})", fontsize=8, loc="left")
     on = librosa.onset.onset_strength(y=seg, sr=SR, hop_length=256)
     tt = np.arange(len(on)) * 256 / SR
     axs[1].plot(tt, on, lw=0.7, color="k")
-    for k in range(int((t1 - t0) / (beat / 4)) + 1):
-        x = k * beat / 4
+    for k, x in _grid(meta, t0, t1, beat):
         axs[1].axvline(x, color="r" if k % 16 == 0 else "b" if k % 4 == 0 else "0.8", lw=1.2 if k % 16 == 0 else 0.6 if k % 4 == 0 else 0.3)
     axs[1].set_xlim(0, t1 - t0)
     axs[1].set_title("onset strength over the grid (red = bar, blue = beat, grey = 16th)", fontsize=8, loc="left")
@@ -226,8 +233,7 @@ def listen(a, renders):
         else:
             yy = np.full(len(es), i)
         axs[2].scatter(xs, yy, s=[10 + 60 * e["v"] for e in es], color=plt.cm.tab10(i % 10), alpha=0.8)
-    for k in range(int((t1 - t0) / (beat / 4)) + 1):
-        x = k * beat / 4
+    for k, x in _grid(meta, t0, t1, beat):
         axs[2].axvline(x, color="r" if k % 16 == 0 else "b" if k % 4 == 0 else "0.85", lw=1 if k % 16 == 0 else 0.5 if k % 4 == 0 else 0.3, zorder=0)
     axs[2].set_yticks(range(len(names)))
     axs[2].set_yticklabels(names, fontsize=7)
@@ -245,12 +251,23 @@ def listen(a, renders):
         es = [e for e in ev[n] if t0 <= e["t"] < t1]
         offs = []
         for e in es:
-            g = round(e["t"] / (beat / 4)) * (beat / 4)
+            if meta.get("grid16"):  # tempo-mapped: nearest 16th of the real grid
+                gg = np.asarray(meta["grid16"])
+                g = gg[np.argmin(np.abs(gg - e["t"]))]
+            else:
+                g = round(e["t"] / (beat / 4)) * (beat / 4)
             offs.append((e["t"] - g) * 1000)
         vs = [e["v"] for e in es]
         print(f"  {n:10s} {len(es):4d} events  timing vs 16th grid: mean {np.mean(offs):+5.1f} ms, spread {np.std(offs):4.1f} ms  "
               f"velocity {min(vs):.2f}-{max(vs):.2f}")
     print(f"image: {path}")
+
+
+def _grid(meta, t0, t1, beat):
+    """(index, x) of the 16th-grid lines in a zoom window; follows the tempo map of a tempo-mapped render."""
+    if meta.get("grid16"):
+        return [(k, g - t0) for k, g in enumerate(meta["grid16"]) if t0 - 1e-6 <= g <= t1 + 1e-6]
+    return [(k, k * beat / 4) for k in range(int((t1 - t0) / (beat / 4)) + 1)]
 
 
 def phone_listen(a, path, meta, y):
@@ -270,6 +287,9 @@ def phone_listen(a, path, meta, y):
         else:
             b0, b1 = [int(v) for v in a.bars.split("-")]
             t0, t1 = (b0 - 1) * beat * 4, b1 * beat * 4
+            if meta.get("grid16"):
+                g = meta["grid16"]
+                t0, t1 = g[min((b0 - 1) * 16, len(g) - 1)], g[min(b1 * 16, len(g) - 1)]
         x = x[:, int(t0 * SR):int(t1 * SR)]
         sections = [dict(s, start=max(s["start"], t0) - t0, end=min(s["end"], t1) - t0) for s in sections
                     if s["end"] > t0 and s["start"] < t1]

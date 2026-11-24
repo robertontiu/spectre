@@ -108,5 +108,38 @@
       "meter (no source sought: genre definition)"
     ],
     "sources": "docs/POP_ROCK.md, section Configuration Mastering loudness: docs/proposals/mastering-trance-poprock.md (dance/electronic chart top 10 2025 average -8.3 LUFS, rock/alternative 2025 average -8.1, iZotope; engine tests: trance clipper limits it to about -9, rock clean at -8.5)."
+  },
+  "joc": {
+    "name": "Joc țigănesc: Romanian lăutar wedding dance music (solo violin, guitar, bass, percussion)",
+    "doc": "docs/JOC_TIGANESC.md",
+    "status": "researched 2026-11-24; the tonal target reuses the measured `rock` curve until the folk curve of Pestana et al. 2013 (Fig. 5) can be extracted",
+    "master": {
+      "target": "rock",
+      "lufs": -11.0,
+      "tp": -1.0,
+      "eq": 0.7,
+      "translate": 0.3,
+      "mono_below": 120.0
+    },
+    "length": "3:00-5:00, typically 3:30-4:30",
+    "form": "rounds of a dance tune: strains of 8 or 16 bars of 2/4, each repeated with variation, faster each round; an optional slow (rar) opening, then the fast (repede) dance, an accelerating last round and a stop; primas preludes and interludes",
+    "tempo": "dance tempo quarter = 110-140 in 2/4; a slow rar or listening section can sit far lower (the reference score's practice ladder runs 50, 70, 90, 110); tempo rises round by round and accelerates at the end (section bpm ramps)",
+    "meter": "2/4: bass on the beats, chords on the afterbeats; one engine pattern bar = two bars of 2/4",
+    "change_rate": "something changes every strain (8-16 bars of 2/4 = 4-8 pattern bars); the tempo steps up each round",
+    "role": "the violin leads throughout (melody, preludes, interludes, improvisation); guitar and bass hold the afterbeat (tiitura); percussion carries the dancers; a voice is optional (shouts to the dancers)",
+    "hand_tuned": [
+      "target curve: `rock` reused (not measured on folk or lautar records)",
+      "lufs -11: a choice inside the sourced folk range of -14 to -10",
+      "translate 0.3",
+      "eq 0.7",
+      "change_rate (derived from the dance form; the exact rate is craft)"
+    ],
+    "sources": [
+      "length: seven Taraf de Haidouks recordings on AcousticBrainz, 2:51-7:14, median 5:21 (docs/JOC_TIGANESC.md, Sources)",
+      "form and tempo: the reference score's four passes at quarter = 50/70/90/110; Dans Tiganesc Rar (6/8) then Repede (2/4) (https://socalfolkdance.org/dances/D/Dans_Tiganesc_Rar-Dans_Tignanesc_Repede.pdf); slow-medium-fast-faster order and accelerations (https://en.wikipedia.org/wiki/Gypsy_style); AcousticBrainz tempo estimates 94-172 bpm",
+      "role: the primas leads (https://en.wikipedia.org/wiki/Romanian_folk_violin); a wedding band with violin, guitar, string bass, accordions, cimbalom and a vocalist (Beissinger 2007, https://journals.ku.edu/folklorica/article/view/3757)",
+      "loudness: folk masters -14 to -10 LUFS, LRA at least 6 LU (https://www.sageaudio.com/articles/mastering-for-folk-music); acoustic genres near -16 (RoEx, advice); chart average -8.3 (iZotope 2024)",
+      "tonal balance: acoustic genres show a natural top-end decay; folk has the lowest spectral centroid, 603 Hz (Pestana et al. 2013); `rock` is the measured curve with the steepest top of the three available"
+    ]
   }
 }

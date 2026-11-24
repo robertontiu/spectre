@@ -1579,3 +1579,169 @@ def mono_voice(kind, p, notes, total_n):  # noqa: F811  (extends the chain with 
 
 
 MONO.update({"singer", "vox2"})
+
+
+# ---------------------------------------------------------------- lăutar band: violin, acoustic guitar, tobă
+# Additive block (2026-11-24, for the joc țigănesc session; docs/JOC_TIGANESC.md). Each new sound draws from its own
+# seeded generators, never from the module RNG, so projects that don't use them render exactly as before.
+_mono_voice_singer = mono_voice
+
+
+def mono_voice(kind, p, notes, total_n):  # noqa: F811  (extends the chain with "violin")
+    if kind == "violin":
+        import violin as _violin
+        return _violin.violin_line(p, notes, total_n)
+    return _mono_voice_singer(kind, p, notes, total_n)
+
+
+def _violin_body(p, x):
+    import violin as _violin
+    return _violin.body(p, x)
+
+
+MONO.add("violin")
+POST["violin"] = _violin_body
+
+_AG_RNG = {}
+
+
+def _rng(name, seed):
+    key = (name, int(seed))
+    if key not in _AG_RNG:
+        _AG_RNG[key] = np.random.default_rng(int(seed))
+    return _AG_RNG[key]
+
+
+def acguitar(p, f, vel, dur):
+    """Acoustic guitar string (nylon by default, `strings: "steel"`), plucked or strummed; the wooden body is applied
+    to the whole track afterwards (`acoustic_body`). chop 0-1 damps each chord right after its length (the
+    afterbeat "țiitură" chop); scrape 0-1 is the pick or nail noise on the strings."""
+    rng = _rng("acguitar", p.get("seed", 3))
+    steel = p.get("strings", "nylon") == "steel"
+    chop = float(p.get("chop", 0.0))
+    rel = 0.07 * (1 - chop) + 0.012 * chop
+    n = _n(dur + rel)
+    t60 = p.get("sustain", 3.2 if steel else 2.0) * (220 / f) ** 0.4
+    bright = float(p.get("bright", 0.55 if steel else 0.4))
+    s = (0.42 if steel else 0.5) - 0.25 * bright
+    L = max(4, int(SR / f))
+    e = rng.standard_normal(L).astype(np.float32) * np.hanning(L).astype(np.float32)
+    e = signal.sosfilt(signal.butter(2, min(900 + 8000 * bright * (0.4 + 0.6 * vel), SR * 0.45), fs=SR, output="sos"),
+                       e).astype(np.float32)
+    D = max(1, int(L * p.get("pluck_pos", 0.16)))
+    e2 = e.copy()
+    e2[D:] -= e[:-D]
+    exc = np.zeros(n, dtype=np.float32)
+    exc[:min(n, L)] = e2[:min(n, L)]
+    y = ks_string(f, n, t60, exc, s)
+    tt = _t(n)
+    sc = float(p.get("scrape", 0.3))
+    if sc > 0:  # the pick or nail across the string
+        nz = rng.standard_normal(n).astype(np.float32)
+        nz = signal.sosfilt(signal.butter(2, [1800, 7000], btype="band", fs=SR, output="sos"), nz).astype(np.float32)
+        y = y + nz * np.exp(-tt / 0.012) * 0.25 * sc * vel
+    h = _n(dur)
+    if h < n:
+        y[h:] *= np.exp(-np.arange(n - h) / _n(rel / 4))
+    if chop > 0 and h < n:  # the palm landing on the strings
+        m = min(n - h, _n(0.02))
+        nz = rng.standard_normal(m).astype(np.float32)
+        nz = signal.sosfilt(signal.butter(2, [150, 1500], btype="band", fs=SR, output="sos"), nz).astype(np.float32)
+        y[h:h + m] += nz * np.exp(-np.arange(m) / _n(0.004)) * 0.08 * chop * vel
+    return (y * vel * 0.6).astype(np.float32)
+
+
+_AC_BODY = {}
+
+
+def acoustic_body(p, x):
+    """POST processor for `acguitar`: a modal guitar body (air mode ~100 Hz, top-plate modes ~200 and ~400 Hz,
+    dense modes above; Fletcher & Rossing 1998, ch. 9), a DC block and a gentle top roll-off. mic 0-1 moves the
+    microphone from the soundhole (warm, boomy) to the 12th fret (brighter, thinner)."""
+    steel = p.get("strings", "nylon") == "steel"
+    mic = float(p.get("mic", 0.5))
+    key = (steel, round(mic, 3), int(p.get("body", 0)))
+    if key not in _AC_BODY:
+        rng = np.random.default_rng(200 + int(p.get("body", 0)))
+        n = int(0.3 * SR)
+        t = np.arange(n) / SR
+        modes = [(98 if steel else 95, 2 - 4 * mic, 14), (195 if steel else 185, 3 - 2 * mic, 20),
+                 (235, -4, 22), (390 if steel else 370, -2, 25), (550, -6, 30)]
+        fr = 650.0
+        while fr < 8000:
+            fr *= 2 ** rng.uniform(0.05, 0.13)
+            lvl = -9 + rng.normal(0, 3) - 7 * max(0.0, np.log2(fr / (3500 if steel else 2500))) + 2 * mic * (fr > 1500)
+            modes.append((fr, lvl, rng.uniform(20, 45)))
+        ir = np.zeros(n)
+        for f_, lv, q in modes:
+            ir += 10 ** (lv / 20) * np.exp(-np.pi * f_ * t / q) * np.sin(2 * np.pi * f_ * t + rng.uniform(0, 6.28))
+        ir[0] += 0.6
+        ir /= np.sqrt((ir ** 2).sum()) * 4
+        _AC_BODY[key] = ir.astype(np.float32)
+    y = signal.oaconvolve(x, _AC_BODY[key])[:len(x)]
+    y = signal.sosfilt(signal.butter(2, 70, btype="high", fs=SR, output="sos"), y)
+    y = signal.sosfilt(signal.butter(2, 12000 if steel else 10000, fs=SR, output="sos"), y)
+    return y.astype(np.float32)
+
+
+def toba(p, vel, ps=0.0):
+    """Tobă mare: the big double-headed bass drum of the lăutar fanfare and the village band, with a cymbal (cinel,
+    talger) mounted on top that the same player strikes with a rod. stroke: boom (felt mallet on the head), cinel
+    (the cymbal alone), both (the two together, the accented beat), rim (the mallet on the hoop, a dry knock).
+    tune Hz (60), decay s (0.2; the head's time constant), cinel_decay s (0.35; lower = held by the hand), bright 0-1 (the cymbal's colour)."""
+    stroke = p.get("stroke", "boom")
+    rng = _rng("toba", p.get("seed", 5))
+    out = None
+    if stroke in ("boom", "both"):
+        tune = p.get("tune", 60) * 2 ** (ps / 12)
+        decay = p.get("decay", 0.2)
+        n = _n(decay * 4 + 0.05)
+        t = _t(n)
+        f = tune * (1 + 0.25 * vel * np.exp(-t / 0.02))
+        ph = 2 * np.pi * np.cumsum(f) / SR
+        head = np.zeros(n, dtype=np.float32)
+        for r, g, d in zip(MEMBRANE[:6], (1.0, 0.5, 0.35, 0.25, 0.18, 0.12), (1.0, 0.45, 0.3, 0.25, 0.2, 0.15)):
+            head += (g * np.sin(ph * r + rng.uniform(0, 6.28)) * np.exp(-t / (decay * d))).astype(np.float32)
+        thud = rng.standard_normal(n).astype(np.float32)
+        thud = signal.sosfilt(signal.butter(2, [60, 700], btype="band", fs=SR, output="sos"), thud).astype(np.float32)
+        head += thud * np.exp(-t / 0.018) * 0.6
+        head *= np.minimum(t / 0.0015, 1)  # the felt mallet: no click
+        out = soft(head, 0.1) * 0.9
+    if stroke == "rim":
+        n = _n(0.2)
+        t = _t(n)
+        x = rng.standard_normal(n).astype(np.float32)
+        x = signal.sosfilt(signal.butter(2, [500, 4000], btype="band", fs=SR, output="sos"), x).astype(np.float32)
+        out = (x * np.exp(-t / 0.012) + 0.4 * np.sin(2 * np.pi * 820 * t) * np.exp(-t / 0.03)).astype(np.float32)
+    if stroke in ("cinel", "both"):
+        dec = p.get("cinel_decay", 0.35)
+        n = _n(dec * 4 + 0.05)
+        t = _t(n)
+        bright = float(p.get("bright", 0.5))
+        k = 60
+        fr = np.exp(rng.uniform(np.log(450), np.log(11000), k))
+        am = (fr / 450) ** (-0.6 + 0.4 * bright) * rng.uniform(0.4, 1.0, k)
+        dc = dec * (fr / 2000) ** -0.35 * rng.uniform(0.6, 1.2, k)
+        cym = np.zeros(n, dtype=np.float32)
+        for j in range(0, k, 20):
+            cym += (am[j:j + 20, None] * np.sin(2 * np.pi * fr[j:j + 20, None] * t[None, :]
+                                                 + rng.uniform(0, 6.28, (min(20, k - j), 1)))
+                    * np.exp(-t[None, :] / dc[j:j + 20, None])).sum(0).astype(np.float32)
+        nz = rng.standard_normal(n).astype(np.float32)
+        nz = signal.sosfilt(signal.butter(2, 3000, btype="high", fs=SR, output="sos"), nz).astype(np.float32)
+        cym += nz * np.exp(-t / (dec * 0.4)) * 0.5
+        cym = cym / (np.abs(cym).max() + 1e-9) * (0.55 if stroke == "both" else 0.75)
+        if out is None:
+            out = cym
+        else:
+            m = max(len(out), len(cym))
+            out = np.pad(out, (0, m - len(out))) + np.pad(cym, (0, m - len(cym)))
+    if out is None:
+        raise ValueError(f"toba: unknown stroke '{stroke}' (boom, cinel, both, rim)")
+    return (out * vel ** 1.1).astype(np.float32)
+
+
+TONAL["acguitar"] = acguitar
+POST["acguitar"] = acoustic_body
+DRUMS["toba"] = toba
+ROUND_ROBIN = ROUND_ROBIN | {"toba"}

@@ -31,6 +31,7 @@ DEFAULT_GAIN.update({"supersaw": -12, "trancebass": -6, "clubkick": -1, "kitkick
                      "vox": -9})
 DEFAULT_GAIN.update({"handclap": -5})
 DEFAULT_GAIN.update({"singer": -9, "vox2": -9})
+DEFAULT_GAIN.update({"violin": -8, "acguitar": -7, "toba": -4})
 
 
 def _attach_lyrics(part, new, tname):
@@ -352,7 +353,58 @@ def schedule(P, hand):
                 events[tname] += new
         t += bars * bar
         bar_i += bars
+    if any(sec.get("bpm") for sec in P["arrangement"]):
+        return _tempo_warp(P, hand, events, holds, sections, t)
     return events, holds, sections, t
+
+
+def _tempo_warp(P, hand, events, holds, sections, total):
+    """Per-section tempo: a section's "bpm" (a number, or [from, to] = a tempo ramp across the section, linear in
+    beats) replaces the project bpm there. Events are scheduled on the project's grid first, then every time is
+    mapped onto the real clock, so swing, humanizing, rolls and note lengths scale with the local tempo. Only runs
+    when a section sets "bpm"; projects without it are untouched."""
+    beat0 = 60.0 / P["bpm"]
+    segs = []  # (nominal start, nominal end, real start, b0, b1, beats)
+    real = 0.0
+    for sec, S in zip(P["arrangement"], sections):
+        b = sec.get("bpm") or P["bpm"]
+        b0, b1 = (float(b[0]), float(b[-1])) if isinstance(b, (list, tuple)) else (float(b), float(b))
+        U = S["bars"] * 4.0
+        segs.append((S["start"], S["end"], real, b0, b1, U))
+        real += _ramp_time(U, b0, b1, U)
+    def W(t):
+        for (a, e, r, b0, b1, U) in segs:
+            if t < e or (a, e, r, b0, b1, U) == segs[-1]:
+                if t < a and a == segs[0][0]:
+                    return r + (t - a) / beat0 * 60.0 / b0
+                u = (t - a) / beat0
+                if u <= U:
+                    return r + _ramp_time(u, b0, b1, U)
+                return r + _ramp_time(U, b0, b1, U) + (u - U) * 60.0 / b1
+        return t
+    for name, evs in events.items():
+        for ev in evs:
+            t0 = ev["t"]
+            ev["t"] = W(t0)
+            if "dur" in ev:
+                ev["dur"] = W(t0 + ev["dur"]) - ev["t"]
+    for name in holds:
+        holds[name] = [(W(a), W(b)) for a, b in holds[name]]
+    for S, (a, e, r, b0, b1, U) in zip(sections, segs):
+        S["start"], S["end"] = W(a), W(e)
+        S["bpm"] = [b0, b1] if b0 != b1 else b0
+        S["beat_start"], S["beat_end"] = 60.0 / b0, 60.0 / b1
+    n16 = int(round(total / (beat0 / 4)))
+    hand.grid16 = [round(W(k * beat0 / 4), 5) for k in range(n16 + 1)]
+    return events, holds, sections, W(total)
+
+
+def _ramp_time(u, b0, b1, U):
+    """Seconds from the section start to beat u when the tempo moves linearly (in beats) from b0 to b1 over U beats."""
+    if abs(b1 - b0) < 1e-9:
+        return u * 60.0 / b0
+    k = (b1 - b0) / U
+    return 60.0 / k * np.log((b0 + k * u) / b0)
 
 
 def render_track(name, tr, evs, holds, total_n, bpm):
@@ -389,6 +441,8 @@ def render_track(name, tr, evs, holds, total_n, bpm):
         for nt, e in zip(notes, evs):
             if "syl" in e:  # singer: the syllable on this note
                 nt["syl"] = e["syl"]
+            if "art" in e:  # violin: articulations written after the note length
+                nt["art"] = e["art"]
         mono = I.mono_voice(typ, p, notes, total_n)
         if mono.ndim == 2:  # stereo voices (singer with a double): pan acts as balance
             st_buf, mono = mono, np.zeros(total_n, dtype=np.float32)
@@ -513,11 +567,12 @@ def render(P, solo=None, out_prefix=None, quiet=False):
                     st = block_hpf(st, a, b, max(f0, 10), max(f1, 10))
             ex = sec.get("exit") or {}
             cut = ex.get("cut")
+            bt_e = S.get("beat_end", beat)  # the local beat in a tempo-mapped section
             if cut and (name in cut.get("tracks", []) or (cut.get("tracks") == "all")):
-                st *= fade_gate(total_n, [(b - int(cut["beats"] * beat * SR), b)])
+                st *= fade_gate(total_n, [(b - int(cut["beats"] * bt_e * SR), b)])
             xl = ex.get("lpf")
             if xl and name in xl.get("tracks", []):
-                st = block_lpf(st, b - int(xl["beats"] * beat * SR), b, 18000, xl.get("to_hz", 400))
+                st = block_lpf(st, b - int(xl["beats"] * bt_e * SR), b, 18000, xl.get("to_hz", 400))
         rev_bus += st * tr.get("send_reverb", 0)
         del_bus += st * tr.get("send_delay", 0)
         mix += st
@@ -541,16 +596,17 @@ def render(P, solo=None, out_prefix=None, quiet=False):
                 put(I.impact(), a, db(-6) * en["impact"])
             if en.get("crash"):
                 put(I.crash({}, 1.0), a, db(-12) * en["crash"])
+            bt_s, bt_e = S.get("beat_start", beat), S.get("beat_end", beat)
             if en.get("downlifter"):
-                put(I.downlifter(en["downlifter"] * beat), a, db(-14))
+                put(I.downlifter(en["downlifter"] * bt_s), a, db(-14))
             if ex.get("riser"):
-                x = I.riser(ex["riser"] * beat)
+                x = I.riser(ex["riser"] * bt_e)
                 put(x, b - len(x), db(-14))
             if ex.get("reverse"):
-                x = I.reverse_cymbal(ex["reverse"] * beat)
+                x = I.reverse_cymbal(ex["reverse"] * bt_e)
                 put(x, b - len(x), db(-12))
             if ex.get("rise"):
-                x = I.pitch_riser(ex["rise"] * beat)
+                x = I.pitch_riser(ex["rise"] * bt_e)
                 put(x, b - len(x), db(-18))
         mix += fxb * 0.9
         rev_bus += fxb * 0.4
@@ -567,10 +623,11 @@ def render(P, solo=None, out_prefix=None, quiet=False):
             S = sec_by_name[sec["name"]]
             a, b = int(S["start"] * SR), int(S["end"] * SR)
             ex = sec.get("exit") or {}
+            bt_e = S.get("beat_end", beat)
             if ex.get("tapestop"):
-                mix = tapestop(mix, b - int(ex["tapestop"] * beat * SR), b)
+                mix = tapestop(mix, b - int(ex["tapestop"] * bt_e * SR), b)
             if ex.get("silence"):
-                mix *= fade_gate(total_n, [(b - int(ex["silence"] * beat * SR), b)])
+                mix *= fade_gate(total_n, [(b - int(ex["silence"] * bt_e * SR), b)])
     premaster = mix.copy()
     # master
     ms = P.get("master", {})
@@ -603,6 +660,8 @@ def render(P, solo=None, out_prefix=None, quiet=False):
     meta = dict(bpm=P["bpm"], sections=sections, duration=total, stems_rms=stems_rms, rms_hop=2205 / SR,
                 events={k: [dict(t=round(e["t"], 4), v=round(e["vel"], 2), m=e.get("midi")) for e in v] for k, v in events.items()},
                 render_sec=round(time.time() - t_start, 1), solo=solo)
+    if getattr(hand, "grid16", None):  # tempo-mapped project: the real time of every 16th, for the ears
+        meta["grid16"] = hand.grid16
     meta["_premaster"] = premaster
     return mix, meta
 
@@ -633,6 +692,8 @@ def cmd_render(args):
     m, s = divmod(meta["duration"], 60)
     print(f"rendered {os.path.basename(path)}  {int(m)}:{s:04.1f}  ({meta['render_sec']}s)")
     print("sections:", ", ".join(f"{x['name']}[bars {x['bar0']}-{x['bar0'] + x['bars'] - 1}]" for x in meta["sections"]))
+    if meta.get("grid16"):
+        print("tempo:", ", ".join(f"{x['name']} {x['bpm']}" for x in meta["sections"]))
 
 
 def main():
