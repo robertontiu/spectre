@@ -10,7 +10,8 @@ These were set by Robert (the repo owner) and apply until he changes them:
 4. **Keep the website's track list up to date** with every finished track, newest first.
 5. **Sessions may run in parallel lanes**, one folder each.
 6. **Delegate long UI work to a sub-agent** so the orchestrator's thread stays free.
-7. **It's an experiment.** Report misses honestly, including in the README and lessons.
+7. **Genre settings come from research, not guesses.** Every per-genre value (length, form, tempo range, structure, mastering target) cites a source in the genre table below or in docs/<GENRE>.md. A value without a source is marked as hand-tuned and gets researched before the next session in that genre.
+8. **It's an experiment.** Report misses honestly, including in the README and lessons.
 
 ## Starting a new session
 1. If the genre is new: research it (instruments, rhythms, modes, the modern reference artists, and the cultural context of the subject), write `docs/<GENRE>.md`, and build the genre's signature instruments in the engine first (generic synths can't fake them). Check them with spectrogram plots and a tiny project, document them in `docs/MANUAL.md`, smoke-test with `examples/engine-test.json`, commit. Engine edits while another session is rendering must be additive and written atomically (temp file plus rename).
@@ -19,13 +20,19 @@ These were set by Robert (the repo owner) and apply until he changes them:
 4. Schedule a check-in (a one-shot scheduled message back into the session) for 15 minutes.
 
 ## Genre conventions (fill the producer template from these)
-Lengths and forms follow the genre, not one rule. Check the genre brief in docs/<GENRE>.md, and add a row when a new genre arrives.
+Lengths and forms follow the genre, not one rule. Each value is backed by the sources below the table (or by docs/<GENRE>.md); add a row, with sources, when a new genre arrives.
 
 | Genre family | `{{LENGTH}}` | `{{FORM}}` | `{{ROLE}}` (what the instrumental must allow) | `{{MASTER}}` |
 |---|---|---|---|---|
 | Beats (trap, boom-bap, drill, rage, folk-fusion trap) | 2:30 to 3:30 | an intro, a real arrangement (hooks and verses) and an outro | it should feel like a real beat an artist could rap on | `studio.py master vNNN --lufs -10.5 --tp -1` |
 | Trance and other club music | 5:00 to 7:00 (an extended mix; a radio edit is 3:00-4:00 and only when Robert asks) | a DJ-friendly intro and outro (16-32 bars of drums to mix with), at least one full breakdown and build into a release, and a second wave | a lead synth carries the melody a vocalist would sing | `studio.py master vNNN --target trance --lufs -10 --tp -1 --translate 0.4` |
 | Pop rock and other songs | 3:00 to 4:00 | a song form (intro, verses, pre-choruses, choruses, a bridge, a final chorus, an outro) | the verses leave room for a voice; a vocal-like lead carries the sung melody | `studio.py master vNNN --target rock --lufs -10 --tp -1 --translate 0.3` |
+
+Sources for the lengths:
+- Beats: hip-hop hits in the Billboard Hot 100 top 10 averaged 2:48 in 2019 ([Billboard](https://www.billboard.com/?p=8514407)); Spotify charting songs averaged about 3:00 in 2024, with hip-hop shrinking most since 2018 ([Chartmetric](https://hmc.chartmetric.com/shorter-songs-trend-streaming-history/)).
+- Club music: the Beatport Top 100 averaged 5:53, ranging 3:33 to 8:23 ([EDMProd analysis](https://www.edmprod.com/beatport-analysis/)); in a catalogue of 63 records released as both, the extended mix ran a median 4:31 against 3:31 for the radio edit, the difference being the DJ intro and outro ([Mixgraph](https://www.mixgraph.io/glossary/intro)); trance arrangements add or remove instruments every 4, 8, 16 or 32 bars ([Wikipedia: Trance music](https://en.wikipedia.org/wiki/Trance_music)).
+- Songs: the average song in the 2020s runs 3:15, down from 4:14 in the 1990s (Washington Post via [HuffPost](https://huffingtonpost.co.uk/entry/pop-songs-are-shorter-now_uk_66b0d65de4b022eb04aa13cb)); Billboard Hot 100 #1 hits averaged 3:30 in 2024 ([Hit Songs Deconstructed](https://hitsongsdeconstructed.com/wp-content/uploads/2025/02/The-Hit-Songs-Deconstructed-1-Hit-Focus-Report-Highlights.pdf)).
+- Mastering targets (`--target`, `--lufs`): the loudness figures are sourced in docs/MASTERING.md and the genre docs; the tonal curves themselves are **hand-tuned, not yet measured from reference tracks**. Measuring them from references is the next step before relying on them.
 
 `{{HAND}}` is 3-5 bullets naming the genre's schools and craft (see the latest session's PROMPT.md in that genre); `{{GENRE_LINE}}` says whether the genre is fixed by the brief or the producer's choice.
 
