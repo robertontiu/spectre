@@ -1,1 +1,1 @@
-Prepared; start after queue item 1 (off-beat re-render) finishes, when no other session renders.
+On hold: waiting for a verified score or recording of the anthem melody (all score sources were blocked from this machine). Start the producer only once the melody is transcribed from a source and recorded in docs/ROMANIAN.md.
