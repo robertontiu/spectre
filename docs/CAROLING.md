@@ -51,12 +51,77 @@ For sessions that make an instrumental in the world of American Christmas caroli
 - **Range:** write the svs voices A3-D5 (sweet spot F#4-B4; Hanami's training data sits G3-D5). Both verified carols below sit D4-D5 in their hymnal keys: sing them there, or transpose down.
 - **What a voice may do here:** a refrain fragment ("Nowell, Nowell", "to hear the angels sing"), a wordless choir ("oo", "ah") under the bells, a call at the door, a hummed verse. Never a carol sung through verse after verse by one voice.
 - **Words:** only public-domain words may be sung (the stanzas of the verified carols below, as printed in their sources), or original words the producer writes. Note the voices' licence: credit Lotte V and the Potluck vocoder in the README (credit lines in engine/voices.json) and never use them for a political subject. The carols' words are religious; the terms as summarised in docs/voice/VOICES.md exclude political, hateful and illegal use, not religious texts.
-- **Mix (choir texture):** voices a little behind the bells and brass, sharing one room (one reverb send for all carolers), panned like a small group standing in a line (soprano left of centre, altos right, doubles wider); see the recommended svs mix chain in docs/MANUAL.md "Voices".
+- **Mix (choir texture):** voices a little behind the bells and brass, sharing one room (one reverb send for all carolers), panned like a small group standing in a line (soprano left of centre, altos right, doubles wider); see "Mixing the voice" below for the researched chain and the session 012 diagnosis.
 
 ## Mixing and recording practice
 - **A choir is recorded as a group, at a distance:** a stereo pair (ORTF, or spaced cardioids about half the choir's width apart), one to two metres in front of the front row and a metre or more above it; the distance sets the balance of direct and reverberant sound; a spot mic for piano or organ, not too prominent; outriggers for a large choir; or close and "too dry", with reverb added in the mix ([Sound On Sound, Q&A](https://www.soundonsound.com/sound-advice/q-how-do-you-record-choir)). A live choral recording got convolution reverb on its close mics "to impose the acoustics of a real concert hall" and about 6 dB of compression on the vocal subgroup's peaks ([Sound On Sound, live choral](https://www.soundonsound.com/techniques/recording-live-choral-performance)).
 - **Outdoors in winter the room is the street:** fresh snow is a strong absorber (a 4-inch layer has an NRC of 0.89, like acoustic panels); compacted snow and ice reflect far more ([Acentech](https://www.acentech.com/resources/the-quiet-snow/)). A carol at the door is dry and close, with short early reflections off the house fronts and no long tail; a church or hall carol (King's College) has a long reverb. Choose one space per moment and let a change of space mean something (the door opening, coming inside).
 - **Tonal shape of holiday records:** sparkly top ends on modern productions, roll-off below about 80 Hz on Mariah Carey's single, mono mixes on the early-1960s classics ([iZotope 2025](https://www.izotope.com/community/blog/holiday-songs-lufs-2025)).
+
+## Mixing the voice (researched 2026-11-24)
+The principles that hold in every genre, the choir and ensemble research, and how to run the checks are in [docs/voice/MIXING.md](voice/MIXING.md). This section is what changes for a carol. Values marked *(hand-tuned)* are Spectre's starting points, not sourced numbers.
+
+**What the research says**
+- **Two traditions, two amounts of reverb.** A church or cathedral choir is recorded from a distance in a long room (see "Mixing and recording practice"); when a choir is close-miked in a small room, the engineer adds the room afterwards: early reflections with no pre-delay plus a hall tail of 2.66 s in one documented mix of a 20-voice choir ([Sound On Sound, Session Notes](https://www.soundonsound.com/techniques/session-notes-recording-choir)). The a cappella pop tradition (Pentatonix) does the opposite: dry, close voices, each tuned and de-essed twice, the backing voices alone sent to a church-preset reverb, the lead on a quarter-note and a slap delay ([Sound On Sound, Inside Track: Pentatonix](https://www.soundonsound.com/techniques/inside-track-pentatonix)). Door-to-door caroling is the driest of all: fresh snow absorbs like acoustic panels (Acentech, above). So "how much reverb" is a choice of place, and a carol sung at a door or in a parlour is a short room, not a church.
+- **Singers themselves prefer a moderate room.** Singers tested in three simulated rooms preferred 1.77 s over 4.79 s and over the dry room, sang slower as the room grew (84, 79.5 and 71.7 bpm) and rated the dry room best for singing in time ([Fischinger, Frieler & Louhivuori 2015](https://jyx.jyu.fi/bitstream/123456789/49954/1/influenceofroomacousticsonchoirsinging.pdf)).
+- **Sung words are fragile, and the consonants carry them.** Unaccompanied sung words were misheard 7 times as often as the same words spoken, and 78% of the phoneme errors were consonants ([Collister & Huron 2008](https://d-scholarship.pitt.edu/19444/1/EMR000050a%2DCollister%2DHuron.pdf)). Reverberation fills exactly the gaps consonants make, and a group that does not place its consonants together smears them: paired singers started notes 57 ms apart on average with eye contact, and listeners noticed differences of 10-38 ms ([D'Amario, Daffern & Bailes 2019](https://eprints.whiterose.ac.uk/148848/1/journal.pone.0218162.pdf)).
+- **A choir is not several soloists.** Singers in choral mode put less energy at 2-4 kHz and more in the fundamental than the same singers singing solo, use narrower vibrato, and listeners prefer the blended mode; a section's pitch scatter is tolerated up to about 14 cents but zero is preferred ([Ternström, overview of choir acoustics](https://scispace.com/pdf/choir-acoustics-an-overview-of-scientific-research-published-2em0kyqmrt.pdf)). Details and what they mean for svs choirs: MIXING.md, "Choir and ensemble voices".
+- **Processing is light.** High-pass at 85-110 Hz, a high shelf only to make dull microphones match (Session Notes, above); about 6 dB of compression on the choir subgroup's peaks in a live recording (Sound On Sound, live choral, above). No published source gives a choir-versus-accompaniment level; in the genre the choir is the lead and bells, brass and organ answer it.
+- **Mastering.** Christmas choral albums sit at about -19 to -23 LUFS and a cappella pop at -12 to -14 (catalogue below); at Spectre's -14 the limiter barely works, so the master changes the voices through its tonal EQ, not its dynamics. The `caroling` configuration borrows the `rock` curve, which expects far more energy at 5-12 kHz than voices, bells and organ have. Do not make up the difference with shelves on the voices (see the diagnosis): let the bells and the organ's upper stops carry the top, and accept a top-end note in the master report if the alternative is hissing consonants. The phone check matters here: its presence peak at 3 kHz is where a choir's consonants and its harshness both live.
+
+**The engine's reverb, measured** (one shared bus, `mix.reverb`; decay time T30 through the bus filters): `size` 0.25 = 0.8 s, 0.35 = 0.9 s, 0.5 = 1.15 s, 0.6 = 1.4 s, 0.75 = 2.1 s (the default), 0.85 = 3.0 s, 0.9 = 4.0 s. It cannot go under about 0.7 s: a parlour or a doorstep is a small `send_reverb` into a small `size`, not a small room simulated exactly. The `room` effect on a voice blends it but smears the words (MANUAL "Voices").
+
+**Starting chain: carolers singing words** (each voice its own track and take; all values *hand-tuned* except where the diagnosis below measured them):
+```json
+"mix": {"reverb": {"size": 0.3, "damping": 0.4, "return_db": -7, "lpf": 9000}},
+"sop":  {"inst": {"type": "singer", "source": "svs", "voice": "hanami", "seed": 3, "svs_vibrato": 0.4,
+                  "inhale": 0.3, "svs_fade_in_ms": 20, "svs_fade_out_ms": 140},
+         "pan": -0.35, "send_reverb": 0.12, "reverb_predelay_ms": 30, "push_ms": 0, "humanize_ms": 0,
+         "fx": [{"type": "hpf", "hz": 110}, {"type": "eq", "hz": 850, "gain_db": -2.5, "q": 0.9},
+                {"type": "highshelf", "hz": 8000, "gain_db": 3}]},
+"alto": {"...the same, with": "voice hanami or hanami-soft, another seed, pan 0.35, 2-3 dB under the soprano"}
+```
+- **Voices for words:** `hanami` (and `hanami-soft` for a second colour). **Never `hanami-dark` on words:** its lowered formants blur them (measured below and in VOICES.md); keep it for "oo" and "ah".
+- **Reverb:** parlour or doorstep `send_reverb` 0.08-0.15 into `size` 0.25-0.35; a hall carol 0.2-0.3 into `size` 0.6-0.75 with `reverb_predelay_ms` 60-80; a church (`size` 0.85, 3 s) only for wordless lines or a closing chord. Pre-delay 30-100 ms keeps a voice in front of its reverb ([Sound On Sound, Vocal Production](https://www.soundonsound.com/techniques/vocal-production)). One space at a time; change it only where the story changes place.
+- **Timing:** on a line with words every voice gets `push_ms` 0 and `humanize_ms` 0, so plosives and sibilants land together; give the line its own breath (a rest of at least an 8th before its first word, never tied to a preceding "ah"). Timing and pitch scatter belong on wordless textures.
+- **Words on every voice.** Putting the words on one voice and "ah" on the others hid them in the test below (1 word of 8); fewer voices singing the same words together is the way to thin a line.
+- **Wordless choir texture ("oo", "ah"):** `svs_vibrato` 0.3-0.5, different `seed`s, modes and banks, `push_ms` spread over ±10-25 ms, `send_reverb` 0.2-0.35, pans wider (±0.4-0.8), 3-6 dB under the word line, no high shelf (a dull pad is right).
+- **EQ:** `hpf` 110, a small 800-850 Hz dip, one high shelf of 3-4 dB at 8 kHz; the engine has no de-esser, so every further dB of shelf is paid in sibilance and breath. No compressor on a carol voice, or `{"type": "comp", "threshold_db": -20, "ratio": 2}` at most; set levels with `gain_db` and section `auto`.
+- **Level:** the word line 0-3 LU over the accompaniment under it when bells or organ play, and the quoted line never under the texture voices around it *(hand-tuned; no published choir figure)*. Lower voices go under the tune, not over it.
+- **Width:** sopranos left of centre, altos right, doubles wider; no `double` on a voice that already has a second take on its own track.
+
+**How to check** (procedure in MIXING.md, "Checking a voice"): Whisper (small.en) on the quick master of the bars that carry words, once on the mix and once on the voices alone (premaster minus a render with the voice tracks muted); the vocal-versus-band loudness from the same two renders. A line that reads on the voices alone and not in the mix is a level or masking problem; a line that does not read on the voices alone is a voice, timing or register problem, and no mix move will fix it.
+
+### Diagnosis: the quote in "The Note She Kept" (session 012, v028; measured 2026-11-24)
+The owner heard the quoted line "Peace on the earth, good will to men" as very hard to understand, its start "like a cat meowing", and suspected the reverb. Excerpts of the two places it is sung were re-rendered with one change at a time and transcribed by Whisper (small.en, on the quick master, one run per variant: read a difference of one word as noise). "Words heard" counts the line's eight words found in order.
+
+| the meeting (0:25-0:36; soprano `hanami` at D5, alto `hanami-dark` an octave below) | words heard in the mix | transcription |
+|---|---|---|
+| as released (sends 0.3 into a 1.15 s reverb, return -7 dB) | 2 of 8 | "Beside the Earth, they're glitching and the wind" |
+| no reverb | 5 | "Beside the earth, good will to man" |
+| soprano alone, no reverb | 7 | "Peace on the Earth, Goodwill to man" |
+| alto alone, no reverb | 0 | nothing in the mix; the voice alone: "This song is too much and I'm" |
+| **alto on `hanami` instead of `hanami-dark`, reverb as released** | 7 | "Peace on the earth, good will to man" |
+| the same with sends 0.18, 0.10, 0.05, 0 | 7 each | the same words |
+
+| the a cappella reprise (1:52-2:02; four voices on the words, `low` on "ooh") | words heard | transcription |
+|---|---|---|
+| as released | 4 of 8 | "I am stronger, with good will to men" |
+| no reverb | 7 | "God is on the earth, good will to men" |
+| a rest before "Peace" (it was tied to the "ah" before it), alto on `hanami` | 6 | "Is on the earth good will to man" |
+| **the rest, the alto on `hanami`, and all four voices on `push_ms` 0 (they were +14, -9, +22, +27 ms), reverb as released** | 8 | "Peace on the Earth, Goodwill to Men" |
+| the words on one soprano, the other three on "ah" | 1 | "There's something I've been through to live" |
+
+What it shows:
+1. **Two causes, and the reverb is only one of them.** Taking the reverb away brings back three words in each place (2 to 5, 4 to 7), so the owner's ear is right that it hurts. But the first word never comes back that way, and changing the voices instead brings back more (2 to 7 in the meeting, 4 to 8 in the reprise) with the reverb left as it was.
+2. **The alto voice.** It is `hanami-dark` (formants lowered), which Whisper cannot follow even alone and dry, and in the meeting it is automated 1.5-3 dB *over* the soprano: two voices sing the same words in octaves and the blurred one leads.
+3. **The reverb.** Sends of 0.3-0.5 into a 1.15 s reverb fill the gap at the "s" of "Peace" by 10-14 dB (the vowel band dips 19 dB there with the reverb, 29-33 dB without). The room is also larger than the story's parlour.
+4. **The door-bar filter removes a consonant.** The 5 kHz low-pass that opens the door takes 8 dB off the "s" of "Peace" (sibilant level against the vowel: -8.3 dB filtered, +0.4 dB open).
+5. **In the reprise the word has no beginning.** "Peace" is tied to the preceding "ah" and the four voices start it up to 36 ms apart, so there is no silence before the "p" and no single plosive. Only the rest and the aligned voices together brought the word back.
+6. **The "meow" (an inference from 2-5, not a measurement):** with "p" and "s" gone, what is left of "Peace on the" is the vowel glide "ee-ah" and then an octave fall (D5 to D4), which is the shape of a meow.
+7. **The long EQ chain did not help.** Each voice carries eight bands, including +11 dB shelves at 4.7 and 13 kHz added to bring the mix up to the borrowed master curve. The three-band chain above read the same (7 of 8 in the meeting, dry, with the alto fixed; 7 of 8 in the reprise with the rest, the alto fixed and sends of 0.15), with the sibilants about 10 dB lower against the vowels.
+
+Fixes in order: alto on `hanami` and under the soprano; a rest before "Peace" and `push_ms` 0 on the quote; no low-pass on the voices in the door bar (filter the organ only); sends of about 0.12 into `size` 0.3; the short EQ chain.
 
 ## Catalogue measurements (AcousticBrainz, 2026-11-24)
 Track lengths from MusicBrainz; tempo, key and ReplayGain from AcousticBrainz (Essentia 2.1-beta2 low-level data, submitted by users for any edition of each recording). ReplayGain was converted to loudness with **LUFS ≈ -23.7 - RG**, fitted on Spectre's own eleven masters (Essentia ReplayGain against pyloudnorm, spread ±0.7 dB on those; choral spectra may shift it by another dB or two). Tempo estimates on unaccompanied choirs are unreliable (rubato, no drums, octave errors). Scripts in the orchestrator's workspace; the raw numbers are reproduced here.
