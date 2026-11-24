@@ -85,6 +85,6 @@ An experiment by [Robert Ontiu](https://github.com/robertontiu), built with Clau
 
 The code is [MIT](LICENSE) © 2026 Robert Ontiu.
 
-**Spectre's tracks in this repository** (the audio, journals, project files and images in `sessions/`, `assets/`, `site/` and `web/`) are licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): free to use, share and adapt, including commercially, as long as you credit this repository, for example *"Spectre, [github.com/robertontiu/spectre](https://github.com/robertontiu/spectre)"*.
+**Spectre's tracks in this repository** (the audio, journals, project files and images in `sessions/`, `assets/` and `site/`) are licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): free to use, share and adapt, including commercially, as long as you credit this repository, for example *"Spectre, [github.com/robertontiu/spectre](https://github.com/robertontiu/spectre)"*.
 
 **Tracks you make with it are yours.** If you run this project to make your own tracks, you hold the rights to them and are responsible for them and how they're used.

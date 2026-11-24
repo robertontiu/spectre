@@ -9,12 +9,12 @@ Next.js 16 (App Router, Turbopack), React 19, TypeScript (strict), Tailwind CSS 
 Node 20.9 or newer.
 
 ```bash
-cd web
+cd site
 npm install
 npm run dev          # http://localhost:3000
 ```
 
-`dev` and `build` first run `scripts/sync-tracks.mjs`, which copies each track's master from `../sessions/<id>-*/*-mastered.mp3` to `public/tracks/` (the MP3s are not committed under `web/`).
+`dev` and `build` first run `scripts/sync-tracks.mjs`, which copies each track's master from `../sessions/<id>-*/*-mastered.mp3` to `public/tracks/` (the MP3s are not committed under `site/`).
 
 | Script                                                  | What it does                                                                                                                     |
 | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -41,7 +41,7 @@ npm run dev          # http://localhost:3000
 
 Create a Vercel project from the GitHub repo with:
 
-- **Root Directory:** `web`
+- **Root Directory:** `site`
 - **Include files outside the root directory in the Build Step:** enabled (it is by default). The prebuild step reads the masters from `../sessions/`, so the build fails with "missing master" if this is off.
 - Framework preset Next.js, default build command (`npm run build`) and output. No environment variables and no `vercel.json` are needed.
 - Domain: add `spectre.robertontiu.com` and point a `CNAME` for `spectre` at `cname.vercel-dns.com`. Absolute URLs in the metadata, sitemap, share links and OG cards use `https://spectre.robertontiu.com` (`src/lib/site.ts`).

@@ -2,7 +2,7 @@
 /**
  * Copies each track's mastered MP3 from its session folder into public/tracks/, under
  * the file name its `src` in data/tracks.json expects. Runs before `next dev` and
- * `next build` (predev/prebuild). The MP3s are not committed under web/; the session
+ * `next build` (predev/prebuild). The MP3s are not committed under site/; the session
  * folders hold the originals.
  *
  *   A track with id "005" uses the first *-mastered.mp3 in ../sessions/005-*\/.
