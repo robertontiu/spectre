@@ -18,6 +18,17 @@ These were set by Robert (the repo owner) and apply until he changes them:
 3. Start a general-purpose sub-agent with a short prompt: "Read sessions/NNN-name/PROMPT.md in full and follow it exactly. If journal.md already exists, this is a resumed session: read the journal and helper scripts first, listen to the latest render before your next move, continue numbering. Your final reply must be the report described at the end of PROMPT.md." Because the full brief lives in PROMPT.md, the same short prompt resumes a stopped session.
 4. Schedule a check-in (a one-shot scheduled message back into the session) for 15 minutes.
 
+## Genre conventions (fill the producer template from these)
+Lengths and forms follow the genre, not one rule. Check the genre brief in docs/<GENRE>.md, and add a row when a new genre arrives.
+
+| Genre family | `{{LENGTH}}` | `{{FORM}}` | `{{ROLE}}` (what the instrumental must allow) | `{{MASTER}}` |
+|---|---|---|---|---|
+| Beats (trap, boom-bap, drill, rage, folk-fusion trap) | 2:30 to 3:30 | an intro, a real arrangement (hooks and verses) and an outro | it should feel like a real beat an artist could rap on | `studio.py master vNNN --lufs -10.5 --tp -1` |
+| Trance and other club music | 5:00 to 7:00 (an extended mix; a radio edit is 3:00-4:00 and only when Robert asks) | a DJ-friendly intro and outro (16-32 bars of drums to mix with), at least one full breakdown and build into a release, and a second wave | a lead synth carries the melody a vocalist would sing | `studio.py master vNNN --target trance --lufs -10 --tp -1 --translate 0.4` |
+| Pop rock and other songs | 3:00 to 4:00 | a song form (intro, verses, pre-choruses, choruses, a bridge, a final chorus, an outro) | the verses leave room for a voice; a vocal-like lead carries the sung melody | `studio.py master vNNN --target rock --lufs -10 --tp -1 --translate 0.3` |
+
+`{{HAND}}` is 3-5 bullets naming the genre's schools and craft (see the latest session's PROMPT.md in that genre); `{{GENRE_LINE}}` says whether the genre is fixed by the brief or the producer's choice.
+
 ## Keeping sessions alive
 - At each check: count `renders/v*.wav` (excluding master, premaster and solo files), note the newest render's time, look for `final.mp3`.
 - Progressing: schedule the next check in 15 minutes. With several sessions running, one combined check is fine.
