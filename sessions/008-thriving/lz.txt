@@ -1,0 +1,19 @@
+ZOOM 133.8-157.4s  LUFS -10.1
+  kick         24 events  timing vs 16th grid: mean  -0.7 ms, spread  4.7 ms  velocity 0.72-0.89
+  snare        29 events  timing vs 16th grid: mean  +2.7 ms, spread  5.6 ms  velocity 0.40-1.00
+  phat          6 events  timing vs 16th grid: mean  +1.1 ms, spread  4.7 ms  velocity 0.79-0.87
+  ride         32 events  timing vs 16th grid: mean  +0.9 ms, spread  6.7 ms  velocity 0.59-0.88
+  crash         1 events  timing vs 16th grid: mean  -5.4 ms, spread  0.0 ms  velocity 1.00-1.00
+  tom2          2 events  timing vs 16th grid: mean  +4.0 ms, spread  2.8 ms  velocity 0.84-0.85
+  bass         36 events  timing vs 16th grid: mean  -2.2 ms, spread  3.5 ms  velocity 0.78-1.00
+  clean        64 events  timing vs 16th grid: mean  +0.1 ms, spread  7.0 ms  velocity 0.39-0.64
+  cleanV       16 events  timing vs 16th grid: mean +20.3 ms, spread 11.7 ms  velocity 0.41-0.62
+  chug         48 events  timing vs 16th grid: mean  +5.2 ms, spread  6.4 ms  velocity 0.55-0.80
+  gtrL         97 events  timing vs 16th grid: mean  +7.1 ms, spread  8.0 ms  velocity 0.60-1.00
+  gtrR        128 events  timing vs 16th grid: mean +13.4 ms, spread 32.8 ms  velocity 0.51-0.91
+  organ        14 events  timing vs 16th grid: mean  +7.6 ms, spread  4.2 ms  velocity 0.51-0.68
+  piano        56 events  timing vs 16th grid: mean  +6.2 ms, spread  8.6 ms  velocity 0.44-0.66
+  voxV          8 events  timing vs 16th grid: mean +26.3 ms, spread 12.3 ms  velocity 0.80-0.95
+  voxC         16 events  timing vs 16th grid: mean  +0.5 ms, spread 10.5 ms  velocity 0.71-0.93
+  voxD         17 events  timing vs 16th grid: mean +15.6 ms, spread 12.9 ms  velocity 0.74-0.96
+image: /home/claude/spectre/sessions/008-thriving/ear_zoom.png

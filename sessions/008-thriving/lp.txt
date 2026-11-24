@@ -1,0 +1,20 @@
+PHONE: v027.wav  speaker model: HP 280 Hz, +4 dB at 3 kHz, LP 12 kHz  target: rock (genre rock)
+  6-12 kHz vs 1-2.8 kHz -14.1 dB = -1.8 dB vs the target   5-16 kHz -0.9 dB vs the target   flatness 4-16 kHz 0.05 (1 = white noise)
+  worst 3 s at 134.6 s: 6-12 kHz +2.5 dB vs the target, flatness 0.02
+  section        level  6-12k vs target  flatness
+  intro          -10.6       -16.4        0.00
+  verse1a         -6.4        -0.5        0.06
+  verse1b         -6.3        -1.8        0.05
+  pre1            -3.1        +0.5        0.05
+  chorus1         -0.8        -1.8        0.06
+  tag             -5.4        +0.6        0.09
+  verse2a         -4.9        +0.9        0.04
+  verse2b         -4.1        +0.2        0.04
+  pre2            -3.1        +0.2        0.05
+  chorus2         -0.5        -2.0        0.04
+  bridgeA         -9.1        +1.0        0.02
+  bridgeB         -7.4        +0.8        0.04
+  chorus3         -0.4        -2.2        0.04
+  chorus4          0.0        -2.6        0.06
+  outro           -2.3        -4.0        0.06
+  coda           -20.0        -4.2        0.13

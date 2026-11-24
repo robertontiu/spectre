@@ -98,6 +98,12 @@ Researched 2026-11-24 under standing rule 8. The proposed configuration, the eng
 - `--lufs -8.5`. Keep `--tp -1`, mono below 120 Hz, and aim width at -11 to -7 LU. Tested on `examples/poprock-test.json`: it lands at -8.5 LUFS and -1.04 dBTP, with PLR 7.5 and LRA 4.0 (unchanged from -10, so the verse-to-chorus contrast survives). The clipper shaves 5 dB of drum peaks (1.1% of samples), limiter reduction is 0.8 dB, and the true-peak guard is not needed. A 320 kbps MP3 peaks at -0.79 dBTP. -8 is possible (PLR 7.0).
 - Proposed curve `rock_modern` = the measured `rock` with era offsets: +2 to +2.5 dB at 31.5-50 Hz, +1.5 at 63 Hz, +1 at 8 kHz, +1.5 at 10 kHz, +2.5 at 12.5 kHz, +4 at 16 kHz. These are estimates (±2-4 dB), pending measurement of owned modern pop-rock references.
 
+## What session 008 learned
+- Tune the kick around 72 Hz with a short decay; keep the bass off A1/B1 in verses; give distorted guitars low-shelf body (160-260 Hz) and pan the doubles about ±0.85.
+- Darken the snare (fewer wires, a shelf from 4.5 kHz, a 9 kHz low-pass, a little 2.5 kHz crack); shelve hats, ride and crash so the top end isn't harsh on phones.
+- The wordless `vox` gets buried behind guitars; a lead guitar or piano can carry the melody, or push the vox at 2.8 kHz.
+- Playing a section 20-30 ms behind the beat reads as weight; playing on top reads as momentum.
+
 ## Sources
 - MusicRadar, Anatomy of an arrangement (song sections): https://www.musicradar.com/how-to/song-sections-explained-intro-verse-chorus-middle8-outro-tag-bridge
 - Mastering The Mix, How to mix big, punchy rock drums: https://www.masteringthemix.com/blogs/learn/how-to-mix-big-punchy-rock-drums
