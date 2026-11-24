@@ -1,0 +1,19 @@
+PHONE: v028.wav  speaker model: HP 280 Hz, +4 dB at 3 kHz, LP 12 kHz  target: hiphop (genre hiphop)
+  6-12 kHz vs 1-2.8 kHz -12.3 dB = -1.7 dB vs the target   5-16 kHz -0.5 dB vs the target   flatness 4-16 kHz 0.11 (1 = white noise)   noise-likeness 4-16 kHz 1.02 (slope removed; 1 = noise, 0 = tones)
+  worst 3 s at 123.9 s: 6-12 kHz +8.1 dB vs the target, flatness 0.17
+  section        level  6-12k vs target  flatness
+  introA          -7.2        +1.7        0.15
+  introB          -5.4        +2.6        0.15
+  dark1           -4.8        +2.5        0.15
+  dark2           -2.6        +0.0        0.17
+  build1          -3.0        +3.4        0.18  <- bright
+  drop1           -2.5        -0.8        0.18
+  bd1a            -6.9        -6.0        0.05
+  bd1b            -3.9       -13.6        0.03
+  build2          -3.0        -0.9        0.08
+  rel1            -1.0        -2.1        0.11
+  bd2             -3.1        -9.3        0.04
+  build3          -2.8        -0.8        0.08
+  rel2             0.0        -3.6        0.08
+  outro           -5.5        +2.8        0.14
+PHONE NOTE: loudest-hiss moment at 123.9 s: 6-12 kHz +8.1 dB above the target (flatness 0.17)

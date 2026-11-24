@@ -106,6 +106,12 @@ Researched 2026-11-24 under standing rule 8. The proposed configuration, the eng
 - `--lufs -9` (lands about -9.3). Use -8.5 only when the mix controls the kick's peaks. Keep `--tp -1`, mono below 120 Hz, and aim width at -9 to -6 LU. Tested on `examples/trance-test.json`: the engine's true-peak guard is not the limit, the soft clipper is. Today's -10 already shaves 6.8 dB off clubkick peaks, -9 shaves 8.0 dB, and -8.5 shaves 8.7 dB (PLR 7.7). A 320 kbps MP3 stays under -0.5 dBTP. **Producers:** clip or saturate the kick or drum bus in the mix so the master doesn't have to.
 - Proposed curve `trance_modern` = the measured `trance` with era offsets: +2 dB at 31.5-50 Hz, +1.5 at 63 Hz, +1 at 10 kHz, +2 at 12.5 kHz, +3.5 at 16 kHz. These are estimates (±2-4 dB), pending measurement of owned reference tracks.
 
+## What session 007 learned
+- Hold the hook back (80 bars in an extended mix) and keep the first drop in a smaller room; the release can then be one changed note.
+- True silence (`exit silence`) for the bar before a release; a breakdown that starts from almost nothing.
+- Clubkick around 56 Hz, narrow deep cut at 66 Hz, boost at 105 Hz; saturate the kick last. Watch the clap: layered with the kick on 2 and 4 it can be the crest spike.
+- Darken open hats (shelf from 9 kHz, low-pass at 12k) so groove-only stretches don't read as hiss on phones.
+
 ## Sources
 - Uplifting trance (Wikipedia): https://en.wikipedia.org/wiki/Uplifting_trance
 - Roland JP-8000 and the supersaw (Wikipedia): https://en.wikipedia.org/wiki/Roland_JP-8000 ; A. Szabo (2010), "How to Emulate the Super Saw" (detune offsets used in `supersaw`)
