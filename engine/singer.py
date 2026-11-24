@@ -8,13 +8,16 @@ How it works (details and sources in docs/MANUAL.md, "Singer"):
    syllable the onset consonants keep their spoken length and land just before the note (singers put consonants
    ahead of the beat so the vowel starts on it), the vowel is stretched over the note (lingering on its first part,
    as singers hold the first vowel of a diphthong), and the coda consonants close the note.
-3. Voice. The melody's own pitch curve (scoop into fresh notes, glides, delayed vibrato, slow drift, jitter; `tune`
-   pulls it toward the exact note) drives one of two sources through the spoken envelope:
+3. Voice. The melody's own pitch curve (glides, delayed vibrato, slow drift, jitter, an optional scoop; `tune` pulls
+   it toward the exact note; each note's pitch starts with its onset consonant) drives one of two sources through the
+   spoken envelope, one level per syllable (set by its vowel, so consonants keep their spoken dip), with the envelope
+   smoothed across syllable joins (`coartic_ms`):
    - `breathy` (default): the `vox` character, an additive soft harmonic source plus breath noise, both shaped by
      the word's envelope: soft, breathy, flute-like, but with vowels and consonants you can read;
    - `pulse`: WORLD's own pulse/noise excitation: a brighter, more processed (vocoder-like) voice; with `tune` 1
      and `retune_ms` near 0 it gives the hard-tuned club vocal.
    Formant shift, doubling (a second take, its own timing and pitch wobble, panned), breath and inhales on top.
+Intelligibility limits (docs/MANUAL.md "Register"): keep sung words at A3-D5 and about 1-3 syllables a second; above E5 the harmonics are too sparse to draw the vowels and syllables become chirps.
 """
 import functools
 import hashlib
@@ -72,6 +75,16 @@ def _speak(text, voice, speed, pitch):
 
 
 @functools.lru_cache(maxsize=4096)
+def _phonemes(text, voice):
+    """eSpeak NG's phoneme mnemonics for text ('' if unavailable)."""
+    try:
+        r = subprocess.run([_espeak_bin(), "-v", voice, "-q", "-x", text], check=True, capture_output=True, text=True)
+        return r.stdout.strip()
+    except Exception:  # pragma: no cover
+        return ""
+
+
+@functools.lru_cache(maxsize=4096)
 def _analyze(text, voice, speed, pitch):
     """WORLD analysis of a spoken word, trimmed to its sounding part. Returns dict of frame arrays."""
     import pyworld as pw
@@ -89,6 +102,15 @@ def _analyze(text, voice, speed, pitch):
     r_db = 20 * np.log10(rms)
     on = np.where(r_db > r_db.max() - 45)[0]
     a, b = (on[0], on[-1] + 1) if len(on) else (0, len(f0))
+    # a word-initial /h/: eSpeak's Klatt voices make it breathy-voiced and WORLD tracks a pitch through it, so it
+    # would be sung as a tone (an "ee" glide instead of a breath). Make it breath: unvoiced until the level comes
+    # within 12 dB of the word's peak
+    if _phonemes(text, voice).lstrip("',%=").startswith("h"):
+        k = a
+        while k < b and r_db[k] < r_db[a:b].max() - 12:
+            k += 1
+        f0 = f0.copy()
+        f0[a:k] = 0.0
     return dict(f0=f0[a:b], sp=sp[a:b], ap=ap[a:b], e=e_db[a:b], r=r_db[a:b], sr=sr, freqs=freqs)
 
 
@@ -171,7 +193,7 @@ VOICES = {  # name -> (eSpeak NG voice, formant shift semitones); Klatt variants
 }
 
 
-def _plan(p, notes, total_n, rng, time_jit=0.0):
+def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False):
     """Build the output frame plan: per frame a source (analysis, frame index) or silence, plus a target pitch."""
     voice_name = p.get("espeak", VOICES.get(p.get("voice", "female"), VOICES["female"])[0])
     speed = p.get("speed", 140)
@@ -210,18 +232,35 @@ def _plan(p, notes, total_n, rng, time_jit=0.0):
         sy = wcache[(wd, n)]
         g["syl"] = sy[min(si, len(sy) - 1)] if sy else None
     jit = time_jit
+    sid = np.full(nF, -1)  # syllable index per frame (for the per-syllable level)
+    vowel = np.zeros(nF, dtype=bool)  # vowel (nucleus) frames
+    lead_ms = p.get("pitch_lead_ms")  # None: the pitch moves where the onset consonant starts (see below)
     for gi, g in enumerate(groups):
         s = g["syl"]
         ns = g["notes"]
         t0 = ns[0]["t0"] / HOP + (rng.normal(0, jit) if jit else 0)
         t_end = (ns[-1]["t0"] + ns[-1]["n"]) / HOP + (rng.normal(0, jit) if jit else 0)
         nxt0 = groups[gi + 1]["notes"][0]["t0"] / HOP if gi + 1 < len(groups) else nF
-        # pitch targets
+        n_on = 0
+        if s is not None:
+            on, nu, co = s["on"], s["nu"], s["co"]
+            n_on, n_nu, n_co = on[1] - on[0], nu[1] - nu[0], co[1] - co[0]
+            # onset room: at most max_onset_ms, and at most 45% of the gap since the previous syllable started, so a
+            # consonant cluster before a fast note is spoken faster instead of swallowing the previous vowel
+            prev0 = groups[gi - 1]["notes"][0]["t0"] / HOP if gi > 0 else -1e9
+            n_room = int(min(p.get("max_onset_ms", 160) / FP, max(2.0, 0.45 * (t0 - prev0))))
+            n_src_on = n_on
+            n_on = min(n_on, n_room)
+        # pitch targets. The new note's pitch starts with its onset consonant (singers change pitch on the consonant,
+        # so the previous vowel keeps its own note to the end). `pitch_lead_ms` sets a fixed lead instead (the first
+        # version used 200 ms, which moved the pitch inside the previous vowel: on short notes most of a syllable was
+        # sung on the next syllable's note).
+        lead = int(round(lead_ms / FP)) if lead_ms is not None else int(round(n_on))
         for k, nt in enumerate(ns):
             a = int(round(nt["t0"] / HOP))
             b = int(round(ns[k + 1]["t0"] / HOP)) if k + 1 < len(ns) else int(round(t_end)) + 1
             b2 = int(round(nxt0)) if k + 1 == len(ns) else b
-            a0 = max(a - 40, 0) if k == 0 else a
+            a0 = max(a - lead, 0) if k == 0 else a
             tgt[a0:min(b2, nF)] = nt["f"]
             vel[a0:min(b2, nF)] = nt["vel"]
             fresh[a0:min(b2, nF)] = not nt.get("glide")
@@ -229,15 +268,7 @@ def _plan(p, notes, total_n, rng, time_jit=0.0):
                 start[a] = not nt.get("glide")
         if s is None:
             continue
-        on, nu, co = s["on"], s["nu"], s["co"]
-        n_on, n_nu, n_co = on[1] - on[0], nu[1] - nu[0], co[1] - co[0]
         avail = t_end - t0
-        # onset room: at most max_onset_ms, and at most 45% of the gap since the previous syllable started, so a
-        # consonant cluster before a fast note is spoken faster instead of swallowing the previous vowel
-        prev0 = groups[gi - 1]["notes"][0]["t0"] / HOP if gi > 0 else -1e9
-        n_room = int(min(p.get("max_onset_ms", 160) / FP, max(2.0, 0.45 * (t0 - prev0))))
-        n_src_on = n_on
-        n_on = min(n_on, n_room)
         # coda: natural length, squeezed if the note is short (keep at least 40% of the note for the vowel)
         c_len = min(n_co, max(1.0, avail * 0.45))
         v_len = max(avail - c_len, 1.0)
@@ -247,6 +278,7 @@ def _plan(p, notes, total_n, rng, time_jit=0.0):
             if 0 <= f < nF:
                 src_w[f], src_i[f] = s["w"], on[0] + n_src_on * j / max(n_on, 1)
                 cons[f] = True
+                sid[f] = gi
         # vowel: linger on the first part (u**1.6)
         L = int(np.ceil(v_len))
         for j in range(L):
@@ -254,12 +286,16 @@ def _plan(p, notes, total_n, rng, time_jit=0.0):
             if 0 <= f < nF:
                 u = j / max(L - 1, 1)
                 src_w[f], src_i[f] = s["w"], nu[0] + (n_nu - 1) * u ** p.get("linger", 1.6)
+                sid[f], vowel[f] = gi, True
         C = int(np.ceil(c_len))
         for j in range(C):
             f = int(round(t0)) + L + j
             if 0 <= f < nF:
                 src_w[f], src_i[f] = s["w"], co[0] + (n_co - 1) * j / max(C - 1, 1) if n_co else nu[1] - 1
                 cons[f] = n_co > 0
+                sid[f] = gi
+    if with_ids:
+        return src_w, src_i, tgt, vel, start, fresh, groups, cons, sid, vowel
     return src_w, src_i, tgt, vel, start, fresh, groups, cons
 
 
@@ -290,8 +326,9 @@ def _pitch_curve(p, tgt, start, fresh, rng, detune_cents=0.0):
             sm[i] = filled[i]
         else:
             sm[i] = sm[i - 1] + a1 * (filled[i] - sm[i - 1])
-    # scoop up into fresh notes
-    scoop = p.get("scoop", 0.4) * (1 - tune)
+    # scoop up into fresh notes (off by default: a scoop on every syllable, together with the formant sweep of the
+    # onset consonant, reads as a bird-like chirp on high notes; use it on a few long notes)
+    scoop = p.get("scoop", 0.0) * (1 - tune)
     env = np.zeros(nF)
     idx = np.where(start)[0]
     tt = np.arange(nF) * FP / 1000
@@ -315,9 +352,12 @@ def _pitch_curve(p, tgt, start, fresh, rng, detune_cents=0.0):
     return 440.0 * 2 ** ((m - 69) / 12)
 
 
-def _interp_frames(src_w, src_i, nbins_out, fs_out, shift):
+def _interp_frames(src_w, src_i, nbins_out, fs_out, shift, coartic_ms=0.0):
     """Spectral envelope, aperiodicity and voicing per output frame, resampled to the output frequency grid with a
-    formant shift (ratio)."""
+    formant shift (ratio). `coartic_ms` > 0 smooths the envelope across the joins between syllables (where the frames
+    jump to another word or to another part of the same word), so the vocal tract moves from one syllable into the
+    next instead of switching between frames: each word is spoken on its own by eSpeak, so without this there is
+    no coarticulation across syllables."""
     nF = len(src_w)
     f_out = np.linspace(0, fs_out / 2, nbins_out)
     sp = np.full((nF, nbins_out), 1e-12)
@@ -345,17 +385,40 @@ def _interp_frames(src_w, src_i, nbins_out, fs_out, shift):
         ap[f] = np.interp(src_f, fr, q, right=1.0)
         voiced[f] = 1.0 if (w["f0"][i0] > 0 or w["f0"][i1] > 0) else 0.0
         live[f] = True
+    K = int(round(coartic_ms / FP / 2))
+    if K >= 1:
+        joins = [f for f in range(1, nF) if live[f] and live[f - 1] and voiced[f] > 0 and voiced[f - 1] > 0
+                 and (src_w[f] is not src_w[f - 1] or abs(src_i[f] - src_i[f - 1]) > 2.5)]
+        if joins:
+            lsp = np.log(sp)
+            out = lsp.copy()
+            for j in joins:
+                a, b = max(j - K, 0), min(j + K, nF)
+                if not (live[a:b].all() and (voiced[a:b] > 0).all()):
+                    a, b = j - 1, j + 1  # don't smear into silence or into an unvoiced consonant
+                    if a < 0 or b > nF:
+                        continue
+                # a linear path in log-envelope from the frame before the window to the frame after it, blended in
+                # with a raised-cosine weight that is 1 at the join
+                left, right = lsp[max(a - 1, 0)], lsp[min(b, nF - 1)]
+                for f in range(a, b):
+                    u = (f - a + 0.5) / (b - a)
+                    wgt = 0.5 * (1 + np.cos(np.pi * (f - (j - 0.5)) / max(K + 0.5, 1)))
+                    out[f] = (1 - wgt) * lsp[f] + wgt * ((1 - u) * left + u * right)
+            sp = np.exp(out)
     return sp, ap, voiced, live, f_out
 
 
 def _take(p, notes, total_n, seed, time_jit_ms=0.0, detune_cents=0.0):
     import pyworld as pw
     rng = np.random.default_rng(seed)
-    src_w, src_i, tgt, vel, start, fresh, groups, cons = _plan(p, notes, total_n, rng, time_jit=time_jit_ms / FP)
+    src_w, src_i, tgt, vel, start, fresh, groups, cons, sid, vowel = _plan(p, notes, total_n, rng,
+                                                                           time_jit=time_jit_ms / FP, with_ids=True)
     f0 = _pitch_curve(p, tgt, start, fresh, rng, detune_cents)
     fft = pw.get_cheaptrick_fft_size(SR)
     shift = 2 ** (p.get("formant", VOICES.get(p.get("voice", "female"), VOICES["female"])[1]) / 12)
-    sp, ap, voiced, live, f_out = _interp_frames(src_w, src_i, fft // 2 + 1, SR, shift)
+    sp, ap, voiced, live, f_out = _interp_frames(src_w, src_i, fft // 2 + 1, SR, shift,
+                                                 coartic_ms=float(p.get("coartic_ms", 40)))
     nF = len(src_w)
     # smooth voicing so consonant/vowel edges cross-fade over ~15 ms
     vs = np.convolve(voiced, np.ones(3) / 3, mode="same")
@@ -365,7 +428,19 @@ def _take(p, notes, total_n, seed, time_jit_ms=0.0, detune_cents=0.0):
     e = sp[:, band].mean(1)
     gain = np.ones(nF)
     on = np.where(live)[0]
-    if len(on):
+    level_mode = p.get("level", "syllable")
+    if len(on) and level_mode == "syllable":
+        # one gain per syllable, set by its vowel: the vowels sit level and every consonant keeps its spoken level
+        # against its own vowel (the first version followed the level frame by frame over 60 ms, which lifted
+        # nasals, glides and /h/ to vowel level: consonants came out 0-3 dB above the vowel instead of 6-9 dB below,
+        # so syllables lost their edges)
+        ref = np.percentile(e[on][voiced[on] > 0], 75) if (voiced[on] > 0).any() else e[on].max()
+        for gi in np.unique(sid[sid >= 0]):
+            fr = (sid == gi)
+            vf = fr & vowel & (voiced > 0)
+            ev = np.percentile(e[vf], 75) if vf.any() else (e[fr].max() if fr.any() else ref)
+            gain[fr] = np.clip(np.sqrt(ref / max(ev, ref * 1e-3)), 0.3, 3.0)
+    elif len(on):
         ref = np.percentile(e[on][voiced[on] > 0], 75) if (voiced[on] > 0).any() else e[on].max()
         # slow level follower over vowels (60 ms), so plosive/fricative frames keep their natural level
         ev = np.where(voiced > 0, e, 0)
@@ -381,8 +456,12 @@ def _take(p, notes, total_n, seed, time_jit_ms=0.0, detune_cents=0.0):
     mode = p.get("source", "breathy")
     # ---- noise part: consonant frication + breath, shaped by the word's envelope (WORLD, f0 = 0 -> all noise)
     hi = np.clip((f_out - 1200) / 2500, 0, 1)
-    nw = np.where(vs[:, None] > 0.5, np.clip(ap, 0, 1) ** 2 * 0.5 + breath * (0.15 + 0.85 * hi[None, :]) * 0.25,
-                  1.0)
+    # `whisper` 0-1: an aspiration layer with the full vocal-tract shape (not high-passed like `breath`). On high
+    # notes the harmonics are too sparse to draw the formants; breath noise through the same envelope still draws
+    # them (whispered speech is intelligible), so the vowels and glides stay readable under the soft tone
+    whisper = float(p.get("whisper", 0.25))
+    nw = np.where(vs[:, None] > 0.5, np.clip(ap, 0, 1) ** 2 * 0.5 + breath * (0.15 + 0.85 * hi[None, :]) * 0.25
+                  + whisper * 0.5, 1.0)
     sp_n = sp * nw * (lvl ** 2)[:, None] + 1e-16
     noise = pw.synthesize(np.zeros(nF), np.ascontiguousarray(sp_n), np.ones_like(sp), SR, FP)
     if mode == "pulse":
@@ -458,6 +537,10 @@ def sing(p, notes, total_n):
     if "lyrics" in p and not p.get("_lyrics"):
         p["_lyrics"] = parse_lyrics(p["lyrics"])
     seed = p.get("seed", 1)
+    hi = [nt for nt in notes if nt["f"] > 660.0]  # above E5
+    if notes and len(hi) > 0.25 * len(notes):
+        _warn(f"{len(hi)} of {len(notes)} sung notes are above E5: up there the harmonics are too far apart to carry "
+              "the vowels, so words turn into chirps; sing the line an octave lower (A3-D5 reads best)")
     main = _take(p, notes, total_n, _seed("singer", seed, 0))
     norm = _norm(main)
     dbl = float(p.get("double", 0.0))
