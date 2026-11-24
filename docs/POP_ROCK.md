@@ -56,6 +56,39 @@ Changed from the previous setup: Spectre's shape now fills 3:00-4:00 (it summed 
 ## The "vocal" role (instrumental)
 A pop rock song without a singer still needs **the sung melody**. Carry it with `vox`, a wordless vocal-like lead (formant "oo" in verses opening to "ah" in choruses, scoops, glides with `~`, vibrato that blooms late), and/or a singing lead guitar that doubles or answers it in the last chorus. Write it like a singer would: phrases with breaths (rests), a verse in a narrow low range, a chorus that climbs a third to a fifth higher with long notes at phrase ends, and one held peak note in the last chorus.
 
+## Mixing the voice (researched 2026-11-24)
+For a sung hook or line in a pop rock track (the wordless `vox` lead follows the same rules without the word checks). The principles for every genre, the choir research and the check procedure are in [docs/voice/MIXING.md](voice/MIXING.md). Values marked *(hand-tuned)* are Spectre's starting points.
+
+**What the research says**
+- **Level with the band, not on top of it:** rock leads sit 0.2 dB over the accompaniment on average (pop 2.7 dB; metal -3.1 dB; solo rock artists 2.5 dB higher than bands) ([Gerdes & Siedenburg 2023](https://www.geidai.ac.jp/~marui/course_enshu_2024/gerdes_siedenburg_202304.pdf)). A rock voice is heard through the guitars because it is denser and because the band makes room, not because it is louder.
+- **How engineers keep it there.** Ken Andrews (Paramore) builds a strong instrumental first and then makes the vocal "compete": a high-pass at 62 Hz, a multiband for general control, an optical compressor hit hard, saturation at "around 30 to 40 percent" that he raises (sometimes automates) in dense passages to keep the vocal on top instead of riding the fader, and a de-esser last; to make room he takes "some 1k or 2k out of the guitars or keyboards" or pans parts wider ([Sound On Sound](https://www.soundonsound.com/techniques/inside-track-paramore)). Jacquire King (Kings of Leon) runs EQ, a fast FET compressor and a de-esser in series and blends in a compressed, excited copy for high-frequency presence ([Sound On Sound](https://www.soundonsound.com/techniques/inside-track-kings-leon-sex-fire)).
+- **Space is a plate and delays, in changing amounts.** Both use an EMT 140 plate and slap and longer delays, "two or three delays and two or three reverbs in total", with different amounts in different song sections; King adds a distant double in the chorus recorded in another space (same sources). No decay times or levels are published. General practice for a voice that must stay in front: pre-delay of 30-100 ms, the reverb pulled down until the voice separates from the band and then halfway back, a slap of about 100 ms without feedback, a short ambience under 100 ms to lock the voice into the band ([Paul White, Sound On Sound](https://www.soundonsound.com/techniques/vocal-production); [Mix Rescue](https://www.soundonsound.com/techniques/mix-rescue-jay-menon)).
+- **Mastering:** rock masters are dense (chart average -8.1 LUFS; Spectre -10). The master's compression and limiter bring reverb up between phrases, and its bus EQ may lift the highs (King's did), which lifts sibilance. Set the vocal reverb a little lower than sounds right on the premaster, and check words on the master.
+
+**The owner's note on "Here You Are" (session 009, candidate v032): "reverb a bit too loud".** The measurements agree, and so does the research. The candidate's voice sends 0.32 into the bus behind a 60 ms pre-delay, plus 0.12 to the delay. In the blend study that setting put the voice's reverb 8.4 dB under the dry voice, while the band's own reverb sat 22.6 dB under the band: the voice is about 14 dB wetter than everything around it. The setting was chosen because it scored best on the study's width and Whisper measures, not by ear, and no source supports a rock lead that much wetter than its band. The study's own table gives the scale: send 0.22 = 11.4 dB under; each halving of the send is 6 dB. **Recommended:** `send_reverb` 0.16-0.20 (about 12.5-14.5 dB under the dry voice), the pre-delay kept at 60-80 ms, and the sense of space made up with a slap instead of more reverb. An A/B of sends 0.32, 0.18 and 0.12 on the study's chorus was started and abandoned (the machine was busy with three producers), so the effect of the lower send on the word score is **not measured yet**: run the check below on the next render.
+
+**Starting chain: a sung hook over double-tracked guitars** (the blend-d chain from MANUAL "Voices" with less reverb and a slap; *hand-tuned* except where the blend study measured it):
+```json
+"mix": {"reverb": {"size": 0.6, "damping": 0.5, "return_db": -6, "lpf": 7000},
+        "delay":  {"beats": 0.75, "feedback": 0.3, "return_db": -9, "lpf": 4500}},
+"voxC": {"inst": {"type": "singer", "source": "svs", "voice": "hanami", "double": 0.2, "double_pan": 0.7,
+                  "inhale": 0.3, "svs_fade_in_ms": 30, "svs_fade_out_ms": 120},
+         "send_reverb": 0.18, "reverb_predelay_ms": 70, "send_delay": 0.08,
+         "fx": [{"type": "hpf", "hz": 100}, {"type": "eq", "hz": 800, "gain_db": -2.5, "q": 0.9},
+                {"type": "highshelf", "hz": 8000, "gain_db": 3}, {"type": "comp", "threshold_db": -22, "ratio": 3},
+                {"type": "sat", "amount": 0.15}, {"type": "delay", "beats": 0.25, "feedback": 0, "mix": 0.1},
+                {"type": "gain", "db": 13}], "gain_db": 12},
+"guitars": {"fx": ["...", {"type": "eq", "hz": 2500, "gain_db": -2.5, "q": 0.7}]}
+```
+- **Reverb:** a plate-length space (`size` 0.5-0.6 = 1.15-1.4 s), send 0.16-0.20 in choruses, 0.10-0.14 in verses (drier and closer when the band is small), pre-delay 60-80 ms. The slap (`beats` 0.25 is 110 ms at 136 bpm) gives depth without a tail.
+- **Level:** -1 to +0.5 LU against the band in a chorus (the measured rock figure; session 009's candidate sits at -0.2 to +0.3), up to +2 in a sparse verse.
+- **Room in the band:** 2.5 dB out of the guitars at 2.5 kHz (measured in the blend study); more voice level beyond that only puts it on top (session 009, v031).
+- **Density instead of level:** `sat` 0.1-0.2 after the compressor, a little more in the last chorus (Andrews' move); `double` 0.2 panned 0.7, up to 0.35 for the final chorus.
+- **Words that got lost in session 009** ("round and round" heard as "running down") are short syllables on 8th notes with soft consonants: that is a writing and note-length problem (MANUAL "Voices", syllable rate), not a mix problem; no chain will bring them back.
+- **Backing voices and "oohs":** MIXING.md "Choir and ensemble voices": 4-8 LU under the lead, `hpf` 150-200, panned out, more reverb than the lead, `svs_vibrato` 0.4.
+
+**How to check:** MIXING.md "Checking a voice": Whisper on each sung line on the master and on the voice alone; the vocal-versus-band loudness and the wet-to-dry ratio from the muted and returns-off renders (`examples/vocals/svs/blend.py` does exactly this for session 009's chorus). Expect 50-60% of words on a dense guitar chorus at best; compare versions.
+
 ## Getting through depression: how songs do it
 - **The arc starts inside the weight.** "Fix You" opens on a church-organ drone at 68 bpm. The drums come in like a heartbeat returning, then an electric guitar breaks through and the production turns from inward reflection to a communal, anthem-like sound. The emotional path runs from quiet desperation through flickering hope and relapse to an earned, hollow-but-standing acceptance.
 - **The relapse belongs in the arc.** The second verse goes back down; the song doesn't climb in a straight line.
