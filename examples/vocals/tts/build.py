@@ -5,7 +5,8 @@ b   the same line on a simple mid-register melody, dry, with the first (tuned) s
 b1  the same, dry, with the sung (natural) defaults, phrase mode
 b2  per-word vs per-phrase speaking, same line, natural tuning, dry (word mode first, then phrase mode)
 b3  the same line dry at each fix stage of the join work: before, + stitching (pitch glide through the consonants),
-    + prosody (spoken stress evened out), + vowel stretch (only the steady core stretched)
+    + prosody (spoken stress evened out), + vowel stretch (only the steady core stretched), + timing (the word's
+    consonants start on the beat and are as long as singers make them, fitted to GTSinger)
 c1/c2/c3  the "Here You Are" pre-chorus and chorus (session 009) with the hook sung an octave below the original as a
     lead, mastered (`master --genre rock`): natural, medium and the first tuned settings, all in phrase mode, same
     voice, level and effects
@@ -90,16 +91,20 @@ def b1():
 
 
 STAGES = {  # "here you are, round and round", dry: what each fix contributes (cumulative)
-    "b3-stage0-before": {"glide_early": 0, "prosody": 0, "stretch": "linger"},
-    "b3-stage1-stitching": {"glide_early": 0.8, "prosody": 0, "stretch": "linger"},
-    "b3-stage2-prosody": {"glide_early": 0.8, "prosody": 0.7, "stretch": "linger"},
-    "b3-stage3-vowel-stretch": {"glide_early": 0.8, "prosody": 0.7, "stretch": "core"},
+    "b3-stage0-before": {"glide_early": 0, "prosody": 0, "stretch": "linger", "onset_beat": 0, "onset_fit": False},
+    "b3-stage1-stitching": {"glide_early": 0.8, "prosody": 0, "stretch": "linger", "onset_beat": 0, "onset_fit": False},
+    "b3-stage2-prosody": {"glide_early": 0.8, "prosody": 0.7, "stretch": "linger", "onset_beat": 0, "onset_fit": False},
+    "b3-stage3-vowel-stretch": {"glide_early": 0.8, "prosody": 0.7, "stretch": "core", "onset_beat": 0,
+                                "onset_fit": False},
+    "b3-stage4-timing": {"glide_early": 0.8, "prosody": 0.7, "stretch": "core", "onset_beat": 1.0, "onset_fit": True},
 }
 
 
-def b3():
+def b3(only=None):
     notes, n = notes_at(100, B_MELODY)
     for name, extra in STAGES.items():
+        if only and name not in only:
+            continue
         mp3(singer.sing(dict({"source": "tts", "voice": "female", "lyrics": LINE, "inhale": 0}, **extra), notes, n),
             name)
 
@@ -208,4 +213,5 @@ if __name__ == "__main__":
             shutil.copytree(d, keep)  # kept for measurement
             mp3(y.T, w, kbps=88, normalize=False)
         else:
-            {"a": a, "b": b, "b1": b1, "b2": b2, "b3": b3, "d": d_}[w]()
+            {"a": a, "b": b, "b1": b1, "b2": b2, "b3": b3, "b3-stage4": lambda: b3(["b3-stage4-timing"]),
+             "d": d_}[w]()

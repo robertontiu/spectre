@@ -472,6 +472,62 @@ def prosody(lyrics, notes, params):
     return rows
 
 
+def timing(lyrics, notes, params, bpm, quiet=False):
+    """Per syllable, against the score: where the vowel starts, where the perceived onset is (P-centre, estimated as
+    the fastest rise of the 300-3000 Hz energy around the consonant-vowel transition, the 'maxD' landmark), how much
+    consonant is placed before the note, the inter-onset intervals, and the syllable's length against its note."""
+    from scipy import signal as sg
+    y, tr, p = render(lyrics, notes, params)
+    groups, sid, src_w, src_i = tr["groups"], tr["sid"], tr["src_w"], tr["src_i"]
+    beat = 60.0 / bpm
+    band = sg.sosfiltfilt(sg.butter(3, [300, 3000], "bandpass", fs=SR, output="sos"), y)
+    h = int(HOP)
+    nF = len(src_w)
+    e = np.array([10 * np.log10(np.mean(band[max(0, int(k * HOP) - h):int(k * HOP) + h] ** 2) + 1e-12)
+                  for k in range(nF)])
+    de = np.convolve(np.r_[0, np.diff(np.convolve(e, np.ones(3) / 3, mode="same"))], np.ones(2) / 2, mode="same")
+    rows = []
+    for k, g in enumerate(groups):
+        s = g["syl"]
+        fr = np.where(sid == k)[0]
+        if s is None or not len(fr):
+            continue
+        score = g["notes"][0]["t0"] / SR
+        nu = [f for f in fr if src_w[f] is s["w"] and s["nu"][0] <= src_i[f] < s["nu"][1]]
+        v0 = (nu[0] if nu else fr[0])
+        a0 = fr[0]
+        lo, hi = max(a0 - 2, 0), min(v0 + 12, nF - 1)
+        pc = lo + int(np.argmax(de[lo:hi + 1]))
+        cons = sum(1 for f in fr if not (src_w[f] is s["w"] and s["nu"][0] <= src_i[f] < s["nu"][1]))
+        rows.append(dict(word=words_at(groups, k), score=score, lead=(v0 - a0) * FP,
+                         v_dev=(v0 * FP / 1000 - score) * 1000, p_dev=(pc * FP / 1000 - score) * 1000,
+                         p=pc * FP / 1000, sung=len(fr) * FP, note=sum(n["n"] for n in g["notes"]) / SR * 1000,
+                         cons=cons * FP, vowel=len(nu) * FP))
+    for i, r in enumerate(rows):
+        if i + 1 < len(rows):
+            r["ioi_score"] = (rows[i + 1]["score"] - r["score"]) * 1000
+            r["ioi_sung"] = (rows[i + 1]["p"] - r["p"]) * 1000
+        else:
+            r["ioi_score"] = r["ioi_sung"] = float("nan")
+        # Friberg & Sundberg (1995): JND about 6 ms below 240 ms IOI, 2.5% of the IOI above
+        ioi = r["ioi_score"] if np.isfinite(r["ioi_score"]) else 500.0
+        r["jnd"] = max(6.0, 0.025 * ioi)
+        r["flag"] = "!!" if abs(r["p_dev"]) > 3 * r["jnd"] else "!" if abs(r["p_dev"]) > r["jnd"] else ""
+    if not quiet:
+        print(f"{'syllable':9s} {'score s':>7s} {'lead':>5s} {'vowel':>6s} {'P-ctr':>6s} {'/beat':>6s} {'IOI sc':>6s} "
+              f"{'IOI sg':>6s} {'note':>5s} {'sung':>5s} {'cons':>5s} {'vowel':>5s}  flag (JND: Friberg & Sundberg 1995)")
+        for r in rows:
+            print(f"{r['word']:9s} {r['score']:7.3f} {r['lead']:5.0f} {r['v_dev']:+6.0f} {r['p_dev']:+6.0f} "
+                  f"{r['p_dev'] / 1000 / beat:+6.2f} {r['ioi_score']:6.0f} {r['ioi_sung']:6.0f} {r['note']:5.0f} "
+                  f"{r['sung']:5.0f} {r['cons']:5.0f} {r['vowel']:5.0f}  {r['flag']}")
+        pd = np.array([r["p_dev"] for r in rows])
+        di = np.array([r["ioi_sung"] - r["ioi_score"] for r in rows[:-1]])
+        print(f"P-centre vs score: mean {pd.mean():+.0f} ms, sd {pd.std():.0f} ms, max |dev| {np.abs(pd).max():.0f} ms; "
+              f"IOI error sd {di.std():.0f} ms; beyond JND: {sum(1 for r in rows if r['flag'])}/{len(rows)}, "
+              f"beyond 3x JND: {sum(1 for r in rows if r['flag'] == '!!')}")
+    return rows
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--lyrics")
@@ -482,6 +538,7 @@ def main():
                     help="extra configuration to compare (params on top of --set)")
     ap.add_argument("--out", default="/tmp/joincheck")
     ap.add_argument("--prosody", action="store_true", help="per-syllable stress cues, spoken vs sung, then exit")
+    ap.add_argument("--timing", action="store_true", help="per-syllable onsets against the score, then exit")
     a = ap.parse_args()
     if a.lyrics:
         spec, bpm, lyr = a.notes, a.bpm, a.lyrics
@@ -490,6 +547,11 @@ def main():
         lyr = CHORUS_LYRICS
     notes = make_notes(spec, bpm)
     base = json.loads(a.set)
+    if a.timing:
+        for name, params in [("current", base)] + [(n, dict(base, **json.loads(js))) for n, js in (a.config or [])]:
+            print(f"\n== timing: {name}")
+            timing(lyr, notes, params, bpm)
+        return
     if a.prosody:
         for name, params in [("current", base)] + [(n, dict(base, **json.loads(js))) for n, js in (a.config or [])]:
             print(f"\n== prosody: {name}")

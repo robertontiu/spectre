@@ -257,11 +257,32 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False, extra=None):
     keep_joins = p.get("source") == "tts" and bool(p.get("keep_joins", True))
     gap_f = float(p.get("phrase_gap_s", 0.3)) * 1000 / FP
 
+    ob = float(p.get("onset_beat", 0) or 0) if p.get("source") == "tts" else 0.0
+
+    def split_onset(k):
+        """`onset_beat` > 0: syllable k's onset frames before and after its note start. Human singers start the
+        word's consonants on the beat and let the vowel follow (GTSinger: the score grid fits syllable starts best,
+        docs/voice/GENERAL.md "Timing"); `onset_beat` is the share of the onset sung after the note start, at most half
+        the note; the rest stays before it, within the old room rule."""
+        sk = groups[k]["syl"]
+        pk = groups[k - 1]["notes"][0]["t0"] / HOP if k > 0 else -1e9
+        n = sk["on"][1] - sk["on"][0]
+        if p.get("onset_fit") and n > 0:
+            # how long a singer makes a spoken onset (GTSinger paired speech, same singer and words): about
+            # 59 ms + 0.54 x the spoken length; applied only to lengthen
+            n = max(n, int(round((59.0 + 0.54 * n * FP) / FP)))
+        n = min(n, int(max_on))
+        post = min(int(round(ob * n)), int(0.5 * (TE[k] - T0[k])))
+        pre = min(n - post, int(max(2.0, 0.45 * (T0[k] - pk))))
+        return pre, post
+
     def onset_frames(k):
         """How many frames syllable k's onset takes before its note (the same rule as below)."""
         sk = groups[k]["syl"]
         if sk is None:
             return 0
+        if ob > 0:
+            return split_onset(k)[0]
         pk = groups[k - 1]["notes"][0]["t0"] / HOP if k > 0 else -1e9
         return min(sk["on"][1] - sk["on"][0], int(min(max_on, max(2.0, 0.45 * (T0[k] - pk)))))
 
@@ -276,6 +297,7 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False, extra=None):
             t_end = T0[gi + 1] - onset_frames(gi + 1)
         nxt0 = groups[gi + 1]["notes"][0]["t0"] / HOP if gi + 1 < len(groups) else nF
         n_on = 0
+        n_pre = n_post = 0
         if s is not None:
             on, nu, co = s["on"], s["nu"], s["co"]
             n_on, n_nu, n_co = on[1] - on[0], nu[1] - nu[0], co[1] - co[0]
@@ -284,12 +306,18 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False, extra=None):
             prev0 = groups[gi - 1]["notes"][0]["t0"] / HOP if gi > 0 else -1e9
             n_room = int(min(p.get("max_onset_ms", 160) / FP, max(2.0, 0.45 * (t0 - prev0))))
             n_src_on = n_on
-            n_on = min(n_on, n_room)
+            if ob > 0:
+                n_pre, n_post = split_onset(gi)
+                n_on = n_pre + n_post
+            else:
+                n_on = min(n_on, n_room)
+                n_pre = n_on
+        vs0 = t0 + n_post  # where the vowel starts: on the note, or after the part of the onset sung on the beat
         # pitch targets. The new note's pitch starts with its onset consonant (singers change pitch on the consonant,
         # so the previous vowel keeps its own note to the end). `pitch_lead_ms` sets a fixed lead instead (the first
         # version used 200 ms, which moved the pitch inside the previous vowel: on short notes most of a syllable was
         # sung on the next syllable's note).
-        lead = int(round(lead_ms / FP)) if lead_ms is not None else int(round(n_on))
+        lead = int(round(lead_ms / FP)) if lead_ms is not None else int(round(n_pre))
         ge = float(p.get("glide_early", 0) or 0)
         if ge > 0 and float(p.get("portamento_ms", 0) or 0) > 0:
             # `tts`: start the pitch move earlier, so it passes through the consonants of the join instead of landing
@@ -309,13 +337,13 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False, extra=None):
                 start[a] = not nt.get("glide")
         if s is None:
             continue
-        avail = t_end - t0
+        avail = t_end - vs0
         # coda: natural length, squeezed if the note is short (keep at least 40% of the note for the vowel)
         c_len = min(n_co, max(1.0, avail * 0.45))
         v_len = max(avail - c_len, 1.0)
         # onset before the note
         for j in range(n_on):
-            f = int(round(t0 - n_on + j))
+            f = int(round(t0 - n_pre + j))
             if 0 <= f < nF:
                 src_w[f], src_i[f] = s["w"], on[0] + n_src_on * j / max(n_on, 1)
                 cons[f] = True
@@ -325,7 +353,7 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False, extra=None):
         # vowel: linger on the first part (u**1.6)
         L = int(np.ceil(v_len))
         if keep_joins:  # whole frames, so the coda ends exactly where the next onset starts
-            L = max(1, int(round(t_end)) - int(round(t0)) - int(np.ceil(c_len)))
+            L = max(1, int(round(t_end)) - int(round(vs0)) - int(np.ceil(c_len)))
         core = p.get("stretch") == "core" and L > n_nu
         if core:
             # stretch only the vowel's steady core: its first and last `trans_ms` (the transitions from the onset and
@@ -336,7 +364,7 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False, extra=None):
             c_src = max(n_nu - hd - tl, 1)
             c_out = max(L - hd - tl, 1)
         for j in range(L):
-            f = int(round(t0)) + j
+            f = int(round(vs0)) + j
             if 0 <= f < nF:
                 if core and j < hd:
                     idx = nu[0] + j
@@ -353,7 +381,7 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False, extra=None):
         C = int(np.ceil(c_len))
         tail = min(int(s.get("tail", 0)), n_co, C)  # `tts`: a final stop's closure and release keep natural speed
         for j in range(C):
-            f = int(round(t0)) + L + j
+            f = int(round(vs0)) + L + j
             if 0 <= f < nF:
                 if tail and j >= C - tail:
                     src_w[f], src_i[f] = s["w"], co[1] - (C - j)
@@ -365,7 +393,7 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False, extra=None):
                 sid[f] = gi
         if extra is not None:
             recs.append(dict(gi=gi, w=s["w"], co1=co[1] if n_co else nu[1], last=bool(s.get("last")),
-                             end_f=int(round(t0)) + L + C, first_f=int(round(t0 - n_on)), n_on=n_on,
+                             end_f=int(round(vs0)) + L + C, first_f=int(round(t0 - n_pre)), n_on=n_on,
                              voiced_on=bool((s["w"]["f0"][on[0]:on[0] + 3] > 0).all()),
                              vel=ns[-1]["vel"]))
     if extra is not None:
@@ -774,12 +802,13 @@ TTS_DEFAULTS = {  # `source: "tts"`: sung, not tuned (the first defaults, which 
     "vibrato": 0.28, "vib_delay": 0.3, "vib_late": 0.35, "vib_min_s": 0.45, "vib_vary": 0.35, "drift_cents": 6,
     "micro": 0.8, "loose_ms": 12, "jitter": 0.01, "shimmer": 0.02, "breath": 0.15, "inhale": 0.15, "linger": 1.4,
     "coartic_ms": 40, "glide_early": 0.8, "prosody": 0.7, "stretch": "core", "trans_ms": 40,
+    "onset_beat": 1.0, "onset_fit": True,
 }
 TTS_TUNED = {  # the first `tts` defaults (2026-11-24): fast retune, flat held notes; for a deliberately tuned vocal
     "tune": 0.7, "retune_ms": 40, "portamento_ms": 0, "scoop": 0.0, "scoop_some": 1.0, "vibrato": 0.18,
     "vib_delay": 0.25, "vib_late": 0, "vib_min_s": 0, "vib_vary": 0, "drift_cents": 0, "micro": 0.5, "loose_ms": 0,
     "release_ms": 0, "attack_ms": 0, "attack_ms_vowel": 0, "coartic_ms": 30, "keep_joins": False,
-    "glide_early": 0, "prosody": 0, "stretch": "linger",
+    "glide_early": 0, "prosody": 0, "stretch": "linger", "onset_beat": 0, "onset_fit": False,
 }
 
 
