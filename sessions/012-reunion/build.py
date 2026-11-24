@@ -104,48 +104,51 @@ def chords(a, b, off=0, lead=0, tail=0):
     return " ".join(out)
 
 
-def svs(voice, pan, gain, rev, seed=1, lpf=None, extra=None, pre=40, shelf=2.0, **inst):
-    fx = [{"type": "hpf", "hz": 110}, {"type": "eq", "hz": 850, "gain_db": -3.5, "q": 0.8},
-          {"type": "eq", "hz": 2600, "gain_db": 4, "q": 0.55}, {"type": "eq", "hz": 2500, "gain_db": 6, "q": 2.5}, {"type": "eq", "hz": 3900, "gain_db": -5, "q": 2.6},
-          {"type": "eq", "hz": 5300, "gain_db": 8.5, "q": 1.5},
-          {"type": "highshelf", "hz": 4700, "gain_db": shelf + 9},
-          {"type": "highshelf", "hz": 13000, "gain_db": 11}]
+def svs(voice, pan, gain, rev, seed=1, lpf=None, extra=None, pre=30, shelf=3.0, **inst):
+    # the short chain of docs/CAROLING.md "Mixing the voice": hpf, a small 850 Hz dip, one shelf (shelf=0: none)
+    fx = [{"type": "hpf", "hz": 110}, {"type": "eq", "hz": 850, "gain_db": -2.5, "q": 0.9}]
+    if shelf:
+        fx.append({"type": "highshelf", "hz": 8000, "gain_db": shelf})
     if lpf:
         fx.append({"type": "lpf", "hz": lpf})
     fx += extra or []
-    i = {"type": "singer", "source": "svs", "voice": voice, "seed": seed, "inhale": 0.3, "svs_fade_in_ms": 30,
-         "svs_fade_out_ms": 140}
+    i = {"type": "singer", "source": "svs", "voice": voice, "seed": seed, "inhale": 0.3, "svs_fade_in_ms": 20,
+         "svs_fade_out_ms": 140, "svs_vibrato": 0.45}
     i.update(inst)
     return {"inst": i, "gain_db": gain, "pan": pan, "send_reverb": rev, "reverb_predelay_ms": pre, "fx": fx,
-            "humanize_ms": 0, "vel_jitter": 0.0}
+            "humanize_ms": 0, "vel_jitter": 0.0, "push_ms": 0}
 
 
 STREET = [{"type": "room", "size": 0.25, "mix": 0.22, "damping": 0.7}]
-ORG = {"type": "organ", "drawbars": [1, 0.55, 0.32, 0.24, 0.17, 0.14, 0.1, 0.1, 0.06, 0.06, 0.03, 0.03]}
+ORG = {"type": "organ", "drawbars": [1, 0.55, 0.32, 0.24, 0.17, 0.14, 0.1, 0.1, 0.07, 0.07, 0.05, 0.05, 0.03, 0.03, 0.02, 0.02]}
 
 
 def tracks():
     T = {}
     # the one outside (A-flat, dry street) and the same voice once inside (B-flat, the room)
-    T["caller"] = svs("hanami", -0.05, 7, 0.04, seed=3, shelf=-3.0,
-                      extra=[{"type": "highshelf", "hz": 9000, "gain_db": -6}] + STREET, transpose=-2)
-    T["caller"]["push_ms"] = 35
-    T["sop"] = svs("hanami", -0.38, 6, 0.3, seed=3)
+    T["caller"] = svs("hanami", -0.05, 6, 0.04, seed=3, shelf=0, extra=STREET, transpose=-2)
+    T["sop"] = svs("hanami", -0.38, 6, 0.2, seed=3)
     # the one who stayed: through the door (muffled), then in the room
-    T["indoor"] = svs("hanami-dark", 0.2, 9, 0.5, seed=5, lpf=1100, transpose=-2)
-    T["alto"] = svs("hanami-dark", 0.42, 3, 0.3, seed=5, shelf=4.0)
+    T["indoor"] = svs("hanami-dark", 0.2, 9, 0.3, seed=5, lpf=1100, shelf=0, transpose=-2)
+    T["alto"] = svs("hanami-dark", 0.42, 3, 0.24, seed=5, shelf=0)
     # the others in the house
-    T["low"] = svs("hanami-soft", 0.05, 1, 0.32, seed=9, shelf=3.0)
-    T["sop_b"] = svs("hanami", -0.8, 2, 0.36, seed=11)
-    T["alto_b"] = svs("hanami-soft", 0.8, 1, 0.36, seed=13)
-    for k, ms in (("sop", 0), ("alto", 14), ("low", 22), ("sop_b", -9), ("alto_b", 27), ("indoor", 10)):
-        T[k]["push_ms"] = ms      # a small group never lands together
+    T["low"] = svs("hanami-soft", 0.05, 1, 0.24, seed=9, shelf=0)
+    T["sop_b"] = svs("hanami", -0.8, 2, 0.24, seed=11)
+    T["alto_b"] = svs("hanami-soft", 0.8, 1, 0.24, seed=13, shelf=0)
+    # the quoted line: its own tracks, clear voices only (never hanami-dark on words), all on the beat, close and dry
+    T["q_sop"] = svs("hanami", -0.38, 6, 0.12, seed=3, svs_vibrato=0.4)
+    T["q_alto"] = svs("hanami", 0.42, 3.5, 0.12, seed=5, svs_vibrato=0.4)
+    T["q_sop2"] = svs("hanami", -0.8, 2, 0.12, seed=11, svs_vibrato=0.4)
+    T["q_alto2"] = svs("hanami-soft", 0.8, 2, 0.12, seed=13, svs_vibrato=0.4)
+    for k, ms in (("caller", 35), ("alto", 14), ("low", 22), ("sop_b", -9), ("alto_b", 25), ("indoor", 10)):
+        T[k]["push_ms"] = ms      # wordless lines: a small group never lands together
     T["organ_door"] = {"inst": dict(ORG, transpose=-2), "gain_db": 9, "send_reverb": 0.45, "legato": 1.0,
                        "humanize_ms": 6, "width": 0.3,
                        "fx": [{"type": "lpf", "hz": 500}, {"type": "tremolo", "rate": 5.5, "depth": 0.06}]}
-    T["organ"] = {"inst": dict(ORG), "gain_db": 6, "send_reverb": 0.3, "legato": 1.0, "humanize_ms": 8,
+    T["organ"] = {"inst": dict(ORG), "gain_db": 6, "send_reverb": 0.2, "legato": 1.0, "humanize_ms": 8,
                   "vel_jitter": 0.04, "width": 0.55,
-                  "fx": [{"type": "hpf", "hz": 120}, {"type": "lpf", "hz": 9000}, {"type": "eq", "hz": 2600, "gain_db": 4, "q": 0.8},
+                  "fx": [{"type": "hpf", "hz": 120}, {"type": "lpf", "hz": 12000}, {"type": "eq", "hz": 2600, "gain_db": 4, "q": 0.8},
+                         {"type": "highshelf", "hz": 5000, "gain_db": 5},
                          {"type": "tremolo", "rate": 5.5, "depth": 0.06}, {"type": "chorus", "rate": 0.4, "depth": 0.2, "mix": 0.2}]}
     T["pedal"] = {"inst": {"type": "organ", "drawbars": [1, 0.5, 0.15, 0.05]}, "gain_db": 11, "send_reverb": 0.2,
                   "legato": 1.0, "humanize_ms": 8, "fx": [{"type": "lpf", "hz": 900}, {"type": "eq", "hz": 140, "gain_db": 3, "q": 0.8}]}
@@ -153,11 +156,11 @@ def tracks():
                            "detune": 6}, "gain_db": 9, "send_reverb": 0.28, "legato": 1.0, "humanize_ms": 10,
                   "pan": 0.15, "fx": [{"type": "hpf", "hz": 60}, {"type": "lpf", "hz": 1100}]}
     # the parlour piano: the house's own voice for the tune (where a brass quartet on the corner would have stood)
-    T["chorale"] = {"inst": {"type": "piano", "felt": 0.45, "release": 0.5}, "gain_db": 4, "send_reverb": 0.3,
+    T["chorale"] = {"inst": {"type": "piano", "felt": 0.45, "release": 0.5}, "gain_db": 4, "send_reverb": 0.2,
                     "legato": 0.98, "humanize_ms": 12, "vel_jitter": 0.1, "pan": -0.15, "width": 0.2,
                     "fx": [{"type": "hpf", "hz": 110}, {"type": "highshelf", "hz": 4000, "gain_db": 4}]}
     bell = {"type": "bell", "ratio": 3.0, "decay": 1.3}
-    bfx = [{"type": "hpf", "hz": 300}, {"type": "highshelf", "hz": 5500, "gain_db": -4}, {"type": "highshelf", "hz": 13000, "gain_db": 10}]
+    bfx = [{"type": "hpf", "hz": 300}, {"type": "highshelf", "hz": 5500, "gain_db": -2.5}, {"type": "highshelf", "hz": 13000, "gain_db": 8}]
     T["bell_st"] = {"inst": dict(bell, transpose=-2), "gain_db": 12, "pan": 0.1, "send_reverb": 0.05,
                     "humanize_ms": 10, "vel_jitter": 0.1, "fx": bfx + [{"type": "lpf", "hz": 5000}] + STREET}
     T["bellL"] = {"inst": dict(bell), "gain_db": 12, "pan": -0.5, "send_reverb": 0.22, "humanize_ms": 14,
@@ -174,7 +177,7 @@ def up(tokens, semis_oct=1):
 def project(mode):
     P = {"title": "Reunion", "bpm": 84, "swing": 0.5, "seed": 12, "tracks": tracks(), "patterns": {},
          "arrangement": [],
-         "mix": {"reverb": {"size": 0.5, "damping": 0.6, "return_db": -7, "lpf": 6000}},
+         "mix": {"reverb": {"size": 0.3, "damping": 0.4, "return_db": -7, "lpf": 9000}},
          "master": {"lufs": -14, "sat": 0.0, "tape": 0.0, "glue": False}}
     pat, arr = P["patterns"], P["arrangement"]
     if mode == "loop":

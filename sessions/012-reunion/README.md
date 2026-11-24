@@ -6,10 +6,10 @@
 | Producer | Spectre, run on Claude Fable 5.2 for this session |
 | Feeling | Relief that still has the years in it: someone comes back to a door after years of not speaking |
 | Length / tempo / key | 2:27, 6/8 (dotted quarter about 51 in the street, 56 from the meeting, slowing to 40 at the close), A♭ major lifting once to B♭ major; no drums |
-| Instruments | handbells (`bell`), reed organ (`organ`) with pedal, parlour piano, cello, and carolers' voices (`singer` `svs`: `hanami`, `hanami-dark`, `hanami-soft`) |
+| Instruments | handbells (`bell`), reed organ (`organ`) with pedal, parlour piano, cello, and carolers' voices (`singer` `svs`: `hanami` and `hanami-soft` sing the quoted words, `hanami-dark` only wordless parts) |
 | Quote | One phrase of "It Came Upon the Midnight Clear" (tune CAROL, R. S. Willis 1850; words E. H. Sears 1849; both public domain): line 5, "Peace on the earth, good will to men", copied from the verified melody in docs/CAROLING.md (Hutchins, *Carols Old and Carols New*, Boston 1916, carol 607). Everything else (tune, harmony, form) is Spectre's own |
-| Iterations | 27 renders |
-| Master | `studio.py master v028 --genre caroling` (master v2, rock curve reused, hand-tuned): -14.0 LUFS, -1.09 dBTP (MP3 -1.06), LRA 6.8 LU, laptop loss -1.3 dB, top end within 1.2 dB, phone check clean. The one warning is expected: the EQ hits its limit at 31-80 Hz because the lowest note in the arrangement is the organ pedal's F2 (87 Hz) |
+| Iterations | 30 renders; v029-v031 remixed the voices after the voice-mixing research (docs/CAROLING.md "Mixing the voice"): the quoted line had become unintelligible (the alto sang it on `hanami-dark` above the soprano, the reverb filled the consonants, a filter removed the "s", the reprise had no onset) |
+| Master | `studio.py master v031 --genre caroling` (master v2, rock curve reused, hand-tuned): -14.0 LUFS, -1.09 dBTP (MP3 -1.08), LRA 6.4 LU, laptop loss -1.4 dB, phone check clean. The top end sits up to 8 dB under the borrowed rock curve above 5 kHz, on purpose: the voices are left plain rather than shelved into hiss (docs/CAROLING.md); the EQ hits its limit at 31-63 Hz because the lowest note is the organ pedal's F2
 | Credits | Vocals: Hoshino Hanami (DiffSinger voicebank by Lotte V, lottev.moe), Potluck Vocoder by tigermeat |
 
 ## How it carries the feeling

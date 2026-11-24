@@ -11,14 +11,15 @@
     "voice": "hanami",
     "seed": 3,
     "inhale": 0.3,
-    "svs_fade_in_ms": 30,
+    "svs_fade_in_ms": 20,
     "svs_fade_out_ms": 140,
+    "svs_vibrato": 0.45,
     "transpose": -2
    },
-   "gain_db": 7,
+   "gain_db": 6,
    "pan": -0.05,
    "send_reverb": 0.04,
-   "reverb_predelay_ms": 40,
+   "reverb_predelay_ms": 30,
    "fx": [
     {
      "type": "hpf",
@@ -27,47 +28,8 @@
     {
      "type": "eq",
      "hz": 850,
-     "gain_db": -3.5,
-     "q": 0.8
-    },
-    {
-     "type": "eq",
-     "hz": 2600,
-     "gain_db": 4,
-     "q": 0.55
-    },
-    {
-     "type": "eq",
-     "hz": 2500,
-     "gain_db": 6,
-     "q": 2.5
-    },
-    {
-     "type": "eq",
-     "hz": 3900,
-     "gain_db": -5,
-     "q": 2.6
-    },
-    {
-     "type": "eq",
-     "hz": 5300,
-     "gain_db": 8.5,
-     "q": 1.5
-    },
-    {
-     "type": "highshelf",
-     "hz": 4700,
-     "gain_db": 6.0
-    },
-    {
-     "type": "highshelf",
-     "hz": 13000,
-     "gain_db": 11
-    },
-    {
-     "type": "highshelf",
-     "hz": 9000,
-     "gain_db": -6
+     "gain_db": -2.5,
+     "q": 0.9
     },
     {
      "type": "room",
@@ -87,13 +49,14 @@
     "voice": "hanami",
     "seed": 3,
     "inhale": 0.3,
-    "svs_fade_in_ms": 30,
-    "svs_fade_out_ms": 140
+    "svs_fade_in_ms": 20,
+    "svs_fade_out_ms": 140,
+    "svs_vibrato": 0.45
    },
    "gain_db": 6,
    "pan": -0.38,
-   "send_reverb": 0.3,
-   "reverb_predelay_ms": 40,
+   "send_reverb": 0.2,
+   "reverb_predelay_ms": 30,
    "fx": [
     {
      "type": "hpf",
@@ -102,42 +65,13 @@
     {
      "type": "eq",
      "hz": 850,
-     "gain_db": -3.5,
-     "q": 0.8
-    },
-    {
-     "type": "eq",
-     "hz": 2600,
-     "gain_db": 4,
-     "q": 0.55
-    },
-    {
-     "type": "eq",
-     "hz": 2500,
-     "gain_db": 6,
-     "q": 2.5
-    },
-    {
-     "type": "eq",
-     "hz": 3900,
-     "gain_db": -5,
-     "q": 2.6
-    },
-    {
-     "type": "eq",
-     "hz": 5300,
-     "gain_db": 8.5,
-     "q": 1.5
+     "gain_db": -2.5,
+     "q": 0.9
     },
     {
      "type": "highshelf",
-     "hz": 4700,
-     "gain_db": 11.0
-    },
-    {
-     "type": "highshelf",
-     "hz": 13000,
-     "gain_db": 11
+     "hz": 8000,
+     "gain_db": 3.0
     }
    ],
    "humanize_ms": 0,
@@ -151,14 +85,15 @@
     "voice": "hanami-dark",
     "seed": 5,
     "inhale": 0.3,
-    "svs_fade_in_ms": 30,
+    "svs_fade_in_ms": 20,
     "svs_fade_out_ms": 140,
+    "svs_vibrato": 0.45,
     "transpose": -2
    },
    "gain_db": 9,
    "pan": 0.2,
-   "send_reverb": 0.5,
-   "reverb_predelay_ms": 40,
+   "send_reverb": 0.3,
+   "reverb_predelay_ms": 30,
    "fx": [
     {
      "type": "hpf",
@@ -167,42 +102,8 @@
     {
      "type": "eq",
      "hz": 850,
-     "gain_db": -3.5,
-     "q": 0.8
-    },
-    {
-     "type": "eq",
-     "hz": 2600,
-     "gain_db": 4,
-     "q": 0.55
-    },
-    {
-     "type": "eq",
-     "hz": 2500,
-     "gain_db": 6,
-     "q": 2.5
-    },
-    {
-     "type": "eq",
-     "hz": 3900,
-     "gain_db": -5,
-     "q": 2.6
-    },
-    {
-     "type": "eq",
-     "hz": 5300,
-     "gain_db": 8.5,
-     "q": 1.5
-    },
-    {
-     "type": "highshelf",
-     "hz": 4700,
-     "gain_db": 11.0
-    },
-    {
-     "type": "highshelf",
-     "hz": 13000,
-     "gain_db": 11
+     "gain_db": -2.5,
+     "q": 0.9
     },
     {
      "type": "lpf",
@@ -220,13 +121,14 @@
     "voice": "hanami-dark",
     "seed": 5,
     "inhale": 0.3,
-    "svs_fade_in_ms": 30,
-    "svs_fade_out_ms": 140
+    "svs_fade_in_ms": 20,
+    "svs_fade_out_ms": 140,
+    "svs_vibrato": 0.45
    },
    "gain_db": 3,
    "pan": 0.42,
-   "send_reverb": 0.3,
-   "reverb_predelay_ms": 40,
+   "send_reverb": 0.24,
+   "reverb_predelay_ms": 30,
    "fx": [
     {
      "type": "hpf",
@@ -235,42 +137,8 @@
     {
      "type": "eq",
      "hz": 850,
-     "gain_db": -3.5,
-     "q": 0.8
-    },
-    {
-     "type": "eq",
-     "hz": 2600,
-     "gain_db": 4,
-     "q": 0.55
-    },
-    {
-     "type": "eq",
-     "hz": 2500,
-     "gain_db": 6,
-     "q": 2.5
-    },
-    {
-     "type": "eq",
-     "hz": 3900,
-     "gain_db": -5,
-     "q": 2.6
-    },
-    {
-     "type": "eq",
-     "hz": 5300,
-     "gain_db": 8.5,
-     "q": 1.5
-    },
-    {
-     "type": "highshelf",
-     "hz": 4700,
-     "gain_db": 13.0
-    },
-    {
-     "type": "highshelf",
-     "hz": 13000,
-     "gain_db": 11
+     "gain_db": -2.5,
+     "q": 0.9
     }
    ],
    "humanize_ms": 0,
@@ -284,13 +152,14 @@
     "voice": "hanami-soft",
     "seed": 9,
     "inhale": 0.3,
-    "svs_fade_in_ms": 30,
-    "svs_fade_out_ms": 140
+    "svs_fade_in_ms": 20,
+    "svs_fade_out_ms": 140,
+    "svs_vibrato": 0.45
    },
    "gain_db": 1,
    "pan": 0.05,
-   "send_reverb": 0.32,
-   "reverb_predelay_ms": 40,
+   "send_reverb": 0.24,
+   "reverb_predelay_ms": 30,
    "fx": [
     {
      "type": "hpf",
@@ -299,42 +168,8 @@
     {
      "type": "eq",
      "hz": 850,
-     "gain_db": -3.5,
-     "q": 0.8
-    },
-    {
-     "type": "eq",
-     "hz": 2600,
-     "gain_db": 4,
-     "q": 0.55
-    },
-    {
-     "type": "eq",
-     "hz": 2500,
-     "gain_db": 6,
-     "q": 2.5
-    },
-    {
-     "type": "eq",
-     "hz": 3900,
-     "gain_db": -5,
-     "q": 2.6
-    },
-    {
-     "type": "eq",
-     "hz": 5300,
-     "gain_db": 8.5,
-     "q": 1.5
-    },
-    {
-     "type": "highshelf",
-     "hz": 4700,
-     "gain_db": 12.0
-    },
-    {
-     "type": "highshelf",
-     "hz": 13000,
-     "gain_db": 11
+     "gain_db": -2.5,
+     "q": 0.9
     }
    ],
    "humanize_ms": 0,
@@ -348,13 +183,14 @@
     "voice": "hanami",
     "seed": 11,
     "inhale": 0.3,
-    "svs_fade_in_ms": 30,
-    "svs_fade_out_ms": 140
+    "svs_fade_in_ms": 20,
+    "svs_fade_out_ms": 140,
+    "svs_vibrato": 0.45
    },
    "gain_db": 2,
    "pan": -0.8,
-   "send_reverb": 0.36,
-   "reverb_predelay_ms": 40,
+   "send_reverb": 0.24,
+   "reverb_predelay_ms": 30,
    "fx": [
     {
      "type": "hpf",
@@ -363,42 +199,13 @@
     {
      "type": "eq",
      "hz": 850,
-     "gain_db": -3.5,
-     "q": 0.8
-    },
-    {
-     "type": "eq",
-     "hz": 2600,
-     "gain_db": 4,
-     "q": 0.55
-    },
-    {
-     "type": "eq",
-     "hz": 2500,
-     "gain_db": 6,
-     "q": 2.5
-    },
-    {
-     "type": "eq",
-     "hz": 3900,
-     "gain_db": -5,
-     "q": 2.6
-    },
-    {
-     "type": "eq",
-     "hz": 5300,
-     "gain_db": 8.5,
-     "q": 1.5
+     "gain_db": -2.5,
+     "q": 0.9
     },
     {
      "type": "highshelf",
-     "hz": 4700,
-     "gain_db": 11.0
-    },
-    {
-     "type": "highshelf",
-     "hz": 13000,
-     "gain_db": 11
+     "hz": 8000,
+     "gain_db": 3.0
     }
    ],
    "humanize_ms": 0,
@@ -412,13 +219,14 @@
     "voice": "hanami-soft",
     "seed": 13,
     "inhale": 0.3,
-    "svs_fade_in_ms": 30,
-    "svs_fade_out_ms": 140
+    "svs_fade_in_ms": 20,
+    "svs_fade_out_ms": 140,
+    "svs_vibrato": 0.45
    },
    "gain_db": 1,
    "pan": 0.8,
-   "send_reverb": 0.36,
-   "reverb_predelay_ms": 40,
+   "send_reverb": 0.24,
+   "reverb_predelay_ms": 30,
    "fx": [
     {
      "type": "hpf",
@@ -427,47 +235,157 @@
     {
      "type": "eq",
      "hz": 850,
-     "gain_db": -3.5,
-     "q": 0.8
-    },
-    {
-     "type": "eq",
-     "hz": 2600,
-     "gain_db": 4,
-     "q": 0.55
-    },
-    {
-     "type": "eq",
-     "hz": 2500,
-     "gain_db": 6,
-     "q": 2.5
-    },
-    {
-     "type": "eq",
-     "hz": 3900,
-     "gain_db": -5,
-     "q": 2.6
-    },
-    {
-     "type": "eq",
-     "hz": 5300,
-     "gain_db": 8.5,
-     "q": 1.5
-    },
-    {
-     "type": "highshelf",
-     "hz": 4700,
-     "gain_db": 11.0
-    },
-    {
-     "type": "highshelf",
-     "hz": 13000,
-     "gain_db": 11
+     "gain_db": -2.5,
+     "q": 0.9
     }
    ],
    "humanize_ms": 0,
    "vel_jitter": 0.0,
-   "push_ms": 27
+   "push_ms": 25
+  },
+  "q_sop": {
+   "inst": {
+    "type": "singer",
+    "source": "svs",
+    "voice": "hanami",
+    "seed": 3,
+    "inhale": 0.3,
+    "svs_fade_in_ms": 20,
+    "svs_fade_out_ms": 140,
+    "svs_vibrato": 0.4
+   },
+   "gain_db": 6,
+   "pan": -0.38,
+   "send_reverb": 0.12,
+   "reverb_predelay_ms": 30,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 110
+    },
+    {
+     "type": "eq",
+     "hz": 850,
+     "gain_db": -2.5,
+     "q": 0.9
+    },
+    {
+     "type": "highshelf",
+     "hz": 8000,
+     "gain_db": 3.0
+    }
+   ],
+   "humanize_ms": 0,
+   "vel_jitter": 0.0,
+   "push_ms": 0
+  },
+  "q_alto": {
+   "inst": {
+    "type": "singer",
+    "source": "svs",
+    "voice": "hanami",
+    "seed": 5,
+    "inhale": 0.3,
+    "svs_fade_in_ms": 20,
+    "svs_fade_out_ms": 140,
+    "svs_vibrato": 0.4
+   },
+   "gain_db": 3.5,
+   "pan": 0.42,
+   "send_reverb": 0.12,
+   "reverb_predelay_ms": 30,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 110
+    },
+    {
+     "type": "eq",
+     "hz": 850,
+     "gain_db": -2.5,
+     "q": 0.9
+    },
+    {
+     "type": "highshelf",
+     "hz": 8000,
+     "gain_db": 3.0
+    }
+   ],
+   "humanize_ms": 0,
+   "vel_jitter": 0.0,
+   "push_ms": 0
+  },
+  "q_sop2": {
+   "inst": {
+    "type": "singer",
+    "source": "svs",
+    "voice": "hanami",
+    "seed": 11,
+    "inhale": 0.3,
+    "svs_fade_in_ms": 20,
+    "svs_fade_out_ms": 140,
+    "svs_vibrato": 0.4
+   },
+   "gain_db": 2,
+   "pan": -0.8,
+   "send_reverb": 0.12,
+   "reverb_predelay_ms": 30,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 110
+    },
+    {
+     "type": "eq",
+     "hz": 850,
+     "gain_db": -2.5,
+     "q": 0.9
+    },
+    {
+     "type": "highshelf",
+     "hz": 8000,
+     "gain_db": 3.0
+    }
+   ],
+   "humanize_ms": 0,
+   "vel_jitter": 0.0,
+   "push_ms": 0
+  },
+  "q_alto2": {
+   "inst": {
+    "type": "singer",
+    "source": "svs",
+    "voice": "hanami-soft",
+    "seed": 13,
+    "inhale": 0.3,
+    "svs_fade_in_ms": 20,
+    "svs_fade_out_ms": 140,
+    "svs_vibrato": 0.4
+   },
+   "gain_db": 2,
+   "pan": 0.8,
+   "send_reverb": 0.12,
+   "reverb_predelay_ms": 30,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 110
+    },
+    {
+     "type": "eq",
+     "hz": 850,
+     "gain_db": -2.5,
+     "q": 0.9
+    },
+    {
+     "type": "highshelf",
+     "hz": 8000,
+     "gain_db": 3.0
+    }
+   ],
+   "humanize_ms": 0,
+   "vel_jitter": 0.0,
+   "push_ms": 0
   },
   "organ_door": {
    "inst": {
@@ -481,10 +399,14 @@
      0.14,
      0.1,
      0.1,
-     0.06,
-     0.06,
+     0.07,
+     0.07,
+     0.05,
+     0.05,
      0.03,
-     0.03
+     0.03,
+     0.02,
+     0.02
     ],
     "transpose": -2
    },
@@ -517,14 +439,18 @@
      0.14,
      0.1,
      0.1,
-     0.06,
-     0.06,
+     0.07,
+     0.07,
+     0.05,
+     0.05,
      0.03,
-     0.03
+     0.03,
+     0.02,
+     0.02
     ]
    },
    "gain_db": 6,
-   "send_reverb": 0.3,
+   "send_reverb": 0.2,
    "legato": 1.0,
    "humanize_ms": 8,
    "vel_jitter": 0.04,
@@ -536,13 +462,18 @@
     },
     {
      "type": "lpf",
-     "hz": 9000
+     "hz": 12000
     },
     {
      "type": "eq",
      "hz": 2600,
      "gain_db": 4,
      "q": 0.8
+    },
+    {
+     "type": "highshelf",
+     "hz": 5000,
+     "gain_db": 5
     },
     {
      "type": "tremolo",
@@ -616,7 +547,7 @@
     "release": 0.5
    },
    "gain_db": 4,
-   "send_reverb": 0.3,
+   "send_reverb": 0.2,
    "legato": 0.98,
    "humanize_ms": 12,
    "vel_jitter": 0.1,
@@ -654,12 +585,12 @@
     {
      "type": "highshelf",
      "hz": 5500,
-     "gain_db": -4
+     "gain_db": -2.5
     },
     {
      "type": "highshelf",
      "hz": 13000,
-     "gain_db": 10
+     "gain_db": 8
     },
     {
      "type": "lpf",
@@ -692,12 +623,12 @@
     {
      "type": "highshelf",
      "hz": 5500,
-     "gain_db": -4
+     "gain_db": -2.5
     },
     {
      "type": "highshelf",
      "hz": 13000,
-     "gain_db": 10
+     "gain_db": 8
     }
    ]
   },
@@ -720,12 +651,12 @@
     {
      "type": "highshelf",
      "hz": 5500,
-     "gain_db": -4
+     "gain_db": -2.5
     },
     {
      "type": "highshelf",
      "hz": 13000,
-     "gain_db": 10
+     "gain_db": 8
     }
    ]
   }
@@ -767,24 +698,32 @@
     "register": "D4",
     "vel": 0.6
    },
-   "sop": {
+   "q_sop": {
     "notes": "14:D5:2",
     "lyrics": "Peace"
    },
-   "alto": {
+   "q_alto": {
     "notes": "14:D4:2",
     "lyrics": "Peace"
    }
   },
   "meet": {
    "bars": 6,
+   "q_sop": {
+    "notes": "0:D5:4 4:D4:2 6:D4:2 8:E4:2 10:F#4:2 12:G4:4 16:A4:2 18:Bb4:4",
+    "lyrics": "on the earth _ good will to men"
+   },
+   "q_alto": {
+    "notes": "0:D4:4 4:D4:2 6:D4:4 10:D4:2 12:D4:4 16:D4:2 18:D4:4",
+    "lyrics": "on the earth good will to men"
+   },
    "sop": {
-    "notes": "0:D5:4 4:D4:2 6:D4:2 8:E4:2 10:F#4:2 12:G4:4 16:A4:2 18:Bb4:4 22:Bb4:2 24:A4:4 28:G4:2 30:A4:4 34:Bb4:2 36:C5:10 46:F4:2 48:Bb4:4 52:C5:2 54:D5:4 58:Bb4:2 60:G4:4 64:Bb4:2 66:F4:4 70:F4:2 72:G4:4 76:Eb4:2 78:F4:4 82:A4:2 84:Bb4:12",
-    "lyrics": "on the earth _ good will to men loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo"
+    "notes": "22:Bb4:2 24:A4:4 28:G4:2 30:A4:4 34:Bb4:2 36:C5:10 46:F4:2 48:Bb4:4 52:C5:2 54:D5:4 58:Bb4:2 60:G4:4 64:Bb4:2 66:F4:4 70:F4:2 72:G4:4 76:Eb4:2 78:F4:4 82:A4:2 84:Bb4:12",
+    "lyrics": "loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo"
    },
    "alto": {
-    "notes": "0:D4:4 4:D4:2 6:D4:4 10:D4:2 12:D4:4 16:D4:2 18:D4:4 22:D4:2 24:F4:4 28:F4:2 30:F4:4 34:G4:2 36:A4:10 46:D4:2 48:D4:4 52:Eb4:2 54:F4:4 58:D4:2 60:Eb4:4 64:G4:2 66:D4:4 70:D4:2 72:Eb4:4 76:C4:2 78:C4:4 82:Eb4:2 84:D4:12",
-    "lyrics": "on the earth good will to men loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo"
+    "notes": "22:D4:2 24:F4:4 28:F4:2 30:F4:4 34:G4:2 36:A4:10 46:D4:2 48:D4:4 52:Eb4:2 54:F4:4 58:D4:2 60:Eb4:4 64:G4:2 66:D4:4 70:D4:2 72:Eb4:4 76:C4:2 78:C4:4 82:Eb4:2 84:D4:12",
+    "lyrics": "loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo loo"
    },
    "organ": {
     "chords": "Bb:4 -:8 Gm:12 F/A:12 F:6 F7/Eb:6 Bb/D:6 Bb:6 Eb:6 Bb/F:6 Cm:6 F7:6 Bb:12",
@@ -872,23 +811,39 @@
   "v3a": {
    "bars": 6,
    "sop": {
-    "notes": "0:Bb4:4 4:C5:2 6:D5:4 10:Bb4:2 12:G4:4 16:Bb4:2 18:F4:4 22:Bb4:2 24:D5:4 28:C5:2 30:Bb4:4 34:G4:2 36:A4:10 46:F4:2 48:Bb4:4 52:C5:2 54:D5:4 58:Bb4:2 60:G4:4 64:Bb4:2 66:F4:4 70:F4:2 72:G4:4 76:Eb4:2 78:F4:4 82:A4:2 84:Bb4:10 94:D5:2",
-    "lyrics": "ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah Peace"
+    "notes": "0:Bb4:4 4:C5:2 6:D5:4 10:Bb4:2 12:G4:4 16:Bb4:2 18:F4:4 22:Bb4:2 24:D5:4 28:C5:2 30:Bb4:4 34:G4:2 36:A4:10 46:F4:2 48:Bb4:4 52:C5:2 54:D5:4 58:Bb4:2 60:G4:4 64:Bb4:2 66:F4:4 70:F4:2 72:G4:4 76:Eb4:2 78:F4:4 82:A4:2 84:Bb4:8",
+    "lyrics": "ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah"
+   },
+   "q_sop": {
+    "notes": "94:D5:2",
+    "lyrics": "Peace"
    },
    "sop_b": {
-    "notes": "0:Bb4:4 4:C5:2 6:D5:4 10:Bb4:2 12:G4:4 16:Bb4:2 18:F4:4 22:Bb4:2 24:D5:4 28:C5:2 30:Bb4:4 34:G4:2 36:A4:10 46:F4:2 48:Bb4:4 52:C5:2 54:D5:4 58:Bb4:2 60:G4:4 64:Bb4:2 66:F4:4 70:F4:2 72:G4:4 76:Eb4:2 78:F4:4 82:A4:2 84:Bb4:10 94:D5:2",
-    "lyrics": "ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah Peace"
+    "notes": "0:Bb4:4 4:C5:2 6:D5:4 10:Bb4:2 12:G4:4 16:Bb4:2 18:F4:4 22:Bb4:2 24:D5:4 28:C5:2 30:Bb4:4 34:G4:2 36:A4:10 46:F4:2 48:Bb4:4 52:C5:2 54:D5:4 58:Bb4:2 60:G4:4 64:Bb4:2 66:F4:4 70:F4:2 72:G4:4 76:Eb4:2 78:F4:4 82:A4:2 84:Bb4:8",
+    "lyrics": "ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah"
+   },
+   "q_sop2": {
+    "notes": "94:D5:2",
+    "lyrics": "Peace"
    },
    "alto": {
-    "notes": "0:D4:4 4:Eb4:2 6:F4:4 10:D4:2 12:Eb4:4 16:G4:2 18:D4:4 22:D4:2 24:Bb4:4 28:A4:2 30:G4:4 34:Eb4:2 36:F4:10 46:D4:2 48:D4:4 52:Eb4:2 54:F4:4 58:D4:2 60:Eb4:4 64:G4:2 66:D4:4 70:D4:2 72:Eb4:4 76:C4:2 78:C4:4 82:Eb4:2 84:D4:10 94:D4:2",
-    "lyrics": "ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah Peace"
+    "notes": "0:D4:4 4:Eb4:2 6:F4:4 10:D4:2 12:Eb4:4 16:G4:2 18:D4:4 22:D4:2 24:Bb4:4 28:A4:2 30:G4:4 34:Eb4:2 36:F4:10 46:D4:2 48:D4:4 52:Eb4:2 54:F4:4 58:D4:2 60:Eb4:4 64:G4:2 66:D4:4 70:D4:2 72:Eb4:4 76:C4:2 78:C4:4 82:Eb4:2 84:D4:8",
+    "lyrics": "ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah"
+   },
+   "q_alto": {
+    "notes": "94:D4:2",
+    "lyrics": "Peace"
    },
    "alto_b": {
-    "notes": "0:D4:4 4:Eb4:2 6:F4:4 10:D4:2 12:Eb4:4 16:G4:2 18:D4:4 22:D4:2 24:Bb4:4 28:A4:2 30:G4:4 34:Eb4:2 36:F4:10 46:D4:2 48:D4:4 52:Eb4:2 54:F4:4 58:D4:2 60:Eb4:4 64:G4:2 66:D4:4 70:D4:2 72:Eb4:4 76:C4:2 78:C4:4 82:Eb4:2 84:D4:10 94:D4:2",
-    "lyrics": "ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah Peace"
+    "notes": "0:D4:4 4:Eb4:2 6:F4:4 10:D4:2 12:Eb4:4 16:G4:2 18:D4:4 22:D4:2 24:Bb4:4 28:A4:2 30:G4:4 34:Eb4:2 36:F4:10 46:D4:2 48:D4:4 52:Eb4:2 54:F4:4 58:D4:2 60:Eb4:4 64:G4:2 66:D4:4 70:D4:2 72:Eb4:4 76:C4:2 78:C4:4 82:Eb4:2 84:D4:8",
+    "lyrics": "ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah ah"
+   },
+   "q_alto2": {
+    "notes": "94:D4:2",
+    "lyrics": "Peace"
    },
    "low": {
-    "notes": "0:Bb3:6 6:Bb3:6 12:Bb3:6 18:Bb3:4 22:Bb3:2 24:Bb3:6 30:Bb3:6 36:C4:10 46:Bb3:2 48:Bb3:6 54:Bb3:6 60:Bb3:6 66:Bb3:4 70:Bb3:2 72:C4:6 78:A3:6 84:Bb3:10 94:Bb3:2",
+    "notes": "0:Bb3:6 6:Bb3:6 12:Bb3:6 18:Bb3:4 22:Bb3:2 24:Bb3:6 30:Bb3:6 36:C4:10 46:Bb3:2 48:Bb3:6 54:Bb3:6 60:Bb3:6 66:Bb3:4 70:Bb3:2 72:C4:6 78:A3:6 84:Bb3:8 94:Bb3:2",
     "lyrics": "_ _ _ _ ooh _ _ _ ooh _ _ _ _ ooh _ _ _ ooh"
    },
    "organ": {
@@ -905,21 +860,37 @@
   },
   "v3b": {
    "bars": 3,
+   "q_sop": {
+    "notes": "0:D5:4 4:D4:2 6:D4:2 8:E4:2 10:F#4:2 12:G4:4 16:A4:2 18:Bb4:4",
+    "lyrics": "on the earth _ good will to men"
+   },
    "sop": {
-    "notes": "0:D5:4 4:D4:2 6:D4:2 8:E4:2 10:F#4:2 12:G4:4 16:A4:2 18:Bb4:4 22:Bb4:2 24:A4:4 28:G4:2 30:A4:4 34:Bb4:2 36:C5:10 46:F4:2",
-    "lyrics": "on the earth _ good will to men ah ah ah ah ah ah ah"
+    "notes": "22:Bb4:2 24:A4:4 28:G4:2 30:A4:4 34:Bb4:2 36:C5:10 46:F4:2",
+    "lyrics": "ah ah ah ah ah ah ah"
+   },
+   "q_sop2": {
+    "notes": "0:D5:4 4:D4:2 6:D4:2 8:E4:2 10:F#4:2 12:G4:4 16:A4:2 18:Bb4:4",
+    "lyrics": "on the earth _ good will to men"
    },
    "sop_b": {
-    "notes": "0:D5:4 4:D4:2 6:D4:2 8:E4:2 10:F#4:2 12:G4:4 16:A4:2 18:Bb4:4 22:Bb4:2 24:A4:4 28:G4:2 30:A4:4 34:Bb4:2 36:C5:10 46:F4:2",
-    "lyrics": "on the earth _ good will to men ah ah ah ah ah ah ah"
+    "notes": "22:Bb4:2 24:A4:4 28:G4:2 30:A4:4 34:Bb4:2 36:C5:10 46:F4:2",
+    "lyrics": "ah ah ah ah ah ah ah"
+   },
+   "q_alto": {
+    "notes": "0:D4:4 4:D4:2 6:D4:4 10:D4:2 12:D4:4 16:D4:2 18:D4:4",
+    "lyrics": "on the earth good will to men"
    },
    "alto": {
-    "notes": "0:D4:4 4:D4:2 6:D4:4 10:D4:2 12:D4:4 16:D4:2 18:D4:4 22:D4:2 24:F4:4 28:F4:2 30:F4:4 34:G4:2 36:A4:10 46:D4:2",
-    "lyrics": "on the earth good will to men ah ah ah ah ah ah ah"
+    "notes": "22:D4:2 24:F4:4 28:F4:2 30:F4:4 34:G4:2 36:A4:10 46:D4:2",
+    "lyrics": "ah ah ah ah ah ah ah"
+   },
+   "q_alto2": {
+    "notes": "0:D4:4 4:D4:2 6:D4:4 10:D4:2 12:D4:4 16:D4:2 18:D4:4",
+    "lyrics": "on the earth good will to men"
    },
    "alto_b": {
-    "notes": "0:D4:4 4:D4:2 6:D4:4 10:D4:2 12:D4:4 16:D4:2 18:D4:4 22:D4:2 24:F4:4 28:F4:2 30:F4:4 34:G4:2 36:A4:10 46:D4:2",
-    "lyrics": "on the earth good will to men ah ah ah ah ah ah ah"
+    "notes": "22:D4:2 24:F4:4 28:F4:2 30:F4:4 34:G4:2 36:A4:10 46:D4:2",
+    "lyrics": "ah ah ah ah ah ah ah"
    },
    "low": {
     "notes": "0:Bb3:4 4:A3:8 12:Bb3:10 22:Bb3:2 24:C4:12 36:C4:10 46:Bb3:2",
@@ -1023,26 +994,6 @@
       0,
       3
      ]
-    },
-    "sop": {
-     "lpf": [
-      5000,
-      5000
-     ],
-     "gain_db": [
-      -1,
-      -1
-     ]
-    },
-    "alto": {
-     "lpf": [
-      5000,
-      5000
-     ],
-     "gain_db": [
-      3,
-      3
-     ]
     }
    }
   },
@@ -1056,18 +1007,6 @@
     "organ": {
      "gain_db": [
       -3,
-      0
-     ]
-    },
-    "alto": {
-     "gain_db": [
-      3,
-      1.5
-     ]
-    },
-    "sop": {
-     "gain_db": [
-      -1,
       0
      ]
     }
@@ -1109,14 +1048,14 @@
    "auto": {
     "bellL": {
      "gain_db": [
-      -2,
-      -2
+      -3.5,
+      -3.5
      ]
     },
     "bellR": {
      "gain_db": [
-      -2,
-      -2
+      -3.5,
+      -3.5
      ]
     }
    }
@@ -1208,7 +1147,7 @@
     },
     "low": {
      "gain_db": [
-      -5,
+      -8,
       -2
      ]
     },
@@ -1216,6 +1155,30 @@
      "gain_db": [
       -8,
       0
+     ]
+    },
+    "q_sop": {
+     "gain_db": [
+      -2,
+      -2
+     ]
+    },
+    "q_sop2": {
+     "gain_db": [
+      -2,
+      -2
+     ]
+    },
+    "q_alto": {
+     "gain_db": [
+      -2,
+      -2
+     ]
+    },
+    "q_alto2": {
+     "gain_db": [
+      -2,
+      -2
      ]
     }
    }
@@ -1300,10 +1263,10 @@
  ],
  "mix": {
   "reverb": {
-   "size": 0.5,
+   "size": 0.3,
    "damping": 0.4,
    "return_db": -7,
-   "lpf": 14000
+   "lpf": 9000
   }
  },
  "master": {

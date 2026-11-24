@@ -32,6 +32,8 @@ DEFAULT_GAIN.update({"supersaw": -12, "trancebass": -6, "clubkick": -1, "kitkick
 DEFAULT_GAIN.update({"handclap": -5})
 DEFAULT_GAIN.update({"singer": -9, "vox2": -9})
 DEFAULT_GAIN.update({"violin": -8, "acguitar": -7, "toba": -4})
+DEFAULT_GAIN.update({"celesta": -12, "glockenspiel": -12, "cello": -12, "viola": -10, "strings_section": -17,
+                     "vibraphone": -14})
 
 
 def _attach_lyrics(part, new, tname):
@@ -672,7 +674,9 @@ def render(P, solo=None, out_prefix=None, quiet=False):
 
 def next_version():
     os.makedirs(RENDERS, exist_ok=True)
-    vs = [int(re.findall(r"v(\d+)", f)[0]) for f in glob.glob(os.path.join(RENDERS, "v*.wav"))]
+    # count every versioned file (wav, json, mp3, png): WAVs are deleted at clean-up, the rest stay
+    vs = [int(m.group(1)) for f in glob.glob(os.path.join(RENDERS, "v*"))
+          for m in [re.match(r"v(\d+)\.", os.path.basename(f))] if m]
     return max(vs, default=0) + 1
 
 
