@@ -22,6 +22,7 @@ export function NowPlaying() {
         <p className="m-0 text-[15px] text-mute">
           <span>{track.artist}</span>, <span className="font-semibold whitespace-nowrap text-ice">{track.bpm} BPM</span>
           <span className="whitespace-nowrap">{` · ${track.genre}`}</span>
+          <span className="whitespace-nowrap">{` · ${track.model}`}</span>
         </p>
       )}
       {message && <p className="m-0 basis-full text-[14px] text-[#ffb4a8]">{message}</p>}

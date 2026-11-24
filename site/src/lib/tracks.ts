@@ -11,6 +11,8 @@ export type Track = {
   /** Length in seconds. */
   duration: number;
   bpm: number;
+  /** The model that ran the producer for this session, e.g. "Claude Opus 5.5"; shown beside the tempo. */
+  model: string;
   /** Short genre label shown beside the tempo, e.g. "Latvian folk trap". */
   genre: string;
   style: string;
