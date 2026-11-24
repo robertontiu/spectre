@@ -1,4 +1,0 @@
-rendered v028.wav  2:24.2  (35.5s)
-sections: bell[bars 1-2], street[bars 3-8], door[bars 9-9], meet[bars 10-15], inter1[bars 16-18], v2[bars 19-30], inter2[bars 31-33], v3a[bars 34-39], v3b[bars 40-42], v3c[bars 43-46], end[bars 47-48]
-tempo: bell 76.0, street 76.0, door 76.0, meet 84.0, inter1 84.0, v2 84.0, inter2 84.0, v3a 84.0, v3b 84.0, v3c [84.0, 60.0], end 60.0
-done
