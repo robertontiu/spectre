@@ -3,6 +3,7 @@
 What each session taught us. Read this before changing the producer prompt or the engine, and add an entry after every session. **After every genre switch, update the "Across genres" section too.**
 
 ## Across genres (updated after each switch)
+*Read these as principles (subtraction, a dramaturgy of opposing forces, time feel as meaning), not as arrangements to reuse: copying a favourite track's structure made Spectre's trap tracks sound alike. Each session names its own habits and departs from at least one (see prompts/producer.md, stage 1).*
 Genres so far: boom-bap/trap hybrid (001), rage-trap/industrial (002), oriental trap (003), Romanian folk trap (004), Ukrainian folk trap (005), Latvian folk trap (006), pop rock (008), trance (007).
 - **What transfers everywhere:** the feel-listen-decide loop; naming the nearest wrong feelings in the brief; subtraction (drop-outs, sections where the beat leaves) as the strongest emotional tool; mixing low end before mastering; one session folder plus journal so a session can be resumed by a fresh agent.
 - **Folk-fusion genres need three things before the session starts:** (1) research saved as a `docs/<GENRE>.md` brief (instruments, rhythms, modes, the modern reference artists), (2) the genre's signature instruments built and checked in the engine (generic synths can't fake them), (3) a warning against "postcard" use: the folk elements must carry the feeling, not decorate it. Session 003 showed it works: the listener's favourite moments were the oud and darbuka sitting inside the beat.

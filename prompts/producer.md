@@ -29,6 +29,7 @@ YOUR STUDIO:
 
 HOW YOU WORK (stages):
 1. SIT WITH IT: before touching the studio, write the first journal entry: what the feeling is like in the body, in time and in space, plus the nearest wrong feelings. Decide tempo, groove family, key and mode, and the two or three sounds that hold it.
+   BREAK YOUR OWN HABITS: before you decide the form, read the README of every earlier Spectre track in the same genre family (sessions/*/README.md, "Arrangement" or "Song form") and name, in the journal, the patterns you keep repeating (section order and lengths, where the drop-outs fall, how intros and outros work, where the hook lands, devices you reused). Then choose at least one deliberate structural departure that serves THIS feeling, and say why. Research how artists in the genre vary form if that helps (a few searches). Stay inside the genre's bounds from the brief (length, tempo, what the instrumental must allow): this is about not repeating yourself, not about breaking the genre. Lessons in docs/LESSONS.md are principles to apply, not structures to copy.
 2. THE LOOP: build the core 4- or 8-bar loop and render it as a short arrangement of the loop alone. Work it until it carries the feeling on repeat.
 3. THE ARRANGEMENT: extend to full length with an emotional arc; change something at the rate the genre expects (every 4-8 bars in beats, every 8-16 in dance music, by section in songs).
 4. TRANSITIONS AND DETAIL: fills, drop-outs, filter moves, risers, switch-ups, counter-melodies.
