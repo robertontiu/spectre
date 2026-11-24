@@ -1,0 +1,19 @@
+ZOOM 134.1-162.4s  LUFS -7.8
+  kick         70 events  timing vs 16th grid: mean  +0.3 ms, spread  3.5 ms  velocity 0.70-0.93
+  snare        33 events  timing vs 16th grid: mean  +3.4 ms, spread  5.0 ms  velocity 0.76-1.00
+  ohat         96 events  timing vs 16th grid: mean  -0.4 ms, spread  4.7 ms  velocity 0.61-0.92
+  bell         17 events  timing vs 16th grid: mean  +0.0 ms, spread  4.1 ms  velocity 0.74-0.92
+  crash         2 events  timing vs 16th grid: mean  -0.1 ms, spread  1.0 ms  velocity 0.97-1.00
+  tom1          2 events  timing vs 16th grid: mean  -0.2 ms, spread  2.5 ms  velocity 0.84-0.88
+  tom2         14 events  timing vs 16th grid: mean  +1.2 ms, spread  4.5 ms  velocity 0.76-1.00
+  tamb        192 events  timing vs 16th grid: mean  +0.2 ms, spread  5.9 ms  velocity 0.26-0.93
+  bass        113 events  timing vs 16th grid: mean  +0.1 ms, spread  4.0 ms  velocity 0.70-1.00
+  fig         257 events  timing vs 16th grid: mean  -0.1 ms, spread  5.1 ms  velocity 0.38-0.99
+  chug         48 events  timing vs 16th grid: mean  +5.6 ms, spread  6.2 ms  velocity 0.60-0.90
+  gtrL        266 events  timing vs 16th grid: mean  +6.7 ms, spread  8.1 ms  velocity 0.67-1.00
+  gtrR        432 events  timing vs 16th grid: mean +11.2 ms, spread 30.7 ms  velocity 0.52-0.94
+  lead         37 events  timing vs 16th grid: mean  -1.0 ms, spread  8.9 ms  velocity 0.78-1.00
+  organ        37 events  timing vs 16th grid: mean  +3.5 ms, spread  4.9 ms  velocity 0.49-0.72
+  voxC         41 events  timing vs 16th grid: mean  +1.1 ms, spread  7.8 ms  velocity 0.74-0.97
+  voxD         36 events  timing vs 16th grid: mean  +5.1 ms, spread 12.0 ms  velocity 0.71-0.97
+image: /home/claude/spectre/sessions/009-carousel/ear_zoom_mono.png
