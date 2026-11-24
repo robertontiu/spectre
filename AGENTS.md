@@ -67,6 +67,8 @@ models/
   tts/kokoro/     Kokoro v1.0 TTS model files for `singer` `source: "tts"` (the .onnx split in 7 parts; README with source,
                   licence, size, checksums); may move out of the repo later (SPECTRE_TTS_DIR)
 examples/
+  anthem/         the verified melody of Romania's anthem: a piano check render, the CC BY-SA score it was read
+                  from, the check scripts (transcription in docs/ROMANIAN.md, "Verified melody")
   joc/            lăutar band A/B (old fiddle vs violin, the violin's articulations, acguitar, toba, a tempo ramp; build.py)
   vocals/         voice A/B renders (diagnostic/: the eSpeak singer; tts/: sampled words autotuned, with build.py)
   engine-test.json  a small project that exercises most engine features (render it to smoke-test changes)

@@ -1,1 +1,0 @@
-On hold: runs after session 010 (joc țigănesc). Robert permits downloading a MIDI file and a recording of the anthem online (the melody is public domain); transcribe and verify the melody from them, record the sources in docs/ROMANIAN.md, then delete this file and start the producer.
