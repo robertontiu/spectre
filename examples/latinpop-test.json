@@ -1,0 +1,247 @@
+{
+ "title": "latinpop config test (bachata derecho / majao on existing instruments)",
+ "bpm": 128,
+ "swing": 0.5,
+ "seed": 3,
+ "tracks": {
+  "requinto": {
+   "inst": {
+    "type": "acguitar",
+    "bright": 0.55,
+    "sustain": 1.6,
+    "mic": 0.6,
+    "transpose": 12
+   },
+   "gain_db": 4,
+   "pan": -0.25,
+   "send_reverb": 0.15,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 150
+    },
+    {
+     "type": "chorus",
+     "rate": 0.8,
+     "depth": 0.25,
+     "mix": 0.3
+    }
+   ]
+  },
+  "segbass": {
+   "inst": {
+    "type": "acguitar",
+    "chop": 0.3
+   },
+   "gain_db": 0,
+   "pan": 0.25,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 90
+    },
+    {
+     "type": "eq",
+     "hz": 180,
+     "gain_db": 4,
+     "q": 0.8
+    }
+   ]
+  },
+  "segunda": {
+   "inst": {
+    "type": "acguitar",
+    "chop": 0.85,
+    "scrape": 0.4
+   },
+   "gain_db": -2,
+   "pan": 0.3,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 140
+    },
+    {
+     "type": "eq",
+     "hz": 250,
+     "gain_db": 3,
+     "q": 0.8
+    }
+   ]
+  },
+  "bass": {
+   "inst": {
+    "type": "ebass",
+    "pick": 0.2,
+    "tone": 2500
+   },
+   "gain_db": 2,
+   "fx": [
+    {
+     "type": "eq",
+     "hz": 120,
+     "gain_db": 4,
+     "q": 0.8
+    }
+   ]
+  },
+  "bongohi": {
+   "inst": {
+    "type": "tom",
+    "tune": 330,
+    "decay": 0.12
+   },
+   "gain_db": -8,
+   "pan": -0.15
+  },
+  "bongolo": {
+   "inst": {
+    "type": "tom",
+    "tune": 230,
+    "decay": 0.16
+   },
+   "gain_db": -8,
+   "pan": -0.15
+  },
+  "guira": {
+   "inst": {
+    "type": "shaker"
+   },
+   "gain_db": 2,
+   "pan": 0.2,
+   "dyn": [
+    1.0,
+    0.6,
+    0.9,
+    0.6
+   ]
+  },
+  "voz": {
+   "inst": {
+    "type": "singer",
+    "source": "svs",
+    "voice": "hanami-es-soft",
+    "inhale": 0.3,
+    "svs_fade_in_ms": 30,
+    "svs_fade_out_ms": 120
+   },
+   "gain_db": 10,
+   "send_reverb": 0.3,
+   "reverb_predelay_ms": 60,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 100
+    },
+    {
+     "type": "highshelf",
+     "hz": 8000,
+     "gain_db": 3
+    }
+   ]
+  }
+ },
+ "patterns": {
+  "derecho": {
+   "bars": 1,
+   "requinto": {
+    "chords": "Am:4 Dm:4 E7:4 Am:4",
+    "style": "arp",
+    "rate": 2,
+    "pattern": "up",
+    "register": "A3",
+    "voicing": "close"
+   },
+   "segbass": {
+    "chords": "Am:4 Dm:4 E7:4 Am:4",
+    "style": "stabs",
+    "rhythm": "x.......x...x...",
+    "stab_len": 1,
+    "voicing": "root",
+    "register": "A2"
+   },
+   "segunda": {
+    "chords": "Am:4 Dm:4 E7:4 Am:4",
+    "style": "stabs",
+    "rhythm": "..x.x.x...x...x.",
+    "stab_len": 1,
+    "voicing": "guitar",
+    "register": "A3",
+    "strum": "down",
+    "strum_ms": 8
+   },
+   "bass": "0:A1:5 6:A1:2 8:D2:4 12:E2:4",
+   "bongohi": "X.x.X.x.X.x.x.x.",
+   "bongolo": "............X...",
+   "guira": "x.x.x.x.x.x.x.x."
+  },
+  "majao": {
+   "bars": 1,
+   "requinto": {
+    "chords": "F:8 E7:8",
+    "style": "arp",
+    "rate": 2,
+    "pattern": "updown",
+    "register": "A3",
+    "voicing": "close"
+   },
+   "segbass": {
+    "chords": "F:8 E7:8",
+    "style": "stabs",
+    "rhythm": "x.......x...x...",
+    "stab_len": 1,
+    "voicing": "root",
+    "register": "A2"
+   },
+   "segunda": {
+    "chords": "F:8 E7:8",
+    "style": "stabs",
+    "rhythm": "..x.x.x...x...x.",
+    "stab_len": 1,
+    "voicing": "guitar",
+    "register": "A3",
+    "strum": "down",
+    "strum_ms": 8
+   },
+   "bass": "0:F2:5 6:F2:2 8:E2:4 12:E2:4",
+   "bongohi": "x...x...x.......",
+   "bongolo": "............x...",
+   "guira": "X...X...X...X..."
+  },
+  "line": {
+   "bars": 4,
+   "voz": {
+    "notes": "0:E4:2 2:F#4:2 4:G4:2 6:A4:2 8:B4:4 12:A4:2 14:G4:2 16:F#4:4 20:G4:2 22:E4:10",
+    "lyrics": "ca-da pa-la-bra lle-va tu nom-bre"
+   }
+  }
+ },
+ "arrangement": [
+  {
+   "name": "verse",
+   "bars": 4,
+   "play": [
+    "derecho",
+    "line"
+   ]
+  },
+  {
+   "name": "chorus",
+   "bars": 4,
+   "play": [
+    "majao"
+   ]
+  }
+ ],
+ "mix": {
+  "reverb": {
+   "size": 0.6,
+   "damping": 0.5,
+   "return_db": -6,
+   "lpf": 7000
+  }
+ },
+ "master": {
+  "lufs": -11
+ }
+}

@@ -720,7 +720,7 @@ def main():
     l.add_argument("--genre", help="with --phone: the genre whose target curve to compare with (default hiphop)")
     m = sub.add_parser("master")
     m.add_argument("version", nargs="?", help="e.g. v027 (default: latest)")
-    m.add_argument("--genre", help="genre configuration (engine/genres.json): trap, hiphop, trance, trance_radio, rock, joc, caroling; required "
+    m.add_argument("--genre", help="genre configuration (engine/genres.json): trap, hiphop, trance, trance_radio, rock, joc, caroling, latinpop; required "
                    "unless --target is given; sets target, lufs, tp, eq and translate")
     m.add_argument("--lufs", type=float)
     m.add_argument("--tp", type=float)

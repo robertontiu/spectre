@@ -204,5 +204,39 @@
       "form and tempo: hymnal settings (Hutchins, Carols Old and Carols New, Boston 1916; Bramley & Stainer 1871), Mutopia MIDI tempo marks, AcousticBrainz tempo estimates (docs/CAROLING.md)",
       "tonal balance: acoustic genres show a natural top-end decay (Pestana et al. 2013); docs/MASTERING.md"
     ]
+  },
+  "latinpop": {
+    "name": "Latin pop, intimate strands: bachata, bolero / romantic ballad, Latin pop ballad, Latin acoustic pop, soft reggaeton-pop (romantic dembow)",
+    "doc": "docs/LATIN_POP.md",
+    "status": "researched 2026-11-24 for session 014; tempo, length and loudness measured on a catalogue of 25 albums (MusicBrainz lengths, AcousticBrainz tempo and ReplayGain) plus Mixgraph's reggaeton data; the tonal target reuses the measured `rock` curve (the mean of Pestana et al.'s pop and rock: the closest measured curve; no Latin curve is measured)",
+    "master": {
+      "target": "rock",
+      "lufs": -11.0,
+      "tp": -1.0,
+      "eq": 0.6,
+      "translate": 0.3,
+      "mono_below": 120.0
+    },
+    "length": "3:00-4:00, typically 3:15-3:50 (catalogue median 3:41 for releases since 2010, middle half 3:12-3:59; by strand: reggaeton-pop 3:21, bolero 3:35, bachata 3:59)",
+    "form": "song form in 8-bar sections: intro 4-8 (often the lead guitar or piano alone), verse, chorus, verse, chorus, a bridge or instrumental break, final chorus, outro; bachata maps it to its rhythm sections: derecho in the verses, majao in the choruses, mambo in the bridge or interlude (the most energetic part, where the singer stops and the guitars and bongos solo)",
+    "tempo": "by strand (catalogue medians, middle half): bachata 128 (122-133); bolero 82 (77-92; 60-90 typical); Latin pop ballad and acoustic pop about 75-80 (66-105, tempo octave ambiguous); reggaeton-pop 96 (91-114), reggaeton 95 (90-98, Mixgraph, 317 tracks)",
+    "meter": "4/4 (Cuban boleros are often written in 2/4); straight 8ths in bachata and bolero, 16ths with light swing in dembow",
+    "change_rate": "by section (8 bars); in bachata the percussion changes with the section (derecho to majao at the chorus, mambo in the break); arrangements grow by adding the second guitar, bass, percussion, strings",
+    "role": "the instrumental carries the melody a singer would sing: requinto or nylon guitar, piano or a voice used as an instrument (a refrain fragment, a call); the accompaniment leaves the middle for it",
+    "hand_tuned": [
+      "target curve: `rock` reused (pop+rock #1s 1950-2010; not measured on Latin records)",
+      "lufs -11: a choice inside the measured range (bolero about -13, bachata since 2010 -9.7, ballads -10.2, reggaeton-pop -10.6, chart average -8.3); intimate strands sit at the quieter end",
+      "eq 0.6: lighter than pop/rock because the curve is borrowed and acoustic arrangements have less 100-400 Hz body",
+      "translate 0.3 (a bass guitar or bass line is present in most strands)",
+      "change_rate (craft)"
+    ],
+    "sources": [
+      "length, tempo, keys, loudness: Spectre's catalogue of 25 albums (2026-11-24): MusicBrainz track lengths, AcousticBrainz (Essentia) tempo estimates (octave-folded per strand) and ReplayGain (LUFS ~ -23.7 - RG, calibrated on Spectre's masters, docs/CAROLING.md); album list and numbers in docs/LATIN_POP.md",
+      "reggaeton tempo: median 95 bpm, middle half 90-98, 317 tracks (https://www.mixgraph.io/bpm-for/reggaeton); 85-100 typical (https://www.musicradar.com/news/beat-building-how-to-produce-a-reggaeton-beat)",
+      "bolero tempo 60-90 bpm (https://www.soundbrenner.com/blogs/articles/bolero-rhythm)",
+      "bachata sections derecho / majao / mambo and instrument roles (https://ubisoft.com/en-au/game/rocksmith/plus/news-updates/4JGuRsatSHe2lZ4XuGxuUF/breaking-down-bachata-part-1-overview; part 2 percussion, part 3 guitars)",
+      "loudness: Latin masters -14 to -8 LUFS, about -12 to keep dynamics, traditional styles -16 to -12, hip-hop-leaning louder (https://sageaudio.com/articles/mastering-for-latin-music); chart top 10 average -8.3 LUFS (https://www.izotope.com/en/learn/mastering-trends)",
+      "tonal balance: Pestana et al. 2013 (docs/MASTERING.md)"
+    ]
   }
 }
