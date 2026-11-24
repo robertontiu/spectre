@@ -76,8 +76,13 @@ They have **no** breathiness, tension, voicing or energy controls: their models 
 | `ctl-hanami-velocity-slow` / `-fast` | velocity 0.6 / 1.6 | nearly identical spectra | a small effect on these banks |
 | `ctl-hanami-low` / `-high` | the line a fifth down / up | both still transcribe correctly | the usable range edges |
 | `ctl-leona-soft-dark` | leona-soft, gender -0.5 | tilt -22.9 dB, breath 0.21 | the darkest, breathiest texture available |
+| `../choir-vibrato-1` / `../choir-vibrato-0.3` | `svs_vibrato` 1 / 0.3 (engine-side: the pitch model's vibrato scaled inside held notes) | fast pitch movement inside held vowels 22.7 -> 16.0 (0.5) -> 11.7 (0) cents sd; Whisper unchanged | straighter tone for choir textures and doubles (GENERAL.md section 6); blend to be judged by ear |
 
 **For choirs and doubles:** combine voices. Different modes and banks, a third or sixth apart, separate takes (each phrase has its own seeded pitch and noise; `seed` changes them). See `examples/vocals/svs/choir-line-dry.mp3`, which uses Hanami Root + Nectar and LEONA Core + CatNap. A real SATB is not possible yet: there is no tenor or bass voice.
+
+## Romanian (searched and tested 2026-11-24): no voice
+
+No DiffSinger bank sings Romanian, and the catalogue's banks have no Romanian data. A phoneme-mapping experiment (Hanami steered into Romanian with phonemes from its other languages: `examples/vocals/svs/romanian.py`, audition `romanian-hanami-experiment.mp3`) reached 0.90 character accuracy and 48% word accuracy with Whisper forced to Romanian (control through the Spanish G2P: 0.85 and 51%), and Whisper heard Romanian on 1 of 5 lines: partly intelligible, not proper Romanian, and Whisper can't judge ă/î. It is not wired into the engine. The only licence-clean neural Romanian voice found is a speaking voice, Piper `ro_RO-mihai` (male, CC0 data, MIT), not wired either. Details and sources: [languages/ro.md](languages/ro.md).
 
 ## What is missing: male and hard voices (searched 2026-11-24)
 

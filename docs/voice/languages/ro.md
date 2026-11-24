@@ -1,0 +1,71 @@
+# Voice: Romanian
+
+The Romanian profile (standing rule 10), written 2026-11-24 (queue item 5b) for upcoming Romanian sessions (docs/ROMANIAN.md, docs/JOC_TIGANESC.md). General findings and their sources are in [../GENERAL.md](../GENERAL.md); the voices in [../VOICES.md](../VOICES.md).
+
+## Can a voice sing Romanian? (searched and tested 2026-11-24)
+
+**No licence-clean voice was trained on Romanian.** The short answer for a session: Romanian sung words are not supported. Use a wordless voice (`vox2`, or an svs voice on open vowels), or the experimental Hanami mapping below once a native listener has approved it.
+
+- **DiffSinger (`svs`):** no Romanian DiffSinger voicebank was found (web searches in English for DiffSinger, OpenUtau and UTAU Romanian voicebanks; the community wiki is blocked from the sandbox). Hanami's dictionaries cover English, Japanese, German, Korean, Spanish, Mandarin, Cantonese, Vietnamese and French (`dsdur/dsdict-*.yaml`), and its readme lists no Romanian data; LEONA has English and Japanese only.
+- **The experiment: Hanami steered into Romanian by phoneme mapping** (`examples/vocals/svs/romanian.py`, audition `examples/vocals/svs/romanian-hanami-experiment.mp3`, results `romanian.json`). Romanian letters are mapped to phonemes Hanami knows from its other languages: Spanish vowels, unaspirated stops (`px tx kx`), clear l (`l1`) and tapped r (`rx`); the German schwa `ax` for **ă**; the Korean ㅡ vowel `eu` (close, unrounded, central-back) for **î/â**; Japanese palatalized `ky`/`gy` for ch/gh before e/i; glides for the rising diphthongs and offglides `I1`/`U1` for the falling ones; a final non-syllabic i as `I1`; initial e as [je] in the pronouns and forms of "a fi". Five lines, dry, Whisper small forced to Romanian:
+
+  | path | word accuracy | character accuracy (spaces, diacritics ignored) | Whisper hears Romanian |
+  |---|---|---|---|
+  | Romanian mapping | 48% | **0.90** | 1 of 5 lines (others: Polish, Japanese x2, Italian) |
+  | control: the Spanish G2P on the same spelling | 51% | 0.85 | 0 of 5 |
+
+  Lines: "acum e primăvară", "în ochii tăi e lumină", "ține-mă de mână", "noaptea vine încet", "dor de casă, dor de voi". Two lines came out right ("Acum e prima vara", "DOR DE CASA, DOR DE VOI"), one nearly ("Sine-mă de mână"); "noaptea" was heard as "nu o te" (the `w` glide of oa sounds like a separate "u") and "tăi e lumină" as "te ieru mine". **Whisper drops diacritics, so it cannot judge ă and î at all**: the Spanish control scored as well while singing every ă as "a". Verdict: partly intelligible, with an audible foreign accent likely; not proper Romanian by this measure. It needs a native ear before any use, and the engine has no `lang: "ro"` (GENERAL.md section 6, item 7).
+- **Licence of that route:** the Hanami terms allow any creative use with credit, commercial included, and derivative voices only through synth settings, which this is; so it would be fit for CC BY tracks with the Hanami credit line, **but never in a track with a political subject** (Lotte V's terms; for example session 011, the anthem). For political Romanian content there is no sung voice.
+- **Speech (`tts`) voices for Romanian:**
+
+  | voice | licence | status |
+  |---|---|---|
+  | **Piper `ro_RO-mihai-medium`** (male) | dataset CC0 (crowdsourced for Home Assistant's "Year of Voice", [OHF-Voice/voice-datasets](https://github.com/OHF-Voice/voice-datasets)); fine-tuned from a CC0 Flemish base model; the [piper-voices](https://huggingface.co/rhasspy/piper-voices) repository is MIT ([model card](https://huggingface.co/rhasspy/piper-voices/tree/main/ro/ro_RO)) | **the only licence-clean neural Romanian voice found**; phonemizes with eSpeak NG `ro`; not wired (`engine/tts_words.py` speaks English through Kokoro and segments English syllables). A Romanian `tts` path would need Piper as a second word sampler plus Romanian syllable rules (below). Male only. |
+  | Kokoro v1.0 | Apache 2.0 | no Romanian voice |
+  | eSpeak NG `ro` | GPL engine, output free | rule-based formant speech: the "robotic" sound that failed the listening test for English |
+  | models trained on SWARA (21 h, 17 speakers; [corpus page](https://speech.utcluj.ro/swarasc/index.html)) | corpus CC BY-NC 4.0 | not fit: non-commercial data |
+  | F5-TTS-RO ([Chivereanu & Boros 2025, arXiv:2512.12297](https://arxiv.org/abs/2512.12297)) | an adapter on F5-TTS, whose "pre-trained models are licensed under the CC-BY-NC license due to the training data Emilia" ([F5-TTS README](https://github.com/SWivid/F5-TTS)) | not fit; it also keeps "residual English accent characteristics" |
+
+  Context: open TTS toolkits are hard to train for Romanian (setup, data preparation, compute; [Răgman, Stânea, Cucu & Stan 2026, arXiv:2603.24116](https://arxiv.org/abs/2603.24116)).
+
+## Vowels
+- **Seven vowels: /i e a o u ə ɨ/**, written i e a o u **ă** and **î/â** (î at the start and end of a word, â inside: "în", "coborî", "mână", "român"; the two letters are one sound) ([Chițoran, *The Phonology of Romanian*, Mouton de Gruyter 2002, doi:10.1515/9783110889185](https://doi.org/10.1515/9783110889185); [Renwick, *The Phonetics and Phonology of Contrast: The Case of the Romanian Vowel System*, De Gruyter 2014, doi:10.1515/9783110362770](https://doi.org/10.1515/9783110362770)).
+- **ă and î, measured:** in stressed position [ɨ] is a high central vowel and [ə] a mid central one; their F1 ranges barely overlap; [ɨ] is short, close to the high vowels, and varies more in F2 (fronted next to palato-alveolars), [ə] is longer, like the mid vowels; both lean somewhat back; the data favour [ə] over [ʌ] for stressed ă ([Recasens & Sánchez-Miret 2025, Languages 10(1), 12, doi:10.3390/languages10010012](https://doi.org/10.3390/languages10010012); six speakers). Cross-study averages quoted there: [ɨ] about F1 415 / F2 1490 Hz, [ə] about 568 / 1410 Hz. Renwick (2014) treats several Romanian vowel contrasts, /ɨ/ among them, as marginal (few minimal pairs, low type frequency) yet maintained.
+- **No reduction of e and o:** unstressed e and o stay mid (unlike English schwa); unstressed a often alternates with ă in related forms (carte / cărticică), but that is morphology, written in the spelling. So, as in Spanish, every written vowel is sung full, and ă is a real vowel that can be held.
+- **For singing:** ă (mid central) sustains well and sounds like a darker, rounder "uh"; î/â is short and high, closer to a tense "i" pulled back: on a long note it is hard to keep (singers open it toward ă), and above about C5 it collapses with the other close vowels (GENERAL.md "High notes"). Put î/â on short notes or low in the line; put the long notes on a, o, e, ă.
+
+## Diphthongs and glides
+- **Rising diphthongs /e̯a/ and /o̯a/** ("mea", "beată", "noapte", "foarte") are phonologically distinct from the glide-vowel sequences /ja/ and /wa/ ("biată", "ziua"); a production and perception study supported the difference for [ea] vs [ja] but not clearly for [oa] vs [wa] ([Chițoran 2002, JIPA 32(2), 203-222, doi:10.1017/S0025100302001044](https://doi.org/10.1017/S0025100302001044)). They come from stressed e and o (stressed mid vowels break into diphthongs: "poartă" / "portar", "seară" / "serile"), so they almost always carry the stress.
+- **Falling diphthongs** /aj aw ej ew ow uj ɨw/ ("mai", "sau", "lei", "greu", "ou", "pui", "râu") and triphthongs (/e̯aw/ "beau", /jaw/ "iau", /e̯o̯a/ "pleoapă", /jo̯a/ "creioane") are frequent (Chițoran 2002; summary with examples: [Wikipedia, "Romanian phonology"](https://en.wikipedia.org/wiki/Romanian_phonology)).
+- **For singing:** one diphthong is one syllable and one note. In a rising diphthong the glide is the start of the note and the a holds ("noap-", "sea-"); in a falling one the first vowel holds and the glide closes the note ("mai", "greu"), as in English and Spanish. The experiment's `w` for oa was heard as a separate "u"; a faster onglide (or the plain vowel o + a on one note) is the first thing to try if the mapping is taken further.
+
+## Consonants
+- **Spelling to sound** (Chițoran 2002; Wikipedia summary above): c and g are /k g/ except before e and i, where they are /tʃ dʒ/ ("cer", "ger"); ch and gh before e/i are /k g/ ("chem", "ghem"), palatalized; in ce, ci, ge, gi before another vowel the e/i is only a spelling mark ("ceas" /tʃas/, "giulgiu"); **ș** /ʃ/, **ț** /ts/, **j** /ʒ/; **h** /h/, [x] at a word end and before consonants ("duh", "hrean"), [ç] before i.
+- **Voiceless stops are unaspirated** (as in Spanish and Italian), and b d g stay stops after vowels (no Spanish-style softening): the svs mapping uses `px tx kx` and plain `b d g`.
+- **r** is described as an alveolar trill (Chițoran 2002); the mapping uses the Spanish tap `rx` everywhere, which a native ear should check. l is clear (`l1`).
+- **Final non-syllabic i and secondary palatalization:** a word-final i after a consonant is not a syllable but palatalizes the consonant (plural "pomi" [pomʲ], "lupi", 2nd person "rupi", "roți" [rotsʲ]); it marks plurals and the 2nd person, so it carries meaning. Acoustically the contrast is larger for labials and dorsals than for coronals ([Spinu, Vogel & Bunnell 2012, Journal of Phonetics 40, 54-66, doi:10.1016/j.wocn.2011.08.001](https://doi.org/10.1016/j.wocn.2011.08.001); fricatives, 31 speakers). **For singing:** never give it a note; it is a brief i-coloured release at the end of the syllable (the mapping's `I1`). Where the plural matters ("ochi" vs "ochii", "eyes" vs "the eyes"), the double ii is one syllable with a full i ([o.kʲij]).
+- **Initial e as [je]** in the personal pronouns and forms of "a fi" ("eu" [jew], "el", "ea", "ei", "ele", "e", "este", "ești", "era"): the standard pronunciation (the normative dictionary DOOM2, Academia Română 2005, not read here; the Wikipedia summary above transcribes "eu" as /jew/). The mapping adds the glide.
+
+## Stress and rhythm
+- **Stress is lexical and unmarked in writing.** The regularity: words ending in a vowel (an open syllable) are mostly stressed on the penultimate ("MA-mă", "CA-să", "fe-REAS-tră"), words ending in a consonant on the final syllable ("co-PIL", "fru-MOS", "a-CUM", "în-CET"); exceptions keep the stress further back ("RE-pe-de", "PA-să-re", numerals like "DOI-spre-ze-ce"); derivational suffixes move the stress, inflections don't ("CAR-te" / "CĂRȚI", "co-PIL" / "co-PII") ([Franzen & Horne 1997, "Word stress in Romanian", Lund Working Papers in Linguistics 46, 75-91](https://journals.lub.lu.se/LWPL/article/download/2449/2024/5103); also Chițoran 2002). Some forms differ only by stress ("VE-se-lă" cheerful vs "ve-SE-lă" crockery; "el SU-flă" vs "el su-FLĂ"). **Check the stress of every word with a native speaker or a dictionary that marks it**; the svs voice has no stress marks and the notes make it.
+- **Rhythm is mixed:** Romanian keeps full vowels (a syllable-timed trait) but allows complex consonant clusters (a stress-timed trait) (as summarised from Renwick and Nespor et al. in [Niculescu & Vasileanu, Interspeech 2025, doi:10.21437/Interspeech.2025-2087](https://doi.org/10.21437/Interspeech.2025-2087)). For lines: runs of 8th-note syllables work as in Spanish; heavy onsets ("str-", "spl-", "ștr-", "pl-") need time before the beat, so don't put them on fast notes.
+- **Phrase ends:** most words end in a vowel and take penultimate stress, so lines usually end on a strong long note followed by a short unstressed syllable ("... pri-mă-VA-ră", "... de MÂ-nă"), like Spanish *llana* endings; a consonant-final word ends on its stressed note ("în-CET"). Write the long note on the stressed syllable (GENERAL.md "Phrase-final lengthening").
+- **Hesitation lengthening** is common in spontaneous Romanian speech (11 per 100 words, mostly on word-final vowels of function words; Niculescu & Vasileanu 2025): not a singing cue, but a reason not to stretch function words in a sung line, where it sounds like hesitation.
+
+## Linking
+- Vowels meeting across words are often elided, and the spelling marks it with a hyphen: "într-o", "s-a", "m-am", "dă-mi", "ține-mă", "nu-i". Sing the hyphenated form as written: the elided group is one syllable ("s-a" is one note), the hyphen does not split syllables there. Without a written elision, adjacent vowels across words are two syllables (hiatus) in careful singing.
+
+## Syllables (for hyphenating lyrics)
+- The orthographic norm (DOOM2, Academia Română 2005; the rule as commonly taught, not checked against the text here): one consonant between vowels starts the next syllable ("ca-să", "mâ-nă"); of two, the second starts the next syllable ("noap-te", "ar-ta"), except a stop or f/v plus l or r, which start a syllable together ("ca-pră", "a-cru"); of three or more, the first stays, the rest start the next syllable, with a few fixed exceptions. A diphthong or triphthong is one syllable ("noap-tea", "iau"); the final non-syllabic i adds no syllable ("pomi" is one).
+
+## Writing Romanian lines for Spectre (practical, once a voice exists)
+- Stress first: look up each word's stress, then put it on a strong beat or a longer note.
+- Long notes on a, o, e and ă; î/â short and low; rising diphthongs (ea, oa) on stressed long notes with the glide at the start.
+- Never a note for the final palatal i; hyphenated elisions ("într-o", "s-a") are one note.
+- Avoid lines that depend on a plural or a 2nd-person -i the listener might miss in a mix.
+- No political subjects with the Lotte V voices.
+
+## Still open
+- A native listener on `examples/vocals/svs/romanian-hanami-experiment.mp3`; if approved, a `lang: "ro"` G2P (like `engine/lang_es.py`) with the mapping, phrase-level elision and a stress-aware warning.
+- A Piper-based `tts` path for a male Romanian voice (and the only voice for political subjects).
+- Romanian intonation and phrase-final lengthening (measured studies not read in this pass), Romanian sung diction in the classical and lăutar traditions (no peer-reviewed source found), and the regional pronunciation of oa as [ɒ].

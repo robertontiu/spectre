@@ -117,3 +117,11 @@ What the numbers say:
 - LEONA's DDPM models also draw noise inside the sampling loop. Those nodes get a fixed seed, and the sessions are rebuilt per phrase, which is slower on a first render but deterministic.
 - Rendered phrases are cached in `~/.cache/spectre/svs/phrases/`, keyed by the render version, bank, mode, vocoder, settings, words, notes and seed.
 - `tts` and the eSpeak sources are untouched: `singer.sing` only gains an early branch for `source: "svs"`. Verified: the tts and `breathy` renders of the line are bit-identical to the previous `singer.py`.
+
+## Voice research pass (queue item 5b, 2026-11-24)
+
+The literature and its consequences are in [docs/voice/GENERAL.md](../../../docs/voice/GENERAL.md) (section 6 lists the improvements for this path). What was built and measured here:
+
+- **`svs_vibrato`** (engine/svs.py, opt-in; default 1 is bit-identical to before, verified on empty phrase caches): the pitch model's curve is split into a slow part (a Gaussian low-pass, sigma 70 ms) and a fast part (vibrato, jitter), and the fast part is scaled inside held notes only (from 100 ms after a note starts to 100 ms before it ends), so transitions stay as sung. `python3 examples/vocals/svs/vibrato.py measure`: fast pitch movement inside held vowels 22.7 cents sd at 1, 16.0 at 0.5, 11.7 at 0 (22 vowels, six lines; the vocoder follows the edited curve to within 1 cent); Whisper on the dry lines 92-94% at every setting. `vibrato.py choir` writes `choir-vibrato-1.mp3` and `choir-vibrato-0.3.mp3` (three takes: hanami, hanami-soft a third below, leona-soft). Why: ensembles narrow vibrato and pitch scatter for blend (Ternström 1993; Daffern 2017).
+- **Consonant length (tested, not kept):** scaling the duration model's consonant lengths (0.7, 1.3, 1.6; the vowel gives up the time) did not help Whisper hear the words in pink noise (SNR -5 / -10 dB: 57% / 24% as predicted, 53% / 6% at 1.6, 56% / 19% at 0.7), so the model's own durations stay.
+- **Romanian:** `romanian.py` sings five Romanian lines with Hanami through a phoneme mapping and transcribes them (Whisper forced to Romanian): character accuracy 0.90, word accuracy 48%, Romanian detected on 1 of 5 lines (`romanian.json`, audition `romanian-hanami-experiment.mp3`). Partly intelligible, not proper Romanian; it needs a native ear (docs/voice/languages/ro.md).

@@ -1,0 +1,182 @@
+{
+ "ro-map": {
+  "mean": 0.48,
+  "char": 0.898,
+  "rows": [
+   {
+    "lyrics": "a-cum e pri-mă-va-ră",
+    "hyp": "Acum e prima vara!",
+    "acc": 0.33,
+    "char": 1.0,
+    "lang": "pl",
+    "p": 0.31,
+    "ph": [
+     "a",
+     "kx u1 m",
+     "y e",
+     "px rx i",
+     "m ax",
+     "v a",
+     "rx ax"
+    ]
+   },
+   {
+    "lyrics": "în o-chii tăi e lu-mi-nă",
+    "hyp": "În ochii te ieru mine",
+    "acc": 0.4,
+    "char": 0.82,
+    "lang": "ja",
+    "p": 0.51,
+    "ph": [
+     "eu n",
+     "o",
+     "ky i I1",
+     "tx ax I1",
+     "y e",
+     "l1 u1",
+     "m i",
+     "n ax"
+    ]
+   },
+   {
+    "lyrics": "ți-ne-mă de mâ-nă",
+    "hyp": "Sine-mă de mână",
+    "acc": 0.67,
+    "char": 0.92,
+    "lang": "ja",
+    "p": 0.71,
+    "ph": [
+     "ts i",
+     "n e",
+     "m ax",
+     "d e",
+     "m eu",
+     "n ax"
+    ]
+   },
+   {
+    "lyrics": "noap-tea vi-ne în-cet",
+    "hyp": "Nu o te avine în ce!",
+    "acc": 0.0,
+    "char": 0.75,
+    "lang": "it",
+    "p": 0.43,
+    "ph": [
+     "n w a px",
+     "tx y a",
+     "v i",
+     "n e",
+     "eu n",
+     "ch e tx"
+    ]
+   },
+   {
+    "lyrics": "dor de ca-să dor de voi",
+    "hyp": "DOR DE CASA, DOR DE VOI",
+    "acc": 1.0,
+    "char": 1.0,
+    "lang": "ro",
+    "p": 0.57,
+    "ph": [
+     "d o rx",
+     "d e",
+     "kx a",
+     "s ax",
+     "d o rx",
+     "d e",
+     "v o I1"
+    ]
+   }
+  ]
+ },
+ "es-g2p": {
+  "mean": 0.513,
+  "char": 0.854,
+  "rows": [
+   {
+    "lyrics": "a-cum e pri-mă-va-ră",
+    "hyp": "Acum e primavara!",
+    "acc": 1.0,
+    "char": 1.0,
+    "lang": "es",
+    "p": 0.25,
+    "ph": [
+     "a",
+     "kx u1 m",
+     "e",
+     "px rx i",
+     "m a",
+     "bh a",
+     "rx a"
+    ]
+   },
+   {
+    "lyrics": "în o-chii tăi e lu-mi-nă",
+    "hyp": "Inocita e lumina!",
+    "acc": 0.4,
+    "char": 0.82,
+    "lang": "it",
+    "p": 0.35,
+    "ph": [
+     "i n",
+     "o",
+     "ch y i",
+     "tx a I1",
+     "e",
+     "l1 u1",
+     "m i",
+     "n a"
+    ]
+   },
+   {
+    "lyrics": "ți-ne-mă de mâ-nă",
+    "hyp": "Tine-ma de mana!",
+    "acc": 1.0,
+    "char": 1.0,
+    "lang": "ja",
+    "p": 0.8,
+    "ph": [
+     "tx i",
+     "n e",
+     "m a",
+     "d e",
+     "m a",
+     "n a"
+    ]
+   },
+   {
+    "lyrics": "noap-tea vi-ne în-cet",
+    "hyp": "Nu ateabine-n se!",
+    "acc": 0.0,
+    "char": 0.62,
+    "lang": "ja",
+    "p": 0.66,
+    "ph": [
+     "n o a px",
+     "tx e a",
+     "b i",
+     "n e",
+     "i n",
+     "s e tx"
+    ]
+   },
+   {
+    "lyrics": "dor de ca-să dor de voi",
+    "hyp": "DORTE, CASA, DORTE Poi!",
+    "acc": 0.17,
+    "char": 0.82,
+    "lang": "it",
+    "p": 0.68,
+    "ph": [
+     "d o rx",
+     "d e",
+     "kx a",
+     "s a",
+     "d o rx",
+     "d e",
+     "b o I1"
+    ]
+   }
+  ]
+ }
+}
