@@ -7,7 +7,7 @@
 | Instruments | two fiddles an octave apart, cobza (oud, bright) chopping the off-beat chords, cimbalom tremolo and drone, nai, tobă, trap kit, 808. cimbalom, fiddle and nai were built for this session |
 | Folk rhythm | the geamparale's 7/16 limp folded into the trap grid as 3-3-2, in the hats, the cobza and the tobă: "the beat walks like a man carrying something" |
 | Iterations | 30 |
-| Master | `studio.py master v026 --lufs -10.5 --tp -1`: -10.5 LUFS, -1.06 dBTP, PLR 9.5, LRA 5.3 LU, laptop loss -2.1 dB, no warnings. Largest EQ moves +4 dB at 31.5 and 50 Hz, -2.6 at 40 Hz, +2.9 at 630 Hz |
+| Master | `studio.py master v026 --lufs -10.5 --tp -1 --genre trap`: -10.5 LUFS, -1.06 dBTP, PLR 9.5, LRA 5.3 LU, laptop loss -2.1 dB, no warnings. Largest EQ moves +4 dB at 31.5 and 50 Hz, -2.6 at 40 Hz, +2.9 at 630 Hz |
 
 ## Arrangement
 - **intro1 (4):** a lone fiddle behind a closed filter; the 3-3-2 hat "clock" fades in

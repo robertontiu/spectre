@@ -13,13 +13,13 @@ Subject: ECSTASY.
 YOU decide the tempo AND the exact feeling: what kind of ecstasy, felt where and by whom (a crowd at sunrise, one person losing the edges of themselves, a release after a long dark stretch, something else). Decide it in your first journal entry and commit to it, then name the nearest wrong feelings for YOUR choice and what separates them. Likely traps to weigh: cheesy (big-room festival clichés, a hook that sounds like a ringtone), hollow (loud but nothing at stake: euphoria needs the tension before it), aggressive (hard dance energy is not ecstasy), and chill (a pretty breakdown that never releases).
 Previous Spectre tracks cover defiance (001), rage (002), rebellion (003), the hustle (004), an anti-war statement (005) and holding the line through a revolution (006), all trap-family beats. This is Spectre's first four-on-the-floor track: make it a real trance track, not a trap beat at 138 bpm.
 
-READ FIRST: /home/claude/spectre/docs/TRANCE.md (the genre brief: tempo, kick and rolling bass, supersaws, gates, breakdown and build, progressions, references). The engine has new instruments, effects and a trance mastering target for this genre: read their section in /home/claude/spectre/docs/MANUAL.md and the targets in docs/MASTERING.md.
+READ FIRST: /home/claude/spectre/docs/TRANCE.md (the genre brief: tempo, kick and rolling bass, supersaws, gates, breakdown and build, progressions, references). The engine has new instruments, effects and a trance mastering configuration for this genre (`--genre trance`): read their section in /home/claude/spectre/docs/MANUAL.md and the targets in docs/MASTERING.md.
 
 STUDIO NOTES FOR TRANCE (from the engineer who built the sounds; details in MANUAL.md):
 - Sounds: `clubkick` (tune 45-60, short tail so the bass rolls between kicks), `supersaw` (stereo; lead, chords, plucks and pads from one instrument via its envelope/filter settings), `trancebass` (offbeat "..x...x...x...x." or rolling ".xxx.xxx.xxx.xxx" stabs with voicing "root"; ALWAYS sidechain it to the kick), the `gate` fx for trance gates, section automation `"hpf":[f0,f1]` for high-pass sweeps, the exit option `"rise": beats` for a pitched build riser, plus the existing pluck/pad/piano/choir/riser/impact/downlifter. `vox` (a wordless formant "ah/oo" voice) can state the theme in the breakdown, with plenty of reverb; it reads synthetic when naked.
 - A muted kick (section `auto` mute) still sends sidechain triggers: leave the kick's pattern out of the breakdown instead of muting it.
 - Intros with only kick and bass trip the ears' "sub very dominant" warning; that's expected there.
-- Master with `studio.py master vNNN --target trance --lufs -10 --tp -1 --translate 0.4`. Don't push louder than -10: the true-peak guard will turn it down.
+- Master with `studio.py master vNNN --genre trance`. Don't push louder than -10: the true-peak guard will turn it down.
 - Nothing has been checked by a human ear: judge the timbres hard, and if a sound reads cheap, change its settings or layer it rather than living with it.
 
 LESSONS FROM PAST SESSIONS (read /home/claude/spectre/docs/LESSONS.md, especially "Across genres"; the artist's favourites are sessions/005-fuck-war and sessions/006-revolution, study their journals: the hook as the statement, subtraction, a dramaturgy instead of a mood):
@@ -32,7 +32,7 @@ YOUR STUDIO:
 - Read /home/claude/spectre/docs/MANUAL.md (tools, project format, how to read the ears, the final `master` step) and /home/claude/spectre/docs/CRAFT.md (written for beats; take what transfers).
 - Work in /home/claude/spectre/sessions/007-ecstasy. Always: cd /home/claude/spectre/sessions/007-ecstasy && export BEAT_DIR=$PWD, and call the engine as python3 /home/claude/spectre/engine/studio.py ... Per-section track levels: read stems_rms in renders/vNNN.meta.json (see sessions/006-revolution/stems.py); solo renders keep their real level. Do NOT modify anything outside this session folder, and don't run git. Helper scripts of your own are fine inside your folder. Another producer is working in sessions/008-thriving at the same time; leave it alone.
 - You cannot hear audio directly. Your ears are the `listen` images and numbers, plus your knowledge of what the notes, rhythms, sounds and arrangement you wrote will sound like. Use both. Read every listen image with the Read tool. Don't pipe listen output into head; redirect it to a file if you need to trim it.
-- The final track is an extended mix: 5:00 to 7:00, the length trance actually lives at. A DJ-friendly intro and outro (16-32 bars where drums and bass carry it, so a DJ can mix in and out), at least one full breakdown and build into a release, and a second wave that goes further than the first. Use the length: trance's ecstasy needs time to build; the long groove before the first breakdown is part of the effect, not filler. It's an instrumental: a lead synth carries the melody a vocalist would sing.
+- The final track is an extended mix: 6:00 to 8:00, the length trance actually lives at. A DJ-friendly intro and outro (16-32 bars where drums and bass carry it, so a DJ can mix in and out), at least one full breakdown (16-64 bars, typically 32) and build into a release, and a second wave that goes further than the first. Use the length: trance's ecstasy needs time to build; the long groove before the first breakdown is part of the effect, not filler. It's an instrumental: a lead synth carries the melody a vocalist would sing.
 - Forward only: every render is kept as a version. You may change anything in project.json, but you never go back to an old version.
 
 HOW YOU WORK (stages):
@@ -41,7 +41,7 @@ HOW YOU WORK (stages):
 3. THE ARRANGEMENT: full length with an arc (DJ intro, groove, first breakdown and build, release, second breakdown, the bigger release, DJ outro); change something every 8-16 bars, as trance does.
 4. TRANSITIONS AND DETAIL: builds, risers, snare rolls, filter sweeps, gates, the drop-out before the release, the chord change that lifts.
 5. MIX: balance, width, depth (reverb and delay), kick/bass carve-up, squint checks (--mono, --lowpass).
-6. MASTER: run `studio.py master vNNN --target trance --lufs -10 --tp -1 --translate 0.4` and read the report and picture. If it warns or the EQ cuts near its limit, fix the mix, re-render and master again.
+6. MASTER: run `studio.py master vNNN --genre trance` and read the report and picture. If it warns or the EQ cuts near its limit, fix the mix, re-render and master again.
 7. FINAL LISTEN from the top, plus zooms on the key moments.
 
 THE LOOP (repeat, one musical intention per iteration):

@@ -13,7 +13,10 @@ Chain (each stage measured, every move bounded):
   8. QC           LUFS, true peak, PLR, loudness range, tonal deviation, mono-bass check, laptop simulation,
                   before/after picture
 
-  python3 master.py renders/v027.premaster.wav [--lufs -11] [--tp -1.0] [--out renders/v027.master.wav]
+  python3 master.py renders/v027.premaster.wav --genre trap [--lufs ..] [--tp ..] [--out renders/v027.master.wav]
+
+A genre (engine/genres.json) sets the target curve and every mastering setting; explicit flags override it.
+There is no default genre: give --genre (or, for old commands, --target, which picks the matching genre).
 """
 import sys, os, json, argparse
 import numpy as np
@@ -35,18 +38,81 @@ def db(x):
     return 10 ** (x / 20)
 
 
-# Genre targets (hand-tuned, not measured from references; see docs/MASTERING.md). Only the shape matters:
-# the EQ aligns each curve to the mix on 200 Hz-5 kHz.
-# trance: a short club kick and rolling bass instead of a sustained 808, so less sub at 31-40 Hz; dense bright
-#         supersaws, hats and long reverbs, so the top falls more slowly.
-# rock:   kick and bass guitar live at 60-250 Hz, little true sub; guitars fill 200 Hz-5 kHz; cymbals keep the top open.
+# Tonal target curves (dB relative to 1 kHz per 1/3 octave; see docs/MASTERING.md for each derivation).
+# Only the shape matters: the EQ aligns each curve to the mix on 200 Hz-5 kHz.
+# beat / trap: hand-tuned for 808 beats; the curve of sessions 001-006, kept exactly so their masters reproduce.
+# hiphop, trance, rock: measured. Average spectra of 772 US/UK #1 singles 1950-2010 by genre (Pestana, Ma, Reiss,
+#   Barbosa & Black 2013, AES 135, Fig. 5: hip-hop, electronic, and the mean of pop and rock), converted from
+#   per-FFT-bin levels to 1/3-octave band energy and rounded to 0.5 dB.
+# trance_handtuned, rock_handtuned: the earlier hand-tuned curves, kept for comparison.
+MEASURED = {
+    "hiphop": {31.5: -7.5, 40: -4.0, 50: -0.5, 63: 2.5, 80: 5.5, 100: 8.0, 125: 8.0, 160: 5.0, 200: 3.5, 250: 2.5,
+               315: 1.0, 400: 1.5, 500: 2.0, 630: 1.5, 800: 0.0, 1000: 0.0, 1250: -1.0, 1600: -1.5, 2000: -1.5,
+               2500: -2.0, 3150: -3.0, 4000: -4.5, 5000: -7.0, 6300: -7.0, 8000: -8.0, 10000: -9.5, 12500: -13.0,
+               16000: -20.0},
+    "trance": {31.5: -11.0, 40: -7.5, 50: -3.0, 63: 0.5, 80: 4.5, 100: 7.5, 125: 9.0, 160: 6.5, 200: 5.0, 250: 4.0,
+               315: 3.0, 400: 2.0, 500: 1.5, 630: 1.0, 800: 0.5, 1000: 0.0, 1250: -0.5, 1600: -1.0, 2000: -2.0,
+               2500: -2.5, 3150: -3.0, 4000: -3.0, 5000: -4.0, 6300: -4.0, 8000: -6.0, 10000: -8.0, 12500: -11.5,
+               16000: -18.0},
+    "rock": {31.5: -15.0, 40: -11.5, 50: -7.0, 63: -3.0, 80: 1.5, 100: 5.0, 125: 7.0, 160: 6.5, 200: 5.5, 250: 5.0,
+             315: 4.0, 400: 3.0, 500: 2.5, 630: 2.0, 800: 1.0, 1000: 0.0, 1250: -0.5, 1600: -0.5, 2000: -1.5,
+             2500: -2.0, 3150: -3.0, 4000: -4.5, 5000: -6.5, 6300: -8.0, 8000: -9.5, 10000: -12.5, 12500: -16.0,
+             16000: -23.0},
+}
+
 TARGETS = {
     "beat": TARGET_ANCHORS,
-    "trance": {31.5: -4.0, 40: 1.5, 50: 5.0, 63: 5.5, 80: 5.0, 100: 4.0, 160: 2.0, 250: 1.0, 500: 0.5,
-               1000: 0.0, 2000: -1.5, 4000: -3.5, 8000: -6.5, 12500: -9.5, 16000: -13.0},
-    "rock": {31.5: -7.0, 40: -3.0, 50: 0.5, 63: 2.5, 80: 3.5, 100: 3.5, 160: 3.0, 250: 2.0, 500: 1.0,
-             1000: 0.0, 2000: -1.0, 4000: -3.5, 8000: -7.0, 12500: -10.5, 16000: -15.0},
+    "trap": TARGET_ANCHORS,
+    "hiphop": MEASURED["hiphop"],
+    "trance": MEASURED["trance"],
+    "rock": MEASURED["rock"],
+    "trance_handtuned": {31.5: -4.0, 40: 1.5, 50: 5.0, 63: 5.5, 80: 5.0, 100: 4.0, 160: 2.0, 250: 1.0, 500: 0.5,
+                         1000: 0.0, 2000: -1.5, 4000: -3.5, 8000: -6.5, 12500: -9.5, 16000: -13.0},
+    "rock_handtuned": {31.5: -7.0, 40: -3.0, 50: 0.5, 63: 2.5, 80: 3.5, 100: 3.5, 160: 3.0, 250: 2.0, 500: 1.0,
+                       1000: 0.0, 2000: -1.0, 4000: -3.5, 8000: -7.0, 12500: -10.5, 16000: -15.0},
 }
+
+GENRES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "genres.json")
+SETTINGS = ("target", "lufs", "tp", "eq", "translate", "mono_below")
+
+
+def load_genres():
+    with open(GENRES_PATH) as fh:
+        return {k: v for k, v in json.load(fh).items() if not k.startswith("_")}
+
+
+def genre_for_target(target, genres):
+    """The genre whose config an old `--target`-only command maps to (beat -> trap, trance_handtuned -> trance)."""
+    base = {"beat": "trap"}.get(target, target.replace("_handtuned", ""))
+    if base in genres:
+        return base
+    for name, g in genres.items():
+        if g["master"]["target"] == target:
+            return name
+    return None
+
+
+def resolve_settings(genre=None, target=None, **overrides):
+    """Settings for one master: the genre's config, then explicit overrides (None = not given)."""
+    genres = load_genres()
+    if genre is None and target is None:
+        raise SystemExit("master: no genre given. Use --genre " + "|".join(genres) +
+                         " (see engine/genres.json and docs/ORCHESTRATION.md, Genre conventions).")
+    if genre is None:
+        genre = genre_for_target(target, genres)
+        if genre is None:
+            raise SystemExit(f"master: target {target!r} belongs to no genre; also give --genre " + "|".join(genres))
+    if genre not in genres:
+        raise SystemExit(f"master: unknown genre {genre!r}; choose one of " + ", ".join(genres))
+    s = dict(genres[genre]["master"])
+    if target is not None:
+        s["target"] = target
+    for k, v in overrides.items():
+        if v is not None:
+            s[k] = v
+    if s["target"] not in TARGETS:
+        raise SystemExit(f"master: unknown target {s['target']!r}; choose one of " + ", ".join(sorted(TARGETS)))
+    return genre, s
 
 
 def target_curve(freqs, target="beat"):
@@ -171,9 +237,12 @@ def soft_clip(x, ceiling_db=-0.5, amount=0.5):
     return signal.resample_poly(y, 1, 4, axis=1)[:, :x.shape[1]]
 
 
-def master(x, lufs=-11.0, tp=-1.0, mono_below=120.0, eq_strength=0.7, translate=0.5, report=None, target="beat"):
+def master(x, lufs=-11.0, tp=-1.0, mono_below=120.0, eq_strength=0.7, translate=0.5, report=None, target="beat",
+           genre=None):
     rep = report if report is not None else {}
+    rep["genre"] = genre
     rep["target"] = target
+    rep["settings"] = dict(target=target, lufs=lufs, tp=tp, eq=eq_strength, translate=translate, mono_below=mono_below)
     meter = pyln.Meter(SR)
     rep["in"] = dict(lufs=round(meter.integrated_loudness(x.T), 1), true_peak=round(true_peak_db(x), 1))
     mid0 = x.mean(0)
@@ -271,7 +340,11 @@ def master(x, lufs=-11.0, tp=-1.0, mono_below=120.0, eq_strength=0.7, translate=
     lap_in = signal.sosfilt(sos, x * 0 + pre, axis=1)
     lap = signal.sosfilt(sos, y, axis=1)
     Lfull = meter.integrated_loudness(y.T)
-    rep["out"] = dict(lufs=round(Lfull, 1), true_peak=round(true_peak_db(y), 2),
+    # stereo width as integrated side minus mid loudness (LU; 0 = as wide as mono-compatible gets, lower = narrower)
+    Lm = meter.integrated_loudness(((y[0] + y[1]) / 2)[:, None])
+    Ls = meter.integrated_loudness(((y[0] - y[1]) / 2)[:, None])
+    width = round(float(Ls - Lm), 1) if np.isfinite(Ls) and np.isfinite(Lm) else None
+    rep["out"] = dict(width_side_minus_mid_lu=width,lufs=round(Lfull, 1), true_peak=round(true_peak_db(y), 2),
                       plr=round(true_peak_db(y) - Lfull, 1),
                       short_term_max=round(float(st.max()), 1) if len(st) else None,
                       loudness_range=round(float(np.percentile(st, 95) - np.percentile(st, 10)), 1) if len(st) else None,
@@ -290,7 +363,7 @@ def picture(rep, path):
     import matplotlib.pyplot as plt
     fig, ax = plt.subplots(1, 1, figsize=(11, 4.5))
     tgt = target_curve(THIRD, rep.get("target", "beat"))
-    ax.semilogx(THIRD, tgt, "k--", lw=1.5, label=f"target ({rep.get('target', 'beat')})")
+    ax.semilogx(THIRD, tgt, "k--", lw=1.5, label=f"target ({rep.get('target', 'beat')}; genre {rep.get('genre')})")
     ax.semilogx(THIRD, rep["in"]["tonal"], color="tab:red", lw=1.2, label=f"premaster ({rep['in']['lufs']} LUFS)")
     ax.semilogx(THIRD, rep["out"]["tonal"], color="tab:blue", lw=1.8, label=f"master ({rep['out']['lufs']} LUFS, {rep['out']['true_peak']} dBTP)")
     ax.axvspan(20, 150, color="0.9", zorder=0)
@@ -308,40 +381,49 @@ def picture(rep, path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("premaster")
-    ap.add_argument("--lufs", type=float, default=-11.0)
-    ap.add_argument("--tp", type=float, default=-1.0)
-    ap.add_argument("--mono-below", type=float, default=120.0)
-    ap.add_argument("--eq", type=float, default=0.7, help="how strongly to move toward the tonal target (0-1)")
-    ap.add_argument("--translate", type=float, default=0.5, help="bass harmonics for small speakers (0-1)")
-    ap.add_argument("--target", default="beat", choices=sorted(TARGETS),
-                    help="tonal target curve: beat (808 beats, default), trance, rock")
+    ap.add_argument("--genre", help="genre configuration from engine/genres.json (sets every setting below): "
+                    + ", ".join(load_genres()))
+    ap.add_argument("--target", choices=sorted(TARGETS),
+                    help="tonal target curve (default: the genre's); beat is the trap curve")
+    ap.add_argument("--lufs", type=float, help="integrated loudness target (default: the genre's)")
+    ap.add_argument("--tp", type=float, help="true-peak ceiling dBTP (default: the genre's)")
+    ap.add_argument("--mono-below", type=float)
+    ap.add_argument("--eq", type=float, help="how strongly to move toward the tonal target (0-1)")
+    ap.add_argument("--translate", type=float, help="bass harmonics for small speakers (0-1)")
     ap.add_argument("--out")
     a = ap.parse_args()
+    genre, s = resolve_settings(a.genre, a.target, lufs=a.lufs, tp=a.tp, eq=a.eq, translate=a.translate,
+                                mono_below=a.mono_below)
+    print(f"genre {genre}: target {s['target']}, lufs {s['lufs']}, tp {s['tp']}, eq {s['eq']}, "
+          f"translate {s['translate']}, mono below {s['mono_below']} Hz")
     x, sr = sf.read(a.premaster, always_2d=True)
     assert sr == SR
     x = x.T.astype(np.float64)
     rep = {"_src": x}
-    y, rep = master(x, a.lufs, a.tp, a.mono_below, a.eq, a.translate, rep, a.target)
+    y, rep = master(x, s["lufs"], s["tp"], s["mono_below"], s["eq"], s["translate"], rep, s["target"], genre)
     rep.pop("_src", None)
     out = a.out or a.premaster.replace(".premaster.wav", ".master.wav")
     sf.write(out, y.T, SR, subtype="PCM_24")
-    json.dump(rep, open(out.replace(".wav", ".report.json"), "w"), indent=1)
-    picture(rep, out.replace(".wav", ".png"))
     i, o = rep["in"], rep["out"]
     print(f"IN   {i['lufs']} LUFS  TP {i['true_peak']} dBTP  laptop loss {i.get('laptop_loss_db')} dB")
     print(f"OUT  {o['lufs']} LUFS  TP {o['true_peak']} dBTP  PLR {o['plr']}  LRA~{o['loudness_range']} LU  "
-          f"short-term max {o['short_term_max']}  low-end L/R corr {o['low_end_corr']}  laptop loss {o['laptop_loss_db']} dB")
+          f"short-term max {o['short_term_max']}  low-end L/R corr {o['low_end_corr']}  laptop loss {o['laptop_loss_db']} dB  "
+          f"width (side-mid) {o['width_side_minus_mid_lu']} LU")
     print("tonal EQ moves (dB):", rep["eq_db"])
+    at_limit = [k for k, v in rep["eq_db"].items() if v <= -7.95 or v >= 3.95]
+    rep["eq_at_limit"] = at_limit
+    if at_limit:
+        print("NOTE: tonal EQ at its limit (-8/+4 dB) at", ", ".join(at_limit), "Hz: the mix and the target disagree there")
     for k, v in rep["multiband"].items():
         print(f"  multiband {k:16s} thr {v['threshold_db']:6.1f}  ratio {v['ratio']}  GR mean {v['gr_mean']} / max {v['gr_max']} dB")
     print(f"  glue GR mean {rep['glue']['gr_mean']} / max {rep['glue']['gr_max']} dB   limiter max GR {rep['limiter_max_gr_db']} dB")
     dev_o = np.array(rep["tonal_dev_out"])
     dev_o -= np.median(dev_o[(THIRD >= 200) & (THIRD <= 5000)])
     worst = sorted(zip(THIRD, dev_o), key=lambda t: -abs(t[1]))[:4]
-    print("largest remaining tonal deviations:", [(f, round(d, 1)) for f, d in worst])
+    print("largest remaining tonal deviations:", [(float(f), round(float(d), 1)) for f, d in worst])
     warns = []
-    if o["true_peak"] > a.tp + 0.05:
-        warns.append(f"true peak {o['true_peak']} above ceiling {a.tp}")
+    if o["true_peak"] > s["tp"] + 0.05:
+        warns.append(f"true peak {o['true_peak']} above ceiling {s['tp']}")
     if rep["limiter_max_gr_db"] > 6:
         warns.append(f"limiter peaks at {rep['limiter_max_gr_db']} dB of reduction: mix too spiky or target too loud")
     if o["plr"] < 7:
@@ -350,6 +432,9 @@ def main():
         warns.append("low end not mono")
     for w in warns:
         print("WARN:", w)
+    rep["warnings"] = warns
+    json.dump(rep, open(out.replace(".wav", ".report.json"), "w"), indent=1)
+    picture(rep, out.replace(".wav", ".png"))
     print("wrote", out)
 
 

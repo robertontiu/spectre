@@ -37,6 +37,8 @@ engine/
   ear.py          the ears: arrangement lanes, mel spectrogram, band energy, loudness, per-section stats,
                   warnings; zoom view with onset grid and timing roll
   master.py       the release mastering stage (see docs/MASTERING.md)
+  genres.json     genre configurations (target curve, loudness and mastering settings, length, form, tempo, sources);
+                  `studio.py master --genre <name>`, no default genre
   gallery.py      dev tool: spectrogram gallery of every instrument (sanity-check sound design)
   solos.sh        diagnostic: per-track RMS and band levels via solo renders (written by the producer in session 002)
 docs/
@@ -49,6 +51,7 @@ prompts/
 site/             the website (Next.js; Vercel, spectre.robertontiu.com); data/tracks.json is the canonical track list
 tools/
   sync_tracks.py  copies each session's mastered MP3 into site/public/tracks
+  pestana_ltas.py derives the measured mastering curves from Pestana et al. (2013), Fig. 5 (see docs/MASTERING.md)
 sessions/
   NNN-name/       one folder per session: project.json, journal.md, mastered mp3, ear and master images,
                   README.md with the result
@@ -71,7 +74,7 @@ Smoke test (about 20 s to render, 25 s to listen):
 mkdir -p /tmp/smoke && cp examples/engine-test.json /tmp/smoke/project.json
 cd /tmp/smoke && export BEAT_DIR=$PWD
 python3 <repo>/engine/studio.py render && python3 <repo>/engine/studio.py listen
-python3 <repo>/engine/studio.py master          # writes renders/v001.master.{wav,mp3,png,report.json}
+python3 <repo>/engine/studio.py master --genre trap   # writes renders/v001.master.{wav,mp3,png,report.json}
 ```
 Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 
@@ -79,7 +82,7 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 
 1. Create `sessions/NNN-shortname/` and write the brief into `PROMPT.md` there (see `docs/ORCHESTRATION.md`).
 2. Fill in `prompts/producer.md` (placeholders in `{{...}}`) and run it as a sub-agent with file, shell and image-reading tools. A full session is 25-45 iterations, about 30-60 minutes.
-3. When it finishes: check the master report (LUFS, true peak under -1 dBTP, no warnings), check the length against the genre (see "Genre conventions" in docs/ORCHESTRATION.md), copy `final.mp3`, and write the session `README.md` (see `sessions/001-bleachers/README.md` for the format).
+3. When it finishes: check the master report (genre, LUFS, true peak under -1 dBTP, no warnings), check the length against the genre (see "Genre conventions" in docs/ORCHESTRATION.md), copy `final.mp3`, and write the session `README.md` (see `sessions/001-bleachers/README.md` for the format).
 4. Long sessions can be interrupted (for example when the operator's own turn is interrupted). Check on them periodically; to resume, start a fresh producer agent with the same prompt plus "read journal.md and the helper scripts, listen to the latest render, continue numbering". Forward-only versioning makes this seamless.
 5. **After every genre switch, record lessons in the repo** (owner's standing rule): add the session entry to `docs/LESSONS.md` and update its "Across genres" section with what transferred and what didn't. If the new genre needed research, save it as a `docs/<GENRE>.md` brief (see `docs/ROMANIAN.md`, `docs/UKRAINIAN.md`). Commit these with the session.
 6. Sessions can run in parallel (one folder each). Engine changes made while another session is rendering must be additive and written atomically (write a temp file, then rename), so a running render never imports a half-written module.
@@ -101,7 +104,7 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 1. **The ears can't hear attitude.** Structure reads well on spectrograms; timbre and emotional "bite" don't. Session 001 aimed for defiance and came across as longing. Ideas: an audio-capable model as a critic ("describe what you hear, without naming emotions"), CLAP-style embeddings as a weak signal, or a human checkpoint ear after the loop stage.
 2. **Synth timbres lean soft.** No real samples. Real drum one-shots or sample packs (the user would provide them; the sandbox network is restricted) would raise quality a lot.
 3. **No vocals.** A generative model as a "session musician" (stems on demand) is the planned v2 for metal and pop.
-4. **Mastering targets** are hand-tuned curves per genre (`--target beat|trance|rock`). Reference-track matching would help.
+4. **Mastering targets** are per-genre configurations (`engine/genres.json`, `--genre trap|hiphop|trance|rock`, no default). The `hiphop`, `trance` and `rock` curves are measured from published genre spectra (Pestana et al. 2013; docs/MASTERING.md) but pool 1950-2010 records; the `trap` curve (`beat`, sessions 001-006) is hand-tuned. Measuring modern reference tracks per genre would help.
 5. **Speed.** A full-length render takes 20-45 s. Per-track caching would make the loop faster.
 
 ## 7. Git

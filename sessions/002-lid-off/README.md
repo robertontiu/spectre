@@ -6,7 +6,7 @@
 | Length / tempo / key | 2:48 of music (2:51 with the final ring-out), 112 bars, 160 bpm straight, E Phrygian with a flat 5, up a semitone to F for the last hook |
 | Genre | Rage-trap crossed with industrial: full-time stampede hooks, half-time verses with a muted chug, distorted 808s, a blown-out diminished supersaw cluster (E-G-Bb-F), a hammering bitcrushed lead |
 | Iterations | 31 render-and-listen loops (about 11 loop, 6 arrangement, 9 transitions and detail, 5 mix), then the master |
-| Master | `studio.py master v032 --lufs -10 --tp -1`: -10.1 LUFS, -1.04 dBTP, PLR 9.1, laptop loss -2.1 dB, no warnings. Largest EQ moves: -4.3 dB at 63 Hz, -3.9 dB at 16 kHz |
+| Master | `studio.py master v032 --lufs -10 --tp -1 --genre trap`: -10.1 LUFS, -1.04 dBTP, PLR 9.1, laptop loss -2.1 dB, no warnings. Largest EQ moves: -4.3 dB at 63 Hz, -3.9 dB at 16 kHz |
 
 ## Arrangement
 1. Intro: a growling 808 under a filtered riff

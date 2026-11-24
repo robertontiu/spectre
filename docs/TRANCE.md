@@ -2,6 +2,21 @@
 
 For sessions that make trance (uplifting, progressive, euphoric). A vocabulary, not a rulebook. Spectre has so far made only trap-family beats: trance is a different body. It runs on a straight four-on-the-floor pulse, the bass lives *between* the kicks, and the emotion comes from long-form tension and release instead of a loop.
 
+## Configuration (researched 2026-11; engine: `--genre trance` in engine/genres.json)
+| Setting | Value | Source |
+|---|---|---|
+| Length and cut | **6:00-8:00, extended mix** (a radio edit, 3:00-4:00, only when Robert asks) | Trance tracks run 6-8 minutes ([Mixgraph trance mixing guide](https://www.mixgraph.io/mixing-guide/trance), 34 analysed tracks); six- and seven-minute productions were standard and a club version runs about 8 minutes against a 3-minute radio edit ([Digital DJ Tips, P. Morse 2025](https://www.digitaldjtips.com/the-lost-art-of-long-tracks/)); the bar template below sums to 4:10-8:21 at 138 bpm, mid-point 6:16. Context, all club genres: extended mixes median 4:31 vs radio edits 3:31 in 63 paired records ([Mixgraph](https://www.mixgraph.io/glossary/intro)); Beatport Top 100 average 5:53, but that analysis excluded trance ([EDMProd](https://www.edmprod.com/beatport-analysis/)). No Beatport or Discogs trance-length dataset was reachable, so this is a range from guides, not a measured median |
+| Form (bars) | DJ intro 16-32, theme 16-32, build 8-16, first drop 16-32, **breakdown 16-64** (typically 32), build 8-16, main drop 32-64, DJ outro 16-32 | Section template: [BeatKey](https://beatkey.pages.dev/how-to-make-trance-music) (breakdown 32-64); breakdowns 16-32 bars ([Mixgraph trance guide](https://www.mixgraph.io/mixing-guide/trance)); DJ intros usually 16 or 32 bars ([Mixgraph](https://www.mixgraph.io/glossary/intro)); a mid-track climax, then a breakdown without beats, then a rebuild to 1-2 peaks ([Wikipedia: Trance music](https://en.wikipedia.org/wiki/Trance_music)) |
+| Tempo | **136-140 bpm, typically 138**; progressive 128 | Mixgraph catalogue, 25,494 trance tracks: median 138, middle half 131-140, 10th-90th percentile 128-141; uplifting and vocal medians 138, progressive 128, tech 140, psytrance 142 ([Mixgraph](https://www.mixgraph.io/bpm-for/trance), measured 2026-11-16) |
+| Meter and groove | 4/4, kick on every beat, clap/snare on 2 and 4, open hat on the offbeat, straight 16ths | Kick on every downbeat ([Wikipedia](https://en.wikipedia.org/wiki/Trance_music)); clap on the second and fourth kick ([MusicRadar](https://www.musicradar.com/tuition/tech/26-trance-tips-34006)); offbeat open hat, 16th hats in builds ([BeatKey](https://beatkey.pages.dev/how-to-make-trance-music)) |
+| Rate of change | add or remove an element every 4, 8, 16 or 32 bars; work in 16-bar blocks | [Wikipedia](https://en.wikipedia.org/wiki/Trance_music); [MusicRadar](https://www.musicradar.com/tuition/tech/26-trance-tips-34006) |
+| Role of the instrumental | a lead synth carries the melody a vocalist would sing; trance is mostly instrumental and vocals have no verse/chorus form; intro and outro must let a DJ blend | [Wikipedia](https://en.wikipedia.org/wiki/Trance_music) |
+| Loudness of releases | Hot Dance/Electronic top 10 (2025): -8.3 LUFS integrated average (-11.3 to -6.2), short-term max average -6.1, LRA 3.5-13.8 LU, true peaks up to +1.5 dBTP; streaming plays at -14 (Spotify, YouTube, Amazon, Tidal), about -16 (Apple) | [iZotope dance/electronic analysis](https://www.izotope.com/en/learn/dance-electronic-analysis); [Spotify](https://support.spotify.com/artists/article/loudness-normalization/); [iZotope streaming guide](https://www.izotope.com/en/learn/mastering-for-streaming-platforms). No trance-only loudness survey found; BeatKey's -9 to -7 (club) and -12 to -10 (streaming) are unsourced guide values |
+| Dynamics (PLR) and width | hits since 2010: PLR about 9.3 dB on average; one dance hit at 7.5 dB. Width: 2024 top-10 songs averaged -8.5 LU side minus mid (half between -10.9 and -6); no trance-specific number | [Țînț & Drăgulin 2025](https://webbut.unitbv.ro/index.php/Series_VIII/article/view/11335); [iZotope dance analysis](https://www.izotope.com/en/learn/dance-electronic-analysis); [iZotope 2024](https://www.izotope.com/en/learn/mastering-trends) |
+| Master | `studio.py master vNNN --genre trance` (= `--target trance --lufs -10 --tp -1 --translate 0.4`) | Target curve: the measured "electronic" spectrum of Pestana et al. 2013 (derivation in docs/MASTERING.md). -10 LUFS is an engine-limited choice, quieter than the charts. `--translate 0.4` and `--eq 0.7` are **hand-tuned** |
+
+Changed from the previous setup: length 5:00-7:00 became 6:00-8:00; the tonal target is now measured (it has less sub at 31-63 Hz and more 80-250 Hz than the old hand-tuned curve, which stays available as `--target trance_handtuned`). **Unsourced** in this brief: the offbeat and rolling bass patterns (not in the cited sources; craft knowledge), and the "nearest wrong feelings" (an editorial brief, not research).
+
 ## The tradition and the references
 - Trance grew out of early-1990s European club music (Germany above all), adding melody, harmony, emotional highs and lows, long tracks and prominent breakdowns to house. Influences: UK progressive house, Goa, sci-fi soundtracks, Moroder/Jarre synth music, Italo-disco. It was dance music's dominant genre in the late 1990s, burned out in the early 2000s, fed the 2010s EDM boom and is having a UK resurgence now.
 - **Uplifting trance** (also "epic" or "euphoric") got its name around 1996, after the "rush" listeners describe. It is happier than Goa and darker trance, rests on longer chord progressions, and draws on classical and film music.
@@ -17,8 +32,8 @@ For sessions that make trance (uplifting, progressive, euphoric). A vocabulary, 
 - Keep percussion simple; strip the beat back where bass and lead are busy.
 
 ## Bass: offbeat and rolling
-- **Offbeat bass:** one note on the "and" between kicks, `"..x...x...x...x."`. The classic progressive and uplifting pulse.
-- **Rolling bass:** three 16ths between kicks, `".xxx.xxx.xxx.xxx"` (kick-bass-bass-bass). Drives harder; it suits drops and tech-leaning tracks. Reggae-style rolling lines are a variation.
+- **Offbeat bass** (unsourced pattern, craft knowledge): one note on the "and" between kicks, `"..x...x...x...x."`. The classic progressive and uplifting pulse.
+- **Rolling bass** (unsourced pattern, craft knowledge): three 16ths between kicks, `".xxx.xxx.xxx.xxx"` (kick-bass-bass-bass). Drives harder; it suits drops and tech-leaning tracks. Reggae-style rolling lines are a variation.
 - Low-pass the bass (about 500 Hz) so it doesn't clash with the kick's mids; boost 60-80 Hz, cut around 200 Hz. A sine sub with short attack and release reinforces it.
 - **Sidechain** the bass, chords and pads to the kick: attack about 1 ms, release 80-120 ms. The pump is part of the sound, not just a mix fix.
 - Engine: `trancebass` with chord stabs and the `root` voicing, e.g. `{"chords": "Am:16 F:16 C:16 G:16", "style": "stabs", "rhythm": ".xxx.xxx.xxx.xxx", "voicing": "root", "register": "A1", "stab_len": 1}`, plus `"sidechain": {"source": "kick", "depth": 0.85, "release_ms": 90}`.
@@ -37,14 +52,14 @@ For sessions that make trance (uplifting, progressive, euphoric). A vocabulary, 
 - **Complexity sweet spot:** in a study where fans rated generated uplifting-trance progressions, enjoyment rose with harmonic complexity up to a point, then fell. Very simple progressions were disliked; "awkward" changes kill the dancefloor. Trance clichés are part of its fabric: predictability lets listeners get lost.
 
 ## Arrangement and the radio edit
-- Club ("extended") mixes run 7-9 minutes, with 16-32-bar intros and outros for DJs. A typical extended layout: intro 16-32, theme 16-32, build 8-16, first drop 16-32, breakdown 32-64, build 8-16, main drop 32-64, outro 16-32. DJs cut tracks to 4-5 minutes; radio edits run about 3-4 minutes.
-- **Spectre's radio-edit shape** (2:30-3:30; at 138 bpm a bar is 1.74 s, so 96 bars is about 2:47): intro 8 (kick, bass and a filtered hint of the theme), first theme or drop 16, **breakdown 16-24** (no kick: pads, piano or the vocal-like lead, the theme stated slowly), **build 8** (snare roll 4ths, 8ths, 16ths, then 32nds; riser; high-pass sweep on the music; pitch rise; one beat of silence), **release/main drop 16-32** (full lead and chords, everything back), outro 8.
+- Extended (club) mixes run 6-8 minutes with 16-32-bar intros and outros for DJs; radio edits about 3 minutes (see Configuration). A typical extended layout: intro 16-32, theme 16-32, build 8-16, first drop 16-32, breakdown 32-64, build 8-16, main drop 32-64, outro 16-32 ([BeatKey](https://beatkey.pages.dev/how-to-make-trance-music)).
+- **Spectre's extended shape** (6:00-8:00; at 138 bpm a bar is 1.74 s, so 232 bars is about 6:43): DJ intro 32 (kick, bass, hats; a filtered hint of the theme in the second 16), groove and theme 32, build 8, first drop 32, **breakdown 32** (no kick: pads, piano or the vocal-like lead, the theme stated slowly), **build 16** (snare roll 4ths, 8ths, 16ths, then 32nds; riser; high-pass sweep on the music; pitch rise; one beat of silence), **main drop 48** (full lead and chords, everything back, a second wave that goes further than the first), DJ outro 32 (back to drums and bass). Structure detail of the build is craft, unsourced.
 - Tease the breakdown: strip to strings, effects and the "vocal", then bring parts back every couple of bars. Introduce new layers with an incidental (offbeat snare, reverse crash, filter sweep). Work in 16-bar blocks.
 
 ## Mixing and loudness
 - **Kick and bass carve-up:** the offbeat placement is the first carve; the sidechain is the second. Keep everything below about 250 Hz narrow and the mids and highs wide.
 - Supersaws high-passed (about 200 Hz) and wide; long, cavernous reverbs on leads and pads; snare and clap tails 0.5-1.5 s. Delays at 138 bpm: quarter 435 ms, dotted 8th 326 ms (`"beats": 0.75`), 8th 217 ms. Don't overuse delay on cycling arps.
-- **Loudness:** club masters run -9 to -7 LUFS, streaming masters -12 to -10. In Spectre: `studio.py master --target trance --lufs -10`. Louder masters hit the true-peak guard and stop gaining loudness.
+- **Loudness:** charting dance/electronic masters average -8.3 LUFS integrated; streaming normalizes to about -14 (see Configuration). In Spectre: `studio.py master vNNN --genre trance` (-10 LUFS). Louder masters hit the true-peak guard and stop gaining loudness.
 
 ## The "vocal" role (instrumental)
 Trance is mostly instrumental already. **The lead synth is the singer:** the supersaw lead carries the hook and the theme. In the breakdown a wordless vocal-like line can carry the theme slowly before the lead takes it at full power: `vox` (soprano "ah" or "oo", long reverb, glides) or a piano. Keep the theme singable: a short, memorable phrase repeated with small changes, rising at the end of each 8 bars.
@@ -71,7 +86,7 @@ Trance is mostly instrumental already. **The lead synth is the singer:** the sup
 | Lead, chords, plucks, pads | `supersaw` (stereo); chords with the `gate` fx; plucks with `sustain_level` 0 and `env` |
 | Breakdown | `pad`, `strings`, `choir`, `piano`, `vox` |
 | Build | snare roll pattern, `"exit": {"riser": 8, "rise": 16}`, `auto` `hpf` sweep, `"cut": {"tracks": "all", "beats": 1}` |
-| Master | `--target trance --lufs -10` |
+| Master | `--genre trance` |
 
 ## Sources
 - Uplifting trance (Wikipedia): https://en.wikipedia.org/wiki/Uplifting_trance
@@ -79,6 +94,11 @@ Trance is mostly instrumental already. **The lead synth is the singer:** the sup
 - MusicRadar, 26 trance tips: https://www.musicradar.com/tuition/tech/26-trance-tips-34006
 - How to make trance music (BPM, keys, progressions, supersaw settings, arrangement, loudness): https://beatkey.pages.dev/how-to-make-trance-music
 - Digital DJ Tips, Everything you wanted to know about trance: https://www.digitaldjtips.com/everything-wanted-to-know-trance/
+- Wikipedia, Trance music (tempo, form, 4/8/16/32-bar changes): https://en.wikipedia.org/wiki/Trance_music
+- Mixgraph, What BPM is trance? (25,494 tracks, measured 2026-11-16): https://www.mixgraph.io/bpm-for/trance ; Trance mixing guide: https://www.mixgraph.io/mixing-guide/trance ; Intro (extended vs radio edit, 63 records): https://www.mixgraph.io/glossary/intro
+- Digital DJ Tips (P. Morse, 2025), The lost art of long tracks: https://www.digitaldjtips.com/the-lost-art-of-long-tracks/
+- iZotope, LUFS and tonal analysis of 10 top-charting dance and electronic songs (2025): https://www.izotope.com/en/learn/dance-electronic-analysis
+- Pestana et al. (2013), spectral characteristics of commercial recordings (the trance target curve; see docs/MASTERING.md): https://www.aes.org/e-lib/browse.cfm?elib=17010
 - MusicRadar, How to use rhythmic sidechain gates: https://www.musicradar.com/tuition/tech/how-to-use-rhythmic-sidechain-gates-588195
 - DJ Mag, Why trance works (Herremans, Solarstone, Helstrip, Solberg): https://djmag.com/longreads/why-trance-works
 - R. T. Solberg and N. Dibben (2019), "Peak experiences with electronic dance music", Music Perception 36(4): https://eprints.whiterose.ac.uk/id/eprint/145911/

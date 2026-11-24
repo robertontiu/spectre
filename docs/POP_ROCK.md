@@ -2,12 +2,28 @@
 
 For sessions that make pop rock. A vocabulary, not a rulebook. Spectre has so far made only 808 beats on a programmed grid: pop rock is a **band playing in a room**. The drums are a kit played by one person, guitars and bass are strings, and the song's shape comes from dynamics between sections rather than from loops and drop-outs.
 
+## Configuration (researched 2026-11; engine: `--genre rock` in engine/genres.json)
+| Setting | Value | Source |
+|---|---|---|
+| Length | **3:00-4:00**, typically about 3:15-3:30 | Average song 3:15 in the 2020s, 4:14 in the 1990s (Washington Post via [HuffPost](https://huffingtonpost.co.uk/entry/pop-songs-are-shorter-now_uk_66b0d65de4b022eb04aa13cb)); Billboard Hot 100 #1 hits averaged 3:30 in 2024, 25% over 4:00 ([Hit Songs Deconstructed](https://hitsongsdeconstructed.com/wp-content/uploads/2025/02/The-Hit-Songs-Deconstructed-1-Hit-Focus-Report-Highlights.pdf)); Billboard year-end top 30 averaged 3:14 in 2020 ([Țînț & Drăgulin 2025](https://webbut.unitbv.ro/index.php/Series_VIII/article/view/11335)). No rock-only length survey found |
+| Form | intro, verse, pre-chorus, chorus, (tag), verse, pre-chorus, chorus, bridge (middle 8), final chorus (often doubled), outro | Section order and the 2-4-bar tag ([MusicRadar](https://www.musicradar.com/how-to/song-sections-explained-intro-verse-chorus-middle8-outro-tag-bridge); it calls the pre-chorus "bridge" and the bridge "middle 8"). Of 2024's #1 hits: 88% start with an intro (average 14 s), 75% end with an outro (average 21 s), 69% have three choruses, 44% a bridge, 38% a pre-chorus; the first chorus arrives at 0:45 on average (Hit Songs Deconstructed). In classic rock (Rolling Stone 200, 1949-2003) only about 6% have a pre-chorus and 31-38% a bridge ([de Clercq 2017](https://www.midside.com/publications/declercq_2017_jmt.pdf)): the pre-chorus is a modern pop-rock habit, optional |
+| Section lengths (bars) | sections 8 bars, 4 and 16 common; chorus 8, doubling to 16 late in the song; tag 2-4; intro 4-8 (about 14 s) | [MusicRadar](https://www.musicradar.com/how-to/song-sections-explained-intro-verse-chorus-middle8-outro-tag-bridge); intro length from Hit Songs Deconstructed |
+| Tempo | **typically 115-130 bpm**; the wider 100-150 range is unsourced | Western music clusters at 115-127 bpm, peak 125 (Moelants 2002, DJ bpm lists plus tapping, as summarised by [Dahl et al. 2014](https://vbn.aau.dk/ws/files/201902553/Dancetempo_JNMR_accepted_source_Jan2014.pdf)); Mixgraph's editorial pop range 95-130 ([Mixgraph](https://www.mixgraph.io/bpm-for)); 2024 #1 hits (mostly hip-hop and country) averaged 100 (Hit Songs Deconstructed). No pop-rock-specific tempo dataset was reachable, so the range is only partly sourced |
+| Meter and groove | 4/4, backbeat (snare on 2 and 4), straight 8ths, a played (humanized) kit | genre definition, **unsourced**. Hit records have played to a click since about 1979, so tempo is steady (CV 0.2-0.5 for a drummer on a click) ([Carter & von Appen 2025](https://theory.esm.rochester.edu/integral/?p=9705)) |
+| Rate of change | a new section every 8 bars (4 or 16); dynamics between sections carry the song | [MusicRadar](https://www.musicradar.com/how-to/song-sections-explained-intro-verse-chorus-middle8-outro-tag-bridge) (chorus at a higher energy than the verse) |
+| Role of the instrumental | the verses leave room for a voice; a vocal-like lead carries the sung melody | the brief's own requirement (instrumental pop rock), not research |
+| Loudness of releases | Hot Rock & Alternative top songs (July 2025): -8.1 LUFS integrated average (-11.9 to -5.1), short-term average -5.3, true peaks -0.45 to +1.11 dBTP; streaming plays at -14 (Spotify), about -16 (Apple) | [iZotope rock/alternative analysis](https://www.izotope.com/en/learn/rock-alternative-analysis); [Spotify](https://support.spotify.com/artists/article/loudness-normalization/); [iZotope streaming guide](https://www.izotope.com/en/learn/mastering-for-streaming-platforms) |
+| Dynamics (PLR, LRA) and width | PLR about 9.3 dB for hits since 2010; LRA of the rock chart songs 4.1-17 LU (median about 4.8); width: 2024 top-10 songs averaged -8.5 LU side minus mid, "alternative" in the middle of the genres; no rock number | [Țînț & Drăgulin 2025](https://webbut.unitbv.ro/index.php/Series_VIII/article/view/11335); iZotope rock analysis; [iZotope 2024](https://www.izotope.com/en/learn/mastering-trends) |
+| Master | `studio.py master vNNN --genre rock` (= `--target rock --lufs -10 --tp -1 --translate 0.3`) | Target curve: the mean of Pestana et al.'s measured pop and rock spectra (docs/MASTERING.md). -10 LUFS is an engine-limited choice, quieter than the charts. `--translate 0.3` and `--eq 0.7` are **hand-tuned** |
+
+Changed from the previous setup: Spectre's shape now fills 3:00-4:00 (it summed to 2:35 before); typical tempo narrowed to 115-130; the tonal target is now measured, with much more 100-400 Hz (+5 to +7 dB re 1 kHz) and less sub and air than the old hand-tuned curve (kept as `--target rock_handtuned`). **Unsourced** in this brief: the drum patterns, hat/ride/crash usage, fills and half-time (craft knowledge), the lift tricks (key change, drop-out), and the "nearest wrong feelings" (an editorial brief).
+
 ## The references
 - **Pop rock and arena pop rock:** Foo Fighters, Paramore, The Killers, Coldplay, Snow Patrol, Jimmy Eat World, Kelly Clarkson's rock singles, Imagine Dragons, Fall Out Boy.
 - **Songs about getting through depression:** Coldplay "Fix You", Paramore "Last Hope", R.E.M. "Everybody Hurts", Jimmy Eat World "The Middle", Twenty One Pilots "Car Radio", Linkin Park "Numb", Bastille "Pompeii". Listen to how they *move*, not to their words.
 
 ## Tempo and the kit (engine names in brackets)
-- **Tempo:** most pop rock sits around 100-150 bpm; 115-135 is the comfortable middle. Ballad-builders like "Fix You" start slow (68 bpm) and open up. Feel is straight 8ths (`"swing": 0.5`) with a human hand (`humanize_ms` 4-8 on drums, a little `push_ms` on the snare for a laid-back backbeat).
+- **Tempo:** typically 115-130 bpm (see Configuration; the wider 100-150 range is unsourced). Ballad-builders like "Fix You" start slow (68 bpm) and open up. Feel is straight 8ths (`"swing": 0.5`) with a human hand (`humanize_ms` 4-8 on drums, a little `push_ms` on the snare for a laid-back backbeat).
 - **Backbeat:** snare on 2 and 4 (`kitsnare`). The kick plays 1 and 3 with pushes ("x.......x.x....." or "x...x...x.x....."), and follows the bass.
 - **Hats:** 8ths in verses (`kithat`, `dyn` accents on the beat). A half-open washy hat or **ride** in choruses (`kitride`, `bell` for cut). Pedal "chick" on 2 and 4 in quiet sections (`kithat` `"pedal": true`). Open hats choked by the closed hat (`"choke_by"`).
 - **Crash on the one** of every chorus and big section (`kitcrash`), often with the kick.
@@ -30,12 +46,12 @@ For sessions that make pop rock. A vocabulary, not a rulebook. Spectre has so fa
 - **Form:** intro, verse 1, pre-chorus, chorus, (tag), verse 2, pre-chorus, chorus, bridge (middle 8), last chorus doubled, outro. Sections are usually 8 bars (4 and 16 are common); the chorus is usually 8, often doubling to 16 at the end. A tag of 2-4 bars gives a breather after a chorus.
 - **Dynamics:** quiet verse, loud chorus. The pre-chorus builds the energy the chorus releases. The middle 8 drops main elements out and changes pace before the final chorus. Contrast between sections, not loudness, makes the chorus land.
 - **Lift tricks:** a key change up a semitone or whole tone for the last chorus; a half-time bridge; a drop-out before the last chorus (one bar of only the voice, or silence); a new layer in the last chorus (octave lead, gang "oh"s, ride on the bell); the last chorus doubled.
-- **Spectre's shape** (2:30-3:30; at 124 bpm a bar is 1.94 s): intro 4, verse 8, pre 4, chorus 8, verse 8, pre 4, chorus 8, bridge 8, drop-out 1-2, double chorus 16, outro 4 = about 80 bars, 2:35.
+- **Spectre's shape** (3:00-4:00; at 124 bpm a bar is 1.94 s): intro 8, verse 16, pre 4, chorus 8, tag 4, verse 16, pre 4, chorus 8, bridge 8, drop-out 1-2, double chorus 16, outro 8 = about 102 bars, 3:17. The first chorus lands at bar 29, about 0:54 (hits average 0:45; see Configuration). Shorter verses (8 bars) are fine if the song still reaches 3:00.
 
 ## Mixing and loudness
 - The (here instrumental) vocal is king: everything is carved around the lead. Kick, snare, bass and lead are centred; double-tracked guitars hard left and right; toms and overheads (ride, crash, hats) panned by the drummer's perspective.
 - Guitars and bass fight at 100-300 Hz; give the bass the bottom and the guitars the 300 Hz-3 kHz band. Kick and bass lock in time.
-- **Loudness:** nine Billboard Hot Rock & Alternative songs (July 2025) averaged about -8 LUFS integrated (range -5 to -12) with true peaks near 0 dBTP, but the chart shows wide freedom in density and dynamics. For Spectre: `studio.py master --target rock --lufs -10` (-9.5 at most). Keep the verse-to-chorus contrast; don't crush it.
+- **Loudness:** nine Billboard Hot Rock & Alternative songs (July 2025) averaged -8.1 LUFS integrated (range -11.9 to -5.1) with true peaks -0.45 to +1.11 dBTP, but the chart shows wide freedom in density and dynamics. For Spectre: `studio.py master vNNN --genre rock` (-10 LUFS; -9.5 at most). Keep the verse-to-chorus contrast; don't crush it.
 
 ## The "vocal" role (instrumental)
 A pop rock song without a singer still needs **the sung melody**. Carry it with `vox`, a wordless vocal-like lead (formant "oo" in verses opening to "ah" in choruses, scoops, glides with `~`, vibrato that blooms late), and/or a singing lead guitar that doubles or answers it in the last chorus. Write it like a singer would: phrases with breaths (rests), a verse in a narrow low range, a chorus that climbs a third to a fifth higher with long notes at phrase ends, and one held peak note in the last chorus.
@@ -62,12 +78,18 @@ A pop rock song without a singer still needs **the sung melody**. Carry it with 
 | Bass | `ebass` (`pick`, `mute`, `drive`, `tone`), stabs + `root` voicing |
 | Keys | `piano`, `organ`, `pad` |
 | Lead "voice" | `vox` (`voice`, `vowel`, `vowel2`, `vibrato`, `glide_ms`) and/or a lead `eguitar` line |
-| Master | `--target rock --lufs -10` |
+| Master | `--genre rock` |
 
 ## Sources
 - MusicRadar, Anatomy of an arrangement (song sections): https://www.musicradar.com/how-to/song-sections-explained-intro-verse-chorus-middle8-outro-tag-bridge
 - Mastering The Mix, How to mix big, punchy rock drums: https://www.masteringthemix.com/blogs/learn/how-to-mix-big-punchy-rock-drums
 - Premier Guitar, Double trouble: make rhythm guitar parts great again: https://www.premierguitar.com/double-trouble-make-rhythm-guitar-parts-great-again
-- iZotope, A LUFS and tonal analysis of top-charting rock and alternative songs: https://www.izotope.com/en/learn/rock-alternative-analysis
+- iZotope, A LUFS and tonal analysis of top-charting rock and alternative songs (July 2025): https://www.izotope.com/en/learn/rock-alternative-analysis
+- Hit Songs Deconstructed, 2024 #1 Hit Focus Report highlights (length, intro, form, tempo): https://hitsongsdeconstructed.com/wp-content/uploads/2025/02/The-Hit-Songs-Deconstructed-1-Hit-Focus-Report-Highlights.pdf
+- T. de Clercq (2017), Interactions between harmony and form in a corpus of rock music, Journal of Music Theory 61(2): https://www.midside.com/publications/declercq_2017_jmt.pdf
+- Dahl, Huron, Brod & Altenmüller (2014), Preferred dance tempo, JNMR 43(2) (summarises Moelants 2002): https://vbn.aau.dk/ws/files/201902553/Dancetempo_JNMR_accepted_source_Jan2014.pdf
+- Carter & von Appen (2025), Tempo variability in Billboard Hot 100 songs 1966-1995, Intégral 38: https://theory.esm.rochester.edu/integral/?p=9705
+- M. A. Țînț & S. Drăgulin (2025), From data to hits (loudness, PLR, length of Billboard year-end hits): https://webbut.unitbv.ro/index.php/Series_VIII/article/view/11335
+- Pestana et al. (2013), spectral characteristics of commercial recordings (the rock target curve; see docs/MASTERING.md): https://www.aes.org/e-lib/browse.cfm?elib=17010
 - Songtell, "Fix You" (Coldplay): https://songtell.com/coldplay/fix-you
 - IBTimes, Hayley Williams on how mental health struggles shaped "Last Hope": https://www.ibtimes.co.uk/ive-wanted-not-here-hayley-williams-reveals-how-mental-health-struggles-shaped-last-hope-1759886

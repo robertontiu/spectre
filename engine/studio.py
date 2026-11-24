@@ -625,11 +625,13 @@ def main():
     l.add_argument("--wav")
     m = sub.add_parser("master")
     m.add_argument("version", nargs="?", help="e.g. v027 (default: latest)")
-    m.add_argument("--lufs", type=float, default=-11.0)
-    m.add_argument("--tp", type=float, default=-1.0)
-    m.add_argument("--eq", type=float, default=0.7)
-    m.add_argument("--translate", type=float, default=0.5)
-    m.add_argument("--target", default="beat", help="tonal target curve: beat (808 beats, default), trance, rock")
+    m.add_argument("--genre", help="genre configuration (engine/genres.json): trap, hiphop, trance, rock; required "
+                   "unless --target is given; sets target, lufs, tp, eq and translate")
+    m.add_argument("--lufs", type=float)
+    m.add_argument("--tp", type=float)
+    m.add_argument("--eq", type=float)
+    m.add_argument("--translate", type=float)
+    m.add_argument("--target", help="tonal target curve override (beat = the trap curve), e.g. hiphop, trance, rock")
     a = ap.parse_args()
     if a.cmd == "render":
         cmd_render(a)
@@ -639,8 +641,16 @@ def main():
         pre = os.path.join(RENDERS, f"{v}.premaster.wav")
         if not os.path.exists(pre):
             raise SystemExit(f"no premaster for {v}: re-render it (studio.py render renders/{v}.project.json)")
-        subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "master.py"), pre,
-                        "--lufs", str(a.lufs), "--tp", str(a.tp), "--eq", str(a.eq), "--translate", str(a.translate), "--target", a.target], check=True)
+        if a.genre is None and a.target is None:
+            import master as _m
+            raise SystemExit("master: no genre given. Use --genre " + "|".join(_m.load_genres()) +
+                             " (see engine/genres.json and docs/ORCHESTRATION.md, Genre conventions).")
+        flags = []
+        for k in ("genre", "target", "lufs", "tp", "eq", "translate"):
+            if getattr(a, k) is not None:
+                flags += [f"--{k}", str(getattr(a, k))]
+        subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "master.py"), pre]
+                       + flags, check=True)
         out = pre.replace(".premaster.wav", ".master.wav")
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", out, "-b:a", "320k", out.replace(".wav", ".mp3")], check=True)
         print("mp3:", out.replace(".wav", ".mp3"))

@@ -8,7 +8,7 @@
 | Length / tempo / mode | 2:52 (92 bars), 136 bpm felt in half-time, G Dorian in a narrow G-A-Bb-C cell over a drone on G and D |
 | Instruments | Suiti-style drone singing (a caller, a "bender" who repeats the line, the burdon drone, a crowd), kokle (low struck strings and open-fifth strums), dūdas (bagpipe), trīdeksnis (jingle staff), taure (birch-bark horn), wind, fire, a distant engine rumble, trap kit and 808 |
 | Iterations | 27 journal entries (26 renders, master and final listen) |
-| Master | `studio.py master v026 --lufs -10.5 --tp -1`: -10.5 LUFS, -1.02 dBTP, PLR 9.5, LRA 9.0 LU, laptop loss -1.8 dB, no warnings. Largest EQ moves +4 dB at 31.5-40 Hz under an 808 moving between G1 and C2 |
+| Master | `studio.py master v026 --lufs -10.5 --tp -1 --genre trap`: -10.5 LUFS, -1.02 dBTP, PLR 9.5, LRA 9.0 LU, laptop loss -1.8 dB, no warnings. Largest EQ moves +4 dB at 31.5-40 Hz under an 808 moving between G1 and C2 |
 
 ## How it carries the feeling
 - **The hook is a folk form:** Suiti call-and-repeat. One voice calls, the next takes over the same words, the drone never stops, and the chain grows each hook until the whole square sings. The hooks step up in loudness: -9.6, -8.8, -8.5, -8.0 LUFS.

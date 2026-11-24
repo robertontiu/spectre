@@ -7,7 +7,7 @@
 | Length / tempo / mode | 2:58 of music (104 bars), 140 bpm felt in half-time, E Ukrainian Dorian (E F# G A# B C# D) |
 | Instruments | white-voice choir sections, tsymbaly (cimbalom), lira (hurdy-gurdy drones), trembita, fiddle, trap kit, 808, plus a war machine of siren, motor and bitcrushed metal clank. trembita and lira were built for this session |
 | Iterations | 27 (25 renders, master, final listen) |
-| Master | `studio.py master v025 --lufs -10.5 --tp -1`: -10.5 LUFS, -1.01 dBTP, PLR 9.5, LRA 9.3 LU, laptop loss -1.9 dB, no warnings. Largest EQ moves +4 dB in the 30-100 Hz gaps around a one-note 808 |
+| Master | `studio.py master v025 --lufs -10.5 --tp -1 --genre trap`: -10.5 LUFS, -1.01 dBTP, PLR 9.5, LRA 9.3 LU, laptop loss -1.9 dB, no warnings. Largest EQ moves +4 dB in the 30-100 Hz gaps around a one-note 808 |
 
 ## How it makes the statement
 - **Two feels:** the war is a machine locked dead straight to the grid; the people (voices, tsymbaly, fiddle) play loose, 10-16 ms late.

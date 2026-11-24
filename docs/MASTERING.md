@@ -24,20 +24,87 @@ Session 001 ("Bleachers") sounded clunky on MacBook speakers. Analysis showed th
 | 5. Glue | 2:1, 30 ms attack, 200 ms release, about 1-2 dB of reduction |
 | 6. Clip + limit | Soft clipper (4x) into a look-ahead true-peak limiter running 4x oversampled, ceiling `--tp` |
 | 7. Loudness | The input drive is solved iteratively so integrated loudness lands on `--lufs` (±0.15 LU). A true-peak guard then turns the master down if the 4x down-sampling recreated inter-sample peaks above `--tp` (reported as `tp_guard_db`; it never acts on a master that already meets the ceiling) |
-| 8. QC | LUFS, true peak, PLR, loudness range, low-end L/R correlation, laptop loss (loudness change after a 180 Hz high-pass), remaining tonal deviations, warnings; before/after picture |
+| 8. QC | LUFS, true peak, PLR, loudness range, low-end L/R correlation, stereo width (side minus mid, LU), laptop loss (loudness change after a 180 Hz high-pass), remaining tonal deviations, EQ bands at their limit, warnings; before/after picture |
 
-Defaults: `--lufs -11 --tp -1 --eq 0.7 --translate 0.5` (session 001 used `--eq 0.9`).
+Settings come from a **genre configuration** (`engine/genres.json`), chosen with `--genre`; explicit flags override single values. There is **no default genre**: `studio.py master` stops with an error listing the genres when neither `--genre` nor `--target` is given. An old `--target`-only command still works and takes the matching genre's settings (`--target beat` is an alias of `trap`). Every report records `genre`, `settings` (the values used), `eq_at_limit` and `warnings`, plus the stereo width (`width_side_minus_mid_lu`).
 
-The target curves are in `TARGETS` (dB relative to 1 kHz per 1/3 octave; `beat` is the original `TARGET_ANCHORS`). They are hand-tuned, not measured from references. Only their shape matters: the EQ aligns each curve to the mix on 200 Hz-5 kHz. Reference matching is a good next step.
+## Genre configurations (`--genre`)
+| Genre | Target curve | `--lufs` | `--tp` | `--eq` | `--translate` | Status |
+|---|---|---|---|---|---|---|
+| `trap` | `beat` (hand-tuned) | -10.5 | -1 | 0.7 | 0.5 | **Trap / beats: the configuration of sessions 001-006**, the former engine default, preserved exactly (craft brief: docs/CRAFT.md). Verified: `--genre trap` re-masters session 005's v025 sample-identically to the pre-change engine and to its stored report |
+| `hiphop` | `hiphop` (measured) | -10.5 | -1 | 0.7 | 0.5 | researched alternative for beats: `trap` with the measured hip-hop curve. Recommended for future beat sessions, with the caveats below |
+| `trance` | `trance` (measured) | -10 | -1 | 0.7 | 0.4 | docs/TRANCE.md |
+| `rock` | `rock` (measured) | -10 | -1 | 0.7 | 0.3 | docs/POP_ROCK.md |
 
-## Genre targets (`--target`)
-| Target | Shape (dB rel. 1 kHz at 31.5 / 50 / 63 / 100 / 250 / 2k / 4k / 8k / 16k Hz) | Why | Suggested settings |
-|---|---|---|---|
-| `beat` (default) | +3 / +6.5 / +6.5 / +5 / +1.5 / -2 / -5 / -8.5 / -16 | 808 beats: a sustained sub-forward low end that is not sub-dominated | `--lufs -10.5` |
-| `trance` | -4 / +5 / +5.5 / +4 / +1 / -1.5 / -3.5 / -6.5 / -13 | a short club kick and rolling bass instead of a sustained 808 (less 31-40 Hz, a 50-80 Hz punch); dense bright supersaws, hats and long reverbs, so the top falls more slowly | `--target trance --lufs -10 --translate 0.4` |
-| `rock` | -7 / +0.5 / +2.5 / +3.5 / +2 / -1 / -3.5 / -7 / -15 | kick and bass guitar live at 60-250 Hz with little true sub; guitars, snare body and toms fill 100 Hz-3 kHz; cymbals keep the top open | `--target rock --lufs -10 --translate 0.3` |
+Session 001 was mastered with `--eq 0.9 --lufs -11` (the engine's flags at the time); reproduce it with `--genre trap --eq 0.9 --lufs -11`. The engine-wide fallbacks `--eq 0.7`, `--mono-below 120` and the stage settings are hand-tuned, not sourced.
 
-Loudness: club trance masters run -9 to -7 LUFS and streaming masters -12 to -10; charting rock averaged about -8 LUFS in 2025 (see `docs/TRANCE.md`, `docs/POP_ROCK.md`). Streaming normalizes everything to about -14 anyway, and this limiter can't go much past -9.5 cleanly, so -10 is the suggestion for both. Pop rock relies on verse-to-chorus contrast: don't trade it for loudness. The rock target lifts up to +4 dB at 100-315 Hz if the guitars and bass are thin there; the synthesized guitars are, so add body in the mix first.
+### Loudness: what the research says and what Spectre uses
+- **Streaming normalization:** Spotify plays at -14 LUFS by default (-11 "loud", -19 "quiet"), turns louder masters down, and asks for true peaks under -1 dBTP, or under -2 dBTP for masters louder than -14 LUFS ([Spotify](https://support.spotify.com/artists/article/loudness-normalization/)). Apple Music about -16, YouTube, Amazon and Tidal -14, Deezer -15, SoundCloud none ([iZotope 2025](https://www.izotope.com/en/learn/mastering-for-streaming-platforms)).
+- **Commercial masters:** 54 Billboard Global 200 top-10 songs (H1 2024) averaged -8.3 LUFS integrated (sd 1 LU; -11.1 to -6), max short-term -6 LUFS, LRA mostly 3.7-6.8 LU, 80% peaking at or above 0 dBTP ([iZotope 2024](https://www.izotope.com/en/learn/mastering-trends)). Hot Dance/Electronic top 10 (2025): -8.3 average (-11.3 to -6.2) ([iZotope](https://www.izotope.com/en/learn/dance-electronic-analysis)). Hot Rock & Alternative (July 2025): -8.1 average (-11.9 to -5.1) ([iZotope](https://www.izotope.com/en/learn/rock-alternative-analysis)). Billboard year-end top 30: -12.5 (1990), -8.0 (2010), -8.8 (2020) ([Țînț & Drăgulin 2025](https://webbut.unitbv.ro/index.php/Series_VIII/article/view/11335)).
+- **Dynamics (PLR):** the same Billboard year-end sets had a mean PLR of 12.6 dB (1990), 10.6 (2000) and 9.3 (2010 and 2020) (Țînț & Drăgulin 2025). One dance hit measured 7.5 dB (iZotope, "Beautiful People" stereo master).
+- **Stereo width:** side-minus-mid integrated loudness of the 2024 top-10 set averaged -8.5 LU, half of the songs between -10.9 and -6 LU; pop widest, hip-hop/rap narrowest; no per-genre numbers (iZotope 2024). The report's `width_side_minus_mid_lu` uses the same definition.
+- **Spectre's choice:** -10 to -10.5 LUFS at -1 dBTP for every genre. This is quieter than the charts (-8 to -8.3) on purpose: this limiter can't go much past -9.5 cleanly (the true-peak guard then turns the master down), and streaming normalizes everything to about -14 anyway, so a louder master buys nothing on the platforms. It is an engine-limited choice, not a genre norm.
+
+## Target curves (`--target`)
+dB relative to the 1 kHz band, per 1/3 octave. Only the shape matters: the EQ aligns the curve to the mix on 200 Hz-5 kHz.
+
+| Hz | `beat` (trap, hand-tuned) | `hiphop` (measured) | `trance` (measured) | `rock` (measured) |
+|---|---|---|---|---|
+| 31.5 | +3 | -7.5 | -11 | -15 |
+| 40 | +5.5 | -4 | -7.5 | -11.5 |
+| 50 | +6.5 | -0.5 | -3 | -7 |
+| 63 | +6.5 | +2.5 | +0.5 | -3 |
+| 80 | +6 | +5.5 | +4.5 | +1.5 |
+| 100 | +5 | +8 | +7.5 | +5 |
+| 125 | (+4.1) | +8 | +9 | +7 |
+| 160 | +3 | +5 | +6.5 | +6.5 |
+| 200 | (+2.2) | +3.5 | +5 | +5.5 |
+| 250 | +1.5 | +2.5 | +4 | +5 |
+| 315 | (+1.3) | +1 | +3 | +4 |
+| 400 | (+1.2) | +1.5 | +2 | +3 |
+| 500 | +1 | +2 | +1.5 | +2.5 |
+| 630 | (+0.7) | +1.5 | +1 | +2 |
+| 800 | (+0.3) | 0 | +0.5 | +1 |
+| 1000 | 0 | 0 | 0 | 0 |
+| 1250 | (-0.6) | -1 | -0.5 | -0.5 |
+| 1600 | (-1.4) | -1.5 | -1 | -0.5 |
+| 2000 | -2 | -1.5 | -2 | -1.5 |
+| 2500 | (-3) | -2 | -2.5 | -2 |
+| 3150 | (-4) | -3 | -3 | -3 |
+| 4000 | -5 | -4.5 | -3 | -4.5 |
+| 5000 | (-6.1) | -7 | -4 | -6.5 |
+| 6300 | (-7.3) | -7 | -4 | -8 |
+| 8000 | -8.5 | -8 | -6 | -9.5 |
+| 10000 | (-10.2) | -9.5 | -8 | -12.5 |
+| 12500 | -12 | -13 | -11.5 | -16 |
+| 16000 | -16 | -20 | -18 | -23 |
+
+Values in brackets are interpolated by the engine between the `beat` curve's anchors. The earlier hand-tuned trance and rock curves stay available as `--target trance_handtuned` and `--target rock_handtuned` for comparison; no session used them for a release.
+
+### Measured targets: derivation
+**Source.** P. D. Pestana, Z. Ma, J. D. Reiss, A. Barbosa and D. A. A. Black, "Spectral Characteristics of Popular Commercial Recordings 1950-2010", AES 135th Convention, New York, 2013 ([AES e-library 17010](https://www.aes.org/e-lib/browse.cfm?elib=17010); [author PDF](https://joshreiss.github.io/documents/2013/Pestana%20Ma%20Reiss%20-%20AES135.pdf)). 772 US and UK number-one singles (about half of all #1s 1950-2010), uncompressed audio, mono (L+R)/2, 4096-point FFT at 44.1 kHz (about 10.8 Hz per bin), each song's spectrum normalised before averaging. Fig. 5 shows average spectra for pop, rock, electronic, hip-hop, jazz, folk and R&B (genre tags from Wikipedia, EchoNest and Last.fm). The paper's summary: a roughly linear decay of about 5 dB per octave from 100 Hz to 4 kHz, steeper above, with a severe low cut around 60 Hz; electronic and hip-hop have an "unmistakeable" extended low end, and the low end is the only region where genre confidence intervals don't overlap.
+
+**Reading the figure.** Fig. 5 is vector graphics in the PDF, so the curves were read exactly, not digitised by eye: the page was converted to SVG, the seven curves identified by their legend styles, and the axes calibrated from the figure's own grid (decade lines at 100 Hz, 1 kHz, 10 kHz; dB lines -100 to -30; fit residual 0.06 dB). Check: the extracted per-bin slope from 100 Hz to 4 kHz is -5.0 dB/octave for rock and electronic, -5.15 pop and -4.8 hip-hop, matching the paper's "about 5 dB per octave". Script: `tools/pestana_ltas.py` (reproduces the engine's numbers from the PDF).
+
+**Conversion.** The figure plots level per FFT bin (constant bandwidth). The engine measures energy per 1/3-octave band (constant percentage bandwidth), and a band holds a number of bins proportional to its width. So each band's energy is the sum of 10^(dB/10) over its frequencies (interpolated on a 1 Hz grid), which adds about +3 dB per octave to the per-bin slope. Bands are normalised to 1 kHz and rounded to 0.5 dB. No further smoothing: the 1/3-octave integration already removes the per-note "comb" the paper shows in the mids.
+
+**Genre mapping.** `hiphop` = Fig. 5 hip-hop. `trance` = Fig. 5 electronic. `rock` = the mean of Fig. 5 pop and rock (pop rock; the two differ by at most 1.5 dB per band).
+
+**What's uncertain.**
+- *Era.* The genre curves pool 1950-2010. The paper shows spectra getting louder, flatter and more extended over time, with more low end after 2000. Rock and pop #1s lean on 1960s-1980s records, so `rock` is probably too dark above 8 kHz for a modern master, and `hiphop` (largely 1990-2010) probably has less sub at 31-50 Hz than 2010s-2020s 808 trap. The per-decade panels of Fig. 2 have no common mid reference, so an era correction couldn't be derived without guessing; none was applied.
+- *Genre labels.* "Electronic" means #1 singles tagged electronic (mostly dance-pop and house-pop), not trance specifically; no trance-only measurement was found. Genre sample sizes aren't reported.
+- *Low end.* At 31.5-50 Hz a 1/3-octave band holds only one or two FFT bins, so those values are interpolations (about ±2 dB). The paper averages normalised magnitude spectra, not power, which slightly understates bands dominated by short loud events (kicks).
+- *Not used:* Elowsson & Friberg (AES 142, 2017, [e-library 18638](https://www.aes.org/e-lib/browse.cfm?elib=18638)) found that the LTAS differences between genres are mainly explained by how prominent the percussion is (more percussion, more relative bass and treble); their numbers weren't accessible. iZotope's genre targets (Tonal Balance Control) aren't published as numbers.
+
+### Test masters with the measured targets (example projects, 2026-11-24)
+| Project | Command | LUFS | dBTP | PLR | Width (S-M) | EQ at its limit | Diagnosis |
+|---|---|---|---|---|---|---|---|
+| `examples/engine-test.json` | `--genre trap` | -10.5 | -1.04 | 9.5 | -16.1 LU | -8 at 50, 63 Hz; +4 at 31.5 Hz | unchanged from before (identical samples with the old flags) |
+| same | `--genre hiphop` | -10.6 | -1.03 | 9.6 | -16.4 LU | -8 at 40-63 Hz; +4 at 31.5 Hz; -7.9 at 8-16 kHz | the test mix: +18 dB at 50-63 Hz and bright above 5 kHz |
+| `examples/trance-test.json` | `--genre trance` | -10.2 | -1.03 | 9.2 | -6.3 LU | -8 at 40, 50, 63 Hz | the mix: clubkick (50 Hz) plus trance bass put 50 and 63 Hz 15-18 dB above 1 kHz, above every measured genre (at most +2.5). The old hand-tuned curve also cut -8 at 50 Hz |
+| `examples/poprock-test.json` | `--genre rock` | -10.1 | -1.05 | 9.0 | -7.7 LU | +4 at 100-400 Hz; -8 at 63 Hz | the sounds: a 63 Hz kick spike (+12.6, every genre at most +2.5) and holes at 125 Hz (-11, every genre at least +3) and 250 Hz; the old curve also boosted +4 across 31-315 Hz. Known: guitars and bass are thin at 100-300 Hz |
+
+Warnings: none in any of these masters (the EQ-limit note is informational). In every case the curve is not at fault: the measured genres never come near the test mixes' values in the failing bands. Fix it in the mix: tune the kick and bass so 50-63 Hz isn't a spike, and add body to guitars, bass and snare at 100-300 Hz.
 
 ## Sources
 - Spotify: Loudness normalization: https://support.spotify.com/artists/article/loudness-normalization/
@@ -47,3 +114,9 @@ Loudness: club trance masters run -9 to -7 LUFS and streaming masters -12 to -10
 - Violet Recording: How to mix 808s: https://violetrecording.com/how-to-mix-808s/
 - Violet Recording: The mastering chain explained: https://violetrecording.com/mastering-chain-explained/
 - LANDR: How to make bass audible on phone speakers: https://blog.landr.com/make-bass-audible-phone-speakers
+- Pestana, Ma, Reiss, Barbosa & Black (2013), Spectral characteristics of popular commercial recordings 1950-2010, AES 135th Convention: https://www.aes.org/e-lib/browse.cfm?elib=17010 (author PDF: https://joshreiss.github.io/documents/2013/Pestana%20Ma%20Reiss%20-%20AES135.pdf)
+- Elowsson & Friberg (2017), Long-term average spectrum in popular music and its relation to the level of the percussion, AES 142nd Convention: https://www.aes.org/e-lib/browse.cfm?elib=18638
+- iZotope (I. Stewart, 2024), Mastering trends in 2024: https://www.izotope.com/en/learn/mastering-trends
+- iZotope (I. Stewart, 2025), How to master for streaming platforms: https://www.izotope.com/en/learn/mastering-for-streaming-platforms
+- iZotope (2025), LUFS and tonal analysis of top-charting dance/electronic songs: https://www.izotope.com/en/learn/dance-electronic-analysis ; rock/alternative: https://www.izotope.com/en/learn/rock-alternative-analysis
+- M. A. Țînț & S. Drăgulin (2025), From data to hits: mixing and mastering techniques that make a song chart-worthy, Bulletin of the Transilvania University of Brașov VIII 18(67): https://webbut.unitbv.ro/index.php/Series_VIII/article/view/11335

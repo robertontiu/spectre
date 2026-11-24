@@ -6,7 +6,7 @@
 | Length / tempo / key | 2:44.6 of music (96 bars), 140 bpm straight, half-time trap pocket, D Hijaz (Phrygian dominant) |
 | Instruments | oud, ney, darbuka (doum, tek, ka), trap kit, 808, crowd chant sections. The engine got oud, ney and darbuka for this session |
 | Iterations | 27 (12, then an interruption, then 15 more resumed from the saved project and journal) |
-| Master | `studio.py master v025 --lufs -10.5 --tp -1`: -10.5 LUFS, -1.02 dBTP, PLR 9.5, LRA about 7.8 LU, laptop loss -2.1 dB, no warnings. All EQ moves under 4.1 dB |
+| Master | `studio.py master v025 --lufs -10.5 --tp -1 --genre trap`: -10.5 LUFS, -1.02 dBTP, PLR 9.5, LRA about 7.8 LU, laptop loss -2.1 dB, no warnings. All EQ moves under 4.1 dB |
 
 ## Arrangement
 - **Intro (1-8):** the oud calls alone through a slowly opening filter, darbuka rims only

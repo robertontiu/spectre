@@ -1,6 +1,6 @@
 # Producer agent prompt (template)
 
-Fill in the `{{...}}` placeholders and give the prompt to a sub-agent that has file, shell and image-reading tools. Paths are relative to the repo root; replace `{{REPO}}` with its absolute path. Nothing here is genre-specific except what you fill in: take `{{HAND}}`, `{{LENGTH}}`, `{{FORM}}`, `{{ROLE}}` and `{{MASTER}}` from the genre table in docs/ORCHESTRATION.md ("Genre conventions") or, for a new genre, from its docs/<GENRE>.md. The latest session's PROMPT.md is usually the best starting point because it carries the newest lessons.
+Fill in the `{{...}}` placeholders and give the prompt to a sub-agent that has file, shell and image-reading tools. Paths are relative to the repo root; replace `{{REPO}}` with its absolute path. Nothing here is genre-specific except what you fill in: take `{{HAND}}`, `{{LENGTH}}`, `{{FORM}}`, `{{ROLE}}` and `{{MASTER}}` from the genre table in docs/ORCHESTRATION.md ("Genre conventions") or, for a new genre, from its docs/<GENRE>.md. `{{MASTER}}` is always `studio.py master vNNN --genre <genre>` with a genre from engine/genres.json (there is no default genre; add flags only to override one value on purpose). The latest session's PROMPT.md is usually the best starting point because it carries the newest lessons.
 
 ---
 
