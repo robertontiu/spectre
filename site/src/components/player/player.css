@@ -1,9 +1,31 @@
 /* The player card: visualizer, transport, equalizer and playlist. Layout lives in
    Tailwind classes on the components; this file holds what utilities can't say well
    (pseudo-elements, range-input parts, pressed states, the track-coloured gradients). */
+/* The card's accent colours (set per track by PlayerCard) are registered colours, so the
+   browser can transition them natively. */
+@property --c1 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #9fcfe2;
+}
+@property --c2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #9fcfe2;
+}
+@property --c3 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0b0d12;
+}
+
 @layer components {
   .player {
     position: relative;
+    transition:
+      --c1 1.6s cubic-bezier(0.25, 0.6, 0.3, 1),
+      --c2 1.6s cubic-bezier(0.25, 0.6, 0.3, 1),
+      --c3 1.6s cubic-bezier(0.25, 0.6, 0.3, 1);
     max-width: 860px;
     margin: calc(-1 * var(--lift)) auto 0;
     padding: 18px clamp(16px, 3vw, 28px) 40px;
@@ -54,7 +76,10 @@
     height: clamp(150px, 24vw, 220px);
     border-radius: 16px;
     overflow: hidden;
-    background: radial-gradient(120% 90% at 50% 100%, color-mix(in srgb, var(--c3) 45%, #0b0d12), #0b0d12 70%);
+    /* The glow in the track's deep colour is painted by the visualizer canvas (an inline
+       style in the opening track's colours covers the first paint), so a colour glide never
+       repaints this box through the card's custom properties. */
+    background: #0b0d12;
   }
   .viz canvas {
     position: absolute;
@@ -62,6 +87,19 @@
     width: 100%;
     height: 100%;
     display: block;
+  }
+  /* The range's hit area: it takes the pointer so that a finger only drags a horizontal
+     slider once the gesture is clearly horizontal (see RangeInput); vertical swipes scroll. */
+  .range-wrap {
+    display: block;
+    width: 100%;
+    touch-action: pan-y;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .range-wrap > .range {
+    display: block;
+    pointer-events: none;
   }
   .range {
     -webkit-appearance: none;
@@ -281,7 +319,12 @@
     max-width: 44px;
     height: 112px;
     cursor: ns-resize;
-    touch-action: none;
+    /* Fingers scroll the page over the column; a drag takes hold only from an armed knob
+       (see BandSlider), which then cancels the scroll. */
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
     border-radius: 8px;
   }
   .sl::before {
@@ -324,6 +367,17 @@
     border-radius: 5px;
     background: #fff;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+    transition:
+      transform 0.15s,
+      box-shadow 0.15s;
+  }
+  /* A finger has held the knob long enough: it is armed for a drag. */
+  .sl.armed .k {
+    transform: scale(1.18);
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--c2) 40%, transparent),
+      0 0 14px color-mix(in srgb, var(--c2) 55%, transparent),
+      0 1px 6px rgba(0, 0, 0, 0.5);
   }
   .bands.off .f {
     background: rgba(255, 255, 255, 0.3);
@@ -524,6 +578,9 @@
     pointer-events: none;
   }
   @media (prefers-reduced-motion: reduce) {
+    .player {
+      transition-duration: 0.4s;
+    }
     .play.nudge::before {
       animation: none;
       opacity: 0.6;

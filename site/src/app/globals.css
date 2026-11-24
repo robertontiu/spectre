@@ -25,8 +25,8 @@
   --ice: #dff3f5;
   --haze: #7fd3d6;
   --card: 13, 17, 28;
-  /* The track palette (--c1..3 accents, --f1..3 fields) is set per element: on the
-     player card, and on each slot of the background crossfade. */
+  /* The track palette is set per element: the accents (--c1..3) on the player card, the
+     field tones (--f1..3) only on the background's first-paint stand-in. */
   /* How far the player card rises over the banner. */
   --lift: clamp(70px, 12svh, 140px);
 }

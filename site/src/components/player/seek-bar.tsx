@@ -10,7 +10,9 @@ const STEPS = 1000;
 /** Elapsed time, a scrubbable position slider and the track length. */
 export function SeekBar() {
   const store = usePlayerStore();
-  const time = usePlayer((s) => s.time);
+  // Re-render only when the shown second or the slider's step changes, not on every tick.
+  const second = usePlayer((s) => Math.floor(s.time));
+  const step = usePlayer((s) => (s.duration ? Math.round(Math.min(1, s.time / s.duration) * STEPS) : 0));
   const duration = usePlayer((s) => s.duration);
   /** Position (0-1) while the visitor drags; playback position otherwise. */
   const [scrub, setScrub] = useState<number | null>(null);
@@ -28,8 +30,8 @@ export function SeekBar() {
     return () => input.removeEventListener("change", commit);
   }, [store]);
 
-  const fraction = scrub ?? (duration ? Math.min(1, time / duration) : 0);
-  const elapsed = scrub === null ? time : scrub * duration;
+  const fraction = scrub ?? step / STEPS;
+  const elapsed = scrub === null ? second : scrub * duration;
 
   return (
     <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 text-[14px] text-mute tabular-nums">

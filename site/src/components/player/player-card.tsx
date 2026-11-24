@@ -5,18 +5,29 @@ import { paletteFrom, paletteVars } from "@/lib/color";
 import { usePlayerStore } from "./player-context";
 
 /**
- * The card element. It carries the accent palette (--c1..3) that the controls and
- * canvases use; the store glides it from track to track.
+ * The card element. It carries the accent palette (--c1..3) that its controls use. On a
+ * track change the new colours are written once; the properties are registered as
+ * <color> (player.css), so the browser transitions them itself, with no script per frame
+ * and no re-render.
  */
 export function PlayerCard({ children }: { children: ReactNode }) {
   const store = usePlayerStore();
   const ref = useRef<HTMLElement>(null);
-  // The opening track's colours, rendered on the server; later changes are written by the store.
+  // The opening track's colours, rendered on the server.
   const [style] = useState(() => paletteVars(paletteFrom(store.tracks[store.initial]?.colors ?? [])) as CSSProperties);
 
   useEffect(() => {
-    store.palette.attach(ref.current);
-    return () => store.palette.attach(null);
+    const el = ref.current;
+    if (!el) return;
+    let current = store.getState().current;
+    return store.subscribe(() => {
+      const next = store.getState().current;
+      if (next === current) return;
+      current = next;
+      for (const [name, value] of Object.entries(paletteVars(paletteFrom(store.tracks[next]?.colors ?? [])))) {
+        el.style.setProperty(name, value);
+      }
+    });
   }, [store]);
 
   return (

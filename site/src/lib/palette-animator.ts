@@ -1,12 +1,13 @@
-import { paletteVars, type Palette } from "./color";
+import type { Palette } from "./color";
 
 const clone = (p: Palette): Palette => p.map((c) => [...c]) as Palette;
 
 /**
- * Glides the player's accent palette toward the current track's colours and mirrors it
- * into CSS custom properties on the player card (not on <html>, so only the card
- * restyles), keeping its canvases (which read `current`) and its controls in step.
- * The page background crossfades separately (see PaletteCrossfade).
+ * Glides the player's accent palette toward the current track's colours for the card's
+ * canvases (the visualizer reads `current` in its frame loop; the equalizer curve
+ * subscribes). It touches no DOM: the card's own accent colours are CSS custom properties
+ * that the browser transitions (PlayerCard), and the page background glides in its own
+ * canvas loop (AtmosphereField).
  */
 export class PaletteAnimator {
   current: Palette;
@@ -14,7 +15,6 @@ export class PaletteAnimator {
   private frame = 0;
   private last = 0;
   private listeners = new Set<() => void>();
-  private element: HTMLElement | null = null;
 
   constructor(initial: Palette) {
     this.current = clone(initial);
@@ -25,11 +25,6 @@ export class PaletteAnimator {
   subscribe(listener: () => void): () => void {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
-  }
-
-  /** The element that carries the palette's CSS custom properties. */
-  attach(element: HTMLElement | null): void {
-    this.element = element;
   }
 
   setTarget(target: Palette): void {
@@ -54,11 +49,7 @@ export class PaletteAnimator {
     }
     const done = delta < 0.6;
     if (done) this.current = clone(this.target);
-
-    const style = this.element?.style;
-    if (style) for (const [name, value] of Object.entries(paletteVars(this.current))) style.setProperty(name, value);
     this.listeners.forEach((l) => l());
-
     this.frame = done ? 0 : requestAnimationFrame(this.step);
   };
 }

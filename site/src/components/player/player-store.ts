@@ -16,19 +16,8 @@ import type { Track } from "@/lib/tracks";
 
 export type RepeatMode = "all" | "one" | "off";
 
-/** How long the background takes to crossfade to a new track's colours. */
+/** How long the background glides to a new track's colours (AtmosphereField). */
 export const FADE_MS = 2000;
-
-/**
- * The background crossfade: two slots, each painted once in one track's colours; the
- * front slot is opaque, the other fades out and is then hidden.
- */
-export type FadeState = {
-  slots: readonly [readonly string[], readonly string[]];
-  front: 0 | 1;
-  /** False while the slots are crossfading. */
-  settled: boolean;
-};
 const REPEAT_MODES: readonly RepeatMode[] = ["all", "one", "off"];
 
 export type PlayerState = {
@@ -42,7 +31,6 @@ export type PlayerState = {
   message: string | null;
   /** Autoplay was blocked: the next tap or key press anywhere starts playback. */
   needsGesture: boolean;
-  fade: FadeState;
   shuffle: boolean;
   repeat: RepeatMode;
   eqOn: boolean;
@@ -75,8 +63,6 @@ export class PlayerStore {
   private state: PlayerState;
   private listeners = new Set<() => void>();
   private audio: HTMLAudioElement | null = null;
-  private fadeTimer: ReturnType<typeof setTimeout> | undefined;
-  private pendingColors: readonly string[] | null = null;
 
   /**
    * @param initial index of the track to open with
@@ -95,7 +81,6 @@ export class PlayerStore {
       duration: tracks[initial]?.duration ?? 0,
       message: null,
       needsGesture: false,
-      fade: { slots: [colors, colors], front: 0, settled: true },
       shuffle: false,
       repeat: "all",
       eqOn: true,
@@ -154,8 +139,6 @@ export class PlayerStore {
       for (const [type, fn] of Object.entries(on)) audio.removeEventListener(type, fn);
       releaseMediaKeys();
       releaseGesture();
-      clearTimeout(this.fadeTimer);
-      this.fadeTimer = undefined;
     };
   }
 
@@ -167,7 +150,6 @@ export class PlayerStore {
     this.audio.src = audioPath(track);
     this.set({ current: index, time: 0, duration: track.duration, message: null });
     this.palette.setTarget(paletteFrom(track.colors));
-    this.fadeTo(track.colors);
     // Keep the address bar on the playing track without a navigation (no remount, no scroll).
     if (syncUrl && !IS_PREVIEW && location.pathname !== trackPath(track)) {
       history.replaceState(history.state, "", trackPath(track));
@@ -319,29 +301,6 @@ export class PlayerStore {
 
   private applyEq(): void {
     this.engine?.setEq(this.state.eqOn, this.state.eq);
-  }
-
-  /* ---- background crossfade ---- */
-
-  private fadeTo(colors: readonly string[]): void {
-    const { fade } = this.state;
-    const same = (a: readonly string[], b: readonly string[]) => a.join() === b.join();
-    if (this.fadeTimer) {
-      // A fade is running: change the slot that is fading out only once it is hidden.
-      this.pendingColors = colors;
-      return;
-    }
-    if (same(fade.slots[fade.front], colors)) return;
-    const back = fade.front === 0 ? 1 : 0;
-    const slots: FadeState["slots"] = back === 0 ? [colors, fade.slots[1]] : [fade.slots[0], colors];
-    this.set({ fade: { slots, front: back, settled: false } });
-    this.fadeTimer = setTimeout(() => {
-      this.fadeTimer = undefined;
-      this.set({ fade: { ...this.state.fade, settled: true } });
-      const pending = this.pendingColors;
-      this.pendingColors = null;
-      if (pending) this.fadeTo(pending);
-    }, FADE_MS + 100);
   }
 
   /* ---- keyboard and media keys ---- */

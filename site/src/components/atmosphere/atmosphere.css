@@ -1,15 +1,21 @@
-/* The fixed background stack: night sky, moon, apparition, harmonics, motes, mist and
-   fog layers on top; the playing track's colour field below. Every moving layer is
-   pre-rendered and moves with transform and opacity only (never animate filters or blur).
+/* The fixed background stack: night sky and moon, then the soft layers under the apparition
+   (a canvas plane), the apparition, its harmonics and the motes (SVG, moved with transform
+   and opacity only), then the soft layers over it (a second canvas plane).
 
-   Layers that carry the track colours (--f1..3) are split from their neutral mist (-c and
-   -n classes) and live inside <PaletteCrossfade> groups: two copies, each painted once
-   in a fixed palette, whose opacity crossfades on a track change. Nothing is repainted
-   while the colours glide. */
+   The planes are drawn by <AtmosphereField> (field-scene.ts) at low resolution and scaled
+   up by the GPU. The .tint/.fg/.bf/.mist/.wisp/.blob/.sink/.rise rules below describe the
+   same layers in CSS: they are only the stand-in for the first paint, until the canvases
+   have drawn, and field-scene.ts mirrors their geometry, colours and keyframes. */
 @layer components {
   .atmos {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    /* A stable height: phones' address bars must not resize the stack while scrolling
+       (AtmosphereField pins it in px once mounted). */
+    height: 100vh;
+    height: 100lvh;
     z-index: -1;
     overflow: hidden;
     pointer-events: none;
@@ -46,21 +52,65 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
+    z-index: -4;
   }
   .layer {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
+    z-index: -2;
     pointer-events: none;
+  }
+  .plane {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    isolation: isolate;
+  }
+  .plane-back {
+    z-index: -3;
+  }
+  .plane-front {
+    z-index: -1;
+  }
+  .field {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  /* The first-paint stand-in: frozen at the start of the drift, no layers of its own. */
+  .stand-in {
+    position: absolute;
+    inset: 0;
+    isolation: isolate;
+  }
+  .stand-in * {
+    animation-play-state: paused !important;
+    will-change: auto !important;
+  }
+  .stand-in .rise {
+    z-index: -1;
   }
   .appar,
   .harm {
     transform-origin: 50% 100%;
-    will-change: transform;
-    animation: sway 13s ease-in-out infinite alternate;
+    will-change: transform, opacity;
+    animation:
+      sway 13s ease-in-out infinite alternate,
+      shim 6s ease-in-out infinite alternate;
+  }
+  .hs1 {
+    animation:
+      sway 13s ease-in-out infinite alternate,
+      shim 7.5s ease-in-out -2s infinite alternate;
+  }
+  .hs2 {
+    animation:
+      sway 13s ease-in-out infinite alternate,
+      shim 5.2s ease-in-out -4s infinite alternate;
   }
   .appar {
     animation:
@@ -82,17 +132,6 @@
     100% {
       opacity: 1;
     }
-  }
-  .hs {
-    animation: shim 6s ease-in-out infinite alternate;
-  }
-  .hs1 {
-    animation-duration: 7.5s;
-    animation-delay: -2s;
-  }
-  .hs2 {
-    animation-duration: 5.2s;
-    animation-delay: -4s;
   }
   @keyframes shim {
     0% {
@@ -257,7 +296,6 @@
     z-index: -1;
     pointer-events: none;
     border-radius: 50%;
-    will-change: transform;
   }
   .m1 {
     left: -40vw;
@@ -297,7 +335,6 @@
     position: absolute;
     pointer-events: none;
     z-index: -1;
-    will-change: transform, opacity;
   }
   .fg1 {
     left: -45vw;
@@ -430,7 +467,6 @@
     position: absolute;
     pointer-events: none;
     z-index: -1;
-    will-change: transform, opacity;
   }
   .bf1 {
     left: -50vw;
@@ -503,7 +539,6 @@
     height: 90vmax;
     border-radius: 50%;
     opacity: 0.64;
-    will-change: transform;
   }
   .b1 {
     left: -30vmax;
@@ -547,24 +582,6 @@
     }
   }
 
-  /* Crossfade groups: the second slot adds onto the first (plus-lighter), so the pair
-   shows a true mix of the two palettes, never a darker gap mid-fade. */
-  .xf {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    isolation: isolate;
-  }
-  .xf-slot {
-    position: absolute;
-    inset: 0;
-    transition: opacity var(--xf-duration, 2s) ease-in-out;
-  }
-  .xf-slot + .xf-slot {
-    mix-blend-mode: plus-lighter;
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .blob,
     .mist,
@@ -572,7 +589,6 @@
     .bf,
     .appar,
     .harm,
-    .hs,
     .dust,
     .wisp {
       animation: none !important;

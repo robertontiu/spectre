@@ -136,20 +136,19 @@ export function Logotype() {
         <use href="#word" stroke="#bfe3ee" strokeWidth="26" opacity=".5" filter="url(#lgh)" />
       </svg>
 
-      <svg className="logo lgf" {...box}>
+      {/* Two fog banks at the letters' feet, each its own SVG so the drift runs on the compositor. */}
+      <svg className="logo lgf lgf1" {...box}>
         <defs>
           <radialGradient id="lfg">
             <stop offset="0" stopColor="#7d97a9" stopOpacity=".34" />
             <stop offset="1" stopColor="#7d97a9" stopOpacity="0" />
           </radialGradient>
         </defs>
-        <g className="lfog1">
-          <ellipse cx="330" cy="250" rx="360" ry="44" fill="url(#lfg)" />
-          <ellipse cx="940" cy="262" rx="340" ry="40" fill="url(#lfg)" />
-        </g>
-        <g className="lfog2">
-          <ellipse cx="640" cy="238" rx="560" ry="34" fill="url(#lfg)" opacity=".7" />
-        </g>
+        <ellipse cx="330" cy="250" rx="360" ry="44" fill="url(#lfg)" />
+        <ellipse cx="940" cy="262" rx="340" ry="40" fill="url(#lfg)" />
+      </svg>
+      <svg className="logo lgf lgf2" {...box}>
+        <ellipse cx="640" cy="238" rx="560" ry="34" fill="url(#lfg)" opacity=".7" />
       </svg>
     </GlitchFrame>
   );

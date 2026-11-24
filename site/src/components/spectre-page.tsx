@@ -1,5 +1,4 @@
 import { Atmosphere } from "@/components/atmosphere/atmosphere";
-import { PaletteCrossfade } from "@/components/atmosphere/palette-crossfade";
 import { Badge } from "@/components/brand/badge";
 import { GithubBadge } from "@/components/brand/github-badge";
 import { Logotype } from "@/components/brand/logotype";
@@ -26,10 +25,6 @@ export function SpectrePage({ initial = 0, autoplay = false }: SpectrePageProps)
           <Badge />
           <Logotype />
         </div>
-        <PaletteCrossfade className="z-2">
-          <div className="fg fg5 fg5-c" />
-        </PaletteCrossfade>
-        <div className="fg fg5 fg5-n" aria-hidden="true" />
       </header>
       <main className="relative isolate flow-root pb-14">
         <Player />

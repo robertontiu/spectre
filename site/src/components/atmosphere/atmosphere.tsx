@@ -1,5 +1,5 @@
 import { harmonicGroups, moteFields, type Mote } from "./ghost-geometry";
-import { PaletteCrossfade } from "./palette-crossfade";
+import { AtmosphereField } from "./atmosphere-field";
 import "./atmosphere.css";
 
 const harmonics = harmonicGroups();
@@ -21,13 +21,12 @@ function Motes({ motes }: { motes: Mote[] }) {
   );
 }
 
-/** Classes of plain divs, back to front, that make a layer of the stack. */
-const Layers = ({ names }: { names: string[] }) => names.map((n) => <div key={n} className={n} aria-hidden="true" />);
-
 /**
  * The fixed, full-viewport background: one stack for the whole page, so there are no
  * section seams. The top half is the moonlit apparition in mist; the bottom half is a
- * blurred field of the playing track's colours (--f1..3), which also tint the mist.
+ * blurred field of the playing track's colours, which also tint the mist. The mist, fog and
+ * colour field are drawn by <AtmosphereField> into two small canvases, one under the
+ * apparition and one over it; the apparition, its harmonics and the motes stay SVG.
  */
 export function Atmosphere() {
   return (
@@ -44,17 +43,6 @@ export function Atmosphere() {
           <ellipse cx="860" cy="90" rx="420" ry="260" fill="url(#moon)" />
           <ellipse cx="600" cy="260" rx="300" ry="300" fill="url(#moon)" opacity=".45" />
         </svg>
-        <PaletteCrossfade>
-          <Layers names={["tint t1", "tint t2", "tint t3"]} />
-        </PaletteCrossfade>
-        <Layers names={["fg fg6"]} />
-        <PaletteCrossfade>
-          <Layers names={["fg fg1 fg1-c"]} />
-        </PaletteCrossfade>
-        <Layers names={["fg fg1 fg1-n", "fg fg2 fg2-n"]} />
-        <PaletteCrossfade>
-          <Layers names={["fg fg2 fg2-c"]} />
-        </PaletteCrossfade>
 
         <svg className="layer appar" {...scene}>
           <defs>
@@ -78,33 +66,26 @@ export function Atmosphere() {
           <ellipse cx="600" cy="196" rx="46" ry="60" fill="#03050b" opacity=".6" filter="url(#hush)" />
         </svg>
 
-        <svg className="layer harm" {...scene}>
-          <defs>
-            <linearGradient id="bodyfade" x1="0" y1="0" x2="0" y2="1">
-              <stop offset=".35" stopColor="#fff" />
-              <stop offset="1" stopColor="#fff" stopOpacity="0" />
-            </linearGradient>
-            <mask id="gm">
-              <use href="#gpath" fill="url(#bodyfade)" />
-            </mask>
-          </defs>
-          <g mask="url(#gm)" opacity=".32">
-            {harmonics.map((lines, i) => (
-              <g key={i} className={`hs hs${i}`}>
-                {lines.map((l) => (
-                  <path
-                    key={l.d}
-                    d={l.d}
-                    fill="none"
-                    stroke="#e3f6f7"
-                    strokeOpacity={l.opacity}
-                    strokeWidth={l.width}
-                  />
-                ))}
-              </g>
-            ))}
-          </g>
-        </svg>
+        {/* One SVG per shimmer group, so the shimmer is a compositor opacity animation
+            (animating a group inside one SVG repainted the whole layer every frame). */}
+        {harmonics.map((lines, i) => (
+          <svg key={i} className={`layer harm hs${i}`} {...scene}>
+            <defs>
+              <linearGradient id={`bodyfade${i}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset=".35" stopColor="#fff" />
+                <stop offset="1" stopColor="#fff" stopOpacity="0" />
+              </linearGradient>
+              <mask id={`gm${i}`}>
+                <use href="#gpath" fill={`url(#bodyfade${i})`} />
+              </mask>
+            </defs>
+            <g mask={`url(#gm${i})`} opacity=".32">
+              {lines.map((l) => (
+                <path key={l.d} d={l.d} fill="none" stroke="#e3f6f7" strokeOpacity={l.opacity} strokeWidth={l.width} />
+              ))}
+            </g>
+          </svg>
+        ))}
 
         <svg className="layer dust d1" {...scene}>
           <Motes motes={motes[0]} />
@@ -112,38 +93,8 @@ export function Atmosphere() {
         <svg className="layer dust d2" {...scene}>
           <Motes motes={motes[1]} />
         </svg>
-        <Layers names={["mist m1", "mist m2", "mist m3"]} />
-        <PaletteCrossfade>
-          <Layers names={["fg fg3 fg3-c"]} />
-        </PaletteCrossfade>
-        <Layers names={["fg fg3 fg3-n"]} />
-        <PaletteCrossfade>
-          <Layers names={["fg fg4 fg4-c"]} />
-        </PaletteCrossfade>
-        <Layers names={["fg fg4 fg4-n", "wisp", "wisp w2", "wisp w3"]} />
-        <PaletteCrossfade>
-          <Layers names={["rise"]} />
-        </PaletteCrossfade>
       </div>
-
-      <div className="abot">
-        <div className="blobs">
-          <PaletteCrossfade>
-            <Layers names={["blob b1", "blob b2", "blob b3"]} />
-          </PaletteCrossfade>
-        </div>
-        <PaletteCrossfade>
-          <Layers names={["sink", "bf bf1 bf1-c"]} />
-        </PaletteCrossfade>
-        <Layers names={["bf bf1 bf1-n", "bf bf2 bf2-n"]} />
-        <PaletteCrossfade>
-          <Layers names={["bf bf2 bf2-c"]} />
-        </PaletteCrossfade>
-        <Layers names={["bf bf3 bf3-n"]} />
-        <PaletteCrossfade>
-          <Layers names={["bf bf3 bf3-c"]} />
-        </PaletteCrossfade>
-      </div>
+      <AtmosphereField />
     </div>
   );
 }

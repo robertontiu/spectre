@@ -7,14 +7,22 @@
     height: auto;
   }
   .badge {
+    position: relative;
     display: block;
     width: clamp(70px, 10vw, 126px);
-    height: auto;
+    aspect-ratio: 1;
     margin: 0 auto calc(-1 * clamp(2px, 2vw, 26px));
     overflow: visible;
   }
+  .badge > svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
   .corona {
-    transform-origin: 60px 60px;
+    transform-origin: 50% 50%;
     animation: corona 9s ease-in-out infinite alternate;
   }
   @keyframes corona {
@@ -59,12 +67,13 @@
   .fog {
     animation: fogd 16s ease-in-out infinite alternate;
   }
+  /* ±5 user units of the 120-wide badge. */
   @keyframes fogd {
     0% {
-      transform: translateX(-5px);
+      transform: translateX(-4.1667%);
     }
     100% {
-      transform: translateX(5px);
+      transform: translateX(4.1667%);
     }
   }
   .logo-wrap {
@@ -293,18 +302,19 @@
     will-change: opacity;
     animation: backl 9s ease-in-out infinite alternate;
   }
-  .lfog1 {
+  .lgf1 {
     animation: lfog 18s ease-in-out infinite alternate;
   }
-  .lfog2 {
+  .lgf2 {
     animation: lfog 24s ease-in-out infinite alternate-reverse;
   }
+  /* ±40 user units of the 1400-wide logotype box. */
   @keyframes lfog {
     0% {
-      transform: translateX(-40px);
+      transform: translateX(-2.857%);
     }
     100% {
-      transform: translateX(40px);
+      transform: translateX(2.857%);
     }
   }
 
@@ -314,8 +324,8 @@
     .glint,
     .fog,
     .lgl,
-    .lfog1,
-    .lfog2,
+    .lgf1,
+    .lgf2,
     .lgw,
     .logo-wrap,
     .lgb,

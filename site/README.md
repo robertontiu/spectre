@@ -57,7 +57,8 @@ src/app/                  layout (metadata, fonts), home page, track/[slug] (pag
                           robots, sitemap, icons
 src/components/
   spectre-page.tsx        the whole page, shared by / and /track/[slug]
-  atmosphere/             the fixed background stack (server-rendered) and PaletteCrossfade
+  atmosphere/             the fixed background stack: SVG apparition (server-rendered) and
+                          AtmosphereField, the canvas planes of mist, fog and track colours
   brand/                  badge, logotype + GlitchFrame, GitHub pill
   player/                 store, provider, card, visualizer, now playing + share,
                           seek bar, controls, equalizer, playlist
@@ -65,9 +66,11 @@ src/lib/                  Web Audio engine, colours, equalizer presets, palette 
                           site URLs, tracks
 ```
 
-- **Server first.** The page shell, the background stack, the badge and the logotype are server components; client components are the player, the colour crossfade and the logotype's glitch timer.
+- **Server first.** The page shell, the apparition, the badge and the logotype are server components; client components are the player, the background field and the logotype's glitch timer.
 - **Player state** lives in a small external store (`player-store.ts`) read with `useSyncExternalStore`, so audio events, media keys and the canvases always see the latest state without re-rendering the page. Preferences persist in `localStorage` (`spectre.v1`, the showcase's format).
 - **Audio:** `<audio>` → MediaElementSource → preamp → 10 biquads → analyser → volume. The graph starts on the first tap or key press; a track link's autoplay plays the element directly, and if the browser blocks it the play button asks for a tap.
-- **Track colours.** The background layers that carry a track's colours are rendered in two palette slots that crossfade by opacity (2 s); they are painted once per track and never repaint mid-glide. Only the player card's accent colours glide through CSS variables.
-- **Styling:** Tailwind for layout and type; the atmosphere, logotype, range inputs, sliders and pressed states are plain CSS next to their components (in `@layer components`). Motion is transform and opacity only, never filters or blur, and it all stops under `prefers-reduced-motion`.
+- **Background field.** The mist, fog banks, wisps and the track-coloured field are drawn by `AtmosphereField` (`atmosphere/field-scene.ts`) into two small canvases (about 25k pixels each, one under the apparition and one over it) that the GPU scales up to the viewport. One rAF loop draws them at 30 fps with time-based drift that mirrors the CSS keyframes, pauses in hidden tabs, and glides to a new track's colours in OKLab over 2 s. A track change or tab switch creates, hides or repaints no DOM layer, and phones keep two small textures instead of dozens of huge animated layers. The stack's height is pinned in px (100lvh first), so a phone's address bar never resizes it while scrolling. Until the first frame, CSS layers in the opening track's colours stand in (frozen), so the server-rendered page looks right; under reduced motion the field is static and colour changes take 0.5 s.
+- **Track colours in the card.** The card's accents `--c1..3` are `@property`-registered colours, written once per track and transitioned by the browser (1.6 s); the visualizer and EQ canvases glide the same palette in JS (`PaletteAnimator`, no DOM writes). The visualizer paints its own glow, reads no layout in its frame loop (ResizeObserver, IntersectionObserver), caps its backing store at 2x and runs at up to 60 fps (30 on touch screens).
+- **Sliders on touch.** The seek and volume sliders are native ranges for keyboard and assistive tech, but a finger only drags them once the gesture is clearly horizontal (a tap still seeks); vertical swipes scroll. An EQ band takes a finger only on its knob after a short rest (the knob glows when armed), otherwise the page scrolls. Mouse and keyboard work as before.
+- **Styling:** Tailwind for layout and type; the atmosphere, logotype, range inputs, sliders and pressed states are plain CSS next to their components (in `@layer components`). DOM motion is transform and opacity only (each moving part of the badge and logotype fog is its own SVG, so it runs on the compositor), never filters or blur, and it all stops under `prefers-reduced-motion`.
 - **Fonts:** Syne and Manrope, self-hosted variable fonts from Fontsource (SIL OFL, see `src/fonts/`), with latin-ext loaded only when needed (Latvian, Romanian titles).
