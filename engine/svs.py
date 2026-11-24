@@ -299,9 +299,11 @@ class Bank:
 
     # -------------------------------------------------------------------------------------------- one phrase
     def render(self, sylls, notes, mode, seed, steps=20, pitch_steps=10, gender=0.0, velocity=1.0, breath=False,
-               tail_sp_ms=300.0, detune_cents=0.0, mix=None):
+               tail_sp_ms=300.0, detune_cents=0.0, mix=None, vibrato=1.0):
         """sylls: [phonemes per syllable]; notes: [(start_ms, dur_ms, midi, syllable index)] contiguous, in order
-        (melisma notes repeat the syllable index). Returns (wave, t0_ms, phones)."""
+        (melisma notes repeat the syllable index). Returns (wave, t0_ms, phones).
+        vibrato: scales the pitch model's vibrato and other fast pitch movement inside held notes (transitions
+        between notes are kept). 1.0 = as the model sings it (bit-identical)."""
         fm = self.frame_ms
         rng = np.random.default_rng(seed)
         first_note = {}
@@ -376,6 +378,8 @@ class Bank:
             pf["noise_in"] = rng.standard_normal(self.pitch_prefix + [total]).astype(np.float32)
         names = [x.name for x in pitch.get_inputs()]
         curve = pitch.run(None, {k: v for k, v in pf.items() if k in names})[0][0]
+        if vibrato != 1.0:
+            curve = scale_vibrato(curve, [((n[0] - t0) / fm, (n[0] + n[1] - t0) / fm) for n in notes], fm, vibrato)
         f0 = (440.0 * 2 ** ((curve + detune_cents / 100.0 - 69) / 12)).astype(np.float32)
         # acoustic + vocoder
         if self.ac_inner:
@@ -416,6 +420,25 @@ class Bank:
         while 1000 % sp and sp > 1:
             sp -= 1
         return np.array(1000, np.int64), np.array(sp, np.int64)
+
+
+def scale_vibrato(curve, spans, frame_ms, amount, sigma_ms=70.0, edge_ms=100.0, ramp_ms=50.0):
+    """Scale the fast part of a pitch curve (MIDI per frame) inside held notes. The slow part is a Gaussian low-pass of
+    the curve (sigma_ms 70: a 5-6 Hz vibrato passes at 3-10%, a 2 Hz drift or scoop at about 75%); the fast part
+    (vibrato, jitter) is the rest. Only frames at least edge_ms inside a note are scaled (ramped in over ramp_ms), so
+    transitions between notes stay as sung. spans: (start, end) of each note in frames."""
+    c = np.asarray(curve, dtype=np.float64)
+    sg = sigma_ms / frame_ms
+    h = int(np.ceil(3 * sg))
+    k = np.exp(-0.5 * (np.arange(-h, h + 1) / sg) ** 2)
+    smooth = np.convolve(np.pad(c, (h, h), mode="edge"), k / k.sum(), mode="valid")
+    mask = np.zeros(len(c))
+    e, r = edge_ms / frame_ms, max(1.0, ramp_ms / frame_ms)
+    idx = np.arange(len(c))
+    for a, b in spans:
+        inside = np.minimum(idx - (a + e), (b - e) - idx)
+        mask = np.maximum(mask, np.clip(inside / r, 0.0, 1.0))
+    return (c + (amount - 1.0) * mask * (c - smooth)).astype(np.float32)
 
 
 # ------------------------------------------------------------------------------------------------ the line
@@ -466,6 +489,7 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
     gender = float(p.get("gender", v.get("gender", 0.0)))
     velocity = float(p.get("velocity", v.get("velocity", 1.0)))
     steps = int(p.get("svs_steps", 20))
+    vib = float(p.get("svs_vibrato", 1.0))
     groups = _groups(p, notes)
     lang = str(p.get("lang") or v.get("lang") or "en")
     if lang != "en" and lang not in info.get("languages", ["en"]):
@@ -494,7 +518,8 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
         pseed = int(_key("seed", seed, words, ns)[:8], 16)
         key = _key(VERSION, bank_name, info.get("vocoder"), mode, mix, gender, velocity, steps, br, detune_cents,
                    words, [(round(a, 1), round(d, 1), m, k) for a, d, m, k in ns], pseed,
-                   *(() if lang == "en" else ("lang", lang, LANG_VERSION)))
+                   *(() if lang == "en" else ("lang", lang, LANG_VERSION)),
+                   *(() if vib == 1.0 else ("vib", vib)))
         path = os.path.join(PHRASES, key[:2], key + ".npz")
         if os.path.exists(path):
             z = np.load(path)
@@ -518,7 +543,7 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
                     done[kk] = bank.syllables(word, n, lang, prev)
                 phs.append(done[kk][si])
             wav, t0, _ = bank.render(phs, ns, mode, pseed, steps=steps, gender=gender, velocity=velocity,
-                                     breath=br, detune_cents=detune_cents, mix=mix)
+                                     breath=br, detune_cents=detune_cents, mix=mix, vibrato=vib)
             os.makedirs(os.path.dirname(path), exist_ok=True)
             _atomic_save(path, lambda t: np.savez(open(t, "wb"), wav=wav, t0=t0))
         wav = wav.copy()
