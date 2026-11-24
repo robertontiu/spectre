@@ -37,6 +37,9 @@ Sources for the lengths:
 
 `{{HAND}}` is 3-5 bullets naming the genre's schools and craft (see the latest session's PROMPT.md in that genre); `{{GENRE_LINE}}` says whether the genre is fixed by the brief or the producer's choice.
 
+## Queued work (do in order, after the sessions in progress finish)
+1. **Break old patterns within a genre (requested by Robert, 2026-11-24).** Spectre's trap tracks share a very similar structure. Bake into the producer behaviour an explicit push to break its own habits: before deciding the form, read the arrangements of its previous tracks in the same genre family (session READMEs), name the patterns it keeps repeating (section order, lengths, where the drop-outs fall, intro/outro shapes, hook placement), and choose at least one structural departure on purpose; research how artists in the genre vary form when useful. The departure must stay inside the genre's bounds from the Genre conventions table (length, tempo, what the instrumental must allow). This is about structure and similarity between tracks, not breaking genre rules. Touches prompts/producer.md, the genre docs and LESSONS.md.
+
 ## Keeping sessions alive
 - At each check: count `renders/v*.wav` (excluding master, premaster and solo files), note the newest render's time, look for `final.mp3`.
 - Progressing: schedule the next check in 15 minutes. With several sessions running, one combined check is fine.
