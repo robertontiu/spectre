@@ -30,7 +30,7 @@ engine/
   instruments.py  synthesized instruments: drums, 808/bass/lead (mono, glide), keys, pads, strings, choir, bells,
                   plucks, organ, folk instruments, textures (vinyl, tape, rain), transition fx (riser, impact, reverse cymbal,
                   pitch riser); trance (clubkick, supersaw, trancebass); pop rock (acoustic kit, eguitar, cleanguitar,
-                  ebass, vox: a wordless formant voice)
+                  ebass, vox: a wordless formant voice); handclap (several hands out of time; replaces the old clap)
   hand.py         the hand: step/note/chord notation parser, swing, humanization, voicing, rolls, arps
   studio.py       project loader, arrangement scheduler, track rendering, fx, sends, sidechain, section
                   automation and transitions, quick master, CLI (render / listen / master)

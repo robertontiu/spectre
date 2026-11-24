@@ -29,6 +29,7 @@ DEFAULT_GAIN = {"kokle": -7, "dudas": -13, "tridksnis": -12, "trembita": -9, "li
 DEFAULT_GAIN.update({"supersaw": -12, "trancebass": -6, "clubkick": -1, "kitkick": -2, "kitsnare": -2, "kittom": -6,
                      "kithat": -15, "kitride": -17, "kitcrash": -16, "eguitar": -11, "cleanguitar": -11, "ebass": -6,
                      "vox": -9})
+DEFAULT_GAIN.update({"handclap": -5})
 
 
 # ------------------------------------------------------------------ helpers
@@ -344,6 +345,10 @@ def render_track(name, tr, evs, holds, total_n, bpm):
     st_buf = None
     if typ in DRUM_TYPES:
         fn = I.DRUMS[typ]
+        if typ == "clap" and p.get("spread", 0.009) > 0.05:  # warning only: the sound stays as it was
+            print(f"warning: track '{name}': clap spread={p['spread']} is in seconds (default 0.009 = 9 ms between "
+                  "bursts); over 0.05 the bursts become separate hits off the beat. Use handclap (spread_ms) "
+                  "for a truer clap", file=sys.stderr)
         cache = {}
         rr = int(p.get("rr", 4)) if typ in getattr(I, "ROUND_ROBIN", ()) else 0
         for j, e in enumerate(sorted(evs, key=lambda e: e["t"])):

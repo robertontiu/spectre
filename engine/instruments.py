@@ -1347,3 +1347,140 @@ MONO.add("vox")
 POST = {"eguitar": guitar_amp, "cleanguitar": clean_amp, "ebass": bass_amp}
 # drums that cycle through `rr` slightly different hits (round robin), so repeated notes aren't identical
 ROUND_ROBIN = {"kitkick", "kitsnare", "kittom", "kithat", "kitride", "kitcrash"}
+
+
+
+
+# ---------------------------------------------------------------- handclap (a truer clap)
+# Additive block: the old `clap` above is untouched and its random-number use unchanged; handclap draws from its
+# own generator (seeded per hit from its params, velocity, pitch and variant number), so adding it changes
+# nothing in projects that don't use it and a track's claps don't depend on any other track.
+#
+# Model (sources in docs/MANUAL.md and docs/TRANCE.md):
+# - one hand clap is a ~5 ms burst: an air pulse squeezed out between the hands, coloured by the cavity between
+#   them, a second-order resonance whose centre and bandwidth depend on how the hands meet (Repp 1987; Peltola,
+#   Erkut, Cook & Valimaki 2007, Table 1: 0.5-1.6 kHz, bandwidths 90-375 Hz, i.e. Q 4-8, so it never rings),
+#   plus the broadband slap of skin on skin;
+# - a "clap" in a record is several hands slightly out of time (the TR-808 retriggers its noise envelope several
+#   times about 10 ms apart, then a longer envelope is its "reverberation"; TR-808 service notes, CP/MA circuit);
+# - each hand gets its own noise and its own resonance, so the bursts never sum into a comb filter (a delayed
+#   copy of the same burst would: the metallic sound); the room is decorrelated noise with a fade-in, no
+#   delay lines, highs dying first.
+_HC_CALLS = {}
+# Peltola et al. 2007, Table 1: (centre Hz, sd, -3 dB bandwidth Hz, sd, gain) per hand configuration.
+# P = palms parallel (P1 flat .. P3 fingers to palm), A = angled; A1+ cupped (domed, lowest), A1- flatter.
+HC_MODES = {"P1": (1364, 333, 188, 54, 27.2), "P2": (774, 448, 139, 7, 13.8), "P3": (1562, 257, 375, 94, 19.5),
+            "A1": (775, 39, 137, 15, 22.2), "A2": (1355, 57, 222, 53, 24.0), "A3": (1452, 12, 183, 40, 13.8),
+            "A1+": (500, 178, 91, 27, 33.8), "A1-": (984, 396, 137, 36, 11.3)}
+HC_HANDS = {"flat": ("P1", "P3", "A2", "A3"), "cupped": ("A1+", "A1", "P2"),
+            "mixed": ("P1", "P2", "P3", "A1", "A2", "A3", "A1+", "A1-")}
+
+
+_HC_WARNED = set()
+
+
+def _hc_warn(msg):
+    if msg not in _HC_WARNED:
+        _HC_WARNED.add(msg)
+        import sys
+        print("warning: " + msg, file=sys.stderr)
+
+
+def _tame_peaks(x, red_db, look=0.0015):
+    """Lookahead peak limiter for one hit: lowers the needle peaks of the bursts by up to red_db with a gain that
+    moves over ~1.5 ms (a clipper on a clap, minus the distortion)."""
+    if red_db <= 0:
+        return x
+    from scipy.ndimage import maximum_filter1d, uniform_filter1d
+    k = max(3, int(look * SR))
+    env = maximum_filter1d(np.abs(x), size=2 * k + 1)  # centred window = lookahead
+    thr = np.abs(x).max() * 10 ** (-red_db / 20)
+    g = np.minimum(1.0, thr / (env + 1e-12))
+    g = uniform_filter1d(maximum_filter1d(1 - g, size=k), size=k)  # smooth the reduction, never shorten it
+    return (x * (1 - g)).astype(np.float32)
+
+
+def _bp_res(x, fc, bw):
+    """RBJ band-pass (0 dB peak) at fc with -3 dB bandwidth bw Hz: the hand cavity's resonance."""
+    fc = float(np.clip(fc, 250, 4000))
+    q = fc / max(bw, 40.0)
+    w = 2 * np.pi * fc / SR
+    al = np.sin(w) / (2 * q)
+    b = np.array([al, 0, -al]) / (1 + al)
+    a = np.array([1 + al, -2 * np.cos(w), 1 - al]) / (1 + al)
+    return signal.lfilter(b, a, x).astype(np.float32)
+
+
+def handclap(p, vel, ps=0.0):
+    """A truer hand clap: `clappers` hands (default 4) hitting `spread_ms` (default 9) apart, each a ~5 ms noise
+    burst through its own hand-cavity resonance (`hands`: mixed / flat / cupped; `tone` scales the resonances),
+    plus the skin slap (`bright` 0-1), a soft low body (`body` 0-1) and a short room (`room` 0-1, `decay` s =
+    the tail's time constant, highs fade first). Every call draws new hands, timings and noise; it is a
+    round-robin drum (`rr`, default 4), so repeated hits differ;
+    `seed` picks another set of hands. limit_db (6) tames the bursts' needle peaks with a lookahead limiter."""
+    import json, zlib
+    pkey = json.dumps(p, sort_keys=True, default=str)
+    ck = (pkey, round(vel * 1000), round(ps * 100))
+    c = _HC_CALLS[ck] = _HC_CALLS.get(ck, -1) + 1  # the c-th variant of this hit: new hands every call
+    rng = np.random.default_rng([int(p.get("seed", 0)) & 0xFFFFFFFF, zlib.crc32(pkey.encode()), ck[1], ck[2] + 10000, c])
+    k = 2 ** (ps / 12) * p.get("tone", 1.0)
+    clappers = max(1, int(p.get("clappers", 4)))
+    spread_ms = float(p.get("spread_ms", 9.0))
+    if not 2.0 <= spread_ms <= 30.0:  # hands of one clap land a few ms apart; more is separate hits
+        _hc_warn(f"handclap: spread_ms={spread_ms:g} is outside 2-30 ms (the gap between hands); clamped")
+        spread_ms = float(np.clip(spread_ms, 2.0, 30.0))
+    spread = spread_ms / 1000
+    hands = p.get("hands", "mixed")
+    modes = HC_HANDS.get(hands, HC_HANDS["mixed"]) if isinstance(hands, str) else tuple(hands)
+    bright = p.get("bright", 0.35)
+    body = p.get("body", 0.15)
+    room = p.get("room", 0.35)
+    decay = float(p.get("decay", 0.05))
+    if not 0.01 <= decay <= 0.4:
+        _hc_warn(f"handclap: decay={decay:g} s is outside 0.01-0.4 s (the room tail's time constant); clamped")
+        decay = float(np.clip(decay, 0.01, 0.4))
+    # onsets: the first hand at 0, the others spread_ms apart on average (0.5x-1.5x), each with its own level
+    gaps = spread * rng.uniform(0.5, 1.5, clappers - 1)
+    onsets = np.concatenate([[0.0], np.cumsum(gaps)])
+    last = onsets[-1]
+    n = _n(last + 0.03 + decay * 7)
+    t = _t(n)
+    hands_x = np.zeros(n, dtype=np.float32)
+    nb = _n(0.012)  # one hand: 12 ms is enough for burst + resonance to die 60 dB
+    tb = _t(nb)
+    for i, t0 in enumerate(onsets):
+        f, df, bw, dbw, g = HC_MODES[modes[rng.integers(len(modes))]]
+        fc = max(350.0, rng.normal(f, df * 0.5)) * k
+        bwi = max(60.0, rng.normal(bw, dbw * 0.5)) * k
+        tau = rng.uniform(0.0008, 0.0015)
+        env = np.minimum(tb / 0.0003, 1) * np.exp(-tb / tau)
+        e = rng.standard_normal(nb).astype(np.float32) * env.astype(np.float32)
+        res = _bp_res(e, fc, bwi) * np.sqrt(g / 24.0) * 2.2
+        slap = lp(hp(e, 1500), 6500) * bright * (0.5 + 0.5 * vel)
+        lvl = rng.uniform(0.6, 1.0) if i else rng.uniform(0.8, 1.0)
+        a = int(t0 * SR)
+        m = min(nb, n - a)
+        hands_x[a:a + m] += ((res + slap) * lvl)[:m]
+    # loudness-normalise the hands (variants stay equally loud; the peak varies a little, as real hits do)
+    act = hands_x[:int((last + 0.006) * SR) + 1]
+    hands_x /= np.sqrt(np.mean(act ** 2)) + 1e-9
+    x = hands_x * 0.45
+    if body > 0:  # the soft flesh thump under the first hands
+        th = lp(rng.standard_normal(n).astype(np.float32), 380) * np.exp(-t / 0.007) * np.minimum(t / 0.001, 1)
+        x += th * body * 0.35
+    if room > 0:  # short room: decorrelated noise, fades in over the hands, highs die first
+        nz = rng.standard_normal(n).astype(np.float32)
+        lo_b, hi_b = bp(nz, 500, 2500), bp(nz, 2500, 7000)
+        tr = np.clip((t - 0.003) / (last + 0.008), 0, 1) ** 1.5
+        dt = np.maximum(t - 0.003, 0)
+        tail = lo_b * np.exp(-dt / decay) + hi_b * 0.6 * np.exp(-dt / (decay * 0.55))
+        x += tail * tr * room * 0.22
+    x = _tame_peaks(x, float(np.clip(p.get("limit_db", 6.0), 0, 12)))
+    fo = min(_n(0.01), n)
+    x[-fo:] *= np.linspace(1, 0, fo, dtype=np.float32)
+    x = soft(x.astype(np.float32), p.get("drive", 0.0))
+    return (x * vel ** 1.1).astype(np.float32)
+
+
+DRUMS["handclap"] = handclap
+ROUND_ROBIN = ROUND_ROBIN | {"handclap"}

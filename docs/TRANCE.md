@@ -27,7 +27,7 @@ Changed from the previous setup: length 5:00-7:00 became 6:00-8:00; the tonal ta
 ## Tempo and groove (engine names in brackets)
 - **Tempo:** 136-140 bpm is the core (uplifting 138-142, vocal 136-140, progressive 128-134, tech 140-145; hard trance 148+ is a different, harder body). Straight 16ths: `"swing": 0.5`, `humanize_ms` 0-1 on the drums.
 - **Kick on every beat**, short and punchy (`clubkick`). Big reverbed kicks are for sparse moments only.
-- **Clap or snare on 2 and 4** (`clap`, `snare`), with a 0.5-1.5 s reverb tail.
+- **Clap or snare on 2 and 4** (`handclap`, `snare`), with a 0.5-1.5 s reverb tail. Level, layering and reverb: see "Claps in trance" below.
 - **Open hat on the offbeat 8ths** (`openhat`, `"..x...x...x...x."`), 16th closed hats or shakers for drive (`hat`). In builds, add 16th hats.
 - Keep percussion simple; strip the beat back where bass and lead are busy.
 
@@ -59,6 +59,11 @@ Changed from the previous setup: length 5:00-7:00 became 6:00-8:00; the tonal ta
 ## Mixing and loudness
 - **Kick and bass carve-up:** the offbeat placement is the first carve; the sidechain is the second. Keep everything below about 250 Hz narrow and the mids and highs wide.
 - Supersaws high-passed (about 200 Hz) and wide; long, cavernous reverbs on leads and pads; snare and clap tails 0.5-1.5 s. Delays at 138 bpm: quarter 435 ms, dotted 8th 326 ms (`"beats": 0.75`), 8th 217 ms. Don't overuse delay on cycling arps.
+- **Claps in trance** (researched 2026-11-24 after the owner heard session 007's clap as "someone knocking a piece of metal on wood", "way too loud"):
+  - *What a clap is:* several hands slightly out of time. One hand clap lasts about 5 ms and is coloured by the air cavity between the hands, a resonance at about 0.5-1.6 kHz with a 90-375 Hz bandwidth depending on how the hands meet (Repp 1987; Peltola et al. 2007, Table 1). The TR-808 makes its clap from band-passed noise through two envelopes: a sawtooth that retriggers to give several quick bursts, and a longer one its service notes call the clap's "reverberation" (Roland TR-808 service notes); emulations put the bursts about 11 ms apart (KVR). Engine: `handclap` (several hands, each with its own resonance and noise, a short room). It never rings: a ringing (narrow, long-decaying) resonance or a comb filter is what reads as metal or wood.
+  - *Level:* the kick is the loudest element and the clap or snare sits "a few dB below the kick drum level" (Loopmasters); a gain-staging guide starts kick and snare both peaking around -8 to -6 dBFS (Soundshock Audio). No measured survey of clap levels in trance was found, so this is engineer guidance. Spectre's practice since session 007 v029: **clap peaks about 6-9 dB under the kick's peaks** (`handclap` is spiky: its loudness sits 19-22 dB under its peak, so set it by the peak; check with the per-hit peaks, not with `stems_rms` alone). A clap peaking at the kick's level on 2 and 4 is the mix's crest spike and the first thing that reads as "too loud".
+  - *Layering:* house and trance producers stack a snappy snare, a short mono clap and a wider clap, each nudged a few milliseconds off the grid (MusicRadar); "several short hits slightly out of time" is the classic synthesized clap, and doubled real claps thicken it (Sound On Sound). In the engine `handclap` already stacks the hands (`clappers`, `spread_ms`); for a layer, add a `snare` track about 6 dB below the clap or a second `handclap` with `hands: "flat"` panned and with a different `seed`.
+  - *Reverb and EQ:* "a very gentle reverb ... for a sense of space" (Loopmasters); a bright ambience with about 60 ms pre-delay and a fast decay, or a short gated reverb; 1-2 kHz for snap (Sound On Sound); experimenting with reverb on the clap gives a track character (MusicRadar). In the engine: `room` in `handclap` for the short space, a reverb send of 0.2-0.3 for the 0.5-1.5 s trance tail, `hpf` 200-300 Hz. Don't saturate a clap to tame it: it turns the bursts into a click; lower it instead.
 - **Loudness:** charting dance/electronic masters average -8.3 LUFS integrated; streaming normalizes to about -14 (see Configuration). In Spectre: `studio.py master vNNN --genre trance` (-10 LUFS). Louder masters hit the true-peak guard and stop gaining loudness.
 
 ## The "vocal" role (instrumental)
@@ -81,7 +86,7 @@ Trance is mostly instrumental already. **The lead synth is the singer:** the sup
 | Role | Engine |
 |---|---|
 | Kick | `clubkick` (tune 48-55, tail 0.06-0.12) |
-| Clap, snare, hats, crash | `clap`, `snare`, `openhat` (offbeat), `hat` (16ths), `crash` / `kitcrash` at the drop |
+| Clap, snare, hats, crash | `handclap` (the old `clap` only for old sessions), `snare`, `openhat` (offbeat), `hat` (16ths), `crash` / `kitcrash` at the drop |
 | Offbeat or rolling bass | `trancebass` + stabs + `"voicing": "root"` + sidechain to the kick |
 | Lead, chords, plucks, pads | `supersaw` (stereo); chords with the `gate` fx; plucks with `sustain_level` 0 and `env` |
 | Breakdown | `pad`, `strings`, `choir`, `piano`, `vox` |
@@ -110,6 +115,7 @@ Researched 2026-11-24 under standing rule 8. The proposed configuration, the eng
 - Hold the hook back (80 bars in an extended mix) and keep the first drop in a smaller room; the release can then be one changed note.
 - True silence (`exit silence`) for the bar before a release; a breakdown that starts from almost nothing.
 - Clubkick around 56 Hz, narrow deep cut at 66 Hz, boost at 105 Hz; saturate the kick last. Watch the clap: layered with the kick on 2 and 4 it can be the crest spike.
+- The owner's verdict on the released v028 was "the song is really nice and promising but those claps destroy it". The ears missed it: the old `clap` with `"spread": 0.6` (seconds, not ms) was one 4 ms click plus a second click as loud as the hit 0.4-1.7 beats later, off the beat, turned up 10 dB and saturated. v029 replaced it with `handclap`, peaking 6.5-9 dB under the kick. Check a clap's solo and per-hit peaks, not only the overview.
 - Darken open hats (shelf from 9 kHz, low-pass at 12k) so groove-only stretches don't read as hiss on phones.
 
 ## Sources
@@ -127,3 +133,9 @@ Researched 2026-11-24 under standing rule 8. The proposed configuration, the eng
 - DJ Mag, Why trance works (Herremans, Solarstone, Helstrip, Solberg): https://djmag.com/longreads/why-trance-works
 - R. T. Solberg and N. Dibben (2019), "Peak experiences with electronic dance music", Music Perception 36(4): https://eprints.whiterose.ac.uk/id/eprint/145911/
 - Industry mastering research, tests and full source list: docs/proposals/mastering-trance-poprock.md
+- Claps: B. H. Repp (1987), "The sound of two hands clapping: An exploratory study", JASA 81(4), 1100-1109, doi:10.1121/1.394630
+- Claps: L. Peltola, C. Erkut, P. R. Cook, V. Välimäki (2007), "Synthesis of hand clapping sounds", IEEE TASLP 15(3); hand-configuration resonances (Table 1) as reproduced in Jylhä & Erkut, DAFx 2008: https://www.dafx.de/paper-archive/2008/papers/dafx08_52.pdf
+- Roland TR-808 service notes, hand clap generating cycle: https://www.manualslib.com/manual/1294765/Roland-Tr-808.html?page=6 ; KVR, Emulating the TR-909(808) clap: https://www.kvraudio.com/forum/viewtopic.php?p=8606994
+- Sound On Sound (2008), Q. How do you record handclaps?: https://www.soundonsound.com/sound-advice/q-how-do-you-record-handclaps
+- MusicRadar, Groove in a house beat with manually layered claps: https://www.musicradar.com/tuition/tech/how-to-add-groove-to-a-house-beat-with-manually-layered-claps-586199
+- Loopmasters, Mixing electronic music, a few guidelines: https://loopmasters.com/articles/2718-Mixing-Electronic-Music-A-Few-Quick-And-Easy-Guidelines ; Soundshock Audio, Gain staging for EDM: https://soundshockaudio.com/gain-staging-for-edm/
