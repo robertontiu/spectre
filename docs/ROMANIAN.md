@@ -103,6 +103,21 @@ Facts this confirms (see "The music" above): minor key, natural minor; range D4-
 "anthem_b":      {"bars": 10, "<track>": "0:G4:6 6:G5:2 8:G5:4 12:G5:4 16:G5:8 24:F5:4 28:F5:4 32:G5:6 38:F5:2 40:Eb5:2 42:D5:2 44:C5:4 48:F5:6 54:Eb5:2 56:D5:4 60:D5:4 64:G5:6 70:F5:2 72:Eb5:2 74:D5:2 76:C5:4 80:D5:4 84:Bb4:8 92:C5:4 96:D5:6 102:C5:2 104:Bb4:4 108:A4:4 112:G4:6 118:A4:2 120:Bb4:4 124:C5:4 128:D5:4 132:C5:2 134:Bb4:2 136:A4:4 140:Bb4:4 144:G4:12 156:G4:4"},
 "anthem_b_end":  {"bars": 10, "<track>": "0:G4:6 6:G5:2 8:G5:4 12:G5:4 16:G5:8 24:F5:4 28:F5:4 32:G5:6 38:F5:2 40:Eb5:2 42:D5:2 44:C5:4 48:F5:6 54:Eb5:2 56:D5:4 60:D5:4 64:G5:6 70:F5:2 72:Eb5:2 74:D5:2 76:C5:4 80:D5:4 84:Bb4:8 92:C5:4 96:D5:6 102:C5:2 104:Bb4:4 108:A4:4 112:G4:6 118:A4:2 120:Bb4:4 124:C5:4 128:D5:4 132:C5:2 134:Bb4:2 136:A4:4 140:Bb4:4 144:G4:12"}
 ```
+**Quote by phrase, not by bar.** Every text line begins on a quarter-note upbeat that sits in the *previous* bar (the note after `//` in the table). A fragment "bars x-y" therefore ends on the next line's first syllable, which sounds like a cut-off word (Session 011's intro first ended on a lone "bar-"). Use these phrase ranges of the engine blocks above; each runs from its own upbeat to its last syllable, so it can be quoted alone and ends where the line ends:
+
+| line | text | notes |
+|---|---|---|
+| a1 | Deșteaptă-te, române, din somnul cel de moarte | `anthem_pickup` + `anthem_a` steps 0-59 (ends on 56:D5 "te"; drop 60:D5 "În") |
+| a2 | În care te-adânciră | `anthem_a` steps 60-91 (60:D5 "În" ... 84:Bb4 "ră"; drop 92:C5 "bar-") |
+| a3 | barbarii de tirani | `anthem_a` steps 92-123 (92:C5 "bar-" ... 120:Bb4; drop 124:C5 "bar-") |
+| a4 | barbarii de tirani! | `anthem_a` steps 124-155 (124:C5 "bar-" ... 144:G4 "rani!"; drop 156:G4 "A-") |
+| b1 | Acum ori niciodată croiește-ți altă soarte | the upbeat (`anthem_a` 156:G4 "A-", or `anthem_b` 156 on the repeat) + `anthem_b` steps 0-59 (drop 60:D5 "La") |
+| b2 | La care să se-nchine | `anthem_b` steps 60-91 (drop 92:C5 "și") |
+| b3 | și cruzii tăi dușmani | `anthem_b` steps 92-123 (drop 124:C5 "și") |
+| b4 | și cruzii tăi dușmani! | `anthem_b` / `anthem_b_end` steps 124-155 (ends on 144:G4 "mani!") |
+
+A fragment may also stop *inside* a line (e.g. "Deș-teap-tă-te, ro-", for a deliberate break), but never on the next line's upbeat unless that dangling syllable is the point, and then say so in the journal.
+
 Fragments by bar (a fragment that starts on a downbeat starts at step 0; subtract 16 x (bar - 1) from the steps above): the opening "Deșteaptă-te, române" = pickup + a bars 1-2; the first climax = a bars 3-6; "Acum ori niciodată" = the bar 10 upbeat + b bars 11-13. Tiny check project and its render: `examples/anthem/` (`project.json`: piano, 104 bpm, pickup + a + b_end; `anthem-check.mp3`; the check scripts in `examples/anthem/check/`).
 
 **Sources and what each was used for**
