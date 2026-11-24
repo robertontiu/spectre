@@ -1,28 +1,128 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { fieldTone, fieldVars, oklabToRgb, paletteFrom, rgbToOklab, type Lab, type RGB } from "@/lib/color";
+import { fieldTone, fieldVars, oklabToRgb, paletteFrom, rgbToOklab, type Lab } from "@/lib/color";
 import { usePlayerStore } from "../player/player-context";
 import { FADE_MS } from "../player/player-store";
-import { BACK, FRONT, drawPlane, driftX, type View } from "./field-scene";
+import {
+  FieldRenderer,
+  MAX_SCALE,
+  epoch,
+  labAt,
+  type FieldColors,
+  type FieldMessage,
+  type FieldReport,
+} from "./field-renderer";
+import type { View } from "./field-scene";
 
-/** Frames per second of the drift (the motion is time-based, so it stays smooth). */
-const FPS = 30;
-/** Pixels in each low-resolution plane (about 200 x 125 on a laptop); the GPU scales it up. */
-const PLANE_AREA = 25000;
 /** A colour change under reduced motion: short, but not a cut. */
 const REDUCED_FADE_MS = 500;
 
-const ease = (x: number) => (x < 0.5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2);
 const fieldLab = (colors: readonly string[]): Lab[] => paletteFrom(colors).map((c) => rgbToOklab(fieldTone(c)));
+
+/** A running renderer for a pair of canvases: in a worker, or on the page. */
+type Connection = {
+  send: (m: FieldMessage) => void;
+  /** Called once messages can be sent (at once if they already can). */
+  onReady: (c: Connection) => void;
+  ready: boolean;
+  onReport: (r: FieldReport) => void;
+  dispose: () => void;
+};
+/**
+ * Connections outlive a component's effect by a tick, so a remount of the same canvases
+ * (React's development double effects) reuses one instead of transferring them twice.
+ */
+const connections = new WeakMap<
+  HTMLCanvasElement,
+  { connection: Connection; disposal?: ReturnType<typeof setTimeout> }
+>();
+
+/**
+ * Starts the renderer for two canvases: in a worker on OffscreenCanvases where the browser
+ * can (the page's main thread then does none of the drawing), otherwise on the page.
+ */
+function connect(back: HTMLCanvasElement, front: HTMLCanvasElement, probe: boolean): Connection {
+  const connection: Connection = {
+    send: () => {},
+    onReady: () => {},
+    ready: false,
+    onReport: () => {},
+    dispose: () => {},
+  };
+  const ready = () => {
+    connection.ready = true;
+    connection.onReady(connection);
+  };
+  const report = (r: FieldReport) => connection.onReport(r);
+  const onPage = () => {
+    const renderer = new FieldRenderer(back, front, performance.timeOrigin, !probe, report, probe);
+    connection.send = (m) => renderer.handle(m);
+    ready();
+  };
+  if (
+    typeof Worker === "undefined" ||
+    !("transferControlToOffscreen" in back) ||
+    typeof OffscreenCanvas === "undefined"
+  ) {
+    onPage();
+    return connection;
+  }
+  let worker: Worker | null = null;
+  let transferred = false;
+  const giveUp = () => {
+    worker?.terminate();
+    worker = null;
+    if (!transferred) onPage();
+  };
+  const timeout = setTimeout(giveUp, 3000);
+  try {
+    worker = new Worker(new URL("./field-worker.ts", import.meta.url), { type: "module" });
+  } catch {
+    clearTimeout(timeout);
+    onPage();
+    return connection;
+  }
+  worker.onerror = () => {
+    clearTimeout(timeout);
+    giveUp();
+  };
+  worker.onmessage = (e: MessageEvent<FieldReport>) => {
+    if (e.data.type !== "hello") return report(e.data);
+    clearTimeout(timeout);
+    if (!worker || transferred) return;
+    const b = back.transferControlToOffscreen();
+    const f = front.transferControlToOffscreen();
+    transferred = true;
+    const init: FieldMessage = {
+      type: "init",
+      back: b,
+      front: f,
+      origin: performance.timeOrigin,
+      adaptive: !probe,
+      probe,
+    };
+    worker.postMessage(init, [b, f]);
+    const w = worker;
+    connection.send = (m) => w.postMessage(m);
+    ready();
+  };
+  connection.dispose = () => {
+    clearTimeout(timeout);
+    worker?.terminate();
+  };
+  return connection;
+}
 
 /**
  * The soft half of the background: the mist and fog banks and the playing track's colour
- * field, drawn into two small canvases (under and over the apparition) that the GPU scales
- * up to the viewport. One rAF loop draws both at 30 fps, with time-based drift, and glides
- * the colours in OKLab when the track changes. Nothing in the DOM changes on a track change
- * or a tab switch, and the browser keeps two small textures instead of dozens of huge
- * animated layers (the cause of the flicker on track changes, refocus and on phones).
+ * field, composited into two canvases (under and over the apparition). Each layer is
+ * pre-rendered once, as its CSS gradient was, and every frame the layers are drawn with
+ * their keyframed drift and opacity, as the browser composited the CSS layers. One loop
+ * (FieldRenderer, in a worker where the browser can draw there) draws both planes at
+ * 30 fps, with time-based drift, and glides the colours in OKLab when the track changes. Nothing in the DOM changes on a track change or a tab switch, and the
+ * browser keeps two textures instead of dozens of huge animated layers (the cause of the
+ * flicker on track changes, refocus and on phones).
  *
  * Until the first frame is drawn (server render, hydration), CSS layers in the opening
  * track's colours stand in, frozen at the start of their drift; they are then removed.
@@ -41,36 +141,27 @@ export function AtmosphereField() {
     const front = frontRef.current;
     const atmos = back?.closest<HTMLElement>(".atmos");
     const banner = atmos?.querySelector<HTMLElement>(".atop");
-    const bctx = back?.getContext("2d");
-    const fctx = front?.getContext("2d");
-    const scratch = document.createElement("canvas").getContext("2d");
-    if (!back || !front || !atmos || !banner || !bctx || !fctx || !scratch) return;
+    if (!back || !front || !atmos || !banner) return;
 
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
-    let view: View | null = null;
-    let scale = 1;
-    let raf = 0;
-    let lastDraw = -Infinity;
+    const params = new URLSearchParams(location.search);
+    // Test hooks (?field-probe): freeze the drift, read costs; ?field-scale=: another resolution.
+    const probe = params.has("field-probe");
+    const maxScale = (probe && Number(params.get("field-scale"))) || MAX_SCALE;
     let stableW = 0;
     let stableH = 0;
+    let send: (m: FieldMessage) => void = () => {};
 
-    // Colours: a glide from `from` to `to` (OKLab) starting at `fadeStart`.
+    // Colours: a glide in OKLab, restarted from wherever it is on each track change.
     let current = store.getState().current;
-    let to = fieldLab(store.tracks[current]?.colors ?? []);
-    let from = to;
-    let fadeStart = -Infinity;
-    let fadeMs = FADE_MS;
-    const labAt = (now: number): Lab[] => {
-      const k = ease(Math.min(1, Math.max(0, (now - fadeStart) / fadeMs)));
-      return to.map((c, i) => c.map((v, j) => from[i][j] + (v - from[i][j]) * k) as Lab);
-    };
-    const fading = (now: number) => now - fadeStart < fadeMs;
+    const opening = fieldLab(store.tracks[current]?.colors ?? []);
+    let colors: FieldColors = { from: opening, to: opening, start: 0, ms: FADE_MS };
 
     /**
      * Measures the viewport. Its height only follows real changes (a new width, or more than
      * a phone's address bar), so the background never resizes while a phone scrolls.
      */
-    const measure = () => {
+    const viewMessage = (): FieldMessage => {
       const w = document.documentElement.clientWidth;
       // The first time, the CSS height (100lvh: the viewport with the address bar hidden).
       const h = Math.round(
@@ -81,108 +172,88 @@ export function AtmosphereField() {
         stableH = h;
         atmos.style.height = `${h}px`;
       }
-      const top = banner.offsetHeight;
-      view = {
+      const view: View = {
         w: stableW,
         h: stableH,
-        top,
+        top: banner.offsetHeight,
         vw: stableW,
         vh: stableH,
         vmin: Math.min(stableW, stableH),
         vmax: Math.max(stableW, stableH),
       };
-      scale = Math.sqrt(PLANE_AREA / (stableW * stableH));
-      const pw = Math.max(1, Math.round(stableW * scale));
-      const ph = Math.max(1, Math.round(stableH * scale));
-      for (const c of [back, front, scratch.canvas]) {
-        if (c.width !== pw || c.height !== ph) {
-          c.width = pw;
-          c.height = ph;
-        }
+      return { type: "view", view, maxScale };
+    };
+    const stateMessage = (): FieldMessage => ({ type: "state", hidden: document.hidden, reduced: reduced.matches });
+
+    const probeState = { cost: { frames: 0, ms: 0 }, drift: 0 };
+    const onReport = (r: FieldReport) => {
+      if (r.type === "drawn") setReady(true);
+      if (r.type === "cost") {
+        probeState.cost.frames = r.frames;
+        probeState.cost.ms = r.ms;
+        probeState.drift = r.drift;
       }
     };
-
-    let draw = (now: number) => {
-      if (!view) measure();
-      if (!view) return;
-      lastDraw = now;
-      const fields = labAt(now).map(oklabToRgb) as RGB[];
-      const t = reduced.matches ? null : now / 1000;
-      drawPlane(bctx, scratch, BACK, view, scale, fields, t);
-      drawPlane(fctx, scratch, FRONT, view, scale, fields, t);
+    const start = (c: Connection) => {
+      c.onReport = onReport;
+      send = c.send;
+      send(viewMessage());
+      send({ type: "colors", colors });
+      send(stateMessage());
     };
-
-    const loop = (now: number) => {
-      raf = 0;
-      if (document.hidden) return;
-      if (now - lastDraw >= 1000 / FPS - 4) draw(now);
-      if (!reduced.matches || fading(now)) raf = requestAnimationFrame(loop);
-    };
-    const start = () => {
-      if (!raf && !document.hidden) raf = requestAnimationFrame(loop);
-    };
-
-    // The first frame, synchronously, before the stand-in layers go.
-    measure();
-    draw(performance.now());
-    setReady(true);
-    start();
+    const held = connections.get(back);
+    if (held) clearTimeout(held.disposal);
+    const connection = held?.connection ?? connect(back, front, probe);
+    if (!held) connections.set(back, { connection });
+    connection.onReady = start;
+    if (connection.ready) start(connection);
 
     const onStore = () => {
       const next = store.getState().current;
       if (next === current) return;
       current = next;
-      const now = performance.now();
-      from = labAt(now);
-      to = fieldLab(store.tracks[next]?.colors ?? []);
-      fadeStart = now;
-      fadeMs = reduced.matches ? REDUCED_FADE_MS : FADE_MS;
-      start();
+      const now = epoch();
+      colors = {
+        from: labAt(colors, now),
+        to: fieldLab(store.tracks[next]?.colors ?? []),
+        start: now,
+        ms: reduced.matches ? REDUCED_FADE_MS : FADE_MS,
+      };
+      send({ type: "colors", colors });
     };
-    // Back from a hidden tab: draw the current state at once (the glide keeps its clock).
-    const onVisibility = () => {
-      if (document.hidden) return;
-      draw(performance.now());
-      start();
-    };
-    const onResize = () => {
-      measure();
-      draw(performance.now());
-      start();
-    };
+    const onState = () => send(stateMessage());
+    const onResize = () => send(viewMessage());
     const resize = new ResizeObserver(onResize);
     resize.observe(banner);
     window.addEventListener("resize", onResize);
     const unsubscribe = store.subscribe(onStore);
-    document.addEventListener("visibilitychange", onVisibility);
-    reduced.addEventListener("change", onResize);
+    document.addEventListener("visibilitychange", onState);
+    reduced.addEventListener("change", onState);
 
-    if (new URLSearchParams(location.search).has("field-probe")) {
-      // Test hook (?field-probe): the drift of the first mist bank as last drawn, and the colours.
-      let drawnAt = 0;
-      const cost = { frames: 0, ms: 0 };
-      const drawn = draw;
-      draw = (now: number) => {
-        drawnAt = now;
-        const t0 = performance.now();
-        drawn(now);
-        cost.frames++;
-        cost.ms += performance.now() - t0;
-      };
+    if (probe) {
       (window as unknown as { __spectreField?: unknown }).__spectreField = {
-        cost,
-        probe: () => (view ? driftX(view, drawnAt / 1000) : 0),
-        fields: () => labAt(performance.now()).map(oklabToRgb),
+        cost: probeState.cost,
+        /** Freezes the drift at `ms` (as a CSS animation's currentTime), or resumes with null. */
+        freeze: (ms: number | null) => send({ type: "freeze", ms }),
+        probe: () => probeState.drift,
+        fields: () => labAt(colors, epoch()).map(oklabToRgb),
       };
     }
 
     return () => {
-      cancelAnimationFrame(raf);
       resize.disconnect();
       window.removeEventListener("resize", onResize);
       unsubscribe();
-      document.removeEventListener("visibilitychange", onVisibility);
-      reduced.removeEventListener("change", onResize);
+      document.removeEventListener("visibilitychange", onState);
+      reduced.removeEventListener("change", onState);
+      connection.onReport = () => {};
+      connection.onReady = () => {};
+      const entry = connections.get(back);
+      if (entry)
+        entry.disposal = setTimeout(() => {
+          connections.delete(back);
+          connection.dispose();
+        });
     };
   }, [store]);
 

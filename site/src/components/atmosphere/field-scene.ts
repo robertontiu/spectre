@@ -2,7 +2,8 @@ import type { RGB } from "@/lib/color";
 
 /*
  * The soft layers of the background (the mist and fog banks and the track-coloured field),
- * described as data and drawn into a low-resolution canvas each frame. The geometry,
+ * described as data, pre-rendered once per layer and composited into a canvas each frame
+ * (see Plane). The geometry,
  * colours and drift mirror the CSS of the first-paint layers in atmosphere.css (which the
  * canvas replaces once it has drawn): same boxes, same radial gradients, same keyframes
  * and timing, so the two look the same.
@@ -392,135 +393,204 @@ function sample<K extends number[]>(tm: Timing<K>, t: number): K {
 
 /* ---- drawing ---- */
 
-const maskCache = new WeakMap<Layer, { key: string; canvas: HTMLCanvasElement }>();
-
 const css = (c: RGB, a: number) => `rgba(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])},${a})`;
+/** The most pixels one sprite may have; bigger layers are pre-rendered a little softer. */
+const SPRITE_BUDGET = 1_200_000;
+
+/** A 2D context on the page or in a worker. */
+export type Ctx2D = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
+type AnyCanvas = HTMLCanvasElement | OffscreenCanvas;
+
+/** A canvas for a sprite: an OffscreenCanvas where there is one (always in a worker). */
+const newCanvas = (w: number, h: number): AnyCanvas => {
+  if (typeof OffscreenCanvas !== "undefined") return new OffscreenCanvas(w, h);
+  const c = document.createElement("canvas");
+  c.width = w;
+  c.height = h;
+  return c;
+};
+
+type Sprite = {
+  canvas: AnyCanvas;
+  key: string;
+  /** Where the sprite sits, in region CSS px (before the layer's transform). */
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
+const usesField = (layer: Layer) => (layer.grads ?? []).some((g) => "f" in g.ink);
+
+/** Paints a layer's own background (its gradients, its mask) into `g`, in region CSS px. */
+function paintLayer(g: Ctx2D, layer: Layer, box: Box, view: View, r: Region, fields: readonly RGB[]) {
+  const [bx, by, bw, bh] = box;
+  for (const gr of layer.grads ?? []) {
+    const color = "f" in gr.ink ? fields[gr.ink.f] : gr.ink.rgb;
+    const ex = bx + gr.cx * bw;
+    const ey = by + gr.cy * bh;
+    const rx = gr.rx * bw;
+    const ry = gr.ry * bh;
+    if (rx <= 0 || ry <= 0) continue;
+    g.save();
+    g.translate(ex, ey);
+    g.scale(rx, ry);
+    const grad = g.createRadialGradient(0, 0, 0, 0, 0, gr.stop);
+    grad.addColorStop(0, css(color, gr.ink.a));
+    grad.addColorStop(1, css(color, 0));
+    g.fillStyle = grad;
+    // The part of the box the ellipse covers, in the ellipse's unit space.
+    const x0 = Math.max((bx - ex) / rx, -gr.stop);
+    const x1 = Math.min((bx + bw - ex) / rx, gr.stop);
+    const y0 = Math.max((by - ey) / ry, -gr.stop);
+    const y1 = Math.min((by + bh - ey) / ry, gr.stop);
+    if (x1 > x0 && y1 > y0) g.fillRect(x0, y0, x1 - x0, y1 - y0);
+    g.restore();
+  }
+  if (layer.linear) {
+    const stops = layer.linear(view, r);
+    const end = Math.max(bh, ...stops.map((s) => s[0]));
+    const grad = g.createLinearGradient(0, by, 0, by + end);
+    let last = 0;
+    for (const [pos, [cr, cg, cb, ca]] of stops) {
+      last = Math.max(last, Math.min(1, Math.max(0, pos / end)));
+      grad.addColorStop(last, `rgba(${cr},${cg},${cb},${ca})`);
+    }
+    g.fillStyle = grad;
+    g.fillRect(bx, by, bw, bh);
+  }
+  if (layer.mask) {
+    const stops = layer.mask(view, r);
+    const end = Math.max(bh, ...stops.map((s) => s[0]));
+    const grad = g.createLinearGradient(0, by, 0, by + end);
+    let last = 0;
+    for (const [pos, a] of stops) {
+      last = Math.max(last, Math.min(1, Math.max(0, pos / end)));
+      grad.addColorStop(last, `rgba(0,0,0,${a})`);
+    }
+    g.globalCompositeOperation = "destination-in";
+    g.fillStyle = grad;
+    g.fillRect(bx - view.w, by - view.h, bw + 2 * view.w, end + 2 * view.h);
+    g.globalCompositeOperation = "source-over";
+  }
+}
+
+/** The part of a layer's box its gradients actually cover (CSS px, region coordinates). */
+function extent(layer: Layer, box: Box): Box {
+  const [bx, by, bw, bh] = box;
+  if (layer.linear || layer.mask || !layer.grads) return box;
+  let x0 = Infinity;
+  let y0 = Infinity;
+  let x1 = -Infinity;
+  let y1 = -Infinity;
+  for (const gr of layer.grads) {
+    const ex = bx + gr.cx * bw;
+    const ey = by + gr.cy * bh;
+    x0 = Math.min(x0, ex - gr.rx * bw * gr.stop);
+    x1 = Math.max(x1, ex + gr.rx * bw * gr.stop);
+    y0 = Math.min(y0, ey - gr.ry * bh * gr.stop);
+    y1 = Math.max(y1, ey + gr.ry * bh * gr.stop);
+  }
+  x0 = Math.max(bx, Math.floor(x0) - 1);
+  y0 = Math.max(by, Math.floor(y0) - 1);
+  x1 = Math.min(bx + bw, Math.ceil(x1) + 1);
+  y1 = Math.min(by + bh, Math.ceil(y1) + 1);
+  return [x0, y0, Math.max(0, x1 - x0), Math.max(0, y1 - y0)];
+}
 
 /**
- * Draws one plane. `ctx` is the plane's canvas, `scale` its pixels per CSS px, `fields` the
- * three field tones, `t` the time in seconds (null: static, as under reduced motion),
- * `scratch` a canvas of the same size for masked layers.
+ * One plane of the field. Each layer is pre-rendered once into its own sprite, exactly as
+ * its CSS background (at `spriteRes` px per CSS px), and every frame the sprites are drawn
+ * with the layer's keyframed transform and opacity, in order, as the browser composited
+ * the CSS layers. Neutral sprites are re-rendered only on resize; track-coloured ones when
+ * the colours change.
  */
-export function drawPlane(
-  ctx: CanvasRenderingContext2D,
-  scratch: CanvasRenderingContext2D,
-  layers: Layer[],
-  view: View,
-  scale: number,
-  fields: readonly RGB[],
-  t: number | null,
-): void {
-  const W = ctx.canvas.width;
-  const H = ctx.canvas.height;
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.globalAlpha = 1;
-  ctx.clearRect(0, 0, W, H);
-  const regions = { top: { w: view.w, h: view.top }, bot: { w: view.w, h: Math.max(0, view.h - view.top) } };
+export class Plane {
+  private sprites = new Map<Layer, Sprite>();
 
-  for (const layer of layers) {
-    if (t === null && layer.motionOnly) continue;
-    const r = regions[layer.region];
-    const oy = layer.region === "top" ? 0 : view.top;
-    const [bx, by, bw, bh] = layer.box(view, r);
-    if (bw <= 0 || bh <= 0) continue;
-    let alpha = layer.opacity ?? 1;
-    if (t !== null && layer.fade) alpha *= sample(layer.fade, t)[1];
-    if (alpha <= 0.001) continue;
+  constructor(private readonly layers: Layer[]) {}
 
-    // Masked layers are static: drawn once per colour and size, then reused.
-    let cache: HTMLCanvasElement | undefined;
-    if (layer.mask) {
-      const key = `${W}x${H}:${view.top}:${fields.map((c) => c.map(Math.round).join()).join(";")}`;
-      const hit = maskCache.get(layer);
-      if (hit && hit.key === key) {
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.globalAlpha = alpha;
-        ctx.drawImage(hit.canvas, 0, 0);
-        continue;
-      }
-      cache = hit?.canvas ?? document.createElement("canvas");
-      cache.width = W;
-      cache.height = H;
-      maskCache.set(layer, { key, canvas: cache });
+  private sprite(
+    layer: Layer,
+    box: Box,
+    view: View,
+    r: Region,
+    fields: readonly RGB[],
+    fieldsKey: string,
+    res: number,
+  ) {
+    const key = `${view.w}x${view.h}:${view.top}:${res}:${usesField(layer) ? fieldsKey : ""}`;
+    let sp = this.sprites.get(layer);
+    if (sp && sp.key === key) return sp;
+    const [x, y, w, h] = extent(layer, box);
+    if (w <= 0 || h <= 0) return null;
+    const k = Math.min(res, Math.sqrt(SPRITE_BUDGET / (w * h)));
+    const cw = Math.max(1, Math.ceil(w * k));
+    const ch = Math.max(1, Math.ceil(h * k));
+    const canvas = sp?.canvas ?? newCanvas(cw, ch);
+    if (canvas.width !== cw || canvas.height !== ch) {
+      canvas.width = cw;
+      canvas.height = ch;
     }
-
-    const target = layer.mask ? scratch : ctx;
-    if (layer.mask) {
-      scratch.setTransform(1, 0, 0, 1, 0, 0);
-      scratch.globalCompositeOperation = "source-over";
-      scratch.globalAlpha = 1;
-      scratch.clearRect(0, 0, W, H);
-    }
-    // The element's transform, about its centre (transform-origin: 50% 50%).
-    target.setTransform(scale, 0, 0, scale, 0, scale * oy);
-    if (t !== null && layer.move) {
-      const [, tx, ty, rot, sx, sy] = sample(layer.move, t);
-      const cx = bx + bw / 2;
-      const cy = by + bh / 2;
-      target.translate(cx + (tx / 100) * view.vw, cy + (ty / 100) * view.vh);
-      target.rotate((rot * Math.PI) / 180);
-      target.scale(sx, sy);
-      target.translate(-cx, -cy);
-    }
-    target.globalAlpha = layer.mask ? 1 : alpha;
-
-    for (const gr of layer.grads ?? []) {
-      const color = "f" in gr.ink ? fields[gr.ink.f] : gr.ink.rgb;
-      const ex = bx + gr.cx * bw;
-      const ey = by + gr.cy * bh;
-      const rx = gr.rx * bw;
-      const ry = gr.ry * bh;
-      if (rx <= 0 || ry <= 0) continue;
-      target.save();
-      target.translate(ex, ey);
-      target.scale(rx, ry);
-      const grad = target.createRadialGradient(0, 0, 0, 0, 0, gr.stop);
-      grad.addColorStop(0, css(color, gr.ink.a));
-      grad.addColorStop(1, css(color, 0));
-      target.fillStyle = grad;
-      // The part of the box the ellipse covers, in the ellipse's unit space.
-      const x0 = Math.max((bx - ex) / rx, -gr.stop);
-      const x1 = Math.min((bx + bw - ex) / rx, gr.stop);
-      const y0 = Math.max((by - ey) / ry, -gr.stop);
-      const y1 = Math.min((by + bh - ey) / ry, gr.stop);
-      if (x1 > x0 && y1 > y0) target.fillRect(x0, y0, x1 - x0, y1 - y0);
-      target.restore();
-    }
-
-    if (layer.linear) {
-      const stops = layer.linear(view, r);
-      const end = Math.max(bh, ...stops.map((s) => s[0]));
-      const grad = target.createLinearGradient(0, by, 0, by + end);
-      let last = 0;
-      for (const [pos, [cr, cg, cb, ca]] of stops) {
-        last = Math.max(last, Math.min(1, Math.max(0, pos / end)));
-        grad.addColorStop(last, `rgba(${cr},${cg},${cb},${ca})`);
-      }
-      target.fillStyle = grad;
-      target.fillRect(bx, by, bw, bh);
-    }
-
-    if (layer.mask) {
-      const stops = layer.mask(view, r);
-      const end = Math.max(bh, ...stops.map((s) => s[0]));
-      const grad = scratch.createLinearGradient(0, by, 0, by + end);
-      let last = 0;
-      for (const [pos, a] of stops) {
-        last = Math.max(last, Math.min(1, Math.max(0, pos / end)));
-        grad.addColorStop(last, `rgba(0,0,0,${a})`);
-      }
-      scratch.setTransform(scale, 0, 0, scale, 0, scale * oy);
-      scratch.globalCompositeOperation = "destination-in";
-      scratch.fillStyle = grad;
-      scratch.fillRect(bx - view.w, by - view.h, bw + 2 * view.w, end + view.h);
-      scratch.globalCompositeOperation = "source-over";
-      cache?.getContext("2d")?.drawImage(scratch.canvas, 0, 0);
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.globalAlpha = alpha;
-      ctx.drawImage(scratch.canvas, 0, 0);
-    }
+    const g = canvas.getContext("2d") as Ctx2D | null;
+    if (!g) return null;
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    g.clearRect(0, 0, cw, ch);
+    g.setTransform(cw / w, 0, 0, ch / h, (-x * cw) / w, (-y * ch) / h);
+    paintLayer(g, layer, box, view, r, fields);
+    sp = { canvas, key, x, y, w, h };
+    this.sprites.set(layer, sp);
+    return sp;
   }
-  ctx.globalAlpha = 1;
+
+  /**
+   * Draws the plane into `ctx` (whose pixels are `scale` per CSS px). `fields` are the three
+   * field tones and `fieldsKey` identifies them; `t` is the time in seconds (null: static,
+   * as under reduced motion).
+   */
+  draw(
+    ctx: Ctx2D,
+    view: View,
+    scale: number,
+    spriteRes: number,
+    fields: readonly RGB[],
+    fieldsKey: string,
+    t: number | null,
+  ): void {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    const regions = { top: { w: view.w, h: view.top }, bot: { w: view.w, h: Math.max(0, view.h - view.top) } };
+
+    for (const layer of this.layers) {
+      if (t === null && layer.motionOnly) continue;
+      const r = regions[layer.region];
+      const box = layer.box(view, r);
+      const [bx, by, bw, bh] = box;
+      if (bw <= 0 || bh <= 0) continue;
+      let alpha = layer.opacity ?? 1;
+      if (t !== null && layer.fade) alpha *= sample(layer.fade, t)[1];
+      if (alpha <= 0.002) continue;
+      const sp = this.sprite(layer, box, view, r, fields, fieldsKey, spriteRes);
+      if (!sp) continue;
+
+      ctx.setTransform(scale, 0, 0, scale, 0, scale * (layer.region === "top" ? 0 : view.top));
+      if (t !== null && layer.move) {
+        // The element's transform, about its centre (transform-origin: 50% 50%).
+        const [, tx, ty, rot, sx, sy] = sample(layer.move, t);
+        const cx = bx + bw / 2;
+        const cy = by + bh / 2;
+        ctx.translate(cx + (tx / 100) * view.vw, cy + (ty / 100) * view.vh);
+        if (rot) ctx.rotate((rot * Math.PI) / 180);
+        ctx.scale(sx, sy);
+        ctx.translate(-cx, -cy);
+      }
+      ctx.globalAlpha = Math.min(1, alpha);
+      ctx.drawImage(sp.canvas, sp.x, sp.y, sp.w, sp.h);
+    }
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+  }
 }
 
 /** The horizontal drift (px) of the first mist bank at time `t` (s); a test probe for smooth motion. */

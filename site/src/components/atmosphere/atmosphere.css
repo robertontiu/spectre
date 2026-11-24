@@ -2,8 +2,8 @@
    (a canvas plane), the apparition, its harmonics and the motes (SVG, moved with transform
    and opacity only), then the soft layers over it (a second canvas plane).
 
-   The planes are drawn by <AtmosphereField> (field-scene.ts) at low resolution and scaled
-   up by the GPU. The .tint/.fg/.bf/.mist/.wisp/.blob/.sink/.rise rules below describe the
+   The planes are composited by <AtmosphereField> (field-scene.ts) from one pre-rendered
+   sprite per layer. The .tint/.fg/.bf/.mist/.wisp/.blob/.sink/.rise rules below describe the
    same layers in CSS: they are only the stand-in for the first paint, until the canvases
    have drawn, and field-scene.ts mirrors their geometry, colours and keyframes. */
 @layer components {
