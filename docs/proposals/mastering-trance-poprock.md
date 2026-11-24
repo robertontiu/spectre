@@ -106,7 +106,7 @@ n/m: not measured in that run. "Clipper shaves" is the drive-scaled input peak a
 - Elowsson & Friberg (2017), LTAS in popular music and its relation to the level of the percussion, AES 142: https://www.aes.org/e-lib/browse.cfm?elib=18638
 - Tamer (2021), Spectral and dynamic analyses of popular music playlists, JAES 69(5) (abstract only: steeper presence-band slope in current playlists): https://aes2.org/publications/elibrary-page/?id=21036
 - Mourgela, Quinton, Bissas, Ronan & Reiss (2024), Exploring trends in audio mixes and masters, AES 157: https://arxiv.org/pdf/2412.03373
-- Gerdes & Siedenburg (2023), Lead-vocal level in recordings of popular music 1946-2020, JASA Express Letters 3(4): https://doi.org/10.1121/10.0017773
+- Gerdes & Siedenburg (2023), Lead-vocal level in recordings of popular music 1946-2020, JASA Express Letters 3(4), 043201 (copy read: https://www.geidai.ac.jp/~marui/course_enshu_2024/gerdes_siedenburg_202304.pdf)
 - Spotify, Loudness normalization: https://support.spotify.com/artists/article/loudness-normalization/
 - Ian Shepherd, Spotify upload true peak: https://productionadvice.co.uk/spotify-upload-true-peak/
 - Hugh Robjohns, Sound On Sound, How loud should master tracks intended for streaming be (2019): https://www.soundonsound.com/sound-advice/q-how-loud-should-master-tracks-intended-streaming
