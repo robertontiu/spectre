@@ -44,12 +44,12 @@ export function ShareButton({ track }: { track: Track }) {
     <span className="share">
       <button
         type="button"
-        className="ib st"
+        className="share-btn"
         aria-label={`Share ${track.title}`}
-        title="Share"
         onClick={() => void share()}
       >
         <ShareIcon />
+        <span>Share</span>
       </button>
       <span className="toast" role="status" aria-live="polite" data-shown={toast ? "" : undefined}>
         {toast}
