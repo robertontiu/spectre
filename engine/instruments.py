@@ -1417,12 +1417,17 @@ def handclap(p, vel, ps=0.0):
     plus the skin slap (`bright` 0-1), a soft low body (`body` 0-1) and a short room (`room` 0-1, `decay` s =
     the tail's time constant, highs fade first). Every call draws new hands, timings and noise; it is a
     round-robin drum (`rr`, default 4), so repeated hits differ;
-    `seed` picks another set of hands. limit_db (6) tames the bursts' needle peaks with a lookahead limiter."""
+    `seed` picks another set of hands. limit_db (6) tames the bursts' needle peaks with a lookahead limiter.
+    `model` 2 (default) is fitted to recorded claps (see _handclap2); `model` 1 is the first version (session 007 v029)."""
     import json, zlib
-    pkey = json.dumps(p, sort_keys=True, default=str)
+    model = int(p.get("model", 2))
+    # `model` is left out of the key so {"model": 1} reproduces the hits rendered before model 2 existed
+    pkey = json.dumps({k: v for k, v in p.items() if k != "model"}, sort_keys=True, default=str)
     ck = (pkey, round(vel * 1000), round(ps * 100))
     c = _HC_CALLS[ck] = _HC_CALLS.get(ck, -1) + 1  # the c-th variant of this hit: new hands every call
     rng = np.random.default_rng([int(p.get("seed", 0)) & 0xFFFFFFFF, zlib.crc32(pkey.encode()), ck[1], ck[2] + 10000, c])
+    if model != 1:
+        return _handclap2(p, vel, ps, rng)
     k = 2 ** (ps / 12) * p.get("tone", 1.0)
     clappers = max(1, int(p.get("clappers", 4)))
     spread_ms = float(p.get("spread_ms", 9.0))
@@ -1482,5 +1487,77 @@ def handclap(p, vel, ps=0.0):
     return (x * vel ** 1.1).astype(np.float32)
 
 
+# Model 2 (default since 2026-11-24): fitted to recorded hand claps. Measured against real claps (four tight claps and
+# one looser group-like clap, 1/3-octave spectra and 5 ms envelopes; docs/TRANCE.md "Claps in trance"), model 1 decayed
+# 40 dB in ~19 ms where real claps take 70-115 ms (soloed it read as "a clock ticking"), was ~5 dB too bright at
+# 3-8 kHz and had almost no low body. Model 2 keeps the hands of model 1 (Peltola cavity resonances, a little narrower)
+# and adds what the recordings show: the hands bunch in the first ~20 ms with later ones quieter, a dense tail that
+# starts with the first hand and decays with a ~34 ms time constant at about -11 dB at 30 ms, a soft 100-400 Hz flesh
+# thump and a roll-off above ~10 kHz. Constants from a fit to the recordings' mean (_HC2).
+_HC2 = dict(tone=1.14, hand_tau=0.39, ring=2.5, res_g=1.36, slap=0.43, slap_lp=7000.0, body=2.2, body_lp=286.0,
+            body_tau=0.039, room=8.5, tail_att=0.007, tail_lo=258.0, tail_c=1788.0, tail_hi=1.0, lp_hz=11400.0,
+            hand_fall=0.022)
+
+
+def _handclap2(p, vel, ps, rng):
+    C = _HC2
+    k = 2 ** (ps / 12) * p.get("tone", 1.0) * C["tone"]
+    clappers = max(1, int(p.get("clappers", 4)))
+    spread_ms = float(p.get("spread_ms", 9.0))
+    if not 2.0 <= spread_ms <= 30.0:
+        _hc_warn(f"handclap: spread_ms={spread_ms:g} is outside 2-30 ms (the gap between hands); clamped")
+        spread_ms = float(np.clip(spread_ms, 2.0, 30.0))
+    hands = p.get("hands", "mixed")
+    modes = HC_HANDS.get(hands, HC_HANDS["mixed"]) if isinstance(hands, str) else tuple(hands)
+    bright = p.get("bright", 0.35)
+    body = p.get("body", 0.5)
+    room = p.get("room", 0.35)
+    decay = float(p.get("decay", 0.034))
+    if not 0.01 <= decay <= 0.4:
+        _hc_warn(f"handclap: decay={decay:g} s is outside 0.01-0.4 s (the room tail's time constant); clamped")
+        decay = float(np.clip(decay, 0.01, 0.4))
+    gaps = spread_ms / 1000 * rng.uniform(0.5, 1.5, clappers - 1)
+    onsets = np.concatenate([[0.0], np.cumsum(gaps)])
+    last = onsets[-1]
+    n = _n(last + 0.03 + decay * 7)
+    t = _t(n)
+    hands_x = np.zeros(n, dtype=np.float32)
+    nb = _n(0.02)
+    tb = _t(nb)
+    for i, t0 in enumerate(onsets):
+        f, df, bw, dbw, g = HC_MODES[modes[rng.integers(len(modes))]]
+        fc = max(350.0, rng.normal(f, df * 0.5)) * k
+        bwi = max(60.0, rng.normal(bw, dbw * 0.5)) * k / C["ring"]
+        tau = rng.uniform(0.0008, 0.0015) * C["hand_tau"]
+        env = np.minimum(tb / 0.0003, 1) * np.exp(-tb / tau)
+        e = rng.standard_normal(nb).astype(np.float32) * env.astype(np.float32)
+        res = _bp_res(e, fc, bwi) * np.sqrt(g / 24.0) * 2.2 * C["res_g"] * np.sqrt(C["ring"])
+        slap = lp(hp(e, 1500), C["slap_lp"]) * bright * C["slap"] * (0.55 + 0.55 * vel)
+        lvl = (rng.uniform(0.6, 1.0) if i else rng.uniform(0.8, 1.0)) * np.exp(-t0 / C["hand_fall"])
+        a = int(t0 * SR)
+        m = min(nb, n - a)
+        hands_x[a:a + m] += ((res + slap) * lvl)[:m]
+    act = hands_x[:int((last + 0.006) * SR) + 1]
+    hands_x /= np.sqrt(np.mean(act ** 2)) + 1e-9
+    x = hands_x * 0.45
+    if body > 0:  # the flesh thump: low noise under the hands
+        th = lp(rng.standard_normal(n).astype(np.float32), C["body_lp"]) * np.exp(-t / C["body_tau"]) * np.minimum(t / 0.001, 1)
+        x += th * body * C["body"] * 0.35
+    if room > 0:  # the dense tail: starts with the first hand, highs die first
+        nz = rng.standard_normal(n).astype(np.float32)
+        lo_b, hi_b = bp(nz, C["tail_lo"], C["tail_c"] * 1.7), bp(nz, C["tail_c"] * 1.7, 7000)
+        tr = 1 - np.exp(-np.maximum(t - 0.001, 0) / C["tail_att"])
+        dt = np.maximum(t - 0.002, 0)
+        tail = lo_b * np.exp(-dt / decay) + hi_b * C["tail_hi"] * np.exp(-dt / (decay * 0.5))
+        x += tail * tr * room * C["room"] * 0.22
+    x = lp(x, C["lp_hz"], 2)
+    x = _tame_peaks(x, float(np.clip(p.get("limit_db", 6.0), 0, 12)))
+    fo = min(_n(0.01), n)
+    x[-fo:] *= np.linspace(1, 0, fo, dtype=np.float32)
+    x = soft(x.astype(np.float32), p.get("drive", 0.0))
+    return (x * vel ** 1.1).astype(np.float32)
+
+
 DRUMS["handclap"] = handclap
 ROUND_ROBIN = ROUND_ROBIN | {"handclap"}
+
