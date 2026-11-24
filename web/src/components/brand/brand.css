@@ -1,0 +1,327 @@
+/* The tonal wraith badge and the smoky SPECTRE logotype, with its occasional
+   horror-film glitch (classes j1-j3 and haunt are toggled by Logotype). */
+@layer components {
+  .logo {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .badge {
+    display: block;
+    width: clamp(70px, 10vw, 126px);
+    height: auto;
+    margin: 0 auto calc(-1 * clamp(2px, 2vw, 26px));
+    overflow: visible;
+  }
+  .corona {
+    transform-origin: 60px 60px;
+    animation: corona 9s ease-in-out infinite alternate;
+  }
+  @keyframes corona {
+    0% {
+      opacity: 0.72;
+      transform: scale(0.97);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1.03);
+    }
+  }
+  .backl {
+    animation: backl 9s ease-in-out infinite alternate;
+  }
+  @keyframes backl {
+    0% {
+      opacity: 0.8;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  .glint {
+    animation: glint 7s ease-in-out infinite;
+  }
+  @keyframes glint {
+    0%,
+    100% {
+      opacity: 0.65;
+    }
+    45% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.35;
+    }
+    56% {
+      opacity: 0.9;
+    }
+  }
+  .fog {
+    animation: fogd 16s ease-in-out infinite alternate;
+  }
+  @keyframes fogd {
+    0% {
+      transform: translateX(-5px);
+    }
+    100% {
+      transform: translateX(5px);
+    }
+  }
+  .logo-wrap {
+    position: relative;
+    max-width: 960px;
+    margin: 0 auto;
+    opacity: 0.8;
+    will-change: transform;
+  }
+  .lgd,
+  .lgf,
+  .lgb,
+  .lgg,
+  .lgw {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+  }
+  .lgd {
+    will-change: opacity;
+  }
+  .lgw {
+    will-change: transform, opacity;
+    animation: wrise 11s ease-in-out infinite alternate;
+  }
+  @keyframes wrise {
+    0% {
+      opacity: 0.45;
+      transform: translateY(4px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(-8px);
+    }
+  }
+  .lgb,
+  .lgg {
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .logo-wrap.j1 {
+    animation: sh1 var(--gd, 0.4s) linear;
+  }
+  .logo-wrap.j2 {
+    animation: sh2 var(--gd, 0.4s) linear;
+  }
+  .logo-wrap.j3 {
+    animation: sh3 var(--gd, 0.4s) linear;
+  }
+  .j1 .lgb,
+  .j2 .lgb,
+  .j3 .lgb {
+    animation: blurin var(--gd, 0.4s) ease-out;
+  }
+  .j1 .lgd,
+  .j2 .lgd,
+  .j3 .lgd {
+    animation: sharpout var(--gd, 0.4s) ease-out;
+  }
+  .j1 .lgg,
+  .j3 .lgg {
+    animation: ghostR var(--gd, 0.4s) linear;
+  }
+  .j2 .lgg {
+    animation: ghostL var(--gd, 0.4s) linear;
+  }
+  .logo-wrap.haunt {
+    animation: hdrift 2.6s ease-in-out;
+  }
+  .haunt .lgb {
+    animation: blurin 2.6s ease-in-out;
+  }
+  .haunt .lgd {
+    animation: sharpout 2.6s ease-in-out;
+  }
+  .haunt .lgg {
+    animation: ghostslow 2.6s ease-in-out;
+  }
+  @keyframes sh1 {
+    0% {
+      transform: translate(2px, -1px) skewX(-1deg);
+    }
+    16% {
+      transform: translate(-3px, 1px) rotate(0.6deg);
+    }
+    33% {
+      transform: translate(1px, 2px) skewX(1.4deg);
+    }
+    52% {
+      transform: translate(-2px, -1px) rotate(-0.4deg);
+    }
+    74% {
+      transform: translate(3px, 0) skewX(-0.6deg);
+    }
+    100% {
+      transform: none;
+    }
+  }
+  @keyframes sh2 {
+    0% {
+      transform: translate(-2px, 1px) rotate(-0.5deg);
+    }
+    22% {
+      transform: translate(4px, -1px) skewX(1deg);
+    }
+    41% {
+      transform: translate(-1px, -2px);
+    }
+    63% {
+      transform: translate(2px, 1px) rotate(0.8deg) skewX(-1.2deg);
+    }
+    85% {
+      transform: translate(-1px, 0);
+    }
+    100% {
+      transform: none;
+    }
+  }
+  @keyframes sh3 {
+    0% {
+      transform: translate(0, 2px) skewX(1.6deg);
+    }
+    25% {
+      transform: translate(-4px, -1px) rotate(0.3deg);
+    }
+    45% {
+      transform: translate(3px, 1px) skewX(-1deg);
+    }
+    70% {
+      transform: translate(-1px, -1px) rotate(-0.7deg);
+    }
+    100% {
+      transform: none;
+    }
+  }
+  @keyframes blurin {
+    0% {
+      opacity: 0;
+    }
+    20% {
+      opacity: 0.95;
+    }
+    70% {
+      opacity: 0.7;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes sharpout {
+    0% {
+      opacity: 1;
+    }
+    20% {
+      opacity: 0.25;
+    }
+    70% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes ghostR {
+    0% {
+      opacity: 0;
+      transform: none;
+    }
+    25% {
+      opacity: 0.4;
+      transform: translateX(16px);
+    }
+    60% {
+      opacity: 0.28;
+      transform: translateX(-8px);
+    }
+    100% {
+      opacity: 0;
+      transform: none;
+    }
+  }
+  @keyframes ghostL {
+    0% {
+      opacity: 0;
+      transform: none;
+    }
+    25% {
+      opacity: 0.4;
+      transform: translateX(-16px);
+    }
+    60% {
+      opacity: 0.28;
+      transform: translateX(9px);
+    }
+    100% {
+      opacity: 0;
+      transform: none;
+    }
+  }
+  @keyframes ghostslow {
+    0% {
+      opacity: 0;
+      transform: none;
+    }
+    50% {
+      opacity: 0.22;
+      transform: translateX(22px);
+    }
+    100% {
+      opacity: 0;
+      transform: none;
+    }
+  }
+  @keyframes hdrift {
+    0% {
+      transform: none;
+    }
+    50% {
+      transform: translate(3px, -2px) skewX(-0.6deg);
+    }
+    100% {
+      transform: none;
+    }
+  }
+  .lgl {
+    will-change: opacity;
+    animation: backl 9s ease-in-out infinite alternate;
+  }
+  .lfog1 {
+    animation: lfog 18s ease-in-out infinite alternate;
+  }
+  .lfog2 {
+    animation: lfog 24s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes lfog {
+    0% {
+      transform: translateX(-40px);
+    }
+    100% {
+      transform: translateX(40px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .corona,
+    .backl,
+    .glint,
+    .fog,
+    .lgl,
+    .lfog1,
+    .lfog2,
+    .lgw,
+    .logo-wrap,
+    .lgb,
+    .lgd,
+    .lgg {
+      animation: none !important;
+    }
+  }
+}

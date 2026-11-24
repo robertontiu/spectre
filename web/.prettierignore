@@ -1,0 +1,7 @@
+.next
+out
+node_modules
+public
+data
+package-lock.json
+src/app/icon.svg

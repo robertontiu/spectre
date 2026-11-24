@@ -44,10 +44,11 @@ docs/
   LESSONS.md      what each session taught us; read before changing the agent prompt or engine
 prompts/
   producer.md     the producer agent prompt template (persona, brief, studio, stages, loop, finish)
-site/             the Spectre showcase page (static; deploys to Vercel); tracks/tracks.json lists the tracks
+web/              the production site (Next.js; Vercel, spectre.robertontiu.com); data/tracks.json is the canonical track list
+site/             the showcase prototype published as an artifact; tracks/tracks.json is generated from web/data/tracks.json
 player/           "Spectre Amp", the retro player artifact
 tools/
-  sync_tracks.py  copies each session's mastered MP3 into site/tracks and player/tracks
+  sync_tracks.py  writes site/tracks/tracks.json from web/data/tracks.json and copies each session's mastered MP3 into site/, player/ and web/public/tracks
 sessions/
   NNN-name/       one folder per session: project.json, journal.md, mastered mp3, ear and master images,
                   README.md with the result

@@ -1,0 +1,499 @@
+/* The player card: visualizer, transport, equalizer and playlist. Layout lives in
+   Tailwind classes on the components; this file holds what utilities can't say well
+   (pseudo-elements, range-input parts, pressed states, the track-coloured gradients). */
+@layer components {
+  .player {
+    position: relative;
+    max-width: 860px;
+    margin: calc(-1 * var(--lift)) auto 0;
+    padding: 18px clamp(16px, 3vw, 28px) 40px;
+    border-radius: 24px 24px 0 0;
+    background: linear-gradient(
+      180deg,
+      rgba(var(--card), 0.9) 0,
+      rgba(var(--card), 0.88) 42%,
+      rgba(var(--card), 0.6) 76%,
+      rgba(var(--card), 0) 100%
+    );
+  }
+  .player::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid rgba(190, 230, 255, 0.14);
+    border-top-color: rgba(210, 245, 255, 0.3);
+    border-bottom: 0;
+    pointer-events: none;
+    -webkit-mask: linear-gradient(#000 30%, transparent 80%);
+    mask: linear-gradient(#000 30%, transparent 80%);
+  }
+  .edge {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(215, 248, 255, 0.85), transparent);
+    box-shadow: 0 0 22px 3px rgba(140, 215, 255, 0.28);
+    pointer-events: none;
+  }
+  .player::after {
+    content: "";
+    position: absolute;
+    left: 3%;
+    right: 3%;
+    top: -38px;
+    height: 76px;
+    z-index: -1;
+    background: radial-gradient(50% 50% at 50% 100%, rgba(0, 0, 0, 0.6), transparent);
+    pointer-events: none;
+  }
+  .viz {
+    position: relative;
+    height: clamp(150px, 24vw, 220px);
+    border-radius: 16px;
+    overflow: hidden;
+    background: radial-gradient(120% 90% at 50% 100%, color-mix(in srgb, var(--c3) 45%, #0b0d12), #0b0d12 70%);
+  }
+  .viz canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 36px;
+    margin: 0;
+    background: transparent;
+    cursor: pointer;
+    --p: 0%;
+  }
+  .range::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 4px;
+    background:
+      linear-gradient(90deg, var(--c2), var(--c2)) 0 / var(--p) 100% no-repeat,
+      rgba(255, 255, 255, 0.16);
+  }
+  .range::-moz-range-track {
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.16);
+  }
+  .range::-moz-range-progress {
+    height: 4px;
+    border-radius: 4px;
+    background: var(--c2);
+  }
+  .range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    margin-top: -5px;
+    border-radius: 50%;
+    background: #fff;
+    border: 0;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--c2) 35%, transparent);
+  }
+  .range::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    border: 0;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--c2) 35%, transparent);
+  }
+  .ib {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    /* The browser's default button padding; it sets how far the mute button gives way
+       to the volume slider in a narrow row. */
+    padding: 1px 6px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    color: #d5dde2;
+    transition:
+      background 0.15s,
+      color 0.15s;
+  }
+  .ib:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+  .ib svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+  .ib.st svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .ib[aria-pressed="true"] {
+    color: var(--c2);
+  }
+  .ib[aria-pressed="true"]::after {
+    content: "";
+    position: absolute;
+    bottom: 5px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .ib .one {
+    position: absolute;
+    top: 7px;
+    right: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    display: none;
+  }
+  .ib.r1 .one {
+    display: block;
+  }
+  .play {
+    width: 62px;
+    height: 62px;
+    color: #0b0d12;
+    background: linear-gradient(140deg, #fff, color-mix(in srgb, var(--c2) 30%, #fff));
+    box-shadow: 0 6px 24px color-mix(in srgb, var(--c1) 30%, transparent);
+  }
+  .play:hover {
+    background: #fff;
+    color: #000;
+  }
+  .play svg {
+    width: 28px;
+    height: 28px;
+  }
+  .ib .x {
+    display: none;
+  }
+  .ib.muted .x {
+    display: inline;
+  }
+  .ib.muted .w {
+    display: none;
+  }
+  .sw {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 12px 0 6px;
+    border: 0;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .sw i {
+    width: 34px;
+    height: 20px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.18);
+    position: relative;
+    transition: background 0.2s;
+  }
+  .sw i::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s;
+  }
+  .sw[aria-pressed="true"] i {
+    background: var(--c1);
+  }
+  .sw[aria-pressed="true"] i::after {
+    transform: translateX(14px);
+  }
+  .select {
+    min-height: 44px;
+    padding: 0 36px 0 14px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.06)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23cfd8dc' stroke-width='1.8'/%3E%3C/svg%3E")
+      right 14px center no-repeat;
+    -webkit-appearance: none;
+    appearance: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .select option {
+    background: #151821;
+    color: #eef3f5;
+  }
+  .bands {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(11, minmax(0, 1fr));
+    gap: 2px;
+    padding: 0 2px;
+  }
+  .bands canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .bd {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .bd output {
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    font-size: 13px;
+    height: 18px;
+  }
+  .bd.pre {
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .sl {
+    position: relative;
+    width: 100%;
+    max-width: 44px;
+    height: 112px;
+    cursor: ns-resize;
+    touch-action: none;
+    border-radius: 8px;
+  }
+  .sl::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 5px;
+    bottom: 5px;
+    width: 2px;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 2px;
+  }
+  .sl::after {
+    content: "";
+    position: absolute;
+    left: 30%;
+    right: 30%;
+    top: 50%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.22);
+  }
+  .sl .f {
+    position: absolute;
+    left: 50%;
+    width: 4px;
+    transform: translateX(-50%);
+    border-radius: 2px;
+    top: calc(50% + var(--fill-top) * (100% - 10px));
+    height: calc(var(--fill-height) * (100% - 10px));
+    background: linear-gradient(var(--c2), var(--c1));
+  }
+  .sl .k {
+    position: absolute;
+    left: 50%;
+    width: 20px;
+    height: 10px;
+    margin-left: -10px;
+    top: calc((1 - var(--u)) * (100% - 10px));
+    border-radius: 5px;
+    background: #fff;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  }
+  .bands.off .f {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  .bands.off .k {
+    background: #8b949b;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0 16px;
+    width: 100%;
+    min-height: 60px;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.045);
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.25s;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  }
+  .row:hover {
+    background: rgba(255, 255, 255, 0.09);
+  }
+  .row .t {
+    font-weight: 600;
+    font-size: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .row .d {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    font-size: 15px;
+  }
+  .row .b {
+    grid-column: 1;
+    font-size: 13px;
+    color: #c3ccd2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .row[aria-current="true"] {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--c1) 48%, transparent),
+      color-mix(in srgb, var(--c2) 24%, transparent)
+    );
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c2) 34%, transparent);
+  }
+  .row[aria-current="true"] .b {
+    color: #fff;
+  }
+
+  @media (max-width: 600px) {
+    .player {
+      border-radius: 20px 20px 0 0;
+      padding-inline: 16px;
+    }
+    .sl {
+      height: 96px;
+    }
+    .bd span {
+      font-size: 13px;
+      letter-spacing: -0.02em;
+    }
+  }
+  @media (max-width: 380px) {
+    .bands {
+      gap: 0;
+      padding: 0;
+    }
+  }
+}
+
+/* Share button beside the title: a 36px icon button that keeps the title's line height
+   (negative margins), with a 44px hit area, and its toast. */
+@layer components {
+  .share {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+  }
+  .share .ib {
+    width: 36px;
+    height: 36px;
+    margin-block: -6px;
+    color: var(--mute);
+  }
+  .share .ib::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+  }
+  .share .ib svg {
+    width: 19px;
+    height: 19px;
+  }
+  .toast {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 10px);
+    padding: 5px 11px;
+    border-radius: 14px;
+    background: rgba(13, 17, 28, 0.92);
+    border: 1px solid rgba(190, 230, 255, 0.22);
+    box-shadow: 0 0 14px rgba(140, 215, 255, 0.12);
+    color: var(--ice);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, 4px);
+    transition:
+      opacity 0.2s,
+      transform 0.2s;
+  }
+  .toast[data-shown] {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* Autoplay was blocked: the play button glows and asks for a tap. */
+  .play.nudge {
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--c2) 45%, transparent),
+      0 6px 24px color-mix(in srgb, var(--c1) 30%, transparent);
+  }
+  .play.nudge::before {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid color-mix(in srgb, var(--c2) 70%, #fff);
+    animation: nudge 1.8s ease-out infinite;
+    pointer-events: none;
+  }
+  @keyframes nudge {
+    0% {
+      opacity: 0.9;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.45);
+    }
+  }
+  .nudge-tip {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 10px);
+    transform: translateX(-50%);
+    padding: 5px 11px;
+    border-radius: 14px;
+    background: rgba(13, 17, 28, 0.92);
+    border: 1px solid rgba(190, 230, 255, 0.22);
+    color: var(--ice);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .play.nudge::before {
+      animation: none;
+      opacity: 0.6;
+    }
+  }
+}

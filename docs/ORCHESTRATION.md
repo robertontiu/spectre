@@ -30,7 +30,7 @@ These were set by Robert (the repo owner) and apply until he changes them:
 2. **Send** the track (named after its title) and `journal.md` to Robert.
 3. **Tidy the session folder:** rename final.mp3 to `<title-slug>-mastered.mp3`; copy `renders/vNNN.master.png` to `master-tonal-balance.png` and the report to `master-report.json`; save the overview ear as `ear-overview.png`; remove `__pycache__`; write `README.md` (table, arrangement, how it carries the feeling, files, Spectre's note; see earlier sessions).
 4. **Repo docs:** add the row to the README results table, the session entry to `docs/LESSONS.md` and update "Across genres"; fix or document any engine quirks the producer reported (smoke-test fixes).
-5. **Players:** add the track to `site/tracks/tracks.json` (newest first; `id`, `artist: "Spectre"`, `title`, `src: "tracks/NNN-slug.mp3"`, `duration` from ffprobe, `bpm`, `style`, `feeling`, 2-3 `colors` that fit the track; the page mutes them automatically) and to the `TRACKS` array in `player/index.html` (newest first). Run `python3 tools/sync_tracks.py` to copy the masters into `site/tracks/` and `player/tracks/`. Republish both artifacts (patch mode, only changed files).
+5. **Players:** add the track to `web/data/tracks.json`, the canonical list (newest first; `id`, `artist: "Spectre"`, `title`, `src: "tracks/NNN-slug.mp3"`, `duration` from ffprobe, `bpm`, `genre` (short, e.g. "Latvian folk trap"), `style`, `feeling`, 2-3 `colors` that fit the track; the page mutes them automatically) and to the `TRACKS` array in `player/index.html` (newest first). Run `python3 tools/sync_tracks.py`: it writes `site/tracks/tracks.json` from the canonical list and copies the masters into `site/tracks/`, `player/tracks/` and `web/public/tracks/`. Republish both artifacts (patch mode, only changed files); the Next.js site picks the track up on its next build.
 6. **Commit and push** (end commit messages with the session's attribution lines).
 
 ## The players (artifacts)
@@ -38,8 +38,8 @@ These were set by Robert (the repo owner) and apply until he changes them:
 |---|---|---|
 | Source in repo | `site/` (index.html + tracks/tracks.json; MP3s synced) | `player/` (index.html; MP3s synced) |
 | Artifact | https://claude.ai/artifact/WU59t858PSxAaKSPU2Jtd8 (slug `eea0a992-1ac0-4ab9-a9cf-3922163cfff3`), private, pinned use: review | https://claude.ai/artifact/Joe5i9QxTSnyTqB3KaYtyN (slug `902e6c38-a14c-4ed1-9cfa-3829d0108b99`), **public**, pinned |
-| Track list | `site/tracks/tracks.json`, fetched by the page | `TRACKS` array inside index.html |
-| Next phase | deploy to Vercel at spectre.robertontiu.com (site/ is a static site with relative paths; run the sync script first) | none planned |
+| Track list | `site/tracks/tracks.json` (generated from `web/data/tracks.json`), fetched by the page | `TRACKS` array inside index.html |
+| Next phase | the production site is the Next.js port in `web/` (see web/README.md), to deploy on Vercel at spectre.robertontiu.com with Root Directory `web` and "Include files outside the root directory" on; `site/` stays as the artifact prototype | none planned |
 
 Publishing: `publish_files` with the artifact slug, `base_version` from `get_artifact`, `mode: "patch"`, files as `index.html`, `tracks/tracks.json`, `tracks/<name>.mp3`. Always publish from the repo copies, then keep them as the source of truth.
 

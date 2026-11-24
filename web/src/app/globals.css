@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/* VOICE a producer's front page, hushed above, loud below
+   IDEA a ghost made of sound: Spectre can't hear, it sees spectrograms, so its "body" is a stack of glowing harmonics in haze
+   PICTURE a veiled apparition in moonlit mist and SPECTRE as dark letters carved out by a cold backlight, under a matching wraith badge;
+           below, a blurred field mixed from the playing track's colours
+   COLOUR a fixed night world: near-black blue #05070d, pale spectral cyan-white, violet and green-grey mist; the track colours lead below
+   TYPE the logotype is drawn SVG; Syne for titles, Manrope for everything else */
+
+@custom-variant phone (@media (max-width: 600px));
+
+@theme inline {
+  --font-sans: var(--font-manrope), var(--font-manrope-ext), system-ui, sans-serif;
+  --font-display: var(--font-syne), var(--font-syne-ext), system-ui, sans-serif;
+  --color-ink: var(--ink);
+  --color-mute: var(--mute);
+  --color-ice: var(--ice);
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #05070d;
+  --ink: #eef3f5;
+  --mute: #a9b3ba;
+  --ice: #dff3f5;
+  --haze: #7fd3d6;
+  --card: 13, 17, 28;
+  /* The track palette (--c1..3 accents, --f1..3 fields) is set per element: on the
+     player card, and on each slot of the background crossfade. */
+  /* How far the player card rises over the banner. */
+  --lift: clamp(70px, 12svh, 140px);
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    min-width: 0;
+  }
+  html {
+    background: var(--bg);
+  }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: transparent;
+    color: var(--ink);
+    font: 16px/1.55 var(--font-sans);
+    overflow-x: hidden;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+  }
+  button,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+  a {
+    color: var(--ice);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ice);
+    outline-offset: 2px;
+  }
+}
