@@ -75,7 +75,40 @@ Every pattern below is written from the sources above; velocities and the exact 
 ## Voices (standing rule 14: voices are instruments)
 - **The engine sings Spanish** with `hanami-es` (warm, clear) and `hanami-es-soft` (soft, airy: the intimate one), measured at 96% Whisper word accuracy (docs/voice/VOICES.md "Spanish"; docs/voice/languages/es.md for writing Spanish lyrics: syllables, stress on strong beats, sinalefa). Female only. Credit line: the `hanami` credit from engine/voices.json. LEONA can't sing Spanish.
 - **What a voice may do here:** a refrain fragment (three to six words), a call that the requinto answers, a word held under the guitar, a wordless "ah" doubling the requinto in the mambo; never verses. Bachata and bolero are sung genres, so the voice can matter, but it stays an instrument.
-- **Mix:** close and dry-ish (a bolero voice is close to the microphone; the reverb behind a 60 ms pre-delay), the svs chain in docs/MANUAL.md "Voices".
+- **Mix:** close, with a small, late reverb: see "Mixing the voice" below.
+
+## Mixing the voice (researched 2026-11-24)
+The principles for every genre, the choir research and the check procedure are in [docs/voice/MIXING.md](voice/MIXING.md); this section is what changes for an intimate Latin voice. Values marked *(hand-tuned)* are Spectre's starting points. No engineer's account of a bachata or bolero vocal mix with settings was found (searched in English and Spanish); the sources below are a Latin pop hit, a ballad mix and a crooner session, plus measured vocal levels for pop.
+
+**What the research says**
+- **The voice comes first and everything is balanced around it.** Humberto Gatica (Bublé; he also mixes Latin ballad singers) starts by getting the vocal right and then sets rhythm, horns and strings around it, compresses it only "a little bit" and rides the dynamics by hand; the space is real chambers and a digital room, not a wash ([Sound On Sound](https://www.soundonsound.com/techniques/inside-track-michael-buble-youre-nobody-till-somebody-loves-you)). Natalia Lafourcade's bolero set moves from "soft, almost whispered bolero songs" to full arrangements, with a band she wants "organic" ([Mix, 2018](https://www.mixonline.com/?p=3738)).
+- **Measured level:** in chart pop the lead vocal sits about 2.7 dB over the accompaniment on average, and solo artists 3.5 dB higher than bands; country, the most text-led genre measured, 3.9 dB ([Gerdes & Siedenburg 2023](https://www.geidai.ac.jp/~marui/course_enshu_2024/gerdes_siedenburg_202304.pdf); A-weighted levels after source separation, 1990-2020). No Latin genre was measured; a sung bolero or bachata is a solo voice over a small band, the high end of that range.
+- **A Latin pop lead chain with numbers** (the Despacito remix vocal bus, Josh Gudwin): a channel compressor at ratio 3 and threshold -12, EQ of about +2 dB at 4.5 kHz and -3 dB at 250 Hz, an optical leveller after it, a second compressor at about 2:1, a de-esser working at 7 and 14 kHz, a plate (EMT 140) on a send, quarter- and 8th-note delay throws on single words only, and a widened copy of the whole vocal 20 dB down ([Tingen](https://tingen.org/making-of-bieber-despacito-remix/)).
+- **A ballad's space with numbers** (Mike Senior's mix of a ballad): a long soft hall of 3.5 s behind a 50 ms pre-delay with its lows rolled off from 200 Hz, a plate confined to 1-5 kHz behind 16 ms, an ambience under 100 ms to lock the voice into the band, a quarter-note delay on phrase ends, all sends de-essed, 4 dB of low-mid shelving cut from about 450 Hz, and detailed level automation for "lyric intelligibility" ([Sound On Sound, Mix Rescue](https://www.soundonsound.com/techniques/mix-rescue-jay-menon)). The long hall works there because it is quiet, late and filtered; the voice itself stays close.
+- **Mastering:** bachata since 2010 sits about -9.7 LUFS and boleros about -13 (catalogue below). At `latinpop`'s -11 the limiter is light; the voice changes through the master's tonal EQ, which shares 2-8 kHz with the requinto and the güira and cannot move one without the others. Mid-range crowding is the genre's known mastering problem (Sage Audio, in Configuration). Fix a masked voice in the mix (requinto register, güira level), never by asking the master for presence.
+
+**The engine, measured:** `mix.reverb` `size` 0.35 decays in 0.9 s, 0.45 in about 1.05 s, 0.5 in 1.15 s, 0.6 in 1.4 s, 0.75 in 2.1 s. One reverb bus, one delay bus, no de-esser.
+
+**Starting chain: a sung fragment over requinto, guitar and bongó** (*hand-tuned*, built from the two documented chains above and the blend study in MANUAL "Voices"):
+```json
+"mix": {"reverb": {"size": 0.55, "damping": 0.6, "return_db": -7, "lpf": 6500},
+        "delay":  {"beats": 1, "feedback": 0.25, "return_db": -10, "lpf": 3500}},
+"voz": {"inst": {"type": "singer", "source": "svs", "voice": "hanami-es", "inhale": 0.3,
+                 "svs_fade_in_ms": 30, "svs_fade_out_ms": 120},
+        "send_reverb": 0.14, "reverb_predelay_ms": 50, "send_delay": 0.0,
+        "fx": [{"type": "hpf", "hz": 100}, {"type": "eq", "hz": 250, "gain_db": -2, "q": 0.8},
+               {"type": "eq", "hz": 800, "gain_db": -2, "q": 0.9}, {"type": "eq", "hz": 4500, "gain_db": 2, "q": 0.8},
+               {"type": "comp", "threshold_db": -22, "ratio": 3}, {"type": "highshelf", "hz": 8000, "gain_db": 3},
+               {"type": "gain", "db": 6}]}
+```
+- **Close, not dry:** `send_reverb` 0.10-0.18 behind a 40-60 ms pre-delay; bolero and ballad may take a longer, quieter space (`size` 0.75, send 0.10-0.14, pre-delay 60-80) and bachata a shorter one (`size` 0.45-0.55). The quarter-note delay only on the last word of a phrase: put that word on a second track with `send_delay` 0.4-0.6 and no dry level change, or leave the delay out.
+- **Voice:** `hanami-es` for words over a bachata band (the requinto and güira are bright); `hanami-es-soft` for a bolero or a bare guitar, where its dark, airy tone (tilt about 11 dB darker than the root voice) is the intimacy. Under a full band the soft voice needs the 4.5 kHz bell at 3-4 dB and still loses consonants: prefer changing the arrangement under it.
+- **Level:** 1-3 LU over the band under it *(hand-tuned from the pop figure; the fragment is the lead while it sounds)*; the requinto answers in the gaps instead of playing through the words, which is the genre's own call-and-response and the cheapest unmasking there is.
+- **Doubles and width:** none on the lead fragment, or `double` 0.1-0.15 with `double_pan` 0.7 for a chorus word (the documented double sat 20 dB down). Centre. A wordless "ah" doubling the requinto is a texture: `hanami-es-soft`, `svs_vibrato` 0.5, send 0.25, 4-6 LU under.
+- **Compression:** one stage at 3:1 is the documented centre; the engine's `comp` eats level, so end the chain with `gain`.
+- **Spanish and the mix:** the five vowels are steady and carry well; b, d and g between vowels are soft by rule (languages/es.md) and are the first sounds a reverb or a guitar hides, and a word split across two patterns or entered through a filter loses its first consonant. Keep each sung word inside one phrase with a rest before it.
+
+**How to check:** Whisper `small` (multilingual) forced to Spanish on the bars with words, on the mix and on the voice alone, as `examples/vocals/svs/spanish.py` does for dry lines (procedure in MIXING.md "Checking a voice"); the vocal-versus-band loudness from a render with `voz` muted. The dry voice reads 96%: if the mix reads much lower and the voice alone still reads, it is masking or space, not pronunciation.
 
 ## Nearest wrong feelings
 - **A club reggaetón banger:** full dembow kit, 808 pressure, perreo energy, a drop. The letter has a pulse, not a dancefloor.
