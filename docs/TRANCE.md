@@ -88,6 +88,24 @@ Trance is mostly instrumental already. **The lead synth is the singer:** the sup
 | Build | snare roll pattern, `"exit": {"riser": 8, "rise": 16}`, `auto` `hpf` sweep, `"cut": {"tracks": "all", "beats": 1}` |
 | Master | `--genre trance` |
 
+## Mastering (industry practice)
+Researched 2026-11-24 under standing rule 8. The proposed configuration, the engine tests and every source are in [docs/proposals/mastering-trance-poprock.md](proposals/mastering-trance-poprock.md). **Measured** means a published measurement; **opinion** means engineer or platform guidance. No trance-only loudness or spectrum survey was found: the measured numbers are for dance/electronic charts and hits in general.
+
+**Measured**
+- **Loudness:** the 10 top Hot Dance/Electronic songs (2025) averaged -8.3 LUFS integrated (range -11.3 to -6.2), with short-term max averaging -6.1 (up to -4.5) and LRA 3.5-13.8 LU (average 6.6). True peaks reached up to +1.5 dBTP; "Beautiful People" has a PLR of 7.5 dB ([iZotope 2025](https://www.izotope.com/en/learn/dance-electronic-analysis)). Global top-10 hits (H1 2024) averaged -8.3 ±1 LUFS, short-term max -6 ±1, with 80% peaking at or above 0 dBTP ([iZotope 2024](https://www.izotope.com/en/learn/mastering-trends)). In 100 Beatport tracks from top labels, true peaks ran from +0.01 to +5.5 dBTP ([Dance Music NW 2018](https://www.dancemusicnw.com/electronic-music-mastering-lufs-and-true-peak-explained/), the author's own measurement). Hits since 2010 average a PLR of 9.3 dB ([Țînț & Drăgulin 2025](https://webbut.unitbv.ro/index.php/Series_VIII/article/view/11335)).
+- **Normalization:** Spotify turns everything down to -14 LUFS. It raises quieter tracks only as far as 1 dB of true-peak headroom allows. In "Loud" mode (-11) it applies its own limiter ([Spotify](https://support.spotify.com/artists/article/loudness-normalization/)). An iZotope author estimates that about 85% of casual listeners have normalization on. So mastering at -9 instead of -8.3 costs **nothing** on normalized streaming: both are turned down. It matters only where nothing normalizes (DJ decks, SoundCloud, downloads), and there it is a 0.7 dB difference.
+- **Tonal balance:** "electronic" has an "unmistakeable" extended low end and is among the brightest genres (Pestana et al. 2013). Spectra over the decades got flatter, with more extended lows and a lower bass resonance. Mixgraph rates trance "brightness" as high (34 tracks, unitless). More percussion means relatively more bass and treble (Elowsson & Friberg 2017). No numeric modern trance spectrum is published (iZotope's targets exist only as plugin presets).
+- **Width:** 2024 hits averaged -8.5 LU side minus mid (middle half -10.9 to -6). Pop is widest. There is no trance figure.
+
+**Opinion (engineers, platforms)**
+- Club masters run about -7 to -6 LUFS short-term at the drop (Dance Music NW, Toolroom and Dirtybird references). For melodic techno, about -7 LUFS integrated. Spread clipping over stages of at most 1-2 dB each, with transparent limiting in breakdowns and harder limiting in drops. Keep kick, sub and bass in phase and mono-compatible, focus the low end at 50-120 Hz, and check in mono because club subs are mono ([Nihil Young, NI](https://blog.native-instruments.com/mastering-with-nihil-young/)).
+- True peak: keep under -1 dBTP, or -2 dBTP for masters louder than -14 LUFS (Spotify). Robjohns sees an argument for -3 dBTP with lossy codecs ([Sound On Sound 2019](https://www.soundonsound.com/sound-advice/q-how-loud-should-master-tracks-intended-streaming)). Loud masters show true peaks of +1 to +2 dBTP and clip in encoders ([Ian Shepherd](https://productionadvice.co.uk/spotify-upload-true-peak/)).
+- Genre habits: the kick-and-offbeat-bass carve and the sidechain pump leave low-end room and are preserved by mastering, not added there. Buzzy supersaws mask some distortion, so trance tolerates limiting better than sparse music (iZotope 2025, on "Forever Young"). Center the bass and widen the top ([Sound On Sound 2001](https://www.soundonsound.com/techniques/increasing-loudness-dance-music-production)).
+
+**For Spectre (proposal; genres.json not yet changed)**
+- `--lufs -9` (lands about -9.3). Use -8.5 only when the mix controls the kick's peaks. Keep `--tp -1`, mono below 120 Hz, and aim width at -9 to -6 LU. Tested on `examples/trance-test.json`: the engine's true-peak guard is not the limit, the soft clipper is. Today's -10 already shaves 6.8 dB off clubkick peaks, -9 shaves 8.0 dB, and -8.5 shaves 8.7 dB (PLR 7.7). A 320 kbps MP3 stays under -0.5 dBTP. **Producers:** clip or saturate the kick or drum bus in the mix so the master doesn't have to.
+- Proposed curve `trance_modern` = the measured `trance` with era offsets: +2 dB at 31.5-50 Hz, +1.5 at 63 Hz, +1 at 10 kHz, +2 at 12.5 kHz, +3.5 at 16 kHz. These are estimates (±2-4 dB), pending measurement of owned reference tracks.
+
 ## Sources
 - Uplifting trance (Wikipedia): https://en.wikipedia.org/wiki/Uplifting_trance
 - Roland JP-8000 and the supersaw (Wikipedia): https://en.wikipedia.org/wiki/Roland_JP-8000 ; A. Szabo (2010), "How to Emulate the Super Saw" (detune offsets used in `supersaw`)
@@ -102,3 +120,4 @@ Trance is mostly instrumental already. **The lead synth is the singer:** the sup
 - MusicRadar, How to use rhythmic sidechain gates: https://www.musicradar.com/tuition/tech/how-to-use-rhythmic-sidechain-gates-588195
 - DJ Mag, Why trance works (Herremans, Solarstone, Helstrip, Solberg): https://djmag.com/longreads/why-trance-works
 - R. T. Solberg and N. Dibben (2019), "Peak experiences with electronic dance music", Music Perception 36(4): https://eprints.whiterose.ac.uk/id/eprint/145911/
+- Industry mastering research, tests and full source list: docs/proposals/mastering-trance-poprock.md

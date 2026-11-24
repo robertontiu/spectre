@@ -80,6 +80,24 @@ A pop rock song without a singer still needs **the sung melody**. Carry it with 
 | Lead "voice" | `vox` (`voice`, `vowel`, `vowel2`, `vibrato`, `glide_ms`) and/or a lead `eguitar` line |
 | Master | `--genre rock` |
 
+## Mastering (industry practice)
+Researched 2026-11-24 under standing rule 8. The proposed configuration, the engine tests and every source are in [docs/proposals/mastering-trance-poprock.md](proposals/mastering-trance-poprock.md). **Measured** means a published measurement; **opinion** means engineer or platform guidance.
+
+**Measured**
+- **Loudness:** nine Hot Rock & Alternative songs (July 2025) averaged -8.1 LUFS integrated (range -11.9 "Wildflower" to -5.1 "Back To Friends"). Short-term max averaged -5.3 (max -3.3), true peaks ran -0.45 to +1.11 dBTP, and LRA 4.1-17 LU (most 4-6) ([iZotope 2025](https://www.izotope.com/en/learn/rock-alternative-analysis)). Global top-10 hits (H1 2024) averaged -8.3 ±1 LUFS, with LRA mostly 3.7-6.8 LU ([iZotope 2024](https://www.izotope.com/en/learn/mastering-trends)). The top 15 Spotify songs of 2025 had a short-term max of about -7 to -3.3 and LRA 3.7-10.4 LU ([Mastering The Mix](https://www.masteringthemix.com/blogs/learn/mastering-trends-for-2026)). PLR: 12.6 dB in 1990, 9.3 in 2010 and 2020 ([Țînț & Drăgulin 2025](https://webbut.unitbv.ro/index.php/Series_VIII/article/view/11335)).
+- **Normalization:** Spotify turns louder masters down to -14 LUFS and raises quieter ones only within 1 dB of true-peak headroom ([Spotify](https://support.spotify.com/artists/article/loudness-normalization/)). A -10 master is therefore not quieter on normalized streaming, only less dense. Loudness numbers now describe density more than playback level (iZotope 2025).
+- **Tonal balance:** the 2020 Billboard set had the most low and low-mid energy of 1990-2020, subdued high mids, and the least high end (Țînț & Drăgulin, iZotope Tonal Balance Control, no dB values). Pop and rock in Pestana et al. (2013) pool 1950-2010 #1s. Digital-era masters extend to about 20 kHz, while 1980s masters had nothing above 16 kHz ([iZotope decades](https://www.izotope.com/en/learn/comparing-tonal-balance-in-popular-music)). One modern-chart note: "Stargazing" dips about 4.5 kHz to tame saturation brashness (iZotope 2025). The lead vocal sits about 0.2 dB above the accompaniment in rock, against 2.7 dB in pop (1990-2020 Grammy nominees; Gerdes & Siedenburg 2023, JASA EL): rock buries the voice in the band.
+- **Width:** 2024 hits averaged -8.5 LU side minus mid, with alternative in the middle of the genres (iZotope 2024). There is no rock number. "Messy" modulates width between verses and choruses.
+
+**Opinion (engineers, platforms)**
+- Keep short-term loudness at or under about -9 LUFS at the loudest moments for dense guitar music. Many releases push to -6 or louder and are then turned down 5-6 dB. Share the work between compressor and limiter. Add bite at 2-5 kHz only gently (mid channel), stop before guitar upper mids get painful, and use side-channel low-mid lift for hard-panned guitars ([Ian Shepherd for iZotope](https://izotope.com/en/learn/how-to-master-metal.html)).
+- Ride sections by fractions of a dB (Greg Calbi: about +0.4 dB in the choruses of "Too Sweet"). Watch for "dynamic inversions", where limiting makes verses louder than choruses. Density, grit and saturation are accepted in current alt-rock masters ("Back To Friends" borders on distortion) (iZotope 2025).
+- True peak: under -1 dBTP, or -2 dBTP above -14 LUFS (Spotify). Robjohns argues for -3 dBTP with lossy codecs (Sound On Sound 2019).
+
+**For Spectre (proposal; genres.json not yet changed)**
+- `--lufs -8.5`. Keep `--tp -1`, mono below 120 Hz, and aim width at -11 to -7 LU. Tested on `examples/poprock-test.json`: it lands at -8.5 LUFS and -1.04 dBTP, with PLR 7.5 and LRA 4.0 (unchanged from -10, so the verse-to-chorus contrast survives). The clipper shaves 5 dB of drum peaks (1.1% of samples), limiter reduction is 0.8 dB, and the true-peak guard is not needed. A 320 kbps MP3 peaks at -0.79 dBTP. -8 is possible (PLR 7.0).
+- Proposed curve `rock_modern` = the measured `rock` with era offsets: +2 to +2.5 dB at 31.5-50 Hz, +1.5 at 63 Hz, +1 at 8 kHz, +1.5 at 10 kHz, +2.5 at 12.5 kHz, +4 at 16 kHz. These are estimates (±2-4 dB), pending measurement of owned modern pop-rock references.
+
 ## Sources
 - MusicRadar, Anatomy of an arrangement (song sections): https://www.musicradar.com/how-to/song-sections-explained-intro-verse-chorus-middle8-outro-tag-bridge
 - Mastering The Mix, How to mix big, punchy rock drums: https://www.masteringthemix.com/blogs/learn/how-to-mix-big-punchy-rock-drums
@@ -93,3 +111,4 @@ A pop rock song without a singer still needs **the sung melody**. Carry it with 
 - Pestana et al. (2013), spectral characteristics of commercial recordings (the rock target curve; see docs/MASTERING.md): https://www.aes.org/e-lib/browse.cfm?elib=17010
 - Songtell, "Fix You" (Coldplay): https://songtell.com/coldplay/fix-you
 - IBTimes, Hayley Williams on how mental health struggles shaped "Last Hope": https://www.ibtimes.co.uk/ive-wanted-not-here-hayley-williams-reveals-how-mental-health-struggles-shaped-last-hope-1759886
+- Industry mastering research, tests and full source list: docs/proposals/mastering-trance-poprock.md
