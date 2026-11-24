@@ -137,8 +137,59 @@ def analyze(text, voice, speed):
     off = np.where(r_db > r_db.max() - 38)[0]
     a, b = (max(on[0] - 1, 0), min(off[-1] + 2, n)) if len(on) else (0, n)
     e_db = 10 * np.log10(sp[:, (freqs > 250) & (freqs < 4000)].mean(1) + 1e-20)
+    # the spoken decay after the trim (down to 60 dB under the peak, at most 300 ms): kept apart, so segmentation
+    # doesn't see it, and played as the natural release when the word ends before a rest
+    lo = np.where(r_db > r_db.max() - 60)[0]
+    b2 = min(max(b, (lo[-1] + 1) if len(lo) else b), b + 60, n)
+    decay = dict(f0=f0[b:b2], sp=sp[b:b2], ap=ap[b:b2], e=e_db[b:b2], r=r_db[b:b2], v=v_db[b:b2])
     return dict(f0=f0[a:b], sp=sp[a:b], ap=ap[a:b], e=e_db[a:b], r=r_db[a:b], v=v_db[a:b], sr=SR, freqs=freqs,
-                text=text)
+                text=text, decay=decay)
+
+
+_KEYS = ("f0", "sp", "ap", "e", "r", "v")
+
+
+def release(w, start, last, fade_ms=None):
+    """Frames for a syllable's release into a rest, starting at analysis frame `start`. When the syllable is the
+    last of its spoken word or phrase (`last`), the release follows the speech itself: the rest of the word after
+    the coda (an open vowel's falling tail) and then the spoken decay that the analysis trimmed; it ends with a
+    30 ms fade (60 ms when there is no spoken decay, after a voiced stop's release). Otherwise (a syllable inside a phrase, followed by a rest) the last frame is held and faded out over
+    about 100 ms. The fade is in power on the envelope, ending 45 dB down. Cached on the analysis."""
+    key = (start, bool(last), fade_ms)
+    cache = w.setdefault("_rel", {})
+    if key in cache:
+        return cache[key]
+    parts = {k: [] for k in _KEYS}
+    n = len(w["f0"])
+    if last:
+        for k in _KEYS:
+            parts[k].append(w[k][start:n])
+        dec = w.get("decay")
+        if dec is not None and len(dec["f0"]):
+            for k in _KEYS:
+                parts[k].append(dec[k])
+        dec_ok = dec is not None and len(dec["f0"]) > 0
+        fm = (30.0 if dec_ok else 60.0) if fade_ms is None else fade_ms  # no spoken decay (a stop's release): longer
+    else:
+        fm = 100.0 if fade_ms is None else fade_ms
+    have = sum(len(x) for x in parts["f0"])
+    if have:
+        base = {k: np.concatenate(parts[k])[-1] for k in _KEYS}
+    else:
+        i = min(max(start - 1, 0), n - 1)
+        base = {k: w[k][i] for k in _KEYS}
+    K = max(2, int(round(fm / FP)))
+    g = 10 ** (-45 / 10 * (np.arange(1, K + 1) / K))  # power ramp to -45 dB
+    parts["f0"].append(np.full(K, base["f0"]))
+    parts["sp"].append(base["sp"][None, :] * g[:, None])
+    parts["ap"].append(np.repeat(base["ap"][None, :], K, 0))
+    for k in ("e", "r", "v"):
+        parts[k].append(base[k] + 10 * np.log10(g))
+    out = {k: np.concatenate(parts[k]) for k in _KEYS}
+    out["freqs"] = w["freqs"]
+    out["sr"] = w["sr"]
+    cache[key] = out
+    return out
 
 
 def _split(w, n_syl):
@@ -216,12 +267,12 @@ _VOICED_STOPS = set("dbɡg")
 _VOICED_FRIC = set("zvðʒ")
 
 
-def _voiced_coda(sy, fin, closure_ms=15, release_ms=20, release_db=-9.0):
+def _voiced_coda(sy, fin, closure_ms=25, release_ms=20, release_db=-9.0):
     """Keep a word-final voiced consonant voiced. The TTS ends 'round', 'and', 'ride' with a long (about 90 ms)
     aspirated release burst, louder than the /n/ before it, that WORLD marks aperiodic; resynthesized on a sung note
     it reads as 't' ('rount and rount'). For a final voiced stop (d, b, g) the coda becomes: the nasal or vowel as
     spoken, a short voiced closure (a 'voice bar': the last voiced frame's envelope, low-passed and 15-25 dB down,
-    with the pitch carried through), then the first 20 ms of the release only, 9 dB softer and partly voiced. A final
+    with the pitch carried through, reached over 25 ms), then the first 20 ms of the release only, 9 dB softer and partly voiced. A final
     voiced fricative (z, v, the 'th' of 'with') keeps its frication but gets voicing below 1 kHz. Returns a new
     syllable (the analysis is copied, never changed in place); 'tail' frames are played at natural speed."""
     if not fin:
@@ -256,7 +307,10 @@ def _voiced_coda(sy, fin, closure_ms=15, release_ms=20, release_db=-9.0):
         bar = np.where(fr < 500, 10 ** (-15 / 10), 10 ** (-25 / 10))  # power: low-passed voice bar
         new = {k: [w[k][:cl]] for k in keys}
         new["f0"].append(np.full(nc, f_carry))
-        new["sp"].append(np.repeat((w["sp"][base] * bar)[None, :], nc, 0))
+        # the voicing fades into the closure (a power ramp from the nasal or vowel down to the voice bar) instead of
+        # switching to it: an instant 25 dB drop reads as a cut
+        u = (np.arange(1, nc + 1) / nc)[:, None]
+        new["sp"].append(w["sp"][base][None, :] * bar[None, :] ** u)
         new["ap"].append(np.repeat(np.minimum(w["ap"][base], 0.3)[None, :], nc, 0))
         for k in ("e", "r", "v"):
             new[k].append(np.full(nc, w[k][base] - 15))
@@ -274,6 +328,8 @@ def _voiced_coda(sy, fin, closure_ms=15, release_ms=20, release_db=-9.0):
         for k in keys:
             w2[k] = np.concatenate(new[k])
         w2.pop("micro", None)
+        w2.pop("_rel", None)
+        w2["decay"] = None
         out = dict(sy, w=w2, co=(c0, cl + nc + n_rel), tail=nc + n_rel)
         return out
     # voiced fricative: carry the pitch through and give it a voiced low band, keep the frication above it
@@ -281,6 +337,7 @@ def _voiced_coda(sy, fin, closure_ms=15, release_ms=20, release_db=-9.0):
     w2["f0"] = w["f0"].copy()
     w2["ap"] = w["ap"].copy()
     w2.pop("micro", None)
+    w2.pop("_rel", None)
     idx = np.arange(rel, c1)
     w2["f0"][idx] = f_carry
     lowb = fr < 1000
@@ -302,14 +359,14 @@ def syllables(word, n_syl, p):
             on, nu, co = _parts(w, a, b)
             out.append(dict(w=w, on=on, nu=nu, co=co))
         fin = final_consonants(text, "en-gb" if voice[:1] == "b" else "en-us")
-        out[-1] = _voiced_coda(_cap_coda(out[-1], fin), fin)
+        out[-1] = dict(_voiced_coda(_cap_coda(out[-1], fin), fin), last=True)
         return out
     print(f"warning: singer: couldn't find {len(pieces)} syllables in the spoken '{text}'; speaking them one by one",
           file=sys.stderr)
     for s in pieces:
         ws = analyze(s, voice, speed)
         on, nu, co = _parts(ws, 0, len(ws["f0"]))
-        out.append(dict(w=ws, on=on, nu=nu, co=co))
+        out.append(dict(w=ws, on=on, nu=nu, co=co, last=True))
     return out
 
 
@@ -398,5 +455,5 @@ def phrase_syllables(words, p):
         on, nu, co = _parts(w, a, b)
         out.append(dict(w=w, on=on, nu=nu, co=co))
     fin = final_consonants("".join(pieces[-1]), "en-gb" if voice[:1] == "b" else "en-us")
-    out[-1] = _voiced_coda(_cap_coda(out[-1], fin), fin)
+    out[-1] = dict(_voiced_coda(_cap_coda(out[-1], fin), fin), last=True)
     return out

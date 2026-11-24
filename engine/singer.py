@@ -197,7 +197,7 @@ VOICES = {  # name -> (eSpeak NG voice, formant shift semitones); Klatt variants
 }
 
 
-def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False):
+def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False, extra=None):
     """Build the output frame plan: per frame a source (analysis, frame index) or silence, plus a target pitch."""
     voice_name = p.get("espeak", VOICES.get(p.get("voice", "female"), VOICES["female"])[0])
     speed = p.get("speed", 140)
@@ -247,6 +247,7 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False):
     sid = np.full(nF, -1)  # syllable index per frame (for the per-syllable level)
     vowel = np.zeros(nF, dtype=bool)  # vowel (nucleus) frames
     lead_ms = p.get("pitch_lead_ms")  # None: the pitch moves where the onset consonant starts (see below)
+    recs = []  # `tts`: per syllable, where it ends and starts (for releases and attacks)
     for gi, g in enumerate(groups):
         s = g["syl"]
         ns = g["notes"]
@@ -312,9 +313,68 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False):
                     src_w[f], src_i[f] = s["w"], co[0] + (n_co - 1) * j / max(C - 1, 1) if n_co else nu[1] - 1
                 cons[f] = n_co > 0
                 sid[f] = gi
+        if extra is not None:
+            recs.append(dict(gi=gi, w=s["w"], co1=co[1] if n_co else nu[1], last=bool(s.get("last")),
+                             end_f=int(round(t0)) + L + C, first_f=int(round(t0 - n_on)), n_on=n_on,
+                             voiced_on=bool((s["w"]["f0"][on[0]:on[0] + 3] > 0).all()),
+                             vel=ns[-1]["vel"]))
+    if extra is not None:
+        extra["gain"] = _edges(p, recs, src_w, src_i, sid, vel, nF)
     if with_ids:
         return src_w, src_i, tgt, vel, start, fresh, groups, cons, sid, vowel
     return src_w, src_i, tgt, vel, start, fresh, groups, cons
+
+
+def _edges(p, recs, src_w, src_i, sid, vel, nF):
+    """`tts`: no hard edges. Every syllable followed by silence releases into it (`tts_words.release`: the spoken
+    tail and decay when it ends its word or phrase, else a ~100 ms fade of its last frame), for up to `release_ms`
+    (200), only into frames nothing else uses; if the next onset or the limit cuts it short, it fades out over
+    `cutfade_ms` (40). A short gap between two syllables of one phrase (under `phrase_gap_s`) is bridged instead:
+    the frame where they meet in the spoken phrase is held at full level. Every syllable that starts after silence
+    gets an attack ramp: `attack_ms` (12) on an unvoiced consonant onset, `attack_ms_vowel` (40) when it starts
+    voiced (a vowel, or l, r, m, n, w, y).
+    Returns a per-frame level multiplier."""
+    import tts_words
+    rg = np.ones(nF)
+    rel_max = int(float(p.get("release_ms", 200)) / FP)
+    cut = int(float(p.get("cutfade_ms", 40)) / FP)
+    gap = int(float(p.get("phrase_gap_s", 0.3)) * 1000 / FP)
+    for r in recs:
+        f = r["end_f"]
+        if not (0 <= f < nF) or src_w[f] is not None or rel_max <= 0:
+            continue
+        run = 0
+        while f + run < nF and src_w[f + run] is None and run <= gap:
+            run += 1
+        if not r["last"] and f + run < nF and src_w[f + run] is not None and run < gap:
+            # a short gap inside a phrase (between two notes, not a rest): bridge it by holding the frame where this
+            # syllable meets the next one in the spoken phrase, at full level: no fade, no attack, no stitch
+            j = max(r["co1"] - 1, 0)
+            for k in range(run):
+                src_w[f + k], src_i[f + k] = r["w"], j
+                sid[f + k] = r["gi"]
+                vel[f + k] = r["vel"]
+            continue
+        wr = tts_words.release(r["w"], r["co1"], r["last"])
+        n = len(wr["f0"])
+        k = 0
+        while k < min(rel_max, n) and f + k < nF and src_w[f + k] is None:
+            src_w[f + k], src_i[f + k] = wr, k
+            sid[f + k] = r["gi"]
+            vel[f + k] = r["vel"]
+            k += 1
+        if k < n:  # cut short: fade out (equal-power curve)
+            m = min(k, cut)
+            if m:
+                rg[f + k - m:f + k] *= np.cos(np.linspace(0, np.pi / 2, m + 1)[1:]) ** 2
+    for r in recs:
+        fs = r["first_f"]
+        if not (0 < fs < nF) or not (src_w[fs - 1] is None or rg[fs - 1] < 0.1):
+            continue
+        A = max(1, int(round(float(p.get("attack_ms_vowel", 40) if r["voiced_on"] else p.get("attack_ms", 12)) / FP)))
+        m = min(A, nF - fs)
+        rg[fs:fs + m] *= np.sin(np.linspace(0, np.pi / 2, A + 1)[1:m + 1]) ** 2
+    return rg
 
 
 def _phrase_syllables(p, groups):
@@ -518,8 +578,10 @@ def _interp_frames(src_w, src_i, nbins_out, fs_out, shift, coartic_ms=0.0):
 def _take(p, notes, total_n, seed, time_jit_ms=0.0, detune_cents=0.0):
     import pyworld as pw
     rng = np.random.default_rng(seed)
+    ex = {} if p.get("source") == "tts" else None
     src_w, src_i, tgt, vel, start, fresh, groups, cons, sid, vowel = _plan(p, notes, total_n, rng,
-                                                                           time_jit=time_jit_ms / FP, with_ids=True)
+                                                                           time_jit=time_jit_ms / FP, with_ids=True,
+                                                                           extra=ex)
     f0 = _pitch_curve(p, tgt, start, fresh, rng, detune_cents)
     fft = pw.get_cheaptrick_fft_size(SR)
     mode = p.get("source", "breathy")
@@ -557,6 +619,8 @@ def _take(p, notes, total_n, seed, time_jit_ms=0.0, detune_cents=0.0):
         gain = np.where(sm > 0, np.sqrt(ref / np.maximum(sm, ref * 1e-3)), 1.0)
         gain = np.clip(gain, 0.3, 3.0)
     lvl = gain * np.where(live, 1.0, 0.0) * np.maximum(vel, 0.0)
+    if ex is not None:
+        lvl = lvl * ex["gain"]
     lvl = lvl * np.where(cons, 10 ** (12 * (float(p.get("diction", 0.5)) - 0.5) / 20), 1.0)  # +-6 dB consonants
     lvl = np.convolve(lvl, np.ones(4) / 4, mode="same")
     breath = float(p.get("breath", 0.3))
@@ -631,11 +695,12 @@ TTS_DEFAULTS = {  # `source: "tts"`: sung, not tuned (the first defaults, which 
     "tune": 0.3, "retune_ms": 120, "portamento_ms": 80, "overshoot": 0.08, "scoop": 0.35, "scoop_some": 0.35,
     "vibrato": 0.28, "vib_delay": 0.3, "vib_late": 0.35, "vib_min_s": 0.45, "vib_vary": 0.35, "drift_cents": 6,
     "micro": 0.8, "loose_ms": 12, "jitter": 0.01, "shimmer": 0.02, "breath": 0.15, "inhale": 0.15, "linger": 1.4,
-    "coartic_ms": 30,
+    "coartic_ms": 40,
 }
 TTS_TUNED = {  # the first `tts` defaults (2026-11-24): fast retune, flat held notes; for a deliberately tuned vocal
     "tune": 0.7, "retune_ms": 40, "portamento_ms": 0, "scoop": 0.0, "scoop_some": 1.0, "vibrato": 0.18,
     "vib_delay": 0.25, "vib_late": 0, "vib_min_s": 0, "vib_vary": 0, "drift_cents": 0, "micro": 0.5, "loose_ms": 0,
+    "release_ms": 0, "attack_ms": 0, "attack_ms_vowel": 0, "coartic_ms": 30,
 }
 
 
