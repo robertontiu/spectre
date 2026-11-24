@@ -70,7 +70,7 @@
       "translate": 0.4,
       "mono_below": 120.0
     },
-    "length": "6:00-8:00 (extended mix); a radio edit is 3:00-4:00 and only on request",
+    "length": "6:00-8:00 (extended mix); a radio edit (`trance_radio`, measured median 3:33) only on request",
     "form": "DJ intro 16-32 bars, theme 16-32, build 8-16, first drop 16-32, breakdown 16-64 (typically 32), build 8-16, main drop 32-64, DJ outro 16-32",
     "tempo": "136-140 bpm, typically 138 (progressive 128-134)",
     "meter": "4/4, kick on every beat, straight 16ths",
@@ -82,6 +82,37 @@
       "lufs -10 is an engine-limited choice, quieter than the charts (-8.3)"
     ],
     "sources": "docs/TRANCE.md, section Configuration Mastering loudness: docs/proposals/mastering-trance-poprock.md (dance/electronic chart top 10 2025 average -8.3 LUFS, rock/alternative 2025 average -8.1, iZotope; engine tests: trance clipper limits it to about -9, rock clean at -8.5)."
+  },
+  "trance_radio": {
+    "name": "Trance, radio edit (the short cut of a trance single: no DJ intro or outro, one breakdown, two drops)",
+    "doc": "docs/TRANCE.md (section Radio edit)",
+    "status": "researched 2026-11-24 for session 013; everything not listed here is as `trance` (tempo, meter, groove, sound); the master is the `trance` master unchanged (measured: radio edits are as loud as their long versions)",
+    "master": {
+      "target": "trance",
+      "lufs": -9.0,
+      "tp": -1.0,
+      "eq": 0.7,
+      "translate": 0.4,
+      "mono_below": 120.0
+    },
+    "length": "3:00-4:00, aim 3:15-3:50 (measured median 3:33, middle half 3:15-3:49, 1,072 trance radio edits); at 138 bpm about 112-132 bars",
+    "form": "intro 8 bars (the track identifiable within 5-15 s, no DJ drums), theme 8-16, build 8, first drop 16 (landing at about 0:40-1:05), breakdown 16 (24 at most), build 8, main drop 32, outro 4-16 (a hard end or a short tail, no DJ outro); two drops around one breakdown; about 120 bars = 3:29 at 138 bpm",
+    "tempo": "136-140 bpm, typically 138 (progressive 128-134)",
+    "meter": "4/4, kick on every beat, straight 16ths",
+    "change_rate": "something every 8-16 bars, blocks of 8 more often than in the extended mix; 32 bars (the main drop) at most",
+    "role": "a lead synth carries the melody a vocalist would sing; no DJ intro or outro needed: the track must say what it is in the first seconds",
+    "hand_tuned": [
+      "translate 0.4",
+      "eq 0.7",
+      "lufs -10 is an engine-limited choice, quieter than the charts (-8.3)",
+      "the section lengths are derived (measured total length and paired cut, arithmetic over the extended template), not measured bar by bar",
+      "first-drop position: derived, no trance measurement found"
+    ],
+    "sources": [
+      "length: MusicBrainz, recordings tagged trance titled 'radio edit', grouped by artist and title: 1,072 tracks, median 3:33, middle half 3:15-3:49, 10th-90th 2:59-4:04; 177 pairs with an extended or original mix: radio 3:30 vs 6:39, 52% kept, 3:07 cut (Spectre's count 2026-11-24, docs/TRANCE.md); all club genres: radio edits median 3:30 over 803 titles (https://www.mixgraph.io/glossary/radio-edit)",
+      "form: DJ ends removed and a hard ending (https://www.mixgraph.io/glossary/radio-edit), intro build-ups removed or halved (https://en.wikipedia.org/wiki/Radio_edit), no two-minute breakdowns on the radio (Bill Padley, https://www.soundonsound.com/people/bill-padley-wise-buddamusic-ltd-music-production-recording-editing-radio-tv), intro 5-10 s (https://waterbear.org.uk/blog/how-to-make-a-radio-edit-for-radio-play/), builds doubling every 1-2 bars and 1-2 bar gaps (https://www.musicradar.com/how-to/8-classic-recipes-for-a-perfect-drop)",
+      "master: 70 radio/long pairs with AcousticBrainz ReplayGain: radio edit median 0.0 dB louder (middle half -1.1 to +1.1), so the `trance` master is kept; its own sources in docs/TRANCE.md, Mastering"
+    ]
   },
   "rock": {
     "name": "Pop rock (band song form)",
