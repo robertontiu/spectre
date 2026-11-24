@@ -26,6 +26,7 @@ written after the note length in the pattern (`"0:D5:4/g-1,tr+1"`, see docs/MANU
   d-5, d+3, d=A4       double stop: a second string at the interval or note given (same bow)
   up, dn               bow direction for this stroke
   acc                  a bitten accent (also `!` on the length)
+  cresc, dim, swell    bow speed and force grow across the note, fade, or swell and fade (messa di voce)
 """
 import numpy as np
 from scipy import signal
@@ -116,7 +117,7 @@ def _parse_art(art):
         if not a:
             continue
         for key in ("ftr", "trem", "turn", "fall", "tr", "sl", "sp", "pz", "nv", "vib", "up", "dn", "acc", "g", "m",
-                    "h", "d", "s"):
+                    "h", "d", "s", "cresc", "dim", "swell"):
             if a == key or (a.startswith(key) and a[len(key)] in "+-="):
                 rest = a[len(key):]
                 out[key] = rest if rest else True
@@ -267,7 +268,7 @@ def violin_line(p, notes, total_n):
         # ---- bow: velocity, force, contact
         V = (0.035 + 0.11 * nt["vel"]) * bowv      # above ~0.16 the string breaks into higher modes
         acc = ("acc" in art) or nt["vel"] > 0.92
-        att = 0.012 if acc else attack0
+        att = 0.012 if acc else float(nt.get("attack", attack0))  # per-note attack: only set by strings_section
         P = pressure + 0.12 * (nt["vel"] - 0.7) + 0.12 * float(np.clip((m0 - 80) / 10, 0, 1))  # high notes need force
         if "pz" in art:
             pluck[s:s + 24] += np.hanning(24) * (0.4 + 0.6 * nt["vel"])
@@ -306,6 +307,16 @@ def violin_line(p, notes, total_n):
         # a long note breathes (a small swell), a short one decays a little after the attack
         shape = 1 - 0.12 * np.clip(t / max(dur, 0.05), 0, 1) if dur < 0.6 else 1 + 0.08 * np.sin(np.pi * np.clip(t / dur, 0, 1))
         v = V * up * shape
+        benv = None
+        if "cresc" in art or "dim" in art or "swell" in art:  # a bow-speed and force envelope across the note
+            u = np.clip(t / max(dur, 0.05), 0, 1)
+            if "cresc" in art:
+                benv = 0.3 + 0.7 * u ** 1.5
+            elif "dim" in art:
+                benv = 1.0 - 0.7 * u ** 0.8
+            else:
+                benv = 0.3 + 0.7 * np.sin(np.pi * u) ** 1.2
+            v = v * benv
         end_adj = nxt is not None and nxt - e < int(0.03 * SR)
         next_slurred = end_adj and i + 1 < len(notes) and (
             "s" in (notes[i + 1].get("art") or []) or notes[i + 1].get("glide"))
@@ -324,6 +335,8 @@ def violin_line(p, notes, total_n):
         vb[s:e] = direction * v
         contact[s:e] = 1
         sl_arr = np.full(n, 5 - 4 * float(np.clip(P, 0.05, 0.95)))
+        if benv is not None:  # softer bow, lighter force (keeps the Helmholtz motion stable through the swell)
+            sl_arr = 5 - 4 * np.clip(P - 0.25 * (1 - benv), 0.05, 0.95)
         if acc and new_stroke:  # bite: more force for the first periods
             sl_arr = sl_arr - 1.2 * np.exp(-t / 0.03)
         slope[s:e] = sl_arr

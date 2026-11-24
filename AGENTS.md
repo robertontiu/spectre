@@ -32,6 +32,9 @@ engine/
                   pitch riser); trance (clubkick, supersaw, trancebass); pop rock (acoustic kit, eguitar, cleanguitar,
                   ebass, vox: a wordless formant voice); handclap (several hands out of time; replaces the old clap);
                   lăutar band (acguitar: dry acoustic guitar with a modal body; toba: bass drum with a cymbal on top)
+  chamber.py      chamber-score instruments modelled on measured recordings: `celesta`, `glockenspiel`, `vibraphone`,
+                  `cello`, `viola` (the violin's waveguide with measured bodies), `strings_section` (several bowed players
+                  per line), `bell` `"clean"` (docs/MANUAL.md "Chamber score instruments", examples/chamberscore/)
   violin.py       the bowed violin (`violin`): a waveguide string bowed through a friction curve (numba), a modal violin
                   body, articulations written after the note length (grace, mordent, trill, slides, double stops...)
   singer.py       voices: `singer` (sings words: words from eSpeak NG or, with `source: "tts"`, sampled from a local
@@ -73,6 +76,8 @@ models/
 examples/
   anthem/         the verified melody of Romania's anthem: a piano check render, the CC BY-SA score it was read
                   from, the check scripts (transcription in docs/ROMANIAN.md, "Verified melody")
+  chamberscore/   chamber-score instruments A/B (old stand-ins vs celesta, glockenspiel, vibraphone, cello, viola,
+                  strings_section) and spectrograms against reference recordings (build.py)
   joc/            lăutar band A/B (old fiddle vs violin, the violin's articulations, acguitar, toba, a tempo ramp; build.py)
   vocals/         voice A/B renders (diagnostic/: the eSpeak singer; tts/: sampled words autotuned, with build.py)
   engine-test.json  a small project that exercises most engine features (render it to smoke-test changes)

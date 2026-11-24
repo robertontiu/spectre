@@ -1745,3 +1745,59 @@ TONAL["acguitar"] = acguitar
 POST["acguitar"] = acoustic_body
 DRUMS["toba"] = toba
 ROUND_ROBIN = ROUND_ROBIN | {"toba"}
+
+
+# ---------------------------------------------------------------- chamber score: celesta, glockenspiel, vibraphone, strings
+# Additive block (2026-11-24, for the chamber-score session; docs/CHAMBER_SCORE.md, code in engine/chamber.py).
+# Each new sound draws from its own seeded generators, never from the module RNG, and `bell` plays exactly as before
+# unless a track asks for `"clean": true`, so existing projects render bit for bit as before.
+_mono_voice_violin = mono_voice
+
+
+def mono_voice(kind, p, notes, total_n):  # noqa: F811  (extends the chain with the chamber strings)
+    if kind in ("cello", "viola"):
+        import chamber as _ch
+        return _ch.string_line(kind, p, notes, total_n)
+    if kind == "strings_section":
+        import chamber as _ch
+        return _ch.strings_section(p, notes, total_n)
+    if kind == "vibraphone":  # a line renderer: the motor turns once for the whole track
+        import chamber as _ch
+        return _ch.vibraphone(p, notes, total_n)
+    return _mono_voice_violin(kind, p, notes, total_n)
+
+
+def _cello_body(p, x):
+    import chamber as _ch
+    return _ch.string_body("cello", p, x)
+
+
+def _viola_body(p, x):
+    import chamber as _ch
+    return _ch.string_body("viola", p, x)
+
+
+def celesta(p, f, vel, dur):
+    import chamber as _ch
+    return _ch.celesta(p, f, vel, dur)
+
+
+def glockenspiel(p, f, vel, dur):
+    import chamber as _ch
+    return _ch.glockenspiel(p, f, vel, dur)
+
+
+_bell_original = bell
+
+
+def _bell(p, f, vel, dur):
+    if p.get("clean"):
+        import chamber as _ch
+        return _ch.bell_clean(p, f, vel, dur)
+    return _bell_original(p, f, vel, dur)
+
+
+MONO.update({"cello", "viola", "strings_section", "vibraphone"})
+POST["cello"] = _cello_body
+POST["viola"] = _viola_body
+TONAL.update(celesta=celesta, glockenspiel=glockenspiel, bell=_bell)
