@@ -61,7 +61,7 @@ sessions/
   NNN-name/       one folder per session: project.json, journal.md, mastered mp3, ear and master images,
                   README.md with the result
 models/
-  tts/kokoro/     Kokoro v1.0 TTS model files for `singer` `source: "tts"` (the .onnx in git LFS; README with source,
+  tts/kokoro/     Kokoro v1.0 TTS model files for `singer` `source: "tts"` (the .onnx split in 7 parts; README with source,
                   licence, size, checksums); may move out of the repo later (SPECTRE_TTS_DIR)
 examples/
   vocals/         voice A/B renders (diagnostic/: the eSpeak singer; tts/: sampled words autotuned, with build.py)
@@ -75,10 +75,9 @@ Python 3.11+ (developed on 3.13), ffmpeg on PATH, and eSpeak NG for the `singer`
 
 ```bash
 pip install -r requirements.txt   # includes kokoro-onnx (onnxruntime, phonemizer, espeakng-loader) for singer "tts"
-git lfs install && git lfs pull   # fetches models/tts/kokoro/kokoro-v1.0.onnx (325 MB, git LFS)
 ```
 
-Sung words (`singer` with `"source": "tts"`) use a local neural text-to-speech, Kokoro v1.0 (Apache 2.0), as a **word sampler only** (approved by the owner; everything else in Spectre stays synthesized). Its model files are versioned in `models/tts/kokoro/` (the 325 MB `kokoro-v1.0.onnx` in git LFS, `voices-v1.0.bin` 28 MB in plain git; source URL, licence and checksums in `models/tts/kokoro/README.md`); `SPECTRE_TTS_DIR` points the engine elsewhere if they move out of the repo. Generated words are cached in `~/.cache/spectre/words/` (`SPECTRE_WORDS_DIR` to move it): outside the repo, never committed, safe to delete (they regenerate deterministically on the next render). Only projects that use `"source": "tts"` need any of this.
+Sung words (`singer` with `"source": "tts"`) use a local neural text-to-speech, Kokoro v1.0 (Apache 2.0), as a **word sampler only** (approved by the owner; everything else in Spectre stays synthesized). Its model files are versioned in `models/tts/kokoro/` (the 325 MB `kokoro-v1.0.onnx` split into seven parts under 50 MB, `kokoro-v1.0.onnx.part00`-`part06`, which the engine joins and checksum-verifies on first use into the gitignored `kokoro-v1.0.onnx`; `voices-v1.0.bin`, 28 MB; source URL, licence and checksums in `models/tts/kokoro/README.md`); `SPECTRE_TTS_DIR` points the engine elsewhere if they move out of the repo. Generated words are cached in `~/.cache/spectre/words/` (`SPECTRE_WORDS_DIR` to move it): outside the repo, never committed, safe to delete (they regenerate deterministically on the next render). Only projects that use `"source": "tts"` need any of this.
 
 Smoke test (about 20 s to render, 25 s to listen):
 
@@ -122,5 +121,5 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 ## 7. Git
 
 - Default branch `main`. Commit engine changes separately from session results.
-- Don't commit `renders/`, WAVs, `__pycache__`, or the TTS word cache (`~/.cache/spectre/words`). Model files go under `models/` with a README (source, licence, size, checksum); files over 100 MB go through git LFS (`.gitattributes`).
+- Don't commit `renders/`, WAVs, `__pycache__`, or the TTS word cache (`~/.cache/spectre/words`). Model files go under `models/` with a README (source, licence, size, checksum); GitHub refuses files over 100 MB and git LFS uploads are blocked from the sandbox, so split larger files into parts under 50 MB (`split -b 48000000 -d -a 2 <file> <file>.part`) and join them in the loader, checksum-verified (see `engine/tts_words.py`).
 - MIT licensed (see `LICENSE`).

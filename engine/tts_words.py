@@ -10,8 +10,9 @@ Cache: every spoken word is written once to ~/.cache/spectre/words/<voice>/<key>
 of model, voice, speed and text; a .txt beside it holds the text). The cache is outside the repo and can be deleted at
 any time: a render regenerates the words it needs (deterministic for the same model files and onnxruntime build). With
 every word of a project in the cache, rendering doesn't need the model at all.
-Model files: models/tts/kokoro/ in the repo (kokoro-v1.0.onnx in git LFS, voices-v1.0.bin; source, licence and checksums
-in models/tts/kokoro/README.md); $SPECTRE_TTS_DIR points elsewhere if they move out of the repo.
+Model files: models/tts/kokoro/ in the repo (kokoro-v1.0.onnx versioned as kokoro-v1.0.onnx.part00-06, joined and
+checksum-verified on first use into the gitignored kokoro-v1.0.onnx; voices-v1.0.bin; source, licence and checksums in
+models/tts/kokoro/README.md); $SPECTRE_TTS_DIR points elsewhere if they move out of the repo.
 """
 import functools
 import hashlib
@@ -29,6 +30,32 @@ MODEL_DIR = os.path.expanduser(os.environ.get("SPECTRE_TTS_DIR", os.path.join(_R
 CACHE_DIR = os.path.expanduser(os.environ.get("SPECTRE_WORDS_DIR", "~/.cache/spectre/words"))
 MODEL_FILES = ("kokoro-v1.0.onnx", "voices-v1.0.bin")
 MODEL_URL = "https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/"
+MODEL_SHA256 = "7d5df8ecf7d4b1878015a32686053fd0eebe2bc377234608764cc0ef3636a6c5"  # kokoro-v1.0.onnx
+
+
+def _join_parts(path):
+    """GitHub refuses files over 100 MB (and git LFS uploads are blocked from the sandbox), so the 325 MB model is
+    versioned as <name>.part00, .part01, ... Join them once into <name> (atomically, checksum-verified)."""
+    import glob
+    parts = sorted(glob.glob(path + ".part[0-9][0-9]"))
+    if not parts:
+        return False
+    tmp = path + f".tmp{os.getpid()}"
+    h = hashlib.sha256()
+    with open(tmp, "wb") as out:
+        for pp in parts:
+            with open(pp, "rb") as f:
+                while True:
+                    b = f.read(1 << 22)
+                    if not b:
+                        break
+                    h.update(b)
+                    out.write(b)
+    if h.hexdigest() != MODEL_SHA256:
+        os.unlink(tmp)
+        raise RuntimeError(f"the joined {os.path.basename(path)} has the wrong checksum: re-fetch its parts")
+    os.replace(tmp, path)
+    return True
 
 # `voice` name -> Kokoro voice. af_heart is Kokoro's flagship US-English female voice, am_michael a US-English male
 # voice; `tts_voice` takes any Kokoro voice name (af_bella, af_sarah, am_adam, bf_emma, bm_george, ...)
@@ -42,11 +69,13 @@ def kokoro_voice(p):
 @functools.lru_cache(maxsize=1)
 def _model():
     paths = [os.path.join(MODEL_DIR, f) for f in MODEL_FILES]
+    if not os.path.exists(paths[0]):
+        _join_parts(paths[0])
     missing = [p for p in paths if not os.path.exists(p)]
     if missing:
         raise RuntimeError(
             "singer source 'tts' needs the Kokoro model files, missing: " + ", ".join(missing) +
-            f". They are versioned in models/tts/kokoro/ (the .onnx in git LFS: run `git lfs pull`), or download "
+            f". They are versioned in models/tts/kokoro/ (the .onnx as .part00-06, joined on first use), or download "
             f"{MODEL_URL}kokoro-v1.0.onnx (325 MB) and {MODEL_URL}voices-v1.0.bin (28 MB) into {MODEL_DIR} (or set "
             "SPECTRE_TTS_DIR); and pip install kokoro-onnx")
     try:
@@ -183,6 +212,82 @@ def _cap_coda(sy, fin):
     return sy
 
 
+_VOICED_STOPS = set("dbɡg")
+_VOICED_FRIC = set("zvðʒ")
+
+
+def _voiced_coda(sy, fin, closure_ms=15, release_ms=20, release_db=-9.0):
+    """Keep a word-final voiced consonant voiced. The TTS ends 'round', 'and', 'ride' with a long (about 90 ms)
+    aspirated release burst, louder than the /n/ before it, that WORLD marks aperiodic; resynthesized on a sung note
+    it reads as 't' ('rount and rount'). For a final voiced stop (d, b, g) the coda becomes: the nasal or vowel as
+    spoken, a short voiced closure (a 'voice bar': the last voiced frame's envelope, low-passed and 15-25 dB down,
+    with the pitch carried through), then the first 20 ms of the release only, 9 dB softer and partly voiced. A final
+    voiced fricative (z, v, the 'th' of 'with') keeps its frication but gets voicing below 1 kHz. Returns a new
+    syllable (the analysis is copied, never changed in place); 'tail' frames are played at natural speed."""
+    if not fin:
+        return sy
+    last = fin[-1]
+    if last not in _VOICED_STOPS and last not in _VOICED_FRIC:
+        return sy
+    w = sy["w"]
+    c0, c1 = sy["co"]
+    fr = w["freqs"]
+    ap_low = w["ap"][:, fr < 1000].mean(1)
+    noisy = [i for i in range(c0, c1) if w["f0"][i] <= 0 or ap_low[i] > 0.5]
+    if not noisy:
+        return sy
+    rel = noisy[0]
+    voiced = [i for i in range(c0 if c0 > 0 else 0, rel) if w["f0"][i] > 0]
+    if not voiced and c0 > 0:
+        voiced = [c0 - 1] if w["f0"][c0 - 1] > 0 else []
+    if not voiced:
+        return sy
+    f_carry = float(w["f0"][voiced[-1]])
+    keys = ("f0", "sp", "ap", "e", "r", "v")
+    if last in _VOICED_STOPS:
+        cl = rel
+        if rel - c0 >= 3:  # the closure: the level dip just before the burst
+            lo = max(c0, rel - 6)
+            cl = lo + int(np.argmin(w["r"][lo:rel + 1]))
+            cl = min(cl, rel)
+        base = voiced[-1] if voiced[-1] < cl else max(c0, cl - 1)
+        nc = max(2, int(round(closure_ms / FP)))
+        nr = max(2, int(round(release_ms / FP)))
+        bar = np.where(fr < 500, 10 ** (-15 / 10), 10 ** (-25 / 10))  # power: low-passed voice bar
+        new = {k: [w[k][:cl]] for k in keys}
+        new["f0"].append(np.full(nc, f_carry))
+        new["sp"].append(np.repeat((w["sp"][base] * bar)[None, :], nc, 0))
+        new["ap"].append(np.repeat(np.minimum(w["ap"][base], 0.3)[None, :], nc, 0))
+        for k in ("e", "r", "v"):
+            new[k].append(np.full(nc, w[k][base] - 15))
+        r1 = min(rel + nr, len(w["f0"]))
+        n_rel = r1 - rel
+        fade = np.linspace(1.0, 0.25, n_rel) ** 2
+        new["f0"].append(np.full(n_rel, f_carry))
+        new["sp"].append(w["sp"][rel:r1] * (10 ** (release_db / 10)) * fade[:, None])
+        apr = w["ap"][rel:r1].copy()
+        apr[:, fr < 1500] = np.minimum(apr[:, fr < 1500], 0.4)  # a voiced, unaspirated release
+        new["ap"].append(apr)
+        for k in ("e", "r", "v"):
+            new[k].append(w[k][rel:r1] + release_db)
+        w2 = dict(w)
+        for k in keys:
+            w2[k] = np.concatenate(new[k])
+        w2.pop("micro", None)
+        out = dict(sy, w=w2, co=(c0, cl + nc + n_rel), tail=nc + n_rel)
+        return out
+    # voiced fricative: carry the pitch through and give it a voiced low band, keep the frication above it
+    w2 = dict(w)
+    w2["f0"] = w["f0"].copy()
+    w2["ap"] = w["ap"].copy()
+    w2.pop("micro", None)
+    idx = np.arange(rel, c1)
+    w2["f0"][idx] = f_carry
+    lowb = fr < 1000
+    w2["ap"][np.ix_(idx, np.where(lowb)[0])] = np.minimum(w2["ap"][np.ix_(idx, np.where(lowb)[0])], 0.25)
+    return dict(sy, w=w2)
+
+
 def syllables(word, n_syl, p):
     """Analysed syllables of one lyric word for singer.py: list of dict(w=analysis, on, nu, co frame ranges)."""
     voice = kokoro_voice(p)
@@ -196,7 +301,8 @@ def syllables(word, n_syl, p):
         for a, b in rng:
             on, nu, co = _parts(w, a, b)
             out.append(dict(w=w, on=on, nu=nu, co=co))
-        out[-1] = _cap_coda(out[-1], final_consonants(text, "en-gb" if voice[:1] == "b" else "en-us"))
+        fin = final_consonants(text, "en-gb" if voice[:1] == "b" else "en-us")
+        out[-1] = _voiced_coda(_cap_coda(out[-1], fin), fin)
         return out
     print(f"warning: singer: couldn't find {len(pieces)} syllables in the spoken '{text}'; speaking them one by one",
           file=sys.stderr)

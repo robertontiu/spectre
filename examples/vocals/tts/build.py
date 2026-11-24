@@ -27,10 +27,11 @@ TMP = "/tmp/spectre_tts_ab"
 LINE = "here you are, round and round"
 
 
-def mp3(y, name, kbps=128):
+def mp3(y, name, kbps=128, normalize=True):
     os.makedirs(TMP, exist_ok=True)
     y = np.asarray(y, dtype=np.float64)
-    y = y / max(np.abs(y).max(), 1e-9) * 0.89  # -1 dBFS peak
+    if normalize:
+        y = y / max(np.abs(y).max(), 1e-9) * 0.89  # -1 dBFS peak
     wav = os.path.join(TMP, name + ".wav")
     sf.write(wav, y.T if y.ndim == 2 else y, SR)
     dst = os.path.join(OUT, name + ".mp3")
@@ -72,11 +73,13 @@ def _session_copy():
     return d
 
 
+VOCAL_DB = float(os.environ.get("VOCAL_DB", 13))  # post-compressor level of the sung lead in (c)
 SING_TRACK = {"inst": {"type": "singer", "source": "tts", "voice": "female", "tune": 0.75, "breath": 0.15,
                        "double": 0.35, "seed": 3},
               "humanize_ms": 0, "gain_db": 12, "send_reverb": 0.22, "send_delay": 0.12,
-              "fx": [{"type": "hpf", "hz": 150}, {"type": "eq", "hz": 3000, "gain_db": 2, "q": 0.9},
-                     {"type": "comp", "threshold_db": -22, "ratio": 3}, {"type": "gain", "db": 6}]}
+              "fx": [{"type": "hpf", "hz": 150}, {"type": "eq", "hz": 500, "gain_db": 3, "q": 0.8},
+                     {"type": "eq", "hz": 3000, "gain_db": -3, "q": 0.9},
+                     {"type": "comp", "threshold_db": -22, "ratio": 3}, {"type": "gain", "db": VOCAL_DB}]}
 HOOK_LYRICS = ("here you are, round and round / hold on tight, round we go / "
                "here you are, round and round / and you stay on the ride").replace("/", " ")
 
@@ -146,7 +149,10 @@ if __name__ == "__main__":
     for w in which:
         if w == "c":
             d = c()
-            y, _ = sf.read(os.path.join(d, "renders", "v001.wav"))
-            mp3(y.T, "c-here-you-are-chorus-tts-octave-down", kbps=88)
+            # the release master (not the quick master inside render), pop rock target
+            subprocess.run([sys.executable, os.path.join(REPO, "engine", "studio.py"), "master", "v001", "--genre",
+                            "rock"], cwd=d, env=dict(os.environ, BEAT_DIR=d), check=True)
+            y, _ = sf.read(os.path.join(d, "renders", "v001.master.wav"))
+            mp3(y.T, "c-here-you-are-chorus-tts-octave-down", kbps=88, normalize=False)
         else:
             {"a": a, "b": b, "d": d_}[w]()

@@ -296,10 +296,16 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False):
                 src_w[f], src_i[f] = s["w"], nu[0] + (n_nu - 1) * u ** p.get("linger", 1.6)
                 sid[f], vowel[f] = gi, True
         C = int(np.ceil(c_len))
+        tail = min(int(s.get("tail", 0)), n_co, C)  # `tts`: a final stop's closure and release keep natural speed
         for j in range(C):
             f = int(round(t0)) + L + j
             if 0 <= f < nF:
-                src_w[f], src_i[f] = s["w"], co[0] + (n_co - 1) * j / max(C - 1, 1) if n_co else nu[1] - 1
+                if tail and j >= C - tail:
+                    src_w[f], src_i[f] = s["w"], co[1] - (C - j)
+                elif tail:
+                    src_w[f], src_i[f] = s["w"], co[0] + (n_co - tail - 1) * j / max(C - tail - 1, 1)
+                else:
+                    src_w[f], src_i[f] = s["w"], co[0] + (n_co - 1) * j / max(C - 1, 1) if n_co else nu[1] - 1
                 cons[f] = n_co > 0
                 sid[f] = gi
     if with_ids:

@@ -4,7 +4,7 @@ These are the model files the engine loads to speak lyric words neutrally (engin
 
 | File | Size | SHA-256 | Storage |
 |---|---|---|---|
-| `kokoro-v1.0.onnx` | 325,532,387 bytes (325 MB) | `7d5df8ecf7d4b1878015a32686053fd0eebe2bc377234608764cc0ef3636a6c5` | git LFS (over GitHub's 100 MB limit; `git lfs pull` after cloning) |
+| `kokoro-v1.0.onnx` | 325,532,387 bytes (325 MB) | `7d5df8ecf7d4b1878015a32686053fd0eebe2bc377234608764cc0ef3636a6c5` | split into `kokoro-v1.0.onnx.part00`-`part06` (48 MB each, the last 37.5 MB): GitHub refuses files over 100 MB and git LFS uploads are blocked from the sandbox. engine/tts_words.py joins them into `kokoro-v1.0.onnx` (gitignored) on first use and checks the SHA-256; by hand: `cat kokoro-v1.0.onnx.part* > kokoro-v1.0.onnx` |
 | `voices-v1.0.bin` | 28,214,398 bytes (28 MB) | `bca610b8308e8d99f32e6fe4197e7ec01679264efed0cac9140fe9c29f1fbf7d` | plain git |
 
 - **Source:** https://github.com/thewh1teagle/kokoro-onnx/releases/tag/model-files-v1.0 (`kokoro-v1.0.onnx`, `voices-v1.0.bin`), the ONNX export of Kokoro-82M by hexgrad. `voices-v1.0.bin` is a NumPy archive with all 54 Kokoro voices (style vectors); Spectre uses `af_heart` (`voice: "female"`), `am_michael` (`"male"`), `af_bella` (`"female2"`) and `am_adam` (`"male2"`), and any other by name with `tts_voice`.
