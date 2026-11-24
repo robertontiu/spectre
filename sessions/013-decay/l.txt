@@ -1,0 +1,13 @@
+ZOOM 51.4-58.3s  LUFS -9.5
+  kick          9 events  timing vs 16th grid: mean  -0.0 ms, spread  0.0 ms  velocity 0.81-0.84
+  ksub          9 events  timing vs 16th grid: mean  -0.0 ms, spread  0.0 ms  velocity 0.85-0.85
+  clap          4 events  timing vs 16th grid: mean  +0.9 ms, spread  0.8 ms  velocity 0.82-0.87
+  ohat         16 events  timing vs 16th grid: mean  +0.3 ms, spread  1.0 ms  velocity 0.74-0.98
+  chh          64 events  timing vs 16th grid: mean  -0.1 ms, spread  0.8 ms  velocity 0.25-0.75
+  snare        56 events  timing vs 16th grid: mean  +0.0 ms, spread 37.9 ms  velocity 0.63-1.00
+  bass         48 events  timing vs 16th grid: mean  +0.0 ms, spread  0.0 ms  velocity 0.78-0.90
+  lead         17 events  timing vs 16th grid: mean  +0.0 ms, spread  0.0 ms  velocity 0.76-0.94
+  saws          9 events  timing vs 16th grid: mean  +3.6 ms, spread  3.1 ms  velocity 0.59-0.91
+  tick          7 events  timing vs 16th grid: mean  -0.0 ms, spread  0.0 ms  velocity 0.78-0.88
+  chop          8 events  timing vs 16th grid: mean  -0.5 ms, spread  3.5 ms  velocity 0.75-0.93
+image: /home/claude/spectre/sessions/013-decay/ear_zoom.png

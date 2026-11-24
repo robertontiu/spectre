@@ -1,0 +1,22 @@
+PHONE: v025.wav  speaker model: HP 280 Hz, +4 dB at 3 kHz, LP 12 kHz  target: trance (genre trance_radio)
+  6-12 kHz vs 1-2.8 kHz -10.1 dB = -2.0 dB vs the target   5-16 kHz -0.8 dB vs the target   flatness 4-16 kHz 0.08 (1 = white noise)   noise-likeness 4-16 kHz 0.83 (slope removed; 1 = noise, 0 = tones)
+  worst 3 s at 53.6 s: 6-12 kHz +4.5 dB vs the target, flatness 0.11
+  section        level  6-12k vs target  flatness
+  intro           -3.6       -11.6        0.01
+  themeA          -3.9        -8.5        0.06
+  themeB          -2.6        -4.2        0.20
+  build1          -0.9        -0.1        0.07
+  drop1a          -1.7        -1.2        0.08
+  drop1b          -1.8        +0.1        0.06
+  breakdown       -4.2        -7.4        0.04
+  build2a         -3.3        +0.1        0.17
+  build2b         -4.7        +1.4        0.21
+  hold            -6.6       -11.3        0.00
+  mainA           -1.2        +0.2        0.06
+  mainB           -0.9        -1.7        0.07
+  mainC           -0.5        -2.1        0.08
+  mainD            0.0        -2.8        0.11
+  tailA           -2.6        -0.8        0.14
+  tailB           -3.5        -0.9        0.16
+  tailC           -4.1        -5.1        0.03
+  tailD           -2.4        -4.0        0.01
