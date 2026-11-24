@@ -42,9 +42,9 @@ export async function generateMetadata({ params }: PageProps<"/track/[slug]">): 
   };
 }
 
-/** A track link opens the player on that track and starts it. */
+/** A track link opens the player on that track, ready to play (no autoplay). */
 export default async function TrackPage({ params }: PageProps<"/track/[slug]">) {
   const found = await findTrack(params);
   if (!found) notFound();
-  return <SpectrePage initial={found.index} autoplay />;
+  return <SpectrePage initial={found.index} />;
 }
