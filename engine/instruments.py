@@ -1561,3 +1561,21 @@ def _handclap2(p, vel, ps, rng):
 DRUMS["handclap"] = handclap
 ROUND_ROBIN = ROUND_ROBIN | {"handclap"}
 
+
+# ---------------------------------------------------------------- singer (a voice that sings words)
+# Additive block: lives in engine/singer.py (eSpeak NG + WORLD; imported only when a project uses it, so projects
+# without a singer don't need either). It draws from its own random generators, so it changes nothing elsewhere.
+_mono_voice_vox = mono_voice
+
+
+def mono_voice(kind, p, notes, total_n):  # noqa: F811  (extends the chain with "singer")
+    if kind == "singer":
+        import singer as _singer
+        return _singer.sing(p, notes, total_n)
+    if kind == "vox2":  # the improved wordless voice (pure synthesis; also in engine/singer.py)
+        import singer as _singer
+        return _singer.vox2_line(p, notes, total_n)
+    return _mono_voice_vox(kind, p, notes, total_n)
+
+
+MONO.update({"singer", "vox2"})

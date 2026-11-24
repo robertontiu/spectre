@@ -30,6 +30,21 @@ DEFAULT_GAIN.update({"supersaw": -12, "trancebass": -6, "clubkick": -1, "kitkick
                      "kithat": -15, "kitride": -17, "kitcrash": -16, "eguitar": -11, "cleanguitar": -11, "ebass": -6,
                      "vox": -9})
 DEFAULT_GAIN.update({"handclap": -5})
+DEFAULT_GAIN.update({"singer": -9, "vox2": -9})
+
+
+def _attach_lyrics(part, new, tname):
+    """singer: a pattern part {"notes": ..., "lyrics": ...} puts one syllable on each note, in order."""
+    if not (isinstance(part, dict) and part.get("lyrics")):
+        return new
+    import singer
+    toks = singer.parse_lyrics(part["lyrics"])
+    if len(toks) != len(new):
+        print(f"warning: track '{tname}': {len(toks)} syllables for {len(new)} notes; extra notes hold the last "
+              "syllable, extra syllables are dropped", file=sys.stderr)
+    for i, e in enumerate(new):
+        e["syl"] = toks[i] if i < len(toks) else "_"
+    return new
 
 
 # ------------------------------------------------------------------ helpers
@@ -315,6 +330,7 @@ def schedule(P, hand):
                     else:
                         spec = part["notes"] if isinstance(part, dict) else part
                         new = hand.note_events(spec, t0, tr)
+                        new = _attach_lyrics(part, new, tname)
                     lim = s0 + bars * bar
                     if in_fill:
                         lim = min(lim, s0 + (bars - fill_bars) * bar)
@@ -332,6 +348,7 @@ def schedule(P, hand):
                     new = hand.chord_events(part, fill_bars, t0, tr, chord_state.setdefault(tname, {}))
                 else:
                     new = hand.note_events(part["notes"] if isinstance(part, dict) else part, t0, tr)
+                    new = _attach_lyrics(part, new, tname)
                 events[tname] += new
         t += bars * bar
         bar_i += bars
@@ -369,7 +386,12 @@ def render_track(name, tr, evs, holds, total_n, bpm):
         evs = sorted(evs, key=lambda e: e["t"])
         notes = [dict(t0=max(0, int(e["t"] * SR)), n=int(e["dur"] * SR), f=midi_to_hz(e["midi"] + p.get("transpose", 0)),
                       vel=e["vel"], glide=e.get("glide", False)) for e in evs]
+        for nt, e in zip(notes, evs):
+            if "syl" in e:  # singer: the syllable on this note
+                nt["syl"] = e["syl"]
         mono = I.mono_voice(typ, p, notes, total_n)
+        if mono.ndim == 2:  # stereo voices (singer with a double): pan acts as balance
+            st_buf, mono = mono, np.zeros(total_n, dtype=np.float32)
     elif typ in I.TONAL:
         fn = I.TONAL[typ]
         for e in evs:

@@ -31,6 +31,8 @@ engine/
                   plucks, organ, folk instruments, textures (vinyl, tape, rain), transition fx (riser, impact, reverse cymbal,
                   pitch riser); trance (clubkick, supersaw, trancebass); pop rock (acoustic kit, eguitar, cleanguitar,
                   ebass, vox: a wordless formant voice); handclap (several hands out of time; replaces the old clap)
+  singer.py       voices: `singer` (sings words: eSpeak NG + WORLD vocoder, every sound synthesized) and `vox2`
+                  (improved wordless voice: LF glottal source, consonant onsets for chops); see docs/MANUAL.md "Voices"
   hand.py         the hand: step/note/chord notation parser, swing, humanization, voicing, rolls, arps
   studio.py       project loader, arrangement scheduler, track rendering, fx, sends, sidechain, section
                   automation and transitions, quick master, CLI (render / listen / master)
@@ -62,7 +64,7 @@ examples/
 
 ## 3. Setup
 
-Python 3.11+ (developed on 3.13), ffmpeg on PATH.
+Python 3.11+ (developed on 3.13), ffmpeg on PATH, and eSpeak NG for the `singer` voice (`apt install espeak-ng`; only projects that use `singer` need it).
 
 ```bash
 pip install -r requirements.txt

@@ -22,7 +22,7 @@ Changed from the previous setup: length 5:00-7:00 became 6:00-8:00; the tonal ta
 - **Uplifting trance** (also "epic" or "euphoric") got its name around 1996, after the "rush" listeners describe. It is happier than Goa and darker trance, rests on longer chord progressions, and draws on classical and film music.
 - **Classic references:** Paul van Dyk, Ferry Corsten (System F), Tiësto, Armin van Buuren, Robert Miles, ATB, Paul Oakenfold, Sasha & Digweed.
 - **Modern references:** Above & Beyond, Aly & Fila, Gareth Emery, Bryan Kearney, Sean Tyas, John O'Callaghan, Andy Blueman, Super8 & Tab; the UK resurgence: Ben Hemsley, Hannah Laing, Ewan McVicar.
-- Trance is mostly instrumental; vocals are used sparingly.
+- Trance is mostly instrumental, but how much depends on the scene: the mainstream end of the genre is now mostly vocal, underground uplifting mostly instrumental. See "Vocals" below.
 
 ## Tempo and groove (engine names in brackets)
 - **Tempo:** 136-140 bpm is the core (uplifting 138-142, vocal 136-140, progressive 128-134, tech 140-145; hard trance 148+ is a different, harder body). Straight 16ths: `"swing": 0.5`, `humanize_ms` 0-1 on the drums.
@@ -71,8 +71,37 @@ Changed from the previous setup: length 5:00-7:00 became 6:00-8:00; the tonal ta
   - *Reverb and EQ:* "a very gentle reverb ... for a sense of space" (Loopmasters); a bright ambience with about 60 ms pre-delay and a fast decay, or a short gated reverb; 1-2 kHz for snap (Sound On Sound); experimenting with reverb on the clap gives a track character (MusicRadar). In the engine: `room` in `handclap` for the short space, a reverb send of 0.2-0.3 for the 0.5-1.5 s trance tail, `hpf` 200-300 Hz. Don't saturate a clap to tame it: it turns the bursts into a click; lower it instead.
 - **Loudness:** charting dance/electronic masters average -8.3 LUFS integrated; streaming normalizes to about -14 (see Configuration). In Spectre: `studio.py master vNNN --genre trance` (-10 LUFS). Louder masters hit the true-peak guard and stop gaining loudness.
 
-## The "vocal" role (instrumental)
-Trance is mostly instrumental already. **The lead synth is the singer:** the supersaw lead carries the hook and the theme. In the breakdown a wordless vocal-like line can carry the theme slowly before the lead takes it at full power: `vox` (soprano "ah" or "oo", long reverb, glides) or a piano. Keep the theme singable: a short, memorable phrase repeated with small changes, rising at the end of each 8 bars.
+## Vocals (researched 2026-11-24): weigh them per track
+Using a voice is **the producer's choice for each track, never a requirement of the brief.** Choose one of three ways and say why in the journal: instrumental, a sung vocal, or vocal fragments (chops). If you choose words, write your own lyrics to carry the feeling.
+
+**How common each is (verified, not assumed).** Trance "is mostly instrumental, although vocals can be mixed in" ([Wikipedia](https://en.wikipedia.org/wiki/Trance_music)); "although much of trance music is purely instrumental, there are still quite a lot of trance tracks that use vocals" ([Native Instruments](https://blog.native-instruments.com/trance-music/)). How much depends on the scene. A count of credited singers in published year-end lists (Spectre's own count, 2026-11-24):
+- *Mainstream (A State of Trance year-end countdowns):* at least 5 of the 2024 top 10 credit a singer (with Jaren, feat. Zoë Johnston, Ben Gold & Bo Bruce, feat. Ren Faye, ft. Lucy Pullin; [EDMTunes 2024](https://www.edmtunes.com/2024/12/the-top-50-tracks-on-a-state-of-trance-2024/)), and 4 of the 2025 top 5 (ft. Plumb, ft. SACHA, ft. Saskia Lie-Atjam, ft. Libby Whitehouse; [EDMTunes 2025](https://www.edmtunes.com/2025/12/watch-armin-van-asot-top-50/)). At the top of the mainstream, vocal tracks are the majority.
+- *Underground uplifting and orchestral (the UpOnly "Tune of the Year" vote, 2013):* 2 of the 51 listed entries credit a vocalist ([Abora Recordings](https://www.abora-recordings.com/voting/toty/2013/2013_UpOnly_Vote_Results.pdf)). Here instrumentals are the norm, at about 96%.
+- *Tech trance* has "minimal vocals" ([Insomniac](https://insomniac.com/magazine/10-trance-subgenres-you-need-to-know)). *Psytrance* samples films (science fiction, or horror in dark psy) more than it uses singers, and Goa grew from remixes that removed the lyrics ([Wikipedia: Psychedelic trance](https://en.wikipedia.org/wiki/Full_On)).
+- So the owner's remark that many trance tracks have no vocals holds for underground uplifting, tech and psy, and not for the mainstream countdowns. Caveats: credits are a lower bound (uncredited vocals and chops aren't counted), the samples are small and come from different years and scenes, and no catalogue-wide count was reachable (Mixgraph gives vocal trance a 138 bpm median but no track counts; Beatport and Discogs block automated access).
+
+**The three choices: when and why**
+- *Instrumental:* the lead synth is the singer. The supersaw carries the hook and the theme, and in the breakdown a wordless line (`vox`, `vox2`) or a piano can state the theme slowly before the lead takes it at full power. Choose it when the feeling is wordless or bigger than words, for underground uplifting, tech or psy references, and when the track must work as a pure DJ tool. Keep the theme singable: a short phrase repeated with small changes, rising at the end of each 8 bars.
+- *A sung vocal (vocal trance):* "grand, soaring, and operatic", "ethereal female leads floating amongst the synths", typically "mezzo-soprano to soprano female soloists" (male singers too), "mostly without a traditional verse/chorus structure"; pop-style vocals entered around the early 2000s ([Wikipedia](https://en.wikipedia.org/wiki/Trance_music)). Trance "tends to favor the use of breathy, ambient, female vocals", and "more trance tracks now feature male vocalists as well" ([Native Instruments](https://blog.native-instruments.com/trance-music/)). Choose it when the feeling has something to say that the melody alone can't: a promise, a name, a direction (editorial, unsourced).
+- *Fragments and chops:* snippets of a vocal sliced into "catchy hooks, lead lines, and even percussive elements", processed with reverb, delay, distortion, octave jumps and formant shifts ([Native Instruments: vocal chops](https://blog.native-instruments.com/vocal-chops/)); in trance, timestretched vocals as incidental effects, and a single vocal line chopped with its last words stretched "more and more" ([MusicRadar, 26 trance tips](https://www.musicradar.com/tuition/tech/26-trance-tips-34006), tips 15 and 24). Choose them when a human trace should colour the track without telling a story.
+
+**Where and how much**
+- The breakdown is the classic home: "maybe some kind of sultry vocal" over strings and effects (MusicRadar tip 16). In a vocal track the hook line usually returns in the drop with the lead doubling or answering it, and the DJ intro and outro stay free of vocals so DJs can blend. That arrangement habit is craft knowledge, unsourced.
+- Sparse: phrases with air between them, words repeated rather than many lines. There is no verse/chorus requirement (Wikipedia). No sourced measure of how many bars carry a vocal was found.
+
+**Processing (what producers do)**
+- *Space:* vocals "have a lot of space to them": large reverbs (Native Instruments); long tails and pitched echoes build breakdown tension ([Attack Magazine](https://www.attackmagazine.com/technique/tutorials/creative-vocal-pitch-processing/)). Duck the reverb under the dry voice ("a sidechain compressor on your vocal's reverb") and EQ the delays so they don't swamp it ([MusicRadar, 96 vocal production tips](https://www.musicradar.com/tuition/tech/96-vocal-production-tips-437031), tips 66, 84, 92).
+- *Up front:* "compress vocals quite heavily for dance records", "EQ them quite brutally"; vocals have to be prominent ([Sound On Sound, Secrets of house and trance](https://www.soundonsound.com/techniques/secrets-house-trance)); centre the lead vocal and duck competing parts rather than only turning the voice up (MusicRadar tips 37, 43, 68).
+- *Doubling:* several takes make a natural chorus, and a doubled layer at the end of phrases lifts them; doublers and chorus effects thicken but cost punch (MusicRadar tips 7, 49, 91).
+- *Pitch correction as a sound:* slow response sounds natural, fast "T-Pain-style" changes are the effect; heavy amounts don't sound natural (tips 52, 60).
+- *Vocoder:* "vocoded vocals can be quite hard to make intelligible" (tip 30); keep it for texture, not for words.
+- *Formant and pitch shifts* change the character of chops (an octave up, a formant shift; Native Instruments) and shape pitched echoes (Attack).
+- *Breaths:* removing every breath "can make a vocal sound artificial" (MusicRadar tip 15).
+- Light sidechain from the kick on a vocal in the drop is a common habit in club music, but no source was found for it (craft, unsourced).
+
+**Lyrics.** No study of trance lyrics was found. Spectre's practice (editorial): few words, short phrases that fit the hook, repeated and varied rather than told as a story; concrete images (light, water, sky, home, holding on) that carry the feeling; vowels on the long notes ("light", "home", "free"), consonant clusters on short ones. Write lyrics that are yours and fit the brief's feeling, not a pastiche of famous lines.
+
+**In the engine** (docs/MANUAL.md, "Voices"): `singer` for words (eSpeak NG + WORLD, every sound synthesized; the default soft, breathy `source` is closest to the trance "breathy, ambient" vocal; `source: "pulse"` with `tune` 1 and `double` for a processed, hard-tuned club vocal), `vox2` for wordless lines and chops (`onset` consonants give "da", "na", "la" fragments), `vox` for the old wordless "ooh". Settings that suit trance: `send_reverb` 0.3-0.4 and `send_delay` 0.2 (dotted 8th) on the voice, a light kick sidechain (depth 0.2-0.3, release 150 ms) in the drop, `hpf` 150-180 Hz, and lyrics in the mezzo-soprano range (A4-F5). Words get harder to read above about E5, which is a limit of the voice itself as well as of the engine. A/B renders: `examples/vocals/`.
 
 ## Ecstasy and euphoria: how trance gets there
 - **The break routine** (breakdown, build-up, drop) is the engine of euphoria. In a 2019 study of EDM peak experiences, listeners described intense, energising, uplifting and embodied responses, attributed mostly to the drop. Drop sections produced significantly higher skin conductance than the rest of the break routine.
@@ -95,6 +124,7 @@ Trance is mostly instrumental already. **The lead synth is the singer:** the sup
 | Offbeat or rolling bass | `trancebass` + stabs + `"voicing": "root"` + sidechain to the kick |
 | Lead, chords, plucks, pads | `supersaw` (stereo); chords with the `gate` fx; plucks with `sustain_level` 0 and `env` |
 | Breakdown | `pad`, `strings`, `choir`, `piano`, `vox` |
+| Voice (the producer's choice; see "Vocals") | `singer` (words), `vox2` (wordless lines, chops), `vox` |
 | Build | snare roll pattern, `"exit": {"riser": 8, "rise": 16}`, `auto` `hpf` sweep, `"cut": {"tracks": "all", "beats": 1}` |
 | Master | `--genre trance` |
 
@@ -144,3 +174,8 @@ Researched 2026-11-24 under standing rule 8. The proposed configuration, the eng
 - Sound On Sound (2008), Q. How do you record handclaps?: https://www.soundonsound.com/sound-advice/q-how-do-you-record-handclaps
 - MusicRadar, Groove in a house beat with manually layered claps: https://www.musicradar.com/tuition/tech/how-to-add-groove-to-a-house-beat-with-manually-layered-claps-586199
 - Loopmasters, Mixing electronic music, a few guidelines: https://loopmasters.com/articles/2718-Mixing-Electronic-Music-A-Few-Quick-And-Easy-Guidelines ; Soundshock Audio, Gain staging for EDM: https://soundshockaudio.com/gain-staging-for-edm/
+- Vocals: Native Instruments, Trance music (vocals in trance): https://blog.native-instruments.com/trance-music/ ; Vocal chops: https://blog.native-instruments.com/vocal-chops/
+- Vocals: A State of Trance year-end countdowns, EDMTunes 2024 (top 10): https://www.edmtunes.com/2024/12/the-top-50-tracks-on-a-state-of-trance-2024/ ; 2025 (top 5 and #7): https://www.edmtunes.com/2025/12/watch-armin-van-asot-top-50/
+- Vocals: UpOnly Tune of the Year 2013 vote results (Abora Recordings): https://www.abora-recordings.com/voting/toty/2013/2013_UpOnly_Vote_Results.pdf
+- Vocals: Insomniac, 10 trance subgenres: https://insomniac.com/magazine/10-trance-subgenres-you-need-to-know ; Wikipedia, Psychedelic trance: https://en.wikipedia.org/wiki/Full_On
+- Vocals: MusicRadar, 96 vocal production tips: https://www.musicradar.com/tuition/tech/96-vocal-production-tips-437031 ; Sound On Sound, Secrets of house and trance: https://www.soundonsound.com/techniques/secrets-house-trance ; Attack Magazine, Creative vocal pitch processing: https://www.attackmagazine.com/technique/tutorials/creative-vocal-pitch-processing/
