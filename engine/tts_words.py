@@ -143,7 +143,7 @@ def analyze(text, voice, speed):
     b2 = min(max(b, (lo[-1] + 1) if len(lo) else b), b + 60, n)
     decay = dict(f0=f0[b:b2], sp=sp[b:b2], ap=ap[b:b2], e=e_db[b:b2], r=r_db[b:b2], v=v_db[b:b2])
     return dict(f0=f0[a:b], sp=sp[a:b], ap=ap[a:b], e=e_db[a:b], r=r_db[a:b], v=v_db[a:b], sr=SR, freqs=freqs,
-                text=text, decay=decay)
+                text=text, decay=decay, off=int(a), voice=voice, speed=speed)
 
 
 _KEYS = ("f0", "sp", "ap", "e", "r", "v")
@@ -370,6 +370,21 @@ def syllables(word, n_syl, p):
     return out
 
 
+def _tilt(w, rng):
+    """Spectral tilt of frames rng of an analysis: energy 2-8 kHz against 0.1-1 kHz of the envelope (dB). Relative
+    high-band energy is the clearest acoustic correlate of stress (Campbell 1995)."""
+    fr = w["freqs"]
+    sp = w["sp"][rng[0]:max(rng[1], rng[0] + 1)]
+    hi = sp[:, (fr >= 2000) & (fr < 8000)].sum(1)
+    lo = sp[:, (fr >= 100) & (fr < 1000)].sum(1)
+    return float(np.mean(10 * np.log10((hi + 1e-20) / (lo + 1e-20))))
+
+
+def _onf(w, on, nu):
+    """Onset force: the onset's loudest frame against the vowel's mean level (dB)."""
+    return float(np.max(w["r"][on[0]:on[1]]) - np.mean(w["r"][nu[0]:max(nu[1], nu[0] + 1)]))
+
+
 def _feats(w):
     """Per-frame features for alignment: 24 log band energies of the spectral envelope (mel-like spacing up to
     8 kHz), voicing and level."""
@@ -427,12 +442,15 @@ def phrase_syllables(words, p):
     if nF < 4 * N:
         return None
     feats, bounds, t = [], [], 0
+    cites = []  # each syllable as spoken in its word alone (citation form): the reference for `prosody`
     for x in pieces:
         ww = analyze("".join(x), voice, speed)
         rng = _split(ww, len(x)) if len(ww["f0"]) > 6 else None
         if rng is None:
             n = len(ww["f0"])
             rng = [(int(n * k / len(x)), int(n * (k + 1) / len(x))) for k in range(len(x))]
+        for a_, b_ in rng:
+            cites.append((ww,) + _parts(ww, a_, b_))
         if t > 0:
             bounds.append(t)  # the word boundary
         bounds += [t + a for a, _ in rng[1:]]  # syllable boundaries inside the word
@@ -451,9 +469,21 @@ def phrase_syllables(words, p):
     if any(b - a < 3 for a, b in zip(cuts[:-1], cuts[1:])):
         return None
     out = []
-    for a, b in zip(cuts[:-1], cuts[1:]):
+    f0v = w["f0"][w["f0"] > 0]
+    med = float(np.median(12 * np.log2(f0v / 440.0))) if len(f0v) else 0.0
+    for (a, b), (ww, con, cnu, cco) in zip(zip(cuts[:-1], cuts[1:]), cites):
         on, nu, co = _parts(w, a, b)
-        out.append(dict(w=w, on=on, nu=nu, co=co))
+        # the phrase's own stress on this syllable, against the same syllable spoken alone: spectral tilt (the
+        # strongest acoustic cue of stress), onset force, and the pitch accent (nucleus F0 against the phrase)
+        pf = w["f0"][nu[0]:nu[1]]
+        acc = float(np.mean(12 * np.log2(pf[pf > 0] / 440.0)) - med) if (pf > 0).any() else 0.0
+        out.append(dict(w=w, on=on, nu=nu, co=co,
+                        tilt_fix=float(np.clip(_tilt(ww, cnu) - _tilt(w, nu), -8, 8)),
+                        # only where the word has an onset of its own: a vowel-initial word's onset in the phrase is
+                        # the previous word's linking consonant ("round-and"), which its citation form lacks
+                        onf_fix=float(np.clip(_onf(ww, con, cnu) - _onf(w, on, nu), -4, 4))
+                        if on[1] > on[0] and con[1] - con[0] >= 3 else 0.0,
+                        accent=acc))
     fin = final_consonants("".join(pieces[-1]), "en-gb" if voice[:1] == "b" else "en-us")
     out[-1] = dict(_voiced_coda(_cap_coda(out[-1], fin), fin), last=True)
     return out

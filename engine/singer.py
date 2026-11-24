@@ -290,6 +290,13 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False, extra=None):
         # version used 200 ms, which moved the pitch inside the previous vowel: on short notes most of a syllable was
         # sung on the next syllable's note).
         lead = int(round(lead_ms / FP)) if lead_ms is not None else int(round(n_on))
+        ge = float(p.get("glide_early", 0) or 0)
+        if ge > 0 and float(p.get("portamento_ms", 0) or 0) > 0:
+            # `tts`: start the pitch move earlier, so it passes through the consonants of the join instead of landing
+            # in the next vowel (measured: 75-100% of the move happened after the next vowel had started)
+            tn = float(np.clip(p.get("tune", 0.3), 0, 1))
+            Tf = (float(p["portamento_ms"]) * (1 - tn) + float(p.get("retune_ms", 15)) * tn) / FP
+            lead += int(round(ge * Tf))
         for k, nt in enumerate(ns):
             a = int(round(nt["t0"] / HOP))
             b = int(round(ns[k + 1]["t0"] / HOP)) if k + 1 < len(ns) else int(round(t_end)) + 1
@@ -313,15 +320,35 @@ def _plan(p, notes, total_n, rng, time_jit=0.0, with_ids=False, extra=None):
                 src_w[f], src_i[f] = s["w"], on[0] + n_src_on * j / max(n_on, 1)
                 cons[f] = True
                 sid[f] = gi
+                if extra is not None:
+                    extra.setdefault("onset", np.zeros(nF, dtype=bool))[f] = True
         # vowel: linger on the first part (u**1.6)
         L = int(np.ceil(v_len))
         if keep_joins:  # whole frames, so the coda ends exactly where the next onset starts
             L = max(1, int(round(t_end)) - int(round(t0)) - int(np.ceil(c_len)))
+        core = p.get("stretch") == "core" and L > n_nu
+        if core:
+            # stretch only the vowel's steady core: its first and last `trans_ms` (the transitions from the onset and
+            # into the coda) keep their spoken speed, as concatenative singing synthesis keeps phoneme transitions as
+            # recorded and sustains only the stationary vowel (Kenmochi & Ohshita 2007)
+            tr_f = int(round(float(p.get("trans_ms", 40)) / FP))
+            hd = tl = min(tr_f, n_nu // 3)
+            c_src = max(n_nu - hd - tl, 1)
+            c_out = max(L - hd - tl, 1)
         for j in range(L):
             f = int(round(t0)) + j
             if 0 <= f < nF:
-                u = j / max(L - 1, 1)
-                src_w[f], src_i[f] = s["w"], nu[0] + (n_nu - 1) * u ** p.get("linger", 1.6)
+                if core and j < hd:
+                    idx = nu[0] + j
+                elif core and j >= L - tl:
+                    idx = nu[1] - (L - j)
+                elif core:
+                    u = (j - hd) / max(c_out - 1, 1)
+                    idx = nu[0] + hd + (c_src - 1) * u ** p.get("linger", 1.6)
+                else:
+                    u = j / max(L - 1, 1)
+                    idx = nu[0] + (n_nu - 1) * u ** p.get("linger", 1.6)
+                src_w[f], src_i[f] = s["w"], idx
                 sid[f], vowel[f] = gi, True
         C = int(np.ceil(c_len))
         tail = min(int(s.get("tail", 0)), n_co, C)  # `tts`: a final stop's closure and release keep natural speed
@@ -612,6 +639,10 @@ def _take(p, notes, total_n, seed, time_jit_ms=0.0, detune_cents=0.0):
     shift = 2 ** (p.get("formant", fdef) / 12)
     sp, ap, voiced, live, f_out = _interp_frames(src_w, src_i, fft // 2 + 1, SR, shift,
                                                  coartic_ms=float(p.get("coartic_ms", 40)))
+    tr = p.get("_trace")
+    if isinstance(tr, dict) and "src_w" not in tr:  # tools/joincheck.py: which source frame went where
+        tr.update(src_w=list(src_w), src_i=np.array(src_i), groups=groups, sid=np.array(sid), f0=np.array(f0),
+                  voiced=np.array(voiced), tgt=np.array(tgt))
     nF = len(src_w)
     # smooth voicing so consonant/vowel edges cross-fade over ~15 ms
     vs = np.convolve(voiced, np.ones(3) / 3, mode="same")
@@ -641,6 +672,28 @@ def _take(p, notes, total_n, seed, time_jit_ms=0.0, detune_cents=0.0):
         sm = np.convolve(ev, np.ones(12), mode="same") / np.maximum(cnt, 1)
         gain = np.where(sm > 0, np.sqrt(ref / np.maximum(sm, ref * 1e-3)), 1.0)
         gain = np.clip(gain, 0.3, 3.0)
+    pros = float(p.get("prosody", 0) or 0) if ex is not None else 0.0
+    acc = np.zeros(nF)
+    if pros > 0:
+        # `tts`: the melody sets the emphasis, not the spoken phrase: each syllable's spectral tilt and onset force
+        # move toward the same syllable spoken alone (its citation form), by `prosody`; spoken pitch accents are
+        # left out of `micro` on accented syllables
+        shape = np.clip(np.log2(np.maximum(f_out, 1) / 1000.0) / 2.0, 0, 1)
+        ons = ex.get("onset", np.zeros(nF, dtype=bool))
+        for gi in np.unique(sid[sid >= 0]):
+            sy = groups[gi].get("syl") or {}
+            fr = sid == gi
+            tf = float(sy.get("tilt_fix", 0.0)) * pros / 0.85
+            if tf:
+                sp[fr] = sp[fr] * (10 ** (tf * shape / 10))[None, :]
+            of = float(sy.get("onf_fix", 0.0)) * pros
+            if of:
+                gain[fr & ons] *= 10 ** (of / 20)
+            if float(sy.get("accent", 0.0)) > 1.0:
+                acc[fr] = 1.0
+    if isinstance(tr, dict) and "env_tilt" not in tr:  # tools/joincheck.py: tilt of the envelope actually sung
+        hb, lb = (f_out >= 2000) & (f_out < 8000), (f_out >= 100) & (f_out < 1000)
+        tr["env_tilt"] = 10 * np.log10((sp[:, hb].sum(1) + 1e-20) / (sp[:, lb].sum(1) + 1e-20))
     lvl = gain * np.where(live, 1.0, 0.0) * np.maximum(vel, 0.0)
     if ex is not None:
         lvl = lvl * ex["gain"]
@@ -649,7 +702,7 @@ def _take(p, notes, total_n, seed, time_jit_ms=0.0, detune_cents=0.0):
     breath = float(p.get("breath", 0.3))
     shimmer = 1 + p.get("shimmer", 0.05) * signal.lfilter([0.3], [1, -0.7], rng.normal(0, 1, nF))
     if mode == "tts":
-        y = _tts_voice(p, f0, sp, ap, voiced, lvl * shimmer, f_out, src_w, src_i, total_n)
+        y = _tts_voice(p, f0, sp, ap, voiced, lvl * shimmer, f_out, src_w, src_i, total_n, acc_drop=pros * acc)
         if p.get("inhale", 0.15) > 0:
             y += _inhales(p, groups, total_n, rng) * p.get("inhale", 0.15)
         return y
@@ -691,7 +744,7 @@ def _micro(w):
     return w["micro"]
 
 
-def _tts_voice(p, f0, sp, ap, voiced, amp, f_out, src_w, src_i, total_n):
+def _tts_voice(p, f0, sp, ap, voiced, amp, f_out, src_w, src_i, total_n, acc_drop=None):
     """`source: "tts"`: WORLD resynthesis of the spoken (TTS) voice itself on the sung pitch: its own spectral envelope
     (formants preserved, or moved by `formant`) and aperiodicity (so consonants and breathiness stay natural), voiced
     where the spoken word was voiced, one level per syllable, plus `breath` noise in the upper bands."""
@@ -705,6 +758,8 @@ def _tts_voice(p, f0, sp, ap, voiced, amp, f_out, src_w, src_i, total_n):
             w = src_w[f]
             if w is not None:
                 dev[f] = _micro(w)[min(int(round(src_i[f])), len(w["f0"]) - 1)]
+        if acc_drop is not None:
+            dev = dev * (1 - acc_drop)
         dev = np.convolve(dev, np.ones(3) / 3, mode="same") * micro
     f0v = np.where(voiced > 0, f0 * 2 ** (dev / 12), 0.0)
     hi = np.clip((f_out - 1500) / 3000, 0, 1)
@@ -718,12 +773,13 @@ TTS_DEFAULTS = {  # `source: "tts"`: sung, not tuned (the first defaults, which 
     "tune": 0.3, "retune_ms": 120, "portamento_ms": 80, "overshoot": 0.08, "scoop": 0.35, "scoop_some": 0.35,
     "vibrato": 0.28, "vib_delay": 0.3, "vib_late": 0.35, "vib_min_s": 0.45, "vib_vary": 0.35, "drift_cents": 6,
     "micro": 0.8, "loose_ms": 12, "jitter": 0.01, "shimmer": 0.02, "breath": 0.15, "inhale": 0.15, "linger": 1.4,
-    "coartic_ms": 40,
+    "coartic_ms": 40, "glide_early": 0.8, "prosody": 0.7, "stretch": "core", "trans_ms": 40,
 }
 TTS_TUNED = {  # the first `tts` defaults (2026-11-24): fast retune, flat held notes; for a deliberately tuned vocal
     "tune": 0.7, "retune_ms": 40, "portamento_ms": 0, "scoop": 0.0, "scoop_some": 1.0, "vibrato": 0.18,
     "vib_delay": 0.25, "vib_late": 0, "vib_min_s": 0, "vib_vary": 0, "drift_cents": 0, "micro": 0.5, "loose_ms": 0,
     "release_ms": 0, "attack_ms": 0, "attack_ms_vowel": 0, "coartic_ms": 30, "keep_joins": False,
+    "glide_early": 0, "prosody": 0, "stretch": "linger",
 }
 
 
