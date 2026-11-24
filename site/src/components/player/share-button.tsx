@@ -42,12 +42,7 @@ export function ShareButton({ track }: { track: Track }) {
 
   return (
     <span className="share">
-      <button
-        type="button"
-        className="share-btn"
-        aria-label={`Share ${track.title}`}
-        onClick={() => void share()}
-      >
+      <button type="button" className="share-btn" aria-label={`Share ${track.title}`} onClick={() => void share()}>
         <ShareIcon />
         <span>Share</span>
       </button>

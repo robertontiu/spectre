@@ -1,5 +1,4 @@
 import { Controls } from "./controls";
-import { Equalizer } from "./equalizer";
 import { NowPlaying } from "./now-playing";
 import { PlayerCard } from "./player-card";
 import { Playlist } from "./playlist";
@@ -16,7 +15,6 @@ export function Player() {
       <NowPlaying />
       <SeekBar />
       <Controls />
-      <Equalizer />
       <Playlist />
     </PlayerCard>
   );
