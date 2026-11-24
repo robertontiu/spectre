@@ -4,6 +4,9 @@ The voices the producer can choose for sung words (docs/MANUAL.md "Voices"). Pic
 
 **Voices are instruments** (standing rule 14): short lines, hooks, calls, refrain fragments and choir textures, never a sung song.
 
+## Mixing a voice
+Choosing a voice is half of it; the other half is the mix. The principles for every genre, the choir and ensemble research (separate takes, `svs_vibrato`, timing scatter, voice counts, reverb) and the Whisper and loudness checks are in [MIXING.md](MIXING.md). Each genre has a researched starting chain: [caroling](../CAROLING.md#mixing-the-voice-researched-2026-11-24), [trance](../TRANCE.md#mixing-the-voice-researched-2026-11-24), [Latin pop](../LATIN_POP.md#mixing-the-voice-researched-2026-11-24), [pop rock](../POP_ROCK.md#mixing-the-voice-researched-2026-11-24), [hip hop](../HIPHOP.md#mixing-the-voice-researched-2026-11-24), [joc and Romanian folk](../JOC_TIGANESC.md#mixing-the-voice-researched-2026-11-24). Two rules that came out of measurement: words go on the clear voices (`hanami`, `hanami-power`, `hanami-es`), never on `hanami-dark`; and every voice singing the same words starts them together (`push_ms` 0).
+
 ## Licences and credit (read before using a voice)
 
 | bank | licence | credit line (put it in the session README's **Credits** and the site notes) |
