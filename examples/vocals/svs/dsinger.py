@@ -97,6 +97,10 @@ class Bank:
             self.lang_ids = yaml.safe_load(open(os.path.join(root, lid), encoding="utf-8"))
         voc = yaml.safe_load(open(os.path.join(root, "dsvocoder", "vocoder.yaml"), encoding="utf-8"))
         self.vocoder_path = vocoder or os.path.join(root, "dsvocoder", voc["model"])
+        vbase = str(yaml.safe_load(open(os.path.join(os.path.dirname(self.vocoder_path), "vocoder.yaml"))).get(
+            "mel_base", "10"))
+        abase = str(self.cfg.get("mel_base", "10"))
+        self.mel_scale = 1.0 if abase == vbase else (np.log(10) if abase == "10" else 1 / np.log(10))
         self.timings = {}
 
     def _phonemes(self, path):
@@ -305,7 +309,7 @@ class Bank:
         self.timings["acoustic"] = self.timings.get("acoustic", 0) + time.time() - t
         t = time.time()
         voc = self.sess(self.vocoder_path)
-        wav = voc.run(None, {"mel": mel, "f0": f0[None, :]})[0][0]
+        wav = voc.run(None, {"mel": (mel * self.mel_scale).astype(np.float32), "f0": f0[None, :]})[0][0]
         self.timings["vocoder"] = self.timings.get("vocoder", 0) + time.time() - t
         return wav.astype(np.float32), t0, phones, (t0, f0)
 

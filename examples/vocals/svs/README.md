@@ -1,5 +1,7 @@
 # SVS trial: a singing voice synthesizer instead of bent TTS speech (2026-11-24)
 
+**Outcome:** Robert approved the Hanami chorus by ear ("a clear improvement"). It is now in the engine as `singer` `"source": "svs"` (`engine/svs.py`; voices in `engine/voices.json` and [docs/voice/VOICES.md](../../../docs/voice/VOICES.md); auditions in `voices/`). Robert's remaining note was that it sounded "like the song is playing on a speaker and someone sings along": see **Blend** below. The trial scripts (`dsinger.py`, `build.py`) stay as they were, except for one fix: LEONA's mel is log10, the Potluck vocoder expects a natural log, and they now convert. The first `leona-potluck-line-dry.mp3` was noise because of this; it has been re-rendered.
+
 **Question:** does a model trained on singing (DiffSinger) sing Spectre's short vocal lines better than `singer` `source: "tts"` (Kokoro speech bent onto the melody with WORLD)? Scope: voices as an instrument (hooks, calls, refrain fragments, choir textures), not full songs. Nothing here changes the engine; `engine/singer.py` is untouched.
 
 ## Listen
@@ -79,3 +81,39 @@ Reading it:
 - **Timing is not better by the numbers**, only different: the model's "vowel on the note" convention gives consonants 60-100 ms ahead of the beat. If that sounds early by ear, the fix is one parameter (shift each note group so the onset consonant starts on the beat), not a pile of rules.
 - **The real limit is voices and licences.** Commercial-clean English banks are few and mostly character voices; Hanami ("natural pop soprano") is the best candidate found, and only with the Potluck vocoder (her own vocoder is non-commercial). No commercial-clean male English bank was found in the time box (TIGER is non-commercial). The Potluck "lite" vocoder is a general model; its author recommends fine-tuning it per voice.
 - **Recommendation:** if the Hanami + Potluck chorus sounds more like singing than `c1-natural` to Robert, this is the better path for sung hooks: integrate it as a `singer` source (`source: "svs"`) that renders each phrase with the bank and caches it, keeping the existing vocal chain (fx, double, sends). If the voice character is wrong for Spectre, the next step is not more rules but a different or self-trained bank (DiffSinger training needs about 1-2 h of clean, licensed singing and a GPU).
+
+## Blend: "singing along to a speaker" (engine `source: "svs"`, voice hanami)
+
+`blend.py` rebuilds everything. Each variant is the c1 chorus with the same backing and the same `master --genre rock`. To measure, every variant is rendered four times: full mix, vocal muted, send returns off, and both. That gives the vocal as heard in the mix, the band, and each one's dry and wet parts, all over chorus1. Whisper (small.en) word accuracy is taken on the **full mastered mix**: it is a rough, single-run proxy for whether the words still read (guitars make it hard; one run per mix).
+
+| file | what changes | vocal vs band LU | wet vs dry, vocal / band dB | L/R coherence 0.5-4 kHz, vocal / band | side-mid dB, vocal / band | 8 kHz vs band | phrase release ms | Whisper words |
+|---|---|---|---|---|---|---|---|---|
+| `blend-ref-tts.mp3` | c1 as it was (tts singer) | -0.5 | -11.4 / -22.2 | 0.77 / 0.52 | -8.9 / -6.6 | +4.4 | 340 | 46% |
+| `blend-ref-svs.mp3` | approved svs chorus, c1's tts chain | -0.6 | -11.4 / -22.2 | 0.77 / 0.52 | -8.8 / -6.6 | **-3.8** | 160 | 42% |
+| `blend-a.mp3` | **tone**: hpf 100 (was 150), 800 Hz -2.5 instead of 500 Hz +3, high shelf +3 dB at 8 kHz | -1.3 | -11.5 / -22.2 | 0.77 / 0.52 | -8.8 / -6.6 | -0.7 | 160 | 54% |
+| `blend-b.mp3` | a + **room**: the kit's early reflections on the voice (`room` 0.35/0.3), send 0.28, 35 ms pre-delay, -1 dB | -2.9 | -8.9 / -22.2 | **0.56** / 0.52 | -6.5 / -6.6 | -1.1 | 235 | fails (transcribes other words) |
+| `blend-c.mp3` | b + edges (double 0.2, breath, 30/120 ms phrase fades) + guitars -2.5 dB at 2.5 kHz + glue comp | -3.2 | -8.7 / -22.6 | 0.60 / 0.55 | -7.5 / -6.8 | +1.2 | 260 | 42% |
+| **`blend-d.mp3`** | a + **space without smear**: no early reflections, reverb send 0.32 behind a **60 ms pre-delay**, double 0.2 panned wider (0.7), breath, soft phrase edges, guitars -2.5 dB at 2.5 kHz | -0.9 | -8.4 / -22.6 | 0.66 / 0.55 | -6.3 / -6.8 | -0.1 | 270 | **62%** |
+| `blend-e.mp3` | d + a light room (`room` 0.3, mix 0.12) | -1.2 | -8.1 / -22.6 | 0.64 / 0.55 | -6.1 / -6.8 | -0.2 | 290 | 58% |
+
+What the numbers say:
+- Against the band, the approved chorus was **dull on top** (8 kHz 3.8 dB under the band, where the tts voice was 4.4 dB over it). It was also **more mono** (coherence 0.77 vs the band's 0.52; side-mid 2 dB narrower) and **barely in the room**.
+- It is also 7-8 dB heavier at 500 Hz-1 kHz than this guitar-and-drum band. That comes from the voice itself: no EQ variant moved it by more than about 1 dB.
+- Its phrase ends were short: the 90-10 % release was 160 ms, against the tts voice's 340 ms.
+- Putting the kit's early reflections on the voice (b) matched the band's width and coherence almost exactly, but it smeared the consonants and Whisper lost the words. A light room (e) costs a little clarity too.
+- The best balance is **d**: air back, the reverb's wet level up 3 dB behind a 60 ms pre-delay (the tail sits in the band's reverb, the words stay clean), a wider and quieter double, soft phrase edges with a breath, and a little 2.5 kHz room carved in the guitars. Its width now matches the band (-6.3 vs -6.8 dB side-mid), it is less mono (0.66), and its words read best of all versions (62%, vs 42% before).
+- d is the mix example in docs/MANUAL.md "Voices". `reverb_predelay_ms` is a new track key (studio.py; 0 = as before).
+- All of this is measured, not heard: b, c, d and e need Robert's ears.
+
+## Engine integration (`singer` `"source": "svs"`)
+
+- `engine/svs.py` is the same OpenUtau code path as `dsinger.py`, with a few additions:
+  - syllables and melismas from the engine's lyric notation;
+  - phrases split at rests (a gap over 12% of the note's slot, or 25 ms);
+  - an optional breath (the model's own `AP`);
+  - phrase-edge fades;
+  - a double as a second take.
+- **Deterministic**: each bank's pitch and acoustic models are patched once (cached in `~/.cache/spectre/svs/<bank>/patched/`). Their starting noise becomes an input, fed from a generator seeded by the phrase and the track's `seed`, so a phrase renders the same no matter what was rendered before. Verified by rendering the same line twice from an empty cache: identical.
+- LEONA's DDPM models also draw noise inside the sampling loop. Those nodes get a fixed seed, and the sessions are rebuilt per phrase, which is slower on a first render but deterministic.
+- Rendered phrases are cached in `~/.cache/spectre/svs/phrases/`, keyed by the render version, bank, mode, vocoder, settings, words, notes and seed.
+- `tts` and the eSpeak sources are untouched: `singer.sing` only gains an early branch for `source: "svs"`. Verified: the tts and `breathy` renders of the line are bit-identical to the previous `singer.py`.
