@@ -238,5 +238,39 @@
       "loudness: Latin masters -14 to -8 LUFS, about -12 to keep dynamics, traditional styles -16 to -12, hip-hop-leaning louder (https://sageaudio.com/articles/mastering-for-latin-music); chart top 10 average -8.3 LUFS (https://www.izotope.com/en/learn/mastering-trends)",
       "tonal balance: Pestana et al. 2013 (docs/MASTERING.md)"
     ]
+  },
+  "chamberscore": {
+    "name": "Cinematic chamber score, whimsical and nostalgic (the childhood-montage idiom of animation and indie-film scores: piano, small strings with pizzicato, glockenspiel, celesta, vibraphone, woodwinds, acoustic guitar, ukulele, whistling, one orchestral swell), blended with neo-classical piano",
+    "doc": "docs/CHAMBER_SCORE.md",
+    "status": "researched 2026-11-24 for session 015; length, tempo estimates, keys and loudness measured on a catalogue of 30 albums (16 film and animation scores, 9 neo-classical, 5 indie-folk / chamber; MusicBrainz lengths, AcousticBrainz tempo, key and ReplayGain); form, meter and tempo of reference cues from analyses (Married Life: Hooktheory and an AAU thesis); the tonal target reuses the measured `rock` curve with a light EQ (no orchestral or acoustic curve is measured)",
+    "master": {
+      "target": "rock",
+      "lufs": -15.0,
+      "tp": -1.0,
+      "eq": 0.4,
+      "translate": 0.2,
+      "mono_below": 80.0
+    },
+    "length": "3:00-4:30, aim 3:15-4:10 (a standalone track built like a montage cue: Married Life 4:11; score cues of 2:00 and longer median 2:52, middle half 2:18-3:32; standalone neo-classical and indie-folk tracks median 4:17 and 3:42)",
+    "form": "theme and variations on one motif: 16-bar periods (A, A', B; Married Life is two AABA cycles with an intro, a break and a closing period), the theme passed between instruments and recoloured; joy and sorrow from the SAME theme by tempo, density and dynamics (a ritardando and a thinning to piano alone), not by switching to minor; one orchestral swell; the return of the theme changed; a slow piano close (Married Life falls from about 175 to 75 bpm); a late whole-tone lift is a habit of the idiom to question",
+    "tempo": "two pockets: a waltz felt in one, quarter about 150-180 (dotted half 50-60: Married Life 172-175, Merry-Go-Round of Life chorus 161); piano-led cues in 4/4 or 2/4 about 72-104 (Spirited Away 77, Path of the Wind 90, Comptine 100, River Flows in You 72); the slow close about 70-80; rubato and ritardandi at phrase ends",
+    "meter": "3/4 (a waltz, felt in one: 12 engine steps per bar, 4 waltz bars = 3 engine bars) or 4/4 / 2/4; no drum kit (brushes, a light shaker or claps at most)",
+    "change_rate": "by phrase and period: something changes every 8-16 bars (the theme moves to another instrument, a layer joins or leaves); the big changes are tempo, density and dynamics",
+    "role": "a piano or a whimsical lead (glockenspiel, celesta, whistle, violin, clarinet-like reed) carries the theme; the accompaniment (waltz bass and chords, pizzicato, guitar or ukulele strums) leaves the middle for it; a voice, if any, is an instrument (a wordless line, a hum, a children's-choir colour)",
+    "hand_tuned": [
+      "target curve: `rock` reused (pop+rock #1s 1950-2010; not measured on scores, piano or chamber music; the steepest measured top)",
+      "lufs -15: a choice between the score albums since 2005 (median -14.9) and neo-classical since 2005 (-16.7), inside Sage Audio's film range at its quiet edge",
+      "eq 0.4: lighter than caroling (0.5) because the curve is borrowed and a chamber ensemble has little 100-400 Hz body to match it",
+      "translate 0.2: little bass-harmonic enhancement (no bass instrument leads)",
+      "mono_below 80: lower than the band genres (Sage Audio: keep the low end of the side image in classical masters); the exact value is a choice",
+      "change_rate (craft, from the period form)"
+    ],
+    "sources": [
+      "length, tempo estimates, keys, loudness: Spectre's catalogue of 30 albums (2026-11-24): MusicBrainz track lengths, AcousticBrainz tempo, key and ReplayGain (LUFS ~ -23.7 - RG, calibrated on Spectre's masters, docs/CAROLING.md); album list and numbers in docs/CHAMBER_SCORE.md",
+      "form, meter, tempo of Married Life (Up): Hooktheory (F major, 3/4, 174 bpm, https://www.hooktheory.com/theorytab/view/michael-giacchino/up---married-life); AAU master's thesis on Married Life (16-bar A/A'/B variants, two AABA cycles, 175 to 75 bpm, sorrow by tempo, dynamics and solo piano in a major key, F to G lift; https://projekter.aau.dk/projekter/files/281254258/)",
+      "tempo and meter of reference cues: Hooktheory (Merry-Go-Round of Life 3/4 110/161; Spirited Away main theme 4/4 77; Path of the Wind 4/4 90; Comptine d'un autre ete 4/4 100; River Flows in You 2/4 72)",
+      "loudness: film and TV music -14 to -10 LUFS (https://www.sageaudio.com/articles/mastering-music-for-film-and-video); dynamic classical -20 to -16 LUFS, keep the low side image (https://sageaudio.com/articles/how-to-master-dynamic-classical-music); streaming normalization -14 (Spotify)",
+      "tonal balance: acoustic genres show a natural top-end decay (Pestana et al. 2013; docs/MASTERING.md)"
+    ]
   }
 }
