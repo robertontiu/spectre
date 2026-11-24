@@ -222,7 +222,16 @@ export function AtmosphereField() {
       send({ type: "colors", colors });
     };
     const onState = () => send(stateMessage());
-    const onResize = () => send(viewMessage());
+    // Only tell the renderer about real changes; a re-layout that leaves the view as it was
+    // (e.g. the logotype's glitch) must not trigger a redraw of the sprites.
+    let lastView = "";
+    const onResize = () => {
+      const msg = viewMessage();
+      const key = JSON.stringify(msg.type === "view" ? msg.view : msg);
+      if (key === lastView) return;
+      lastView = key;
+      send(msg);
+    };
     const resize = new ResizeObserver(onResize);
     resize.observe(banner);
     window.addEventListener("resize", onResize);

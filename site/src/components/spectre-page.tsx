@@ -19,7 +19,7 @@ export function SpectrePage({ initial = 0, autoplay = false }: SpectrePageProps)
   return (
     <PlayerProvider tracks={tracks} initial={initial} autoplay={autoplay}>
       <Atmosphere />
-      <header className="relative isolate grid min-h-[clamp(340px,60svh,660px)] items-end">
+      <header className="relative isolate grid min-h-[clamp(340px,60svh,660px)] items-end overflow-x-clip">
         <GithubBadge />
         <div className="relative z-1 mx-auto w-full max-w-[960px] px-[max(16px,env(safe-area-inset-left,0px))] pt-10 pb-[calc(var(--lift)+8px)]">
           <Badge />

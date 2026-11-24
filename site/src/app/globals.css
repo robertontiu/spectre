@@ -38,6 +38,10 @@
   }
   html {
     background: var(--bg);
+    /* Nothing (e.g. the logotype's glitch shake) may widen the page on phones: a wider
+       layout viewport would zoom the page out and resize the background mid-playback. */
+    overflow-x: hidden;
+    overflow-x: clip;
   }
   body {
     margin: 0;
