@@ -169,6 +169,56 @@ A brief may make a voice mandatory (session 013 does); then the choice above is 
 - **Choirs:** several voices a third or sixth apart, other modes and `seed`s (`examples/vocals/svs/choir-line-dry.mp3`); all are female, so a low choir layer goes on `choir`/`vox2` or instruments. `vox2` (pure synthesis) can add wordless chops beside the svs voice.
 - **Terms and credit:** Lotte V's terms forbid political, hateful or illegal use; a physics subject (radioactive decay) is not political, but keep it physics and feeling, not a statement about nuclear weapons, power or disasters. Every svs voice used goes into the README's **Credits** line and the site notes with its `credit` from engine/voices.json, e.g. "Vocals: Hoshino Hanami (DiffSinger voicebank by Lotte V, lottev.moe), Potluck Vocoder by tigermeat" (LEONA: "Vocals: LEONA (DiffSinger voicebank by Lotte V, lottev.moe, CC BY 4.0), Potluck Vocoder by tigermeat").
 
+## Mixing the voice (researched 2026-11-24)
+"Vocals" above says where a voice goes and what it is for; this section is how to mix it so the words survive supersaws, a kick and a loud master. The principles for every genre, the choir research and the check procedure are in [docs/voice/MIXING.md](voice/MIXING.md). Values marked *(hand-tuned)* are Spectre's starting points, not sourced numbers. Published interviews with dance engineers describe the approach but almost never give settings, and no measured survey of trance vocal levels or reverb times was found.
+
+**What the research says**
+- **Loud, bright, squeezed, mixed last.** Darren Tate: "I'll tend to compress vocals quite heavily for dance records", "EQ them quite brutally", and he needs "the vocals sitting up there in the mix"; he balances the track first and fits the vocal last ([Sound On Sound, Secrets of house and trance](https://www.soundonsound.com/techniques/secrets-house-trance)). Armin van Buuren makes the room in the instruments instead: "Only use the sounds in the frequency ranges you want them to be active in", because "I want to hear what the vocalist is singing" ([Sound On Sound, 2009](https://www.soundonsound.com/people/armin-van-buuren)). One documented in-the-box dance-pop lead ran a compressor at 6:1 with light de-essing built in, saturation on the voice throughout, and reverb and delay sends only from the lead; the chorus chops got their own group with a rhythmic volume shaper at 37% for "a little bounce" ([Sound On Sound, Inside Track: Clean Bandit](https://www.soundonsound.com/techniques/inside-track-clean-bandit-solo?page=3)).
+- **Space is long, but it is kept off the words.** Large reverbs and long tails are the genre (sources under "Processing" above). What keeps the words clear under them is general practice: a pre-delay from 30-40 ms to over 100 ms keeps the dry voice in front, the reverb is high-passed around 150 Hz and often low-passed at 3-4 kHz, and its level is found by pulling it down until the voice separates from the track and then coming halfway back ([Sound On Sound, Vocal Production](https://www.soundonsound.com/techniques/vocal-production)); the reverb and delay sends are de-essed so sibilants don't splash ([Sound On Sound, Managing Sibilance](https://www.soundonsound.com/techniques/managing-sibilance)); the reverb is ducked under the dry voice (MusicRadar tip 66, above). Excess reverb and delay as spot effects on single words ("throws") are a dance habit (Vocal Production); the Despacito remix used quarter- and 8th-note throws on single words only ([Tingen](https://tingen.org/making-of-bieber-despacito-remix/)).
+- **Level:** measured lead-vocal levels exist for chart pop (about 1-3 dB over the accompaniment), rock (0 dB) and metal (-3 dB), not for dance music ([Gerdes & Siedenburg 2023](https://www.geidai.ac.jp/~marui/course_enshu_2024/gerdes_siedenburg_202304.pdf)). A trance drop is as dense as a rock chorus, a breakdown as open as a ballad.
+- **Chops are rhythm, not text** (Native Instruments, above). Nobody mixes a chop to be read; a chop that must carry a word has to be mixed as a line.
+- **Mastering.** At -9 to -10 LUFS the limiter and glue compressor work on every kick. That shortens the distance between the dry voice and everything quieter than it: reverb tails, delays and the saws between the syllables all come up. A reverb level that just works before the master is too much after it, so judge words on the master, not on the premaster. High-shelf moves on the master raise sibilance with them (Managing Sibilance); the master's tonal EQ moves the voice's presence with the saws', it cannot separate them.
+
+**The engine, measured:** `mix.reverb` `size` 0.75 decays in 2.1 s, 0.85 in 3.0 s, 0.88 in about 3.5 s, 0.9 in 4.0 s (T30 through the bus filters). There is one reverb bus and one delay bus, no ducking of the returns from the voice, no de-esser, and `sidechain` only listens to drum tracks. So "keep the reverb off the words" is done with pre-delay, small sends on word tracks, and separate throw tracks.
+
+**Starting chains** (all *hand-tuned* except the blend-d values from MANUAL "Voices"):
+```json
+"mix": {"reverb": {"size": 0.85, "damping": 0.5, "return_db": -6, "lpf": 7500},
+        "delay":  {"beats": 0.75, "feedback": 0.35, "return_db": -9, "lpf": 4000}},
+
+"line":  {"inst": {"type": "singer", "source": "svs", "voice": "hanami-power", "svs_fade_in_ms": 10, "svs_fade_out_ms": 80},
+          "send_reverb": 0.10, "reverb_predelay_ms": 100, "send_delay": 0.04,
+          "sidechain": {"source": "kick", "depth": 0.15, "release_ms": 120},
+          "fx": [{"type": "hpf", "hz": 180}, {"type": "eq", "hz": 800, "gain_db": -2.5, "q": 0.9},
+                 {"type": "eq", "hz": 3200, "gain_db": 3, "q": 0.8}, {"type": "comp", "threshold_db": -24, "ratio": 4},
+                 {"type": "highshelf", "hz": 8000, "gain_db": 3}, {"type": "gain", "db": 10}], "gain_db": 10},
+
+"throw": {"inst": {"...": "the same voice; its pattern holds only the last word of the line"},
+          "send_reverb": 0.6, "reverb_predelay_ms": 40, "send_delay": 0.6,
+          "fx": [{"type": "hpf", "hz": 250}, {"type": "lpf", "hz": 5000}, {"type": "gain", "db": -4}]},
+
+"far":   {"inst": {"...": "hanami or hanami-soft, double 0.25, double_pan 0.7"}, "width": 0.3,
+          "send_reverb": 0.3, "reverb_predelay_ms": 100, "send_delay": 0.1,
+          "fx": [{"type": "hpf", "hz": 200}, {"type": "eq", "hz": 800, "gain_db": -2, "q": 0.9},
+                 {"type": "comp", "threshold_db": -22, "ratio": 3}, {"type": "highshelf", "hz": 8000, "gain_db": 3}]},
+
+"chop":  {"inst": {"...": "hanami-power or leona-power, svs_fade_in_ms 3, svs_fade_out_ms 25"},
+          "send_reverb": 0.15, "reverb_predelay_ms": 60, "send_delay": 0.15,
+          "sidechain": {"source": "kick", "depth": 0.2, "release_ms": 120},
+          "fx": [{"type": "hpf", "hz": 220}, {"type": "eq", "hz": 800, "gain_db": -2.5, "q": 1.0},
+                 {"type": "comp", "threshold_db": -24, "ratio": 5}, {"type": "highshelf", "hz": 8000, "gain_db": 2}]}
+```
+- **A line with words in a drop (`line`):** nearly dry, long pre-delay, a bright voice (`hanami-power`; `leona-power` slurs words), 4:1 or more. The long tail comes from the `throw` track on the last word, so the tail starts when the words are over. Level about 0 to -1 LU against the band in the drop *(hand-tuned, between the measured rock and pop figures)*; make room in the band rather than adding level: `{"type": "eq", "hz": 2500, "gain_db": -2.5, "q": 0.7}` on the supersaws, a section `auto` of -2 dB on saws and lead for the bars of the call, or a call-and-answer arrangement where the saws rest while the voice sings. Kick sidechain on a word line light (0.1-0.2) or none: deeper pumping swallows syllables that fall on the beat.
+- **The far voice in a breakdown or intro (`far`):** wet is the point, but keep the pre-delay at 80-120 ms and the send near 0.3 with a 3 s reverb; 2-4 LU over the pads under it. **Never sweep a low-pass or high-pass across words** (a filter under about 6 kHz removes the s, t, f and k that make them words; session 012's door did exactly this): filter the reverb's throw, the pad or a wordless double, and bring the worded voice in by level.
+- **Chops (`chop`):** a syllable of two 16ths at 138-140 bpm lasts 0.21 s, under the quarter note a sung word needs (MANUAL "Voices"). Mix them as rhythm: short fades, heavy compression, gated to the grid, delay for bounce. If the chop repeats the hook's words, let the full line state them once, clearly, before the chops take over, so the ear knows what the fragments are.
+- **Choir and pad voices:** MIXING.md "Choir and ensemble voices": `svs_vibrato` 0.3-0.5, vowels only, `hanami-dark` and `leona-soft` welcome here, sends 0.5-0.7, deep kick sidechain (0.6-0.8) in drops, 6-10 LU under the lead element, high-passed at 220-250 Hz and dipped at 2.5-3 kHz so they stay out of the word line's band.
+- **Delay:** dotted 8th (`beats` 0.75) or quarter (`beats` 1); a word line sends 0.03-0.06, because each repeat lands on the next word; the throw sends 0.5-0.7.
+- **De-essing substitute:** the high shelf at 8 kHz stays at 3 dB or less on word lines, the reverb bus `lpf` at 7-8 kHz and the delay bus at 4 kHz; the throw track is low-passed at 5 kHz before its sends.
+
+**How to check:** Whisper (small.en) per sung line on the **mastered** mix and on the voices alone (session 013's `words.py` does the first; procedure in MIXING.md "Checking a voice"), and the vocal-versus-band loudness per section from a render with the voice tracks muted. Check lines only: chops are not expected to transcribe.
+
+**Session 013, "Half of Me" (the owner: "places where he can't understand the words").** The producer measured v026: Whisper heard 4 of the 36 sung words (11%) on the master while the same lines dry were understood, so the words are lost in the space and the band, not in the voice. What the project shows against the research above: the reverb is 3.5 s (`size` 0.88) and the worded tracks send 0.2 (`line`) and 0.42 (`far`) into it; the delay bus feeds back 0.42; the intro's `far` voice enters through a 4 kHz low-pass that opens to 9 kHz across the words; the chops sing four words on two 16ths each with `leona-power`; and the master runs at -9.3 LUFS. The long reverb is right for the genre (the research does not support "less reverb" here); what is missing is the separation of words from tail: the `line` and `throw` chains above, no filter sweep on worded voices, room in the saws under the two calls, and the check run on the master.
+
 ## Ecstasy and euphoria: how trance gets there
 - **The break routine** (breakdown, build-up, drop) is the engine of euphoria. In a 2019 study of EDM peak experiences, listeners described intense, energising, uplifting and embodied responses, attributed mostly to the drop. Drop sections produced significantly higher skin conductance than the rest of the break routine.
 - **Expectation:** pleasure comes from expectations being fulfilled, delayed or violated, which can produce chills and an intense desire to move. The drop should come exactly when the body expects it, but with *more* than expected: the lead an octave up, a sus chord resolving, a new top note, a key change, the kick returning after a beat of silence.
