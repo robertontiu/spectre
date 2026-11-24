@@ -1,0 +1,309 @@
+{
+ "about": "Voices for singer source 'svs' (engine/svs.py). Pick one with \"voice\": \"<id>\". Descriptions, measurements and auditions: docs/voice/VOICES.md. Every voice here is licence-clean for Spectre's CC BY 4.0 tracks only with the credit line given; never use a Lotte V voice in a track with a political subject.",
+ "default": "hanami",
+ "banks": {
+  "hanami": {
+   "name": "Hoshino Hanami ~AI❤dol~ for DiffSinger v1.0",
+   "author": "Lotte V",
+   "dir": "hanami",
+   "url": "https://lottev.moe/ (v1.0 release post; MediaFire)",
+   "vocoder": "potluck/dsvocoder/potluck_pc-nsf_lite.onnx",
+   "licence": "Team L❤VE Voicebank License + Terms of Use: any creative use, commercial included, without permission; credit Lotte V; do not redistribute or sell the files or claim the voice; no political, hateful or illegal use. Its own vocoder is CC BY-NC-SA, so the engine uses the Potluck vocoder.",
+   "credit": "Vocals: Hoshino Hanami (DiffSinger voicebank by Lotte V, lottev.moe), Potluck Vocoder by tigermeat (https://github.com/mrtigermeat/potluck-vocoder, licence: see repo)"
+  },
+  "leona": {
+   "name": "LEONA -Ubasti- AI for DiffSinger v0.0.1b (beta)",
+   "author": "Lotte V",
+   "dir": "leona",
+   "url": "https://github.com/lottev1991/LotteV-Voicebank-Update-Repo/releases/tag/v0.0.1b-leona",
+   "vocoder": "potluck/dsvocoder/potluck_pc-nsf_lite.onnx",
+   "licence": "Voicebank CC BY 4.0 plus Lotte V's Terms of Use (as Hanami: credit, no redistribution, no political/hateful use). Its own vocoder is CC BY-NC-SA, so the engine uses the Potluck vocoder.",
+   "credit": "Vocals: LEONA (DiffSinger voicebank by Lotte V, lottev.moe, CC BY 4.0), Potluck Vocoder by tigermeat (https://github.com/mrtigermeat/potluck-vocoder, licence: see repo)"
+  }
+ },
+ "voices": [
+  {
+   "id": "hanami",
+   "bank": "hanami",
+   "mode": "Root",
+   "gender": 0.0,
+   "range": "A3-D5 (usable G3-F5; most data G3-D5, peak G4)",
+   "range_midi": [
+    55,
+    77
+   ],
+   "tags": {
+    "gender": "female",
+    "register": "mezzo-soprano / pop alto-soprano",
+    "timbre": [
+     "warm",
+     "clear",
+     "natural",
+     "medium-bright"
+    ],
+    "emotions": [
+     "tender",
+     "hopeful",
+     "nostalgic",
+     "warm",
+     "sincere"
+    ],
+    "genres": [
+     "pop rock",
+     "ballad",
+     "lo-fi",
+     "folk",
+     "carol choir",
+     "hooks in hip-hop"
+    ],
+    "bad_at": [
+     "aggression, grit, belting",
+     "dark or menacing lines",
+     "male parts"
+    ]
+   },
+   "settings": "defaults; mix chain: docs/MANUAL.md 'Voices' (svs mix example)",
+   "audition": "examples/vocals/svs/voices/hanami.mp3"
+  },
+  {
+   "id": "hanami-power",
+   "bank": "hanami",
+   "mode": "Fragrance",
+   "gender": 0.0,
+   "range": "A3-D5",
+   "range_midi": [
+    55,
+    77
+   ],
+   "tags": {
+    "gender": "female",
+    "register": "mezzo-soprano / pop",
+    "timbre": [
+     "bright",
+     "firm",
+     "open",
+     "forward"
+    ],
+    "emotions": [
+     "joyful",
+     "anthemic",
+     "confident",
+     "defiant (light)"
+    ],
+    "genres": [
+     "pop rock choruses",
+     "trance and EDM hooks",
+     "calls over dense mixes"
+    ],
+    "bad_at": [
+     "intimacy, whisper",
+     "soft lullaby lines"
+    ]
+   },
+   "settings": "defaults; cuts through a dense mix with less presence boost",
+   "audition": "examples/vocals/svs/voices/hanami-power.mp3"
+  },
+  {
+   "id": "hanami-soft",
+   "bank": "hanami",
+   "mode": "Nectar",
+   "gender": 0.0,
+   "range": "A3-C5 (soft modes thin out on top)",
+   "range_midi": [
+    55,
+    77
+   ],
+   "tags": {
+    "gender": "female",
+    "register": "mezzo-soprano / pop",
+    "timbre": [
+     "soft",
+     "dark",
+     "airy",
+     "breathy"
+    ],
+    "emotions": [
+     "intimate",
+     "melancholy",
+     "dreamy",
+     "longing",
+     "calm"
+    ],
+    "genres": [
+     "lo-fi",
+     "ambient",
+     "ballad",
+     "dream pop",
+     "choir pads and oohs"
+    ],
+    "bad_at": [
+     "cutting through guitars or saws",
+     "energy, excitement"
+    ]
+   },
+   "settings": "give it 1-2 dB more level or a quieter bed than the other modes",
+   "audition": "examples/vocals/svs/voices/hanami-soft.mp3"
+  },
+  {
+   "id": "hanami-dark",
+   "bank": "hanami",
+   "mode": "Root",
+   "gender": -0.5,
+   "range": "A3-C5",
+   "range_midi": [
+    55,
+    77
+   ],
+   "tags": {
+    "gender": "female (low formants)",
+    "register": "alto colour",
+    "timbre": [
+     "dark",
+     "warm",
+     "rounded",
+     "covered"
+    ],
+    "emotions": [
+     "solemn",
+     "mournful",
+     "mysterious",
+     "reverent"
+    ],
+    "genres": [
+     "folk lament",
+     "dark ambient",
+     "choir alto line",
+     "cinematic"
+    ],
+    "bad_at": [
+     "bright pop",
+     "clear diction in dense mixes"
+    ]
+   },
+   "settings": "hanami Root with gender -0.5 (formants down); less intelligible than hanami: keep the bed sparse",
+   "audition": "examples/vocals/svs/voices/hanami-dark.mp3"
+  },
+  {
+   "id": "leona",
+   "bank": "leona",
+   "mode": "Core",
+   "gender": 0.0,
+   "range": "A3-D5 (assumed from Hanami's data; not measured)",
+   "range_midi": [
+    57,
+    77
+   ],
+   "tags": {
+    "gender": "female",
+    "register": "soprano, character voice (beta)",
+    "timbre": [
+     "bright",
+     "light",
+     "youthful",
+     "character/cute"
+    ],
+    "emotions": [
+     "playful",
+     "cheeky",
+     "sunny",
+     "excited"
+    ],
+    "genres": [
+     "J-pop and anime-style hooks",
+     "hyperpop",
+     "chiptune",
+     "trance"
+    ],
+    "bad_at": [
+     "mature, serious or sad lines",
+     "natural adult pop"
+    ]
+   },
+   "settings": "beta voicebank: check every render; narrow vibrato (about 18 cents)",
+   "audition": "examples/vocals/svs/voices/leona.mp3"
+  },
+  {
+   "id": "leona-power",
+   "bank": "leona",
+   "mode": "CatNip",
+   "gender": 0.0,
+   "range": "A3-D5",
+   "range_midi": [
+    57,
+    77
+   ],
+   "tags": {
+    "gender": "female",
+    "register": "soprano, character voice (beta)",
+    "timbre": [
+     "brightest",
+     "hard",
+     "edgy",
+     "nasal-forward"
+    ],
+    "emotions": [
+     "energetic",
+     "excited",
+     "bratty",
+     "triumphant"
+    ],
+    "genres": [
+     "EDM and trance drops",
+     "hyperpop",
+     "rock calls"
+    ],
+    "bad_at": [
+     "tenderness",
+     "warmth"
+    ]
+   },
+   "settings": "the brightest voice in the set: cut 3-5 kHz rather than adding presence",
+   "audition": "examples/vocals/svs/voices/leona-power.mp3"
+  },
+  {
+   "id": "leona-soft",
+   "bank": "leona",
+   "mode": "CatNap",
+   "gender": 0.0,
+   "range": "A3-C5",
+   "range_midi": [
+    57,
+    77
+   ],
+   "tags": {
+    "gender": "female",
+    "register": "soprano, character voice (beta)",
+    "timbre": [
+     "soft",
+     "breathy",
+     "airy",
+     "dark"
+    ],
+    "emotions": [
+     "wistful",
+     "tender",
+     "fragile",
+     "sleepy"
+    ],
+    "genres": [
+     "lo-fi",
+     "dream pop",
+     "ambient",
+     "choir pads"
+    ],
+    "bad_at": [
+     "dense mixes",
+     "energy"
+    ]
+   },
+   "settings": "the breathiest voice in the set (aperiodicity 0.18)",
+   "audition": "examples/vocals/svs/voices/leona-soft.mp3"
+  }
+ ],
+ "controls": {
+  "gender": "-1..1 (0): formant shift; negative = formants down (darker, larger, older), positive = up (brighter, younger). Measured on hanami: -0.5 F1/F2 617/987 -> 498/1009 Hz. Not a male voice: at -1 an octave down it stays a low female voice (examples/vocals/svs/voices/ctl-hanami-male-fake.mp3).",
+  "velocity": "0.5..2 (1): consonant speed; small effect on these banks",
+  "mix": "a voice entry may give \"mix\": {mode: weight} instead of \"mode\" to blend vocal modes (speaker embeddings interpolated)",
+  "not available": "these banks have no breathiness, tension, voicing or energy controls (their models were trained without them)"
+ }
+}

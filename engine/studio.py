@@ -573,7 +573,11 @@ def render(P, solo=None, out_prefix=None, quiet=False):
             xl = ex.get("lpf")
             if xl and name in xl.get("tracks", []):
                 st = block_lpf(st, b - int(xl["beats"] * bt_e * SR), b, 18000, xl.get("to_hz", 400))
-        rev_bus += st * tr.get("send_reverb", 0)
+        pd_n = int(tr.get("reverb_predelay_ms", 0) / 1000 * SR)  # the reverb hears this track later
+        if pd_n > 0 and tr.get("send_reverb", 0):
+            rev_bus[:, pd_n:] += st[:, :-pd_n] * tr["send_reverb"]
+        else:
+            rev_bus += st * tr.get("send_reverb", 0)
         del_bus += st * tr.get("send_delay", 0)
         mix += st
         env = np.sqrt(np.convolve(st.mean(0) ** 2, np.ones(2205) / 2205, mode="same")[::2205])

@@ -37,6 +37,9 @@ engine/
   singer.py       voices: `singer` (sings words: words from eSpeak NG or, with `source: "tts"`, sampled from a local
                   TTS, then laid on the melody with the WORLD vocoder) and `vox2` (improved wordless voice: LF glottal
                   source, consonant onsets for chops); see docs/MANUAL.md "Voices"
+  svs.py          `singer` `source: "svs"`: a singing voice synthesizer (DiffSinger voicebanks, ONNX, CPU; OpenUtau's code
+                  path, seeded and phrase-cached, deterministic); banks in ~/.cache/spectre/svs (never in git)
+  voices.json     the svs voice catalogue: ids, banks, licences and credit lines, tags (docs/voice/VOICES.md)
   tts_words.py    the word sampler for `singer` `source: "tts"`: Kokoro TTS (local, Apache 2.0) speaks each word
                   neutrally (whole phrases, or single words) into a cache (~/.cache/spectre/words), WORLD analysis, syllable segmentation (phrases aligned to the words by DTW)
   hand.py         the hand: step/note/chord notation parser, swing, humanization, voicing, rolls, arps

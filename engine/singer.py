@@ -871,6 +871,9 @@ def _inhales(p, groups, total_n, rng):
 def sing(p, notes, total_n):
     """Render a sung line. notes: list of dict(t0, n, f, vel, glide[, syl]). Returns mono, or stereo (2, N) when
     `double` > 0."""
+    if p.get("source") == "svs":  # a singing voice synthesizer (engine/svs.py); the other sources are unchanged
+        import svs
+        return svs.sing(p, notes, total_n)
     p = dict(p)
     if "lyrics" in p and not p.get("_lyrics"):
         p["_lyrics"] = parse_lyrics(p["lyrics"])

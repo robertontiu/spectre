@@ -7,3 +7,6 @@ librosa>=0.10
 matplotlib>=3.8
 pyworld>=0.3.4
 kokoro-onnx>=0.4  # singer source "tts" only: the word sampler (pulls onnxruntime, phonemizer, espeakng-loader)
+onnx>=1.16  # singer source "svs" only: patches the DiffSinger models once (seeded noise input)
+cmudict>=1.0  # singer source "svs": English words to phonemes
+pyyaml>=6.0  # singer source "svs": voicebank configs
