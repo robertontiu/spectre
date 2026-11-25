@@ -38,6 +38,8 @@ import shutil
 import sys
 import tarfile
 import tempfile
+import time
+import urllib.error
 import urllib.request
 import zipfile
 
@@ -119,7 +121,7 @@ def source(r):
         return r["url"]
     if r["kind"] == "files" and all(f.get("url") for f in r["files"]):
         return f"{len(r['files'])} direct links ({r['page']})"
-    return f"manual: {r['page']}"
+    return f"no direct link recorded yet; official source: {r['page']}"
 
 
 def status(ids, verify):
@@ -148,12 +150,40 @@ def status(ids, verify):
 # ---- downloads -----------------------------------------------------------------------
 
 
+class Transient(IOError):
+    """The server was busy or unreachable (429, 5xx, timeout): the link is not known to be broken."""
+
+
+class DeadLink(IOError):
+    """The server answered that the file is not there (404, 410, 403): the link needs replacing."""
+
+
+def _open(url, tries=5):
+    """urlopen with retries for transient errors (429 / 5xx / timeouts, honouring Retry-After)."""
+    for k in range(tries):
+        try:
+            return urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": UA}), timeout=120)
+        except urllib.error.HTTPError as e:
+            if e.code in (404, 410, 403, 401):
+                raise DeadLink(f"HTTP {e.code} {e.reason}") from e
+            if e.code != 429 and e.code < 500:
+                raise
+            why = f"HTTP {e.code} {e.reason}"
+            ra = e.headers.get("Retry-After", "") if e.headers else ""
+            wait = min(float(ra), 120.0) if ra.isdigit() else 10.0 * 2 ** k
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+            why, wait = str(getattr(e, "reason", e)), 10.0 * 2 ** k
+        if k == tries - 1:
+            raise Transient(f"{why} after {tries} tries")
+        print(f"      {why}: retrying in {wait:.0f} s")
+        time.sleep(wait)
+
+
 def fetch(url, dst, size=None, digest=None):
     """Download url to dst (via a .part file), then check size and sha256; raises on mismatch."""
     print(f"get   {url}")
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
     tmp = dst + ".part"
-    with urllib.request.urlopen(req, timeout=120) as r, open(tmp, "wb") as f:
+    with _open(url) as r, open(tmp, "wb") as f:
         shutil.copyfileobj(r, f, 1 << 20)
     got = os.path.getsize(tmp)
     if size is not None and got != size:
@@ -167,8 +197,8 @@ def fetch(url, dst, size=None, digest=None):
 
 def mediafire(page):
     """The direct link behind a MediaFire file page (it changes; the page is the stable link)."""
-    req = urllib.request.Request(page, headers={"User-Agent": UA})
-    html = urllib.request.urlopen(req, timeout=60).read().decode("utf-8", "replace")
+    with _open(page) as r:
+        html = r.read().decode("utf-8", "replace")
     hits = re.findall(r'https://download\d*\.mediafire\.com/[^"\'\s<>]+', html)
     if not hits:
         raise IOError("no download link on the MediaFire page")
@@ -240,11 +270,19 @@ def install_hf(r):
     print(f"ok    {r['id']} -> {snap}")
 
 
-def explain(r, why):
+def explain(r, why, what):
+    """what: 'transient' (retry later), 'nolink' (find and record the link), 'dead' or 'changed' (find the source again)."""
     print(f"todo  {r['id']}: {why}")
+    if what == "transient":
+        print("        the link is not broken, the server was busy or unreachable: run "
+              f"`engine_assets.py install {r['id']}` again later before searching for another source")
+    else:
+        print(f"        official source: {r.get('page', r.get('repo', '?'))}. This entry has an official source; "
+              "find the file there (search_hint), check licence, size and sha256, install it and record the link "
+              "in engine/third_party.json, optional entries included. The mirror is only a fallback.")
     for i, step in enumerate(r.get("manual", []), 1):
         print(f"        {i}. {step}")
-    print(f"        if the link fails: {r['search_hint']}")
+    print(f"        search_hint: {r['search_hint']}")
 
 
 def install(ids, required_only):
@@ -264,13 +302,21 @@ def install(ids, required_only):
         try:
             {"zip": install_zip, "files": install_files, "hf_model": install_hf}[r["kind"]](r)
         except LookupError:
-            explain(r, "no direct link; install it by hand")
+            explain(r, "no direct link recorded yet", "nolink")
+            failed.append(r["id"])
+        except Transient as e:
+            explain(r, f"download interrupted ({e})", "transient")
+            failed.append(r["id"])
+        except DeadLink as e:
+            explain(r, f"link dead ({e})", "dead")
             failed.append(r["id"])
         except Exception as e:
-            explain(r, f"download failed ({e})")
+            explain(r, f"download failed ({e})", "changed" if "sha256" in str(e) or "size" in str(e) else "dead")
             failed.append(r["id"])
     if failed:
         print(f"\nnot installed: {', '.join(failed)}")
+        print("Every entry has an official source (its page). Report each as: installed, retried, link found and "
+              "recorded, or not found after searching (say where you looked). Never as 'no official link'.")
     return 0
 
 

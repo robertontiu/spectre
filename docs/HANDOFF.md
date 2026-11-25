@@ -15,7 +15,7 @@ The chat orchestrator handed over here after the remix pass and the S3 upload.
 - **Memory:** about 8 GB. A render takes about 1.5 GB, a long master up to 5.7 GB, and Whisper medium about 4 GB. Before a render or master, wait for a free slot (`tools/remix/waitfree.sh`) and at least 3 GB free; before Whisper, 5 GB free and no other Whisper process. Running two Whisper jobs next to a render took the server down once.
 - **Remix lessons:** moved to docs/LESSONS.md "Remix pass (2026-11-25)" (2026-11-25).
 - **Fixed 2026-11-25:** `tools/refcurve.py` cache keys longer than 150 characters now end in a hash of the whole query, so two long queries can no longer collide (short keys unchanged, so the existing cache still hits).
-- **Cleanup still to do:** /tmp scratch, ~/beat (3.2 GB pre-repo workspace, superseded), ~/ext (third-party clones), ~/lottev1991.
+- **Cleanup still to do (only on the old server; a fresh cloud container has none of these):** /tmp scratch, ~/beat (3.2 GB pre-repo workspace, superseded), ~/ext (third-party clones), ~/lottev1991.
 
 ## 1. What Spectre is
 
