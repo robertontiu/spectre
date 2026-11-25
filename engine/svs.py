@@ -11,6 +11,10 @@ end in SP; without it a final consonant can hang for half a second), an optional
 diffusion noise fed from a seeded generator instead of onnxruntime's own, so every phrase renders bit for bit the same
 regardless of what was rendered before (the models are patched once: their RandomNormalLike node becomes an input).
 
+Banks with `"engine": "soulx"` in voices.json are not DiffSinger banks: engine/svs_soulx.py renders their phrases
+(SoulX-Singer, a zero-shot model that continues a prompt recording: the male voices). Everything around the phrase
+(phrase splitting, cache, fades, doubles, levelling) is the same code below.
+
 Voices are listed in engine/voices.json (id, bank, vocal mode, licence, credit, tags); docs/voice/VOICES.md describes
 them. Model files never go in the repo: banks live in ~/.cache/spectre/svs/<bank>/bank/ (SPECTRE_SVS_DIR moves it),
 rendered phrases in ~/.cache/spectre/svs/phrases/ (safe to delete; they regenerate identically).
@@ -488,7 +492,9 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
     mix = v.get("mix")
     gender = float(p.get("gender", v.get("gender", 0.0)))
     velocity = float(p.get("velocity", v.get("velocity", 1.0)))
-    steps = int(p.get("svs_steps", 20))
+    soulx = info.get("engine") == "soulx"  # a zero-shot model with a prompt voice instead of a DiffSinger bank
+    steps = int(p.get("svs_steps", info.get("steps", 16) if soulx else 20))
+    tune = float(p.get("svs_tune", v.get("tune", info.get("tune", 1.0)))) if soulx else 0.0
     vib = float(p.get("svs_vibrato", 1.0))
     groups = _groups(p, notes)
     lang = str(p.get("lang") or v.get("lang") or "en")
@@ -519,11 +525,17 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
         key = _key(VERSION, bank_name, info.get("vocoder"), mode, mix, gender, velocity, steps, br, detune_cents,
                    words, [(round(a, 1), round(d, 1), m, k) for a, d, m, k in ns], pseed,
                    *(() if lang == "en" else ("lang", lang, LANG_VERSION)),
-                   *(() if vib == 1.0 else ("vib", vib)))
+                   *(() if vib == 1.0 else ("vib", vib)),
+                   *(() if not soulx else ("soulx", v.get("prompt"), __import__("svs_soulx").VERSION, tune)))
         path = os.path.join(PHRASES, key[:2], key + ".npz")
         if os.path.exists(path):
             z = np.load(path)
             wav, t0 = z["wav"], float(z["t0"])
+        elif soulx:
+            import svs_soulx
+            wav, t0 = svs_soulx.render(v, info, words, ns, pseed, steps=steps, tune=tune)
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            _atomic_save(path, lambda t: np.savez(open(t, "wb"), wav=wav, t0=t0))
         else:
             if bank is None:
                 bank = Bank.get(bank_name, banks)
@@ -563,6 +575,9 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
     return y[:total_n]
 
 
+_NOTED = set()  # voices whose `status` note (voices.json) was printed in this process
+
+
 def sing(p, notes, total_n):
     """singer.sing for `source: "svs"`: mono, or stereo (2, N) with a double (a second take: its own seeded pitch
     and timbre noise, its phrases moved by a few ms, a few cents off, panned opposite), levelled by singer._norm."""
@@ -573,6 +588,9 @@ def sing(p, notes, total_n):
     if not notes:
         return np.zeros(total_n, dtype=np.float32)
     v, _ = voice_spec(p)
+    if v.get("status") and v["id"] not in _NOTED:
+        _NOTED.add(v["id"])
+        _warn(f"voice {v['id']!r}: {v['status']}")
     lo, hi = v.get("range_midi", [0, 127])
     out = [nt for nt in notes if not lo <= 69 + 12 * np.log2(nt["f"] / 440.0) <= hi]
     if out:

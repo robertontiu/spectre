@@ -93,7 +93,8 @@ def main():
     import singer
     os.makedirs(OUT, exist_ok=True)
     from svs import voices
-    jobs = [(v["id"], v["id"], {}, 0, "") for v in voices()["voices"]]
+    # a voice may give "audition_transpose" (the male voices sing the line an octave down: male.py measures them)
+    jobs = [(v["id"], v["id"], {}, int(v.get("audition_transpose", 0)), "") for v in voices()["voices"]]
     jobs += [(k, v, p, tr, what) for k, (v, p, tr, what) in DEMOS.items()]
     res = {}
     import subprocess

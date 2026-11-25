@@ -1,0 +1,289 @@
+{
+ "ref-hanami": {
+  "tilt_db": -8.6,
+  "breathiness": 0.06,
+  "F1": 617,
+  "F2": 987,
+  "vibrato_cents": 32.0,
+  "attack_ms": 130.0,
+  "pitch_cents": [
+   3,
+   -1,
+   1,
+   8,
+   -4,
+   0
+  ],
+  "pitch_mean_abs_cents": 2.8,
+  "whisper": "Here you are, round and round.",
+  "whisper_words": 1.0,
+  "above_12k_db": -41.4,
+  "what": "hanami at the written pitch (F#4-B4), the same measures"
+ },
+ "male-light": {
+  "tilt_db": -13.9,
+  "breathiness": 0.11,
+  "F1": 714,
+  "F2": 1215,
+  "vibrato_cents": 22.0,
+  "attack_ms": 300.0,
+  "pitch_cents": [
+   0,
+   6,
+   2,
+   -3,
+   -1,
+   0
+  ],
+  "pitch_mean_abs_cents": 2.0,
+  "whisper": "Here you are, round and round.",
+  "whisper_words": 1.0,
+  "above_12k_db": -64.9,
+  "what": "the catalogue line at -12 semitones (F#3-B3), dry",
+  "render_s": 0
+ },
+ "ctl-male-light-low": {
+  "tilt_db": -19.7,
+  "breathiness": 0.14,
+  "F1": 641,
+  "F2": 1105,
+  "vibrato_cents": 29.0,
+  "attack_ms": 260.0,
+  "pitch_cents": [
+   8,
+   2,
+   -1,
+   -3,
+   17,
+   4
+  ],
+  "pitch_mean_abs_cents": 5.8,
+  "whisper": "Here you are round and round",
+  "whisper_words": 1.0,
+  "above_12k_db": -66.4,
+  "what": "the line at -19 semitones: the low end of the range"
+ },
+ "ctl-male-light-high": {
+  "tilt_db": -11.8,
+  "breathiness": 0.11,
+  "F1": 680,
+  "F2": 1311,
+  "vibrato_cents": 20.0,
+  "attack_ms": 250.0,
+  "pitch_cents": [
+   7,
+   11,
+   0,
+   8,
+   12,
+   7
+  ],
+  "pitch_mean_abs_cents": 7.5,
+  "whisper": "Here you are, round and round.",
+  "whisper_words": 1.0,
+  "above_12k_db": -63.2,
+  "what": "the line at -7 semitones: the high end of the range"
+ },
+ "male-deep": {
+  "tilt_db": -13.5,
+  "breathiness": 0.08,
+  "F1": 577,
+  "F2": 952,
+  "vibrato_cents": 18.0,
+  "attack_ms": 70.0,
+  "pitch_cents": [
+   -15,
+   -12,
+   4,
+   6,
+   5,
+   -2
+  ],
+  "pitch_mean_abs_cents": 7.3,
+  "whisper": "Here you are, round and round.",
+  "whisper_words": 1.0,
+  "above_12k_db": -65.7,
+  "what": "the catalogue line at -12 semitones (F#3-B3), dry",
+  "render_s": 94
+ },
+ "ctl-male-deep-low": {
+  "tilt_db": -15.8,
+  "breathiness": 0.11,
+  "F1": 519,
+  "F2": 893,
+  "vibrato_cents": 36.0,
+  "attack_ms": 360.0,
+  "pitch_cents": [
+   0,
+   3,
+   1,
+   -1,
+   9,
+   4
+  ],
+  "pitch_mean_abs_cents": 3.0,
+  "whisper": "Here you are, round and round.",
+  "whisper_words": 1.0,
+  "above_12k_db": -68.8,
+  "what": "the line at -19 semitones: the low end of the range"
+ },
+ "ctl-male-deep-high": {
+  "tilt_db": -13.8,
+  "breathiness": 0.09,
+  "F1": 655,
+  "F2": 1021,
+  "vibrato_cents": 35.0,
+  "attack_ms": 160.0,
+  "pitch_cents": [
+   8,
+   6,
+   -4,
+   2,
+   0,
+   3
+  ],
+  "pitch_mean_abs_cents": 3.8,
+  "whisper": "Here you are, round and round.",
+  "whisper_words": 1.0,
+  "above_12k_db": -66.5,
+  "what": "the line at -7 semitones: the high end of the range"
+ },
+ "male-light-mix": {
+  "vocal_vs_band_lu": -1.0,
+  "vocal_gain_db": 13.4,
+  "whisper_mix": "Here you are, round and round",
+  "whisper_mix_words": 1.0,
+  "whisper_stem": "Here you are, round and round",
+  "whisper_stem_words": 1.0,
+  "what": "the line in a small band (ep, bass, drums) through the standing vocal chain, quick master"
+ },
+ "male-deep-mix": {
+  "vocal_vs_band_lu": -1.0,
+  "vocal_gain_db": 13.4,
+  "whisper_mix": "Here you are, round and round",
+  "whisper_mix_words": 1.0,
+  "whisper_stem": "Here you are, round and round.",
+  "whisper_stem_words": 1.0,
+  "what": "the line in a small band (ep, bass, drums) through the standing vocal chain, quick master"
+ },
+ "ref-hanami-mix": {
+  "vocal_vs_band_lu": -1.0,
+  "vocal_gain_db": 12.9,
+  "whisper_mix": "Here you are, round and round",
+  "whisper_mix_words": 1.0,
+  "whisper_stem": "Here you are round and round",
+  "whisper_stem_words": 1.0,
+  "what": "the line in a small band (ep, bass, drums) through the standing vocal chain, quick master"
+ },
+ "steps-male-light-8": {
+  "tilt_db": -15.1,
+  "breathiness": 0.11,
+  "F1": 695,
+  "F2": 1204,
+  "vibrato_cents": 20.0,
+  "attack_ms": 250.0,
+  "pitch_cents": [
+   -4,
+   5,
+   2,
+   -5,
+   -5,
+   -6
+  ],
+  "pitch_mean_abs_cents": 4.5,
+  "whisper": "Here you are, round and round.",
+  "whisper_words": 1.0,
+  "above_12k_db": -66.8,
+  "render_s": 65,
+  "what": "8 sampling steps"
+ },
+ "steps-male-light-16": {
+  "tilt_db": -13.9,
+  "breathiness": 0.11,
+  "F1": 714,
+  "F2": 1215,
+  "vibrato_cents": 22.0,
+  "attack_ms": 300.0,
+  "pitch_cents": [
+   0,
+   6,
+   2,
+   -3,
+   -1,
+   0
+  ],
+  "pitch_mean_abs_cents": 2.0,
+  "whisper": "Here you are, round and round.",
+  "whisper_words": 1.0,
+  "above_12k_db": -64.9,
+  "render_s": 0,
+  "what": "16 sampling steps"
+ },
+ "steps-male-light-32": {
+  "tilt_db": -13.3,
+  "breathiness": 0.11,
+  "F1": 728,
+  "F2": 1225,
+  "vibrato_cents": 54.0,
+  "attack_ms": 70.0,
+  "pitch_cents": [
+   -3,
+   1,
+   6,
+   1,
+   3,
+   0
+  ],
+  "pitch_mean_abs_cents": 2.3,
+  "whisper": "Here you are, round and round.",
+  "whisper_words": 1.0,
+  "above_12k_db": -64.2,
+  "render_s": 183,
+  "what": "32 sampling steps"
+ },
+ "timing-male-light": {
+  "rise_vs_note_start_ms": [
+   81,
+   -133,
+   -150,
+   105,
+   56,
+   26
+  ],
+  "mean_ms": -2,
+  "sd_ms": 101,
+  "what": "fastest 300-3000 Hz level rise against each note start"
+ },
+ "timing-male-deep": {
+  "rise_vs_note_start_ms": [
+   -121,
+   0,
+   102,
+   92,
+   44,
+   -14
+  ],
+  "mean_ms": 17,
+  "sd_ms": 75,
+  "what": "fastest 300-3000 Hz level rise against each note start"
+ },
+ "ref-hanami-timing": {
+  "rise_vs_note_start_ms": [
+   -138,
+   -1,
+   -1,
+   -7,
+   -4,
+   0
+  ],
+  "mean_ms": -25,
+  "sd_ms": 51,
+  "what": "fastest 300-3000 Hz level rise against each note start"
+ },
+ "note-quiet-mix": {
+  "what": "a first run of the mix check, not reproduced by male.py: the vocal gain sat before the compressor (27 dB into a 3:1 compressor) and the vocal ended about 9 LU under the band",
+  "male-light": "6 of 6 words (vocal -9.1 LU)",
+  "male-deep": "4 of 6, 'Here you are, love and love' (vocal -9.1 LU)",
+  "hanami": "6 of 6 (vocal -8.8 LU)"
+ }
+}

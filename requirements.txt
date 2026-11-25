@@ -9,4 +9,7 @@ onnxruntime>=1.17  # singer (svs): runs the DiffSinger models on CPU
 onnx>=1.16  # singer (svs): patches the DiffSinger models once (seeded noise input)
 cmudict>=1.0  # singer (svs): English words to phonemes
 pyyaml>=6.0  # singer (svs): voicebank configs
-pyworld>=0.3.4  # measurement only (examples/vocals/svs/voices.py, vibrato.py): F0, envelope, aperiodicity; not needed to render
+pyworld>=0.3.4  # measurement (examples/vocals/svs/voices.py, vibrato.py): F0, envelope, aperiodicity; to render only for the male voices (their tuning pass)
+# Male voices only (engine/svs_soulx.py, docs/voice/VOICES.md "Male voices"); not installed by this file:
+#   pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu && pip install omegaconf
+#   python3 engine/svs_soulx.py setup

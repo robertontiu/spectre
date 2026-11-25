@@ -1,0 +1,33 @@
+{
+ "about": "Reference recordings (prompts) for the SoulX-Singer voices (engine/svs_soulx.py; docs/voice/VOICES.md 'Male voices'). The audio is never in git: `python3 engine/svs_soulx.py setup` cuts each prompt out of its source archive into ~/.cache/spectre/svs/soulx/prompts/<id>.wav. `notes` is the prompt's score as SoulX needs it: [word or <SP>, MIDI note, type (1 rest, 2 word start, 3 the same word continued on another note), seconds]; aligned by hand from the pitch and level tracks of the recording (the singers are a little under concert pitch; the notes are the written ones). The seconds add up to the length of the cut.",
+ "sources": {
+  "vocalset": {
+   "name": "VocalSet: A Singing Voice Dataset (Wilkins, Seetharaman, Wahl, Pardo; ISMIR 2018), version 1.0",
+   "url": "https://zenodo.org/records/1193957",
+   "archive": "https://zenodo.org/api/records/1193957/files/VocalSet.zip/content",
+   "licence": "CC BY 4.0",
+   "credit": "VocalSet (Wilkins, Seetharaman, Wahl, Pardo 2018, https://zenodo.org/records/1193957, CC BY 4.0)"
+  }
+ },
+ "prompts": {
+  "vocalset-m7": {
+   "source": "vocalset",
+   "member": "FULL/male7/excerpts/straight/m7_row_straight.wav",
+   "singer": "male7 (anonymous professional singer)",
+   "cut_s": [0.0, 6.2],
+   "notes": [["<SP>", 0, 1, 0.16], ["row", 48, 2, 0.86], ["row", 48, 2, 0.74], ["row", 48, 2, 0.54],
+             ["your", 50, 2, 0.20], ["boat", 52, 2, 0.60], ["<SP>", 0, 1, 0.22], ["gently", 52, 2, 0.52],
+             ["gently", 50, 3, 0.22], ["down", 52, 2, 0.58], ["the", 53, 2, 0.22], ["stream", 55, 2, 1.14],
+             ["<SP>", 0, 1, 0.20]]
+  },
+  "vocalset-m3": {
+   "source": "vocalset",
+   "member": "FULL/male3/excerpts/straight/m3_row_straight.wav",
+   "singer": "male3 (anonymous professional singer)",
+   "cut_s": [0.0, 6.6],
+   "notes": [["<SP>", 0, 1, 0.04], ["row", 48, 2, 1.00], ["row", 48, 2, 0.76], ["row", 48, 2, 0.50],
+             ["your", 50, 2, 0.30], ["boat", 52, 2, 0.84], ["gently", 52, 2, 0.50], ["gently", 50, 3, 0.32],
+             ["down", 52, 2, 0.52], ["the", 53, 2, 0.28], ["stream", 55, 2, 1.32], ["<SP>", 0, 1, 0.22]]
+  }
+ }
+}

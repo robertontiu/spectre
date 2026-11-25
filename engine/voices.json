@@ -1,5 +1,5 @@
 {
- "about": "Voices for singer source 'svs' (engine/svs.py). Pick one with \"voice\": \"<id>\". Descriptions, measurements and auditions: docs/voice/VOICES.md. Every voice here is licence-clean for Spectre's CC BY 4.0 tracks only with the credit line given; never use a Lotte V voice in a track with a political subject.",
+ "about": "Voices for singer source 'svs' (engine/svs.py). Pick one with \"voice\": \"<id>\". Descriptions, measurements and auditions: docs/voice/VOICES.md. Every voice here is licence-clean for Spectre's CC BY 4.0 tracks only with the credit line given; never use a Lotte V voice in a track with a political subject. The male voices (bank soulx-vocalset) are another kind of model (engine/svs_soulx.py) and carry a `status` note until the owner approves them.",
  "default": "hanami",
  "banks": {
   "hanami": {
@@ -33,6 +33,20 @@
     "en"
    ],
    "languages_note": "ships English and Japanese dictionaries only; its phoneme set lacks the Spanish symbols (bh, dh, gh, rx, rr, tx, kx, px, l1, ...): no Spanish"
+  },
+  "soulx-vocalset": {
+   "name": "SoulX-Singer (zero-shot singing synthesis) with VocalSet prompt singers",
+   "author": "Soul AI Lab (model); VocalSet: Wilkins, Seetharaman, Wahl, Pardo (prompt recordings)",
+   "engine": "soulx",
+   "dir": "soulx",
+   "url": "https://github.com/Soul-AILab/SoulX-Singer (weights: https://huggingface.co/Soul-AILab/SoulX-Singer); prompts: https://zenodo.org/records/1193957; install: python3 engine/svs_soulx.py setup",
+   "steps": 16,
+   "licence": "SoulX-Singer: Apache 2.0, code and model weights ('free to use the codes and model weights'); its usage disclaimer asks to respect consent and not to impersonate individuals without authorization. Own vocoder inside the weights (no Potluck). Prompt recordings: VocalSet, CC BY 4.0 (any use, commercial included, with attribution). No ban on AI-generated music or on political subjects in either. Open point for the owner: the VocalSet singers are anonymous professionals who recorded for a research dataset; CC BY covers the recording, not a singer's personality rights, and nobody asked them about voice cloning.",
+   "credit": "Vocals: SoulX-Singer (Soul AI Lab, Apache 2.0, https://github.com/Soul-AILab/SoulX-Singer), voice from a singer of VocalSet (Wilkins, Seetharaman, Wahl, Pardo 2018, https://zenodo.org/records/1193957, CC BY 4.0)",
+   "languages": [
+    "en"
+   ],
+   "languages_note": "the model sings English, Mandarin and Cantonese; only English is wired (CMUdict). No Spanish."
   }
  },
  "voices": [
@@ -396,6 +410,94 @@
    },
    "settings": "the breathiest voice in the set (aperiodicity 0.18)",
    "audition": "examples/vocals/svs/voices/leona-soft.mp3"
+  },
+  {
+   "id": "male-light",
+   "bank": "soulx-vocalset",
+   "prompt": "vocalset-m7",
+   "audition_transpose": -12,
+   "range": "B2-E4 (tested; the prompt singer's own line sits at C3-G3)",
+   "range_midi": [
+    45,
+    65
+   ],
+   "tags": {
+    "gender": "male",
+    "register": "tenor / high baritone (the lighter of the two)",
+    "timbre": [
+     "light",
+     "open",
+     "clear",
+     "natural",
+     "trained singer"
+    ],
+    "emotions": [
+     "sincere",
+     "hopeful",
+     "tender",
+     "earnest"
+    ],
+    "genres": [
+     "pop rock",
+     "folk",
+     "ballad",
+     "hooks and calls in hip-hop",
+     "carol and choir tenor"
+    ],
+    "bad_at": [
+     "grit, rasp, shouting",
+     "air above 12 kHz (the model works at 24 kHz)",
+     "Spanish or any language but English",
+     "exact timing of consonants (no phoneme control)"
+    ]
+   },
+   "settings": "tune 1 (two passes: notes pulled onto the written pitch); svs_steps 16; no gender, velocity, inhale or svs_vibrato controls",
+   "audition": "examples/vocals/svs/voices/male-light.mp3",
+   "status": "new (2026-11-25): awaiting the owner's verdict by ear and his decision on the prompt singers (docs/voice/VOICES.md 'Male voices'); not for a released track before that"
+  },
+  {
+   "id": "male-deep",
+   "bank": "soulx-vocalset",
+   "prompt": "vocalset-m3",
+   "audition_transpose": -12,
+   "range": "B2-E4 (tested; the prompt singer's own line sits at C3-G3)",
+   "range_midi": [
+    45,
+    65
+   ],
+   "tags": {
+    "gender": "male",
+    "register": "baritone / bass-baritone (the darker of the two)",
+    "timbre": [
+     "dark",
+     "round",
+     "full",
+     "natural",
+     "trained singer"
+    ],
+    "emotions": [
+     "solemn",
+     "warm",
+     "grave",
+     "reassuring"
+    ],
+    "genres": [
+     "folk",
+     "ballad",
+     "carol and choir bass or baritone",
+     "cinematic",
+     "low hooks in hip-hop"
+    ],
+    "bad_at": [
+     "grit, rasp, shouting",
+     "bright pop leads",
+     "air above 12 kHz (the model works at 24 kHz)",
+     "Spanish or any language but English"
+    ]
+   },
+   "settings": "tune 1 (two passes: notes pulled onto the written pitch); svs_steps 16; no gender, velocity, inhale or svs_vibrato controls",
+   "audition": "examples/vocals/svs/voices/male-deep.mp3",
+   "status": "new (2026-11-25): awaiting the owner's verdict by ear and his decision on the prompt singers (docs/voice/VOICES.md 'Male voices'); not for a released track before that"
   }
  ],
  "controls": {
@@ -403,6 +505,7 @@
   "velocity": "0.5..2 (1): consonant speed; small effect on these banks",
   "mix": "a voice entry may give \"mix\": {mode: weight} instead of \"mode\" to blend vocal modes (speaker embeddings interpolated)",
   "not available": "these banks have no breathiness, tension, voicing or energy controls (their models were trained without them)",
-  "lang": "\"en\" (default) or \"es\" (Hanami only): the language the lyrics are read in. A voice id may set it (hanami-es, hanami-es-soft); a track's `lang` overrides it. Spanish: engine/lang_es.py, docs/voice/languages/es.md"
+  "lang": "\"en\" (default) or \"es\" (Hanami only): the language the lyrics are read in. A voice id may set it (hanami-es, hanami-es-soft); a track's `lang` overrides it. Spanish: engine/lang_es.py, docs/voice/languages/es.md",
+  "male voices (soulx)": "the SoulX-Singer voices take none of gender, velocity, inhale, svs_vibrato or lang. Theirs: svs_tune 0..1 (1: a second pass pulls every note's median onto the written pitch; 0: the model's own pitch, 10-60 cents off), svs_steps (16), seed, double."
  }
 }
