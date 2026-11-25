@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SpectrePage } from "@/components/spectre-page";
-import { formatTime } from "@/lib/format";
+import { trackDescription } from "@/lib/format";
 import { SITE_NAME, SITE_URL, audioPath, trackPath, trackSlug } from "@/lib/site";
 import { tracks } from "@/lib/tracks";
 
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PageProps<"/track/[slug]">): 
   if (!found) return {};
   const { track } = found;
   const title = `Spectre – ${track.title}`;
-  const description = `${track.genre} by Spectre (produced on ${track.model}), ${track.bpm} BPM, ${formatTime(Math.round(track.duration))}. Feeling: ${track.feeling}. ${track.style}.`;
+  const description = trackDescription(track);
   return {
     title: { absolute: title },
     description,

@@ -1,6 +1,7 @@
 "use client";
 
 import { usePlayer, usePlayerStore } from "./player-context";
+import { InfoButton } from "./info-button";
 import { ShareButton } from "./share-button";
 
 /** Title, artist and tempo of the selected track, plus any playback problem. */
@@ -16,6 +17,7 @@ export function NowPlaying() {
         <h2 className="m-0 font-display text-[clamp(24px,3.4vw,32px)] leading-[1.05] font-extrabold tracking-[-.01em]">
           {track?.title ?? "Spectre"}
         </h2>
+        {track && <InfoButton key={track.id} track={track} />}
         {track && <ShareButton track={track} />}
       </div>
       {track && (

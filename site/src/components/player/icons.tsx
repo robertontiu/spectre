@@ -44,3 +44,17 @@ export const ShareIcon = () => (
     <path d="M12 14.5V3.5M7.5 8 12 3.5 16.5 8M6 11.5H5v8.5h14v-8.5h-1" />
   </svg>
 );
+
+/** A circled "i" for the track info button. */
+export const InfoIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M12 11v5.5M12 7.6v.1" />
+  </svg>
+);
+
+export const CloseIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M6 6l12 12M18 6 6 18" />
+  </svg>
+);
