@@ -102,9 +102,10 @@
     "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets')",
     "target_date": "2026-11-25",
     "target_change": "2026-11-25: trance -> trance_2015: trance of 2015-2021 from the open catalogue; against the old `trance` curve (number-one singles tagged electronic, not trance; aligned at 500 Hz-2 kHz) it asks for +8 to +12 dB at 31.5-63 Hz, -2 to -5 dB at 100-315 Hz and +2 to +7 dB at 8-16 kHz",
-    "length": "6:00-8:00 (extended mix); a radio edit (`trance_radio`, measured median 3:33) only on request",
+    "era_targets": {"2015-2017 (and the modern period pooled)": "trance_2015", "2018-2026, the new school and the bleeding edge (measured 2018-2021, extrapolated 2022-2026)": "trance_2018", "note": "the master uses `target`; a brief aimed at a sub-era passes `--target`. trance_2018 against trance_2015: +1 to +1.5 dB at 50-200 Hz, 0.5 dB darker at 1.25-10 kHz (docs/TRANCE.md 'Modern trance production', C continued and D)"},
+    "length": "6:00-7:30 (extended mix; measured: MusicBrainz trance \"Extended Mix\" recordings 2015-2025, median 6:34, middle half 6:00-7:09, 414 tracks; 2023-2025: 6:24); a radio edit (`trance_radio`, measured median 3:33) only on request",
     "form": "DJ intro 16-32 bars, theme 16-32, build 8-16, first drop 16-32, breakdown 16-64 (typically 32), build 8-16, main drop 32-64, DJ outro 16-32",
-    "tempo": "136-140 bpm, typically 138 (progressive 128-134)",
+    "tempo": "136-140 bpm, typically 138 (progressive 128-134); by sub-era (Mixgraph, by year): 132-136 in 2015-2017, 138 in 2018-2022, 138 rising to 140 in 2023-2026 with the slower quarter at 134-136.5; a bleeding-edge brief 138-140",
     "meter": "4/4, kick on every beat, straight 16ths",
     "change_rate": "add or remove an element every 4, 8, 16 or 32 bars; work in 16-bar blocks",
     "role": "a lead synth carries the melody a vocalist would sing; DJ-mixable intro and outro",
@@ -113,7 +114,7 @@
       "eq 0.7",
       "lufs -10 is an engine-limited choice, quieter than the charts (-8.3)"
     ],
-    "sources": "docs/TRANCE.md, section Configuration Mastering loudness: docs/proposals/mastering-trance-poprock.md (dance/electronic chart top 10 2025 average -8.3 LUFS, rock/alternative 2025 average -8.1, iZotope; engine tests: trance clipper limits it to about -9, rock clean at -8.5)."
+    "sources": "docs/TRANCE.md, section Configuration; sub-eras, strands, length and tempo by year (2026-11-25): docs/TRANCE.md 'Modern trance production' C continued to I (Mixgraph year-by-year BPM https://www.mixgraph.io/bpm-for/trance ; Mixgraph loudness by Beatport genre https://www.mixgraph.io/tools/lufs-meter ; MusicBrainz lengths counted by Spectre; Beatportal on the 2023 trance split). Mastering loudness: docs/proposals/mastering-trance-poprock.md (dance/electronic chart top 10 2025 average -8.3 LUFS, rock/alternative 2025 average -8.1, iZotope; engine tests: trance clipper limits it to about -9, rock clean at -8.5)."
   },
   "trance_radio": {
     "name": "Trance, radio edit (the short cut of a trance single: no DJ intro or outro, one breakdown, two drops)",
@@ -142,10 +143,10 @@
     "target_tracks": 558,
     "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets')",
     "target_date": "2026-11-25",
-    "target_change": "2026-11-25: trance -> trance_2015: as `trance`",
+    "target_change": "2026-11-25: trance -> trance_2015: as `trance` (and, as there, `--target trance_2018` for a brief aimed at 2018-2026)",
     "length": "3:00-4:00, aim 3:15-3:50 (measured median 3:33, middle half 3:15-3:49, 1,072 trance radio edits); at 138 bpm about 112-132 bars",
     "form": "intro 8 bars (the track identifiable within 5-15 s, no DJ drums), theme 8-16, build 8, first drop 16 (landing at about 0:40-1:05), breakdown 16 (24 at most), build 8, main drop 32, outro 4-16 (a hard end or a short tail, no DJ outro); two drops around one breakdown; about 120 bars = 3:29 at 138 bpm",
-    "tempo": "136-140 bpm, typically 138 (progressive 128-134)",
+    "tempo": "136-140 bpm, typically 138 (progressive 128-134); by sub-era (Mixgraph, by year): 132-136 in 2015-2017, 138 in 2018-2022, 138 rising to 140 in 2023-2026 with the slower quarter at 134-136.5; a bleeding-edge brief 138-140",
     "meter": "4/4, kick on every beat, straight 16ths",
     "change_rate": "something every 8-16 bars, blocks of 8 more often than in the extended mix; 32 bars (the main drop) at most",
     "role": "a lead synth carries the melody a vocalist would sing; no DJ intro or outro needed: the track must say what it is in the first seconds",
