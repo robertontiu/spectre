@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 
+/** The transition starts when the badge's top edge is this far below the viewport's top, in px. */
+const START_MARGIN = 20;
 /** Scroll share of the way down to the card at which the badge lands (the rest the card rises). */
 const LAND_AT = 0.55;
 /** The badge's largest size once it sits on the card's edge, in px. */
@@ -10,8 +12,9 @@ const END_SIZE = 84;
 const TITLE_FADE = 0.7;
 
 /**
- * The scroll-linked hero: as the page scrolls, the SPECTRE title fades out and drifts up,
- * and the badge travels (and shrinks on wide screens) onto the player card's top edge,
+ * The scroll-linked hero. The page first scrolls normally, badge and title untransformed;
+ * once the badge's top edge comes within START_MARGIN of the viewport's top, the SPECTRE
+ * title fades out and drifts up, and the badge travels (and shrinks on wide screens) onto the player card's top edge,
  * centred, the edge through its middle; from there it scrolls with the card. Scrubbed by
  * the scroll position, reversible, transform and opacity only.
  *
@@ -35,8 +38,8 @@ export function HeroMotion({ badge, title }: { badge: ReactNode; title: ReactNod
 
     // What is applied now, so measurements can take it back out.
     let applied = { x: 0, y: 0 };
-    // Geometry: the badge's travel (page px), its end scale, and the scroll that ends it.
-    let geo = { dx: 0, dy: 0, scale: 1, span: 1 };
+    // Geometry: the badge's travel (page px), its end scale, and the scroll range it runs over.
+    let geo = { dx: 0, dy: 0, scale: 1, start: 0, span: 1 };
     let frame = 0;
 
     const measure = () => {
@@ -48,18 +51,24 @@ export function HeroMotion({ badge, title }: { badge: ReactNode; title: ReactNod
       const by = b.top + b.height / 2 - applied.y;
       const dx = c.left + c.width / 2 - bx;
       const dy = c.top - by;
+      // Page coordinates of the badge's (untransformed) top edge, and the scroll where it
+      // reaches START_MARGIN below the viewport's top: the transition starts there, at 0.
+      const top = by + scrollY - (badgeEl.offsetHeight || size) / 2;
+      const start = Math.max(0, top - START_MARGIN);
       const room = document.documentElement.scrollHeight - innerHeight;
       geo = {
         dx,
         dy,
         scale: Math.min(1, END_SIZE / size),
-        span: Math.max(1, Math.min(dy * LAND_AT, room)),
+        start,
+        span: Math.max(1, Math.min(dy * LAND_AT, room - start)),
       };
     };
 
     const render = () => {
       frame = 0;
-      const p = Math.min(1, Math.max(0, scrollY / geo.span));
+      const into = Math.min(geo.span, Math.max(0, scrollY - geo.start));
+      const p = into / geo.span;
       const fade = Math.max(0, 1 - p / TITLE_FADE);
       titleEl.style.opacity = String(fade);
       if (reduced.matches) {
@@ -71,7 +80,7 @@ export function HeroMotion({ badge, title }: { badge: ReactNode; title: ReactNod
       applied = { x: geo.dx * p, y: geo.dy * p };
       const s = 1 + (geo.scale - 1) * p;
       badgeEl.style.transform = `translate3d(${applied.x}px, ${applied.y}px, 0) scale(${s})`;
-      titleEl.style.transform = `translate3d(0, ${-0.4 * Math.min(scrollY, geo.span)}px, 0)`;
+      titleEl.style.transform = `translate3d(0, ${-0.4 * into}px, 0)`;
     };
 
     const schedule = () => {
