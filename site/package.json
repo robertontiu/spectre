@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "sync-tracks": "node scripts/sync-tracks.mjs",
-    "predev": "node scripts/sync-tracks.mjs",
+    "sync-tracks": "node scripts/sync-tracks.mjs --force",
     "dev": "next dev",
+    "dev:local": "node scripts/sync-tracks.mjs --force && SPECTRE_LOCAL_AUDIO=1 next dev",
     "prebuild": "node scripts/sync-tracks.mjs",
     "build": "next build",
     "export": "SPECTRE_EXPORT=1 npm run build",

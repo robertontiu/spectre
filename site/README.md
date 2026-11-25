@@ -14,47 +14,75 @@ npm install
 npm run dev          # http://localhost:3000
 ```
 
-`dev` and `build` first run `scripts/sync-tracks.mjs`, which copies each track's master from `../sessions/<id>-*/*-mastered.mp3` to `public/tracks/` (the MP3s are not committed under `site/`).
+| Script                                                  | What it does                                                                                                                                                                              |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                                           | Dev server. Audio comes from the S3 bucket if `.env.local` configures it, otherwise from `public/tracks/` (see "Audio").                                                                  |
+| `npm run dev:local`                                     | Offline development: copies the masters from `../sessions/` into `public/tracks/` and plays them from there, bucket or not (`SPECTRE_LOCAL_AUDIO=1`).                                     |
+| `npm run build` / `npm start`                           | Production build (what Vercel runs) and a local production server. The prebuild copies local masters only while no bucket is configured (the transition; see "Audio").                    |
+| `npm run export`                                        | Fully static site in `out/` (`output: "export"`): no audio route, so the masters are copied into it and played from `tracks/`.                                                            |
+| `npm run export:preview`                                | Static home page that works from any sub-path (relative URLs, assets in `out/assets/`); used for the claude.ai artifact preview. Like `export`, it carries its own copies of the masters. |
+| `npm run sync-tracks`                                   | Copy the masters into `public/tracks/` (needs the session folders locally: `python3 ../tools/upload_track.py --fetch <id>` restores one from the bucket).                                 |
+| `npm run lint` / `npm run typecheck` / `npm run format` | ESLint (create-next-app config), `tsc`, Prettier with Tailwind class sorting.                                                                                                             |
 
-| Script                                                  | What it does                                                                                                                     |
-| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev`                                           | Sync the tracks, start the dev server.                                                                                           |
-| `npm run build` / `npm start`                           | Production build (what Vercel runs) and a local production server.                                                               |
-| `npm run export`                                        | Fully static site in `out/` (`output: "export"`; nothing here needs a server).                                                   |
-| `npm run export:preview`                                | Static home page that works from any sub-path (relative URLs, assets in `out/assets/`); used for the claude.ai artifact preview. |
-| `npm run lint` / `npm run typecheck` / `npm run format` | ESLint (create-next-app config), `tsc`, Prettier with Tailwind class sorting.                                                    |
+## Audio
+
+The masters are not part of the site or its deployments. They live in the owner's S3 bucket (OVHcloud Object Storage), with each track's other session files, under the track's `uuid` from `data/tracks.json`: `<uuid>/rendition.mp3` is the master (layout in [AGENTS.md](../AGENTS.md), "Track files in S3").
+
+- The player loads `/api/track/<slug>` ([`src/app/api/track/[slug]/route.server.ts`](src/app/api/track/[slug]/route.server.ts)). The route finds the slug in `data/tracks.json` (404 otherwise) and answers with a 302 to a presigned GET of `<uuid>/rendition.mp3`, signed with a **read-only** key ([`src/lib/s3.ts`](src/lib/s3.ts)). No audio passes through the function, which only signs (Node runtime, a few ms per call, well inside Vercel Hobby's limits). The redirect carries `Cache-Control: private, max-age=300`.
+- **Signed URLs** are valid for at least `SPECTRE_SIGNED_URL_TTL` seconds (default 3600) after they are handed out. The `<audio>` element keeps using the URL it got for every later range request (seeking, re-buffering after a pause), so the URL has to outlive a listening session of a track: the longest track runs 7:28, and an hour covers it several times over, pauses included, while a shared URL dies within the hour. URLs are signed per 10-minute window (the same URL for everyone inside a window, valid for window + TTL), so the browser's HTTP cache can reuse the bytes across plays. If a URL still expires (a very long pause), the player re-resolves the source before resuming or seeking once it is 25 minutes old, and reloads after an error or an 8-second stall, carrying on from the same spot (`player-store.ts`).
+- **Signing:** a hand-written SigV4 query presigner (about 40 lines of `node:crypto`) instead of `@aws-sdk/client-s3` + `@aws-sdk/s3-request-presigner`: the route signs one kind of request only, and the SDK would add several MB of dependencies and a heavier function bundle and cold start. Its output is byte-identical to botocore's presigner (tested with OVH-style and local endpoints, special characters in keys, a trailing slash in the endpoint).
+- **Cross-origin audio:** the visualizer wires the `<audio>` element into an AudioContext through a MediaElementSource; for audio from another origin that graph outputs silence unless the element has `crossOrigin="anonymous"` (set in `player-context.tsx`) **and** the bucket answers with CORS headers. The bucket's CORS rules are set with `python3 ../tools/upload_track.py --cors`: GET and HEAD from `https://spectre.robertontiu.com`, `https://spectre-*.vercel.app` (preview deployments) and `http://localhost:3000`, exposing `Accept-Ranges`, `Content-Range` and `Content-Length`.
+- **Hotlinking** is deterred where it is cheap and cannot break playback: the route refuses (403) a request whose `Origin` is another site, or that another site's page makes for media or a fetch (`Sec-Fetch-Site: cross-site` with any `Sec-Fetch-Dest` but `document`). Same-origin requests, address-bar navigations, link clicks and clients without these headers (crawlers reading `og:audio`, curl) pass: a missing `Referer` or `Origin` is normal for `<audio>`. This keeps other pages from embedding the player's audio; it cannot stop anyone from downloading a track, and a signed URL works for anyone who has it until it expires.
+- `og:audio` on each track page is `https://spectre.robertontiu.com/api/track/<slug>`.
+- **Without a bucket** (any of the five `SPECTRE_S3_*` variables below missing), the route redirects to `/tracks/<file>` in `public/tracks/`, and `npm run build`'s prebuild copies the masters there from `../sessions/`. That is how the site runs until the owner configures the bucket on Vercel: **switching is setting the variables and redeploying**; the prebuild then copies nothing and deployments carry no audio. Once the session folders leave the repo (docs/ORCHESTRATION.md, queue 11), the prebuild step goes too.
+- Static exports (`export`, `export:preview`) have no server, so they leave the route out (`pageExtensions` in `next.config.ts` drops `*.server.ts`) and play their bundled copies under `tracks/`.
+
+### Environment variables
+
+Set them in Vercel (Project → Settings → Environment Variables, Production and Preview) or in `site/.env.local` for local work (gitignored). Never commit values.
+
+| Variable                       | Value                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------- |
+| `SPECTRE_S3_ENDPOINT`          | the bucket's S3 endpoint, e.g. `https://s3.gra.io.cloud.ovh.net` (path-style URLs are used) |
+| `SPECTRE_S3_REGION`            | e.g. `gra`                                                                                  |
+| `SPECTRE_S3_BUCKET`            | the bucket's name                                                                           |
+| `SPECTRE_S3_ACCESS_KEY_ID`     | the site's **read-only** key (the workspace's upload key is a different, read-write one)    |
+| `SPECTRE_S3_SECRET_ACCESS_KEY` | its secret                                                                                  |
+| `SPECTRE_SIGNED_URL_TTL`       | optional: seconds a signed URL lives at least, default `3600` (minimum 60)                  |
+| `SPECTRE_LOCAL_AUDIO`          | optional, development only: `1` plays `public/tracks/` even with a bucket (`dev:local`)     |
 
 ## Add a track
 
-1. Put the master in its session folder as `sessions/NNN-name/<title-slug>-mastered.mp3` (the session delivery procedure already does this).
-2. Add a line at the top of [`data/tracks.json`](data/tracks.json) (newest first):
+1. The master is in its session folder as `sessions/NNN-name/<title-slug>-mastered.mp3` (the session delivery procedure does this).
+2. Add a line at the top of [`data/tracks.json`](data/tracks.json) (newest first), without a `uuid`:
 
    ```json
-   {"id":"007","artist":"Spectre","title":"…","src":"tracks/007-title-slug.mp3","duration":180.0,"bpm":120,"genre":"…","style":"…","feeling":"…","colors":["#…","#…","#…"]},
+   {"id":"016","artist":"Spectre","title":"…","file":"016-title-slug.mp3","duration":180.0,"bpm":120,"model":"…","genre":"…","style":"…","feeling":"…","colors":["#…","#…","#…"]},
    ```
 
-   `id` selects the session folder, `src`'s file name is where the MP3 is copied to and also the track's URL (`/track/007-title-slug`), `duration` comes from `ffprobe`, `genre` is the short label shown beside the tempo, and `colors` are 2-3 colours that fit the track (the page mutes them).
+   `id` selects the session folder; `file` is the track's slug plus `.mp3` (the slug is its URL, `/track/016-title-slug`, and `file` its name in `public/tracks/` when played locally); `duration` comes from `ffprobe`, `genre` is the short label shown beside the tempo, and `colors` are 2-3 colours that fit the track (the page mutes them).
 
-3. Run `python3 ../tools/sync_tracks.py` to update the other players (it writes `site/tracks/tracks.json` from this file and copies the masters everywhere), then commit `data/tracks.json`.
+3. **Publish:** `python3 ../tools/upload_track.py 016` (with the workspace's write key in the environment) gives the track its `uuid` in `data/tracks.json` and uploads its session files to the bucket. Then check `npm run build` and commit `data/tracks.json`; the site picks the track up on its next deploy.
 
 ## Deploy on Vercel
 
 Create a Vercel project from the GitHub repo with:
 
 - **Root Directory:** `site`
-- **Include files outside the root directory in the Build Step:** enabled (it is by default). The prebuild step reads the masters from `../sessions/`, so the build fails with "missing master" if this is off.
-- Framework preset Next.js, default build command (`npm run build`) and output. No environment variables and no `vercel.json` are needed.
+- **Include files outside the root directory in the Build Step:** enabled (it is by default). Only needed while no bucket is configured: the prebuild then reads the masters from `../sessions/`.
+- Framework preset Next.js, default build command (`npm run build`) and output. No `vercel.json`.
+- **Environment variables:** the five `SPECTRE_S3_*` variables above with the read-only key, for Production and Preview (and `SPECTRE_SIGNED_URL_TTL` if the default doesn't suit). Without them the site serves the local copies (see "Audio").
 - Domain: add `spectre.robertontiu.com` and point a `CNAME` for `spectre` at `cname.vercel-dns.com`. Absolute URLs in the metadata, sitemap, share links and OG cards use `https://spectre.robertontiu.com` (`src/lib/site.ts`).
 
-The six masters are about 42 MB; Vercel serves them from `public/tracks/` as static files.
+With the bucket configured, deployments carry no audio (the 15 masters were about 119 MB per deployment when Vercel served them from `public/tracks/`).
 
 ## How it is built
 
 ```
-data/tracks.json          the canonical track list (newest first)
-scripts/                  sync-tracks.mjs (prebuild), preview-export.mjs
+data/tracks.json          the canonical track list (newest first), with each track's uuid
+scripts/                  sync-tracks.mjs (local copies of the masters), preview-export.mjs
 src/app/                  layout (metadata, fonts), home page, track/[slug] (page + OG card),
-                          robots, sitemap, icons
+                          api/track/[slug] (audio redirect), robots, sitemap, icons
 src/components/
   spectre-page.tsx        the whole page, shared by / and /track/[slug]
   atmosphere/             the fixed background stack: SVG apparition (server-rendered) and
@@ -63,12 +91,12 @@ src/components/
   player/                 store, provider, card, visualizer, now playing + share,
                           seek bar, controls, playlist
 src/lib/                  Web Audio engine, colours, palette animator,
-                          site URLs, tracks
+                          site URLs, tracks, s3 (bucket config and SigV4 presigner)
 ```
 
 - **Server first.** The page shell, the apparition, the badge and the logotype are server components; client components are the player, the background field and the logotype's glitch timer.
 - **Player state** lives in a small external store (`player-store.ts`) read with `useSyncExternalStore`, so audio events, media keys and the canvases always see the latest state without re-rendering the page. Preferences (shuffle, repeat, volume, mute) persist in `localStorage` (`spectre.v1`); EQ fields in older saves are ignored.
-- **Audio:** `<audio>` → MediaElementSource → analyser → volume. No EQ or other processing: the tracks are mastered, so they play exactly as mastered (the volume gain is 1 at full volume and the element stays at volume 1, so the level matches the raw file). The graph is built on the first play, so the visualizer and volume always apply. Nothing autoplays, not even a track link (it opens on that track, ready to play).
+- **Audio:** `<audio crossOrigin="anonymous">` (the source is the bucket; see "Audio" above) → MediaElementSource → analyser → volume. No EQ or other processing: the tracks are mastered, so they play exactly as mastered (the volume gain is 1 at full volume and the element stays at volume 1, so the level matches the raw file). The graph is built on the first play, so the visualizer and volume always apply. Nothing autoplays, not even a track link (it opens on that track, ready to play).
 - **Background field.** The mist, fog banks, wisps and the track-coloured field are composited by `AtmosphereField` (`atmosphere/field-scene.ts`) into two canvases, one under the apparition and one over it. Each original CSS layer is pre-rendered once into its own sprite exactly as its gradient (0.5 px per CSS px; track-coloured sprites again only when the colours change), and every frame the sprites are drawn in the original order with the original keyframed drift and opacity, like the browser composited the CSS layers. The canvases are 0.75 px per CSS px (within about 0.7 Mpx each, no CSS blur); if a device cannot hold about 20 fps (canvas drawn without a GPU) they step down, never below 0.4. One loop (`field-renderer.ts`) draws at 30 fps with time-based drift, in a worker on OffscreenCanvases where the browser supports it (otherwise on the page), pauses in hidden tabs, and glides to a new track's colours in OKLab over 2 s. A track change or tab switch creates, hides or repaints no DOM layer. The stack's height is pinned in px (100lvh first), so a phone's address bar never resizes it while scrolling. Until the first frame, CSS layers in the opening track's colours stand in (frozen), so the server-rendered page looks right; under reduced motion the field is static and colour changes take 0.5 s.
 - **Track colours in the card.** The card's accents `--c1..3` are `@property`-registered colours, written once per track and transitioned by the browser (1.6 s); the visualizer canvas glides the same palette in JS (`PaletteAnimator`, no DOM writes). The visualizer paints its own glow, reads no layout in its frame loop (ResizeObserver, IntersectionObserver), caps its backing store at 2x and runs at up to 60 fps (30 on touch screens).
 - **Sliders on touch.** The seek and volume sliders are native ranges for keyboard and assistive tech, but a finger only drags them once the gesture is clearly horizontal (a tap still seeks); vertical swipes scroll. Mouse and keyboard work as before.

@@ -34,7 +34,9 @@ export function PlayerProvider({ tracks, initial = 0, autoplay = false, children
   return (
     <PlayerContext value={store}>
       {children}
-      <audio ref={audioRef} preload="metadata" />
+      {/* crossOrigin: the audio comes from the S3 bucket (another origin) and feeds the
+          Web Audio graph; without CORS the graph would only output silence. */}
+      <audio ref={audioRef} preload="metadata" crossOrigin="anonymous" />
     </PlayerContext>
   );
 }

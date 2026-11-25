@@ -2,6 +2,8 @@
 
 What each session taught us. Read this before changing the producer prompt or the engine, and add an entry after every session. **After every genre switch, update the "Across genres" section too.**
 
+*Session files (journals, projects, READMEs, masters) now live in the S3 bucket under each track's `uuid` from `site/data/tracks.json`, not in `sessions/` in git; `python3 tools/upload_track.py --fetch <id>` restores a session folder (AGENTS.md section 8). The `sessions/...` paths below are kept as history.*
+
 ## Across genres (updated after each switch)
 *Read these as principles (subtraction, a dramaturgy of opposing forces, time feel as meaning), not as arrangements to reuse: copying a favourite track's structure made Spectre's trap tracks sound alike. Each session names its own habits and departs from at least one (see prompts/producer.md, stage 1).*
 Genres so far: boom-bap/trap hybrid (001), rage-trap/industrial (002), oriental trap (003), Romanian folk trap (004), Ukrainian folk trap (005), Latvian folk trap (006), pop rock (008), trance (007), joc țigănesc / Romanian lăutari wedding dance (010), aggressive boom-bap hip hop on a national anthem (011), American Christmas caroling (012), trance radio edit (013), Latin pop / bolero-bachata (014), cinematic chamber score (015).

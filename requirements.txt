@@ -10,3 +10,4 @@ onnx>=1.16  # singer (svs): patches the DiffSinger models once (seeded noise inp
 cmudict>=1.0  # singer (svs): English words to phonemes
 pyyaml>=6.0  # singer (svs): voicebank configs
 pyworld>=0.3.4  # measurement only (examples/vocals/svs/voices.py, male.py, vibrato.py): F0, envelope, aperiodicity
+boto3>=1.36  # tools/upload_track.py: track masters to the S3 bucket

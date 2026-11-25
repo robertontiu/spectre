@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SpectrePage } from "@/components/spectre-page";
 import { trackDescription } from "@/lib/format";
-import { SITE_NAME, SITE_URL, audioPath, trackPath, trackSlug } from "@/lib/site";
+import { SITE_NAME, trackAudioUrl, trackPath, trackSlug } from "@/lib/site";
 import { tracks } from "@/lib/tracks";
 
 /** Every track has a page, built at compile time; other slugs are 404s. */
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: PageProps<"/track/[slug]">): 
       description,
       locale: "en",
       duration: Math.round(track.duration),
-      audio: [{ url: new URL(audioPath(track), SITE_URL).href, type: "audio/mpeg" }],
+      audio: [{ url: trackAudioUrl(track), type: "audio/mpeg" }],
     },
     twitter: { card: "summary_large_image", title, description },
   };

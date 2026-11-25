@@ -72,8 +72,10 @@ docs/
 prompts/
   producer.md     the producer agent prompt template (persona, brief, studio, stages, loop, finish)
 site/             the website (Next.js; Vercel, spectre.robertontiu.com); data/tracks.json is the canonical track list
+                  (the showcase: one line per published track, with its fixed uuid)
 tools/
-  sync_tracks.py  copies each session's mastered MP3 into site/public/tracks
+  upload_track.py publishes a track: its uuid in tracks.json, its session files to the S3 bucket under that uuid,
+                  verified; --check compares the bucket with tracks.json, --fetch restores a session folder (section 8)
   pestana_ltas.py derives the measured mastering curves from Pestana et al. (2013), Fig. 5 (see docs/MASTERING.md)
   refcurve.py     era target curves: from the open catalogue (MusicBrainz + AcousticBrainz, no audio) or from local
                   reference masters (analysis only); n, spread, provenance (docs/MASTERING.md "Era targets")
@@ -81,7 +83,8 @@ tools/
                   docs/voice/GENERAL.md "Timing"; data cached in ~/.cache/spectre/refs, never committed)
 sessions/
   NNN-name/       one folder per session: project.json, journal.md, mastered mp3, ear and master images,
-                  README.md with the result
+                  README.md with the result. A local working area: published sessions live in the S3 bucket
+                  under their track's uuid (section 8); the folders still in git leave it after the migration
 examples/
   anthem/         the verified melody of Romania's anthem: a piano check render, the CC BY-SA score it was read
                   from, the check scripts (transcription in docs/ROMANIAN.md, "Verified melody")
@@ -125,7 +128,7 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 4. Long sessions can be interrupted (for example when the operator's own turn is interrupted). Check on them periodically; to resume, start a fresh producer agent with the same prompt plus "read journal.md and the helper scripts, listen to the latest render, continue numbering". Forward-only versioning makes this seamless.
 5. **After every genre switch, record lessons in the repo** (owner's standing rule): add the session entry to `docs/LESSONS.md` and update its "Across genres" section with what transferred and what didn't. If the new genre needed research, save it as a `docs/<GENRE>.md` brief (see `docs/ROMANIAN.md`, `docs/UKRAINIAN.md`). Commit these with the session.
 6. Sessions can run in parallel (one folder each). Engine changes made while another session is rendering must be additive and written atomically (write a temp file, then rename), so a running render never imports a half-written module.
-7. Commit the session folder **without** `renders/` (the WAVs are large and reproducible from `project.json`, because rendering is seeded and deterministic).
+7. **Publish** the session with `python3 tools/upload_track.py <id>` (section 8) once its line is in `site/data/tracks.json`: the session's files go to the S3 bucket, not into git (renders never leave the workspace; they are reproducible from `project.json`, because rendering is seeded and deterministic). Commit `site/data/tracks.json` (it now carries the track's uuid) and the cross-track files (docs, engine, lessons).
 
 ## 5. Engine conventions
 
@@ -149,5 +152,49 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 ## 7. Git
 
 - Default branch `main`. Commit engine changes separately from session results.
-- Don't commit `renders/`, WAVs, `__pycache__`, or voice model files and caches (`~/.cache/spectre/`). If a model ever has to be versioned, put it under `models/` with a README (source, licence, size, checksum); GitHub refuses files over 100 MB and git LFS uploads are blocked from the sandbox, so split larger files into parts under 50 MB (`split -b 48000000 -d -a 2 <file> <file>.part`) and join them in the loader, checksum-verified.
+- Don't commit `renders/`, WAVs, `__pycache__`, or voice model files and caches (`~/.cache/spectre/`). Track files (masters, journals, project files, session images and scripts) go to the S3 bucket, not into git (section 8); the repo keeps only cross-track files: engine, tools, docs, prompts, examples and the site. If a model ever has to be versioned, put it under `models/` with a README (source, licence, size, checksum); GitHub refuses files over 100 MB and git LFS uploads are blocked from the sandbox, so split larger files into parts under 50 MB (`split -b 48000000 -d -a 2 <file> <file>.part`) and join them in the loader, checksum-verified.
 - MIT licensed (see `LICENSE`).
+
+## 8. Track files in S3
+
+Every published track's files live in the owner's S3 bucket (OVHcloud Object Storage), not in the repo. `site/data/tracks.json` is the showcase list: each track has a fixed `uuid` (v4, made once when it is first published, never changed), and that uuid is the key prefix of all its files. The names are the same for every track and defined once, in `tools/upload_track.py` (`RENDITION`, `NAMED`, `TOOLS`; the site's audio route reads `TRACK_OBJECTS` in `site/src/lib/s3.ts`):
+
+| Object | From the session folder |
+|---|---|
+| `<uuid>/rendition.mp3` | `<title-slug>-mastered.mp3` (the published master; the site plays it) |
+| `<uuid>/journal.md` | `journal.md` |
+| `<uuid>/readme.md` | `README.md` |
+| `<uuid>/prompt.md` | `PROMPT.md` |
+| `<uuid>/project.json` | `project.json` |
+| `<uuid>/master-report.json` | `master-report.json` |
+| `<uuid>/master-tonal-balance.png` | `master-tonal-balance.png` |
+| `<uuid>/ear-overview.png` | `ear-overview.png` |
+| `<uuid>/tools/<path>` | every other published file (build and helper scripts), its path in the folder kept |
+
+**What is published, and nothing else:** the files git tracks in the session folder (the sessions from before the move), plus the named files above and helper scripts (`*.py`, `*.sh`) anywhere in the folder. Never `renders/`, WAVs, `__pycache__`, listen dumps, trial masters, A/B excerpts or other scratch: they stay local and are cleaned up (ORCHESTRATION.md, standing rule 12). A session must have exactly one `*-mastered.mp3`, `journal.md`, `README.md` and `project.json`. The tool takes tracks by id, slug or uuid from `tracks.json`, never by file path, and refuses anything else.
+
+**Workflow.** Work happens locally in `sessions/<id>-<name>/`. Publishing a track, or a new version of one (a remix, a remaster), is one step:
+
+```bash
+python3 tools/upload_track.py <id>        # 1. a uuid in tracks.json if the track is new
+                                          # 2. upload every new or changed file (MD5 compared; unchanged skipped)
+                                          # 3. verify (Content-MD5 on upload, then size and ETag)
+python3 tools/upload_track.py --check     # the bucket against tracks.json and the local sessions
+python3 tools/upload_track.py --fetch <id>   # restore sessions/<folder>/ from the bucket (to remix it);
+                                             # refuses to overwrite local changes without --force
+```
+
+Committing `tracks.json` and pushing stay in the normal delivery step (ORCHESTRATION.md, "Delivering a finished session"). Every object is private; the site reaches the master only through short-lived presigned URLs (site/README.md, "Audio").
+
+**Environment** (values never committed; in the workspace's shell, not in any file in the repo):
+
+| Variable | Workspace (upload) | Vercel (site) |
+|---|---|---|
+| `SPECTRE_S3_ENDPOINT` | e.g. `https://s3.gra.io.cloud.ovh.net` | same |
+| `SPECTRE_S3_REGION` | e.g. `gra` | same |
+| `SPECTRE_S3_BUCKET` | the bucket | same |
+| `SPECTRE_S3_ACCESS_KEY_ID` / `SPECTRE_S3_SECRET_ACCESS_KEY` | a **read-write** key | a **read-only** key |
+| `SPECTRE_SIGNED_URL_TTL` | | optional, default 3600 s |
+| `SPECTRE_S3_CORS_ORIGINS` | optional, replaces the default CORS origins for `--cors` | |
+
+`--cors` sets the bucket's CORS rules for the player (needed once; the key must be allowed to set bucket CORS). Requires `boto3` (in requirements.txt).

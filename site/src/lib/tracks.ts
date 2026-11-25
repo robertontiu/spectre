@@ -4,10 +4,19 @@ import data from "../../data/tracks.json";
 export type Track = {
   /** Session number, e.g. "005"; selects `sessions/005-*` for the master. */
   id: string;
+  /**
+   * The track's fixed showcase id (UUID v4, made once at delivery, never changed): its
+   * key prefix in the S3 bucket, `<uuid>/rendition.mp3` (the master) and `<uuid>/log.md`.
+   */
+  uuid: string;
   artist: string;
   title: string;
-  /** Path of the MP3 relative to the site root, e.g. "tracks/005-fuck-every-war.mp3". */
-  src: string;
+  /**
+   * The master's file name, e.g. "005-fuck-every-war.mp3": the track's slug without
+   * ".mp3" (`/track/005-fuck-every-war`), and its name under `public/tracks/` when the
+   * audio is served locally (no bucket configured, `dev:local`, static exports).
+   */
+  file: string;
   /** Length in seconds. */
   duration: number;
   bpm: number;

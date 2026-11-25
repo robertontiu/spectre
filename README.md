@@ -45,7 +45,7 @@ Every part of the process is modeled on how producers actually work and on resea
 
 **It mixes, then masters.** A mastering stage, built on how mastering engineers work, balances the tonal spectrum, keeps the low end mono, adds bass harmonics so the track reads on laptop speakers, and limits true peaks. When the master has to correct too much, Spectre goes back and fixes the mix.
 
-**It keeps a journal.** Every move is written down: what it heard, what it felt, what it changed and why. Each track comes with that journal, the project file that reproduces it exactly, and the pictures Spectre saw. You'll find them in [`sessions/`](sessions).
+**It keeps a journal.** Every move is written down: what it heard, what it felt, what it changed and why. Each track comes with that journal, the project file that reproduces it exactly, and the pictures Spectre saw. They are stored with each track in Spectre's track storage, outside this repository (the `sessions/` folders still here are moving there).
 
 ## The research behind it
 
@@ -93,7 +93,7 @@ Every instrument is synthesized by the engine's own code. Sung words are the one
 - *Vocals: Hoshino Hanami (DiffSinger voicebank by Lotte V, lottev.moe), Potluck Vocoder by tigermeat*
 - *Vocals: LEONA (DiffSinger voicebank by Lotte V, lottev.moe, CC BY 4.0), Potluck Vocoder by tigermeat*
 
-**If you reuse or remix a Spectre track with these vocals,** the voicebank's terms travel with the voice: keep the credit line, and don't use those vocals for political, hateful or illegal content. The full voice catalogue with tags, ranges and licences is in [`docs/voice/VOICES.md`](docs/voice/VOICES.md); the research behind how the voices are timed and mixed is in [`docs/voice/`](docs/voice).
+**The voicebanks' terms travel with the voice:** a track with these vocals keeps the credit line, and those vocals are never used for political, hateful or illegal content. The full voice catalogue with tags, ranges and licences is in [`docs/voice/VOICES.md`](docs/voice/VOICES.md); the research behind how the voices are timed and mixed is in [`docs/voice/`](docs/voice).
 
 Reference recordings and datasets used only for analysis (the singing dataset GTSinger, CC BY-NC-SA 4.0; instrument samples from the University of Iowa MIS, VSCO-2-CE, VCSL and others) were measured locally and are not part of this repository or of any track.
 
@@ -105,8 +105,8 @@ An experiment by [Robert Ontiu](https://github.com/robertontiu), built with Clau
 
 The code is [MIT](LICENSE) © 2026 Robert Ontiu.
 
-**Spectre's tracks in this repository** (the audio, journals, project files and images in `sessions/`, `assets/` and `site/`) are licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): free to use, share and adapt, including commercially, as long as you credit this repository, for example *"Spectre, [github.com/robertontiu/spectre](https://github.com/robertontiu/spectre)"*.
+**Spectre's tracks are not licensed for reuse.** The tracks and their session files (audio, journals, project files and images) are © 2026 Robert Ontiu; the MIT licence covers the code only.
 
-**The models above keep their own licences** (see "Voices and third-party models"); the MIT and CC BY licences cover Spectre's own code and tracks, not the voicebanks or model files.
+**The models above keep their own licences** (see "Voices and third-party models"); the MIT licence covers Spectre's own code, not the voicebanks or model files.
 
 **Tracks you make with it are yours.** If you run this project to make your own tracks, you hold the rights to them and are responsible for them and how they're used.

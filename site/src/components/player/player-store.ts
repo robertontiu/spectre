@@ -50,6 +50,11 @@ export class PlayerStore {
   private state: PlayerState;
   private listeners = new Set<() => void>();
   private audio: HTMLAudioElement | null = null;
+  /** When the audio was last reloaded after an error or a stall (at most once a minute). */
+  private recoveredAt = 0;
+  /** When the current source was resolved (the audio route's signed URL was handed out). */
+  private loadedAt = 0;
+  private stallTimer: ReturnType<typeof setTimeout> | undefined;
 
   /**
    * @param initial index of the track to open with
@@ -106,11 +111,23 @@ export class PlayerStore {
     const on: Record<string, () => void> = {
       ended: () => this.step(1, true),
       play: () => this.set({ playing: true }),
-      pause: () => this.set({ playing: false }),
-      error: () => {
-        if (audio.getAttribute("src")) this.set({ message: "This track could not be loaded." });
+      pause: () => {
+        this.clearStall();
+        this.set({ playing: false });
       },
-      timeupdate: () => this.set({ time: audio.currentTime }),
+      error: () => {
+        if (!audio.getAttribute("src")) return;
+        if (this.recover(audio)) return;
+        this.set({ message: "This track could not be loaded." });
+      },
+      timeupdate: () => {
+        this.clearStall();
+        this.set({ time: audio.currentTime });
+      },
+      waiting: () => this.watchStall(audio),
+      stalled: () => this.watchStall(audio),
+      playing: () => this.clearStall(),
+      emptied: () => this.clearStall(),
       loadedmetadata: () => this.set({ duration: audio.duration }),
     };
     for (const [type, fn] of Object.entries(on)) audio.addEventListener(type, fn);
@@ -125,12 +142,77 @@ export class PlayerStore {
     };
   }
 
+  /* ---- signed URLs ----
+   * The audio route hands out signed URLs that expire (SPECTRE_SIGNED_URL_TTL, an hour by
+   * default, and always at least that long after they are handed out). The element keeps
+   * using the URL it was given for every later range request, so a seek or a re-buffer
+   * after a long pause can hit an expired one. Browsers do not always report that as an
+   * error (Chrome just stalls), so the player
+   *  - re-resolves the source before resuming or seeking once it is older than
+   *    SOURCE_MAX_AGE (well inside the TTL),
+   *  - and reloads after an error, or a stall of STALL_MS while playing,
+   * carrying on from the same spot. Error and stall reloads happen at most once a minute,
+   * so a track that really is missing still reports the error.
+   */
+
+  private static readonly SOURCE_MAX_AGE = 25 * 60_000;
+  private static readonly STALL_MS = 8_000;
+
+  private stale(audio: HTMLAudioElement): boolean {
+    return !IS_PREVIEW && Date.now() - this.loadedAt > PlayerStore.SOURCE_MAX_AGE && !!audio.getAttribute("src");
+  }
+
+  /** Loads the same track again (a fresh signed URL), then seeks to `at` and resumes if asked. */
+  private reload(audio: HTMLAudioElement, at: number, resume: boolean): void {
+    this.clearStall();
+    this.loadedAt = Date.now();
+    audio.addEventListener(
+      "loadedmetadata",
+      () => {
+        if (at > 0) audio.currentTime = Math.min(at, audio.duration || at);
+        if (resume) void audio.play().catch(() => this.set({ playing: false }));
+      },
+      { once: true },
+    );
+    audio.load();
+  }
+
+  private recover(audio: HTMLAudioElement): boolean {
+    const now = Date.now();
+    if (now - this.recoveredAt < 60_000 || audio.error?.code === MediaError.MEDIA_ERR_ABORTED) return false;
+    this.recoveredAt = now;
+    this.reload(audio, audio.currentTime, this.state.playing);
+    return true;
+  }
+
+  private watchStall(audio: HTMLAudioElement): void {
+    if (audio.paused || this.stallTimer) return;
+    this.stallTimer = setTimeout(() => {
+      this.stallTimer = undefined;
+      if (!audio.paused && audio.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) this.recover(audio);
+    }, PlayerStore.STALL_MS);
+  }
+
+  private clearStall(): void {
+    clearTimeout(this.stallTimer);
+    this.stallTimer = undefined;
+  }
+
+  /** Seeks, re-resolving an old source first. */
+  private seekTo(seconds: number): void {
+    const audio = this.audio;
+    if (!audio) return;
+    if (this.stale(audio)) this.reload(audio, seconds, !audio.paused);
+    else audio.currentTime = seconds;
+  }
+
   /* ---- playback ---- */
 
   select = (index: number, autoplay: boolean, { syncUrl = true } = {}): void => {
     const track = this.tracks[index];
     if (!track || !this.audio) return;
     this.audio.src = audioPath(track);
+    this.loadedAt = Date.now();
     this.set({ current: index, time: 0, duration: track.duration, message: null });
     this.palette.setTarget(paletteFrom(track.colors));
     // Keep the address bar on the playing track without a navigation (no remount, no scroll).
@@ -157,6 +239,11 @@ export class PlayerStore {
     const audio = this.audio;
     if (!audio || !this.tracks.length) return;
     if (!auto) this.engine?.ensureGraph();
+    if (audio.currentTime > 0 && this.stale(audio)) {
+      if (!auto) await this.engine?.resume();
+      this.reload(audio, audio.currentTime, true);
+      return;
+    }
     try {
       if (!auto) await this.engine?.resume();
       await audio.play();
@@ -179,7 +266,7 @@ export class PlayerStore {
 
   /** Restarts the track if it has played for more than 3 s, otherwise goes back one. */
   previous = (): void => {
-    if (this.audio && this.audio.currentTime > 3) this.audio.currentTime = 0;
+    if (this.audio && this.audio.currentTime > 3) this.seekTo(0);
     else this.step(-1, false);
   };
 
@@ -188,7 +275,7 @@ export class PlayerStore {
     const n = this.tracks.length;
     if (!n || !this.audio) return;
     if (auto && repeat === "one") {
-      this.audio.currentTime = 0;
+      this.seekTo(0);
       void this.play();
       return;
     }
@@ -226,12 +313,12 @@ export class PlayerStore {
 
   seekToFraction = (fraction: number): void => {
     const d = this.trackLength;
-    if (this.audio && d) this.audio.currentTime = fraction * d;
+    if (d) this.seekTo(fraction * d);
   };
 
   seekBy = (seconds: number): void => {
     if (!this.audio) return;
-    this.audio.currentTime = Math.max(0, Math.min(this.trackLength, this.audio.currentTime + seconds));
+    this.seekTo(Math.max(0, Math.min(this.trackLength, this.audio.currentTime + seconds)));
   };
 
   /* ---- modes ---- */
