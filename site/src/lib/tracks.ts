@@ -4,7 +4,7 @@ import data from "../../data/tracks.json";
  * The listener-facing genre families, in the order the playlist's filter shows them. Every
  * track's `family` is one of these; add a new one only when no existing family fits.
  */
-export const FAMILIES = ["Hip-Hop", "Electronic", "Rock", "Latin", "World", "Soundtrack", "Holiday"] as const;
+export const FAMILIES = ["Hip-Hop", "Electronic", "Rock", "Latin", "Folklore", "Soundtrack", "Holiday"] as const;
 
 export type Family = (typeof FAMILIES)[number];
 
