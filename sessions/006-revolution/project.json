@@ -368,7 +368,7 @@
     {
      "type": "eq",
      "hz": 100,
-     "gain_db": 4,
+     "gain_db": 2,
      "q": 1.0
     },
     {
@@ -513,7 +513,15 @@
     },
     {
      "type": "gain",
-     "db": -2
+     "db": 0
+    },
+    {
+     "type": "dyneq",
+     "hz": 68,
+     "q": 1.5,
+     "depth_db": -6,
+     "key": "kick",
+     "release_ms": 90
     }
    ]
   }

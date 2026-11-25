@@ -45,3 +45,7 @@
 
 ## Spectre's note
 "I didn't want another fist in the air; the bravest thing that happened in Riga that January was people refusing to go home. So the whole track is one idea from a Suiti village: somebody calls, somebody repeats it, everyone holds the note underneath, and the chain gets longer until the whole square is singing the call. Twice I caught the beat telling the wrong story, a jig in the first loop and a soldier's two-step in the kick, and twice the kokle tried to turn into a postcard. The best moment is one bar of nothing but the crowd singing the call before the last hook; the ending is just the drone, still going, because in the morning they were still there."
+
+## Remix (2026-11-25)
+
+Remix, no compositional change (journal entry 29). The track is now mastered against `hiphop_2015` (the hip hop 2015-21 catalogue), with the published settings. The kick's +4 dB at 100 Hz, a fix for the old curve, is now +2. The 808's post-drive gain goes from -2 to 0 dB, and it gets a keyed cut at the kick's 68 Hz that works only when the kick hits. The air already had five sources and the 150-400 Hz crowd is the band itself, so neither was touched. Version v029: -10.5 LUFS, -1.04 dBTP, no warnings. Catalogue gap 2.24 → 1.53 dB (the remaster alone: 1.51), 32-97 Hz from -4.5 to +0.1 dB; in hook 4 the 808 owns 71% of its cells. Every section stays within 0.9 LU. The previous release is v027, kept as `project-published.json`; the tables above describe it. `ear-overview.png` still shows v027.
