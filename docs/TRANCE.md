@@ -498,10 +498,10 @@ When a brief asks for the newest sound, aim at these (sources in D-F; "engine" s
 | 1 | **Tempo 138-140** (2026 median 140, 2025 middle half 134-140); 136 only for a progressive brief; the hard strand 142-158 | [M] Mixgraph; [S] Producer School | yes |
 | 2 | **Kick** with a 50-55 Hz fundamental (tuned to the key, never carved) and a short 2-4 kHz click; 1-2 dB of soft clipping on the kick or drum bus | [S] Producer School; [P] map; "Mastering" | yes: `kicksub` + `kickpunch` + `kickclick`, `clip` |
 | 3 | **A separate clean sub**, a rolling 16th bass or an arpeggiated bass loop an octave down above it | [S] Producer School, Cold Rush | yes: `sub`, `trancebass`, chord `arp` |
-| 4 | **The lead is an arp, a pluck, an acid line or a distorted mid lead (1-3 kHz)**; a supersaw stack as the wash or, in uplifting, the hook | [S] MusicRadar 2021, Beatportal 2023, Producer School | mostly: `polysynth`, `supersaw` model 2, `drive`/`sat`; acid only approximated (no accent or slide) |
-| 5 | **Grit on single layers**: saturation chains, about 20% digital downsampling | [S] Producer School, MusicRadar 2021 | yes: `sat`, `drive`, `clip`, `srr`, `bitcrush`; a resonance suppressor after the saturation: **no** |
-| 6 | **Granular or frozen space** that turns a pluck into a pad; shimmer reverbs | [S] MusicRadar 2021; A (Chicane) | **no** (approximate with a long `hall` return, `pingpong` delay and a pad layer) |
-| 7 | **Hardware-coloured percussion** (909 drums) in the raw and hard strands | [S] Beatportal 2023 | partly: `clubkick` with a 909-style top, `metalhat` (808-style); no 909 snare, clap or ride |
+| 4 | **The lead is an arp, a pluck, an acid line or a distorted mid lead (1-3 kHz)**; a supersaw stack as the wash or, in uplifting, the hook | [S] MusicRadar 2021, Beatportal 2023, Producer School | yes: the `acid` voice (accent coupled to the filter, slide), `polysynth` and `supersaw` model 2 with `glide_ms` and `accent`, `drive`/`sat` (built 2026-11-25) |
+| 5 | **Grit on single layers**: saturation chains, about 20% digital downsampling | [S] Producer School, MusicRadar 2021 | yes: `sat`, `drive`, `clip`, `srr`, `bitcrush`, and the `suppress` resonance suppressor after the saturation (built 2026-11-25) |
+| 6 | **Granular or frozen space** that turns a pluck into a pad; shimmer reverbs | [S] MusicRadar 2021; A (Chicane) | yes: `granular` (freeze, stretch) and `shimmer` returns or fx (built 2026-11-25) |
+| 7 | **Hardware-coloured percussion** (909 drums) in the raw and hard strands | [S] Beatportal 2023 | yes: `snare909`, `clap909`, `ride909` (fitted to a TR-909 recording), `clubkick` with a 909-style top, `metalhat` (built 2026-11-25) |
 | 8 | **Techno-leaning drums**: constant 16th hats, layered claps and a snare on 2 and 4 | [S] Producer School | yes: `metalhat`, `handclap`, `snare` |
 | 9 | **Arrangement** by strand: long drops (32-64 bars) and functional breaks (hard, raw), or short or no breakdowns and change inside sounds (hypnotic, progressive); uplifting keeps the classic break routine | [S] Producer School, Beatportal, Mixgraph guides | yes (the producer's form); long-form movement of instrument parameters only by cross-fading layers (I) |
 | 10 | **Length**: extended mix 5:50-7:05 (2023-25 median 6:24); a 3:15-4:00 short cut only on request | [M] MusicBrainz | yes (`trance_radio` for the short cut) |
@@ -550,12 +550,15 @@ When a brief asks for the newest sound, aim at these (sources in D-F; "engine" s
 | Gates (the pop-trance device) | `gate` fx |
 | Low end, hats, voice, master | as B and "Vocals"; `--genre trance` (`--target trance_2018` for 2018-2026 briefs) |
 
-**What is missing** (proposals; none blocks the session):
-1. **A granular or freeze effect.** The melodic-techno wash (granular space, MusicRadar 2021) has no engine equivalent; a long reverb, delay and a slow pad layer approximate it (MANUAL lists no granular, freeze or shimmer effect).
-2. **A shimmer reverb** (pitch-shifted feedback; Chicane's "Valhalla Shimmer on everything", A): the returns are plain reverb and delay.
-3. **An acid voice** (303-style: accent coupled to filter envelope, slide between notes). `polysynth` with `reso`, `env` and a pattern approximates it; there is no accent-to-filter coupling or per-note slide on polyphonic voices. Only needed for the raw strand.
-4. **909 drums.** `clubkick` has a "909-style noise top" and `metalhat` follows the 808; there is no 909 snare, clap or ride model. Not needed for the recommended strand.
-5. **Long-form modulation tied to the arrangement.** Section `auto` ramps a track's `lpf`, `hpf`, `gain_db` and `mute` (MANUAL "SECTION"); it does not reach instrument parameters (LFO depth or rate, `drift`, envelope times, the supersaw's `mix`/`knob`). A sound can be filtered and faded over 16 bars, but its own movement cannot grow or settle; the workaround is two layers with different settings cross-faded by `gain_db` ramps.
+**Built 2026-11-25** (standing rule 19; docs/MANUAL.md "Modern strands" and SECTION "Automating sounds"; A/B demos in examples/production/modern/; published tracks render bit-identically):
+1. **Granular / freeze:** the `granular` return or fx (MANUAL "Granular / freeze"): send the pluck into it to turn it into a pad; `scan` 0 freezes, 0.25 stretches.
+2. **Shimmer reverb:** the `shimmer` return or fx (MANUAL "Shimmer reverb"): +12 (and +7/+19) in the feedback path, level-compensated.
+3. **Acid voice:** the mono `acid` instrument (MANUAL "Acid voice"), `!` accent and `~` slide in the notes; plus opt-in `glide_ms` and `accent` on `polysynth` and `supersaw` model 2 ("Slide and accent on the polysynth").
+4. **909 drums:** `snare909`, `clap909`, `ride909` (MANUAL "909 drums"), fitted to a TR-909 recording by spectrum and band decay.
+5. **Long-form modulation:** section `auto` now reaches instrument parameters (`inst`, read per note onset), fx parameters (`fx`) and returns (`return:<name>`) (SECTION "Automating sounds"). A held note keeps one value; the mono voices (808, bass, lead, sub, vox, singer) are not reached.
+Also built: a resonance suppressor, `{"type": "suppress"}` (G, row 5; MANUAL "Resonance suppressor").
+
+**Still missing:**
 6. **No measured target for 2022-2026** (C, continued): only reference masters bought and measured locally (`refcurve.py measure`, PRODUCTION.md section 3) can close it.
 
 ### J. Mastering by sub-era and strand

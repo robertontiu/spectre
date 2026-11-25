@@ -221,6 +221,8 @@ class Hand:
                            vel=self.vel(v, tr), glide=glide))
             if art:
                 ev[-1]["art"] = art
+            if "!" in lenstr:  # the accent as a flag too: `acid` (and polysynth's `accent`) read it
+                ev[-1]["acc"] = True
         return ev
 
     # ---------------- chords

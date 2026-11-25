@@ -1851,3 +1851,30 @@ TONAL.update(supersaw=_supersaw, polysynth=_polysynth, air=_air)
 DRUMS.update(kicksub=_kick_layer("kicksub"), kickpunch=_kick_layer("kickpunch"), kickclick=_kick_layer("kickclick"),
              metalhat=_kick_layer("metalhat"))
 ROUND_ROBIN = ROUND_ROBIN | {"metalhat"}
+
+
+# ---------------------------------------------------------------- modern strands: acid voice, 909 snare, clap, ride
+# Additive block (2026-11-25, docs/TRANCE.md "Modern trance production" G and I; code in engine/acid.py and
+# engine/tr909.py; docs/MANUAL.md "Acid voice" and "909 drums"). Used only when a track names them; the 909 drums
+# draw from the module RNG at call time, `acid` draws nothing.
+_mono_voice_sub = mono_voice
+
+
+def mono_voice(kind, p, notes, total_n):  # noqa: F811  (extends the chain with "acid")
+    if kind == "acid":
+        import acid as _acid
+        return _acid.acid_line(p, notes, total_n)
+    return _mono_voice_sub(kind, p, notes, total_n)
+
+
+def _tr909(kind):
+    def f(p, vel, ps=0.0):
+        import tr909 as _t
+        return getattr(_t, kind)(p, vel, ps)
+    f.__name__ = kind
+    return f
+
+
+MONO.add("acid")
+DRUMS.update(snare909=_tr909("snare909"), clap909=_tr909("clap909"), ride909=_tr909("ride909"))
+ROUND_ROBIN = ROUND_ROBIN | {"snare909", "clap909"}

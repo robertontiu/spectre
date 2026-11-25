@@ -1,0 +1,155 @@
+{
+ "shimmer": {
+  "what": "A: the pluck into a long hall; B: the same send into a shimmer return (+12, decay 7 s, amount 0.7)",
+  "A tail (bars 6-8) vs playing (bars 1-4), dB": -33.4,
+  "A tail: 4-16 kHz vs 1-4 kHz, dB": -16.0,
+  "B tail (bars 6-8) vs playing (bars 1-4), dB": -23.2,
+  "B tail: 4-16 kHz vs 1-4 kHz, dB": -5.8
+ },
+ "granular": {
+  "what": "A: the pluck into a long hall; B: the same send into a granular return: stretched to half speed while the pluck plays, then frozen (scan 0) on its last moment for 4 bars, density 40 to 90",
+  "A tail (bars 6-8) vs playing (bars 1-4), dB": -33.7,
+  "A tail: 4-16 kHz vs 1-4 kHz, dB": -16.0,
+  "B tail (bars 6-8) vs playing (bars 1-4), dB": 0.5,
+  "B tail: 4-16 kHz vs 1-4 kHz, dB": -6.7
+ },
+ "acid": {
+  "what": "A: the old approximation (polysynth saw, resonant filter with an envelope, drive): no accent coupling, no slide; B: `acid` (accents `!`, slides `~`), cutoff 180 to 700 Hz and decay 0.25 to 0.7 s automated over the 8 bars"
+ },
+ "909": {
+  "what": "A: handclap, snare, kitride; B: clap909, snare909, ride909 (same patterns, clubkick in both)"
+ },
+ "slide": {
+  "what": "A: a polysynth line where `~` and `!` do nothing but velocity; B: the same with `glide_ms` 90 (slides) and `accent` 0.9 (accented notes open the filter further)"
+ },
+ "automation": {
+  "what": "A: a supersaw pad, every chord the same; B: the same pad with section `inst` automation over 8 bars: detune 8 to 34 cents, drift 0 to 0.8, cutoff LFO depth 0.02 to 0.9 octave and rate 0.3 to 3 Hz, cutoff 1.5 to 5 kHz (each chord takes the values at its onset)",
+  "A spectral centroid bars 1-2 / 7-8, Hz": [
+   754,
+   747
+  ],
+  "B spectral centroid bars 1-2 / 7-8, Hz": [
+   645,
+   886
+  ],
+  "B per chord: detune, drift, lfo depth, lfo rate, cutoff": [
+   [
+    8.0,
+    0.0,
+    0.02,
+    0.3,
+    1500
+   ],
+   [
+    9.6,
+    0.05,
+    0.08,
+    0.35,
+    1618
+   ],
+   [
+    11.3,
+    0.1,
+    0.13,
+    0.4,
+    1744
+   ],
+   [
+    12.9,
+    0.15,
+    0.19,
+    0.46,
+    1880
+   ],
+   [
+    14.5,
+    0.2,
+    0.24,
+    0.53,
+    2028
+   ],
+   [
+    16.1,
+    0.25,
+    0.3,
+    0.62,
+    2186
+   ],
+   [
+    17.7,
+    0.3,
+    0.35,
+    0.71,
+    2355
+   ],
+   [
+    19.4,
+    0.35,
+    0.4,
+    0.82,
+    2539
+   ],
+   [
+    21.0,
+    0.4,
+    0.46,
+    0.95,
+    2738
+   ],
+   [
+    22.6,
+    0.45,
+    0.51,
+    1.09,
+    2951
+   ],
+   [
+    24.3,
+    0.5,
+    0.57,
+    1.27,
+    3184
+   ],
+   [
+    25.9,
+    0.55,
+    0.63,
+    1.46,
+    3434
+   ],
+   [
+    27.5,
+    0.6,
+    0.68,
+    1.69,
+    3702
+   ],
+   [
+    29.1,
+    0.65,
+    0.74,
+    1.95,
+    3992
+   ],
+   [
+    30.7,
+    0.7,
+    0.79,
+    2.25,
+    4300
+   ],
+   [
+    32.4,
+    0.75,
+    0.85,
+    2.6,
+    4639
+   ]
+  ]
+ },
+ "suppress": {
+  "what": "A: a saturated resonant lead (drive 14 dB, sat 0.4); B: the same with `suppress` after the saturation (depth 8 dB, threshold 2 dB)",
+  "A largest bulge of the spectrum's peak envelope over its 1-octave trend, 0.5-12 kHz, dB": 8.1,
+  "B largest bulge of the spectrum's peak envelope over its 1-octave trend, 0.5-12 kHz, dB": 6.3
+ }
+}

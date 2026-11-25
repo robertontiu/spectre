@@ -217,6 +217,10 @@ def voice(p, f, vel, dur, oscs):
     t = np.arange(n) / SR
     mods = mod_sources(p, n, hold, vel)
     pitch_c = mods.get("pitch", 0.0)
+    gf = p.get("_glide_from")
+    if gf:  # slide (opt-in with `glide_ms`): from the previous note's pitch, an exponential (RC-like) approach
+        tau = max(float(p.get("glide_ms", 80.0)), 1.0) / 1000 / 2.3
+        pitch_c = pitch_c + 1200 * np.log2(float(gf) / f) * np.exp(-t / tau)
     drift = float(p.get("drift", 0.0))
     L = np.zeros(n)
     R = np.zeros(n)
@@ -290,7 +294,11 @@ def voice(p, f, vel, dur, oscs):
             cut0 *= (f / 261.63) ** kt
         cut = np.full(n, cut0)
         if float(p.get("env", 0.0)) > 0:
-            cut = cut + float(p["env"]) * vel * np.exp(-t / float(p.get("fdecay", 0.25)))
+            if p.get("_accent"):  # accent (opt-in with `accent`): a deeper, shorter filter envelope
+                ac = float(p.get("accent", 0.0))
+                cut = cut + float(p["env"]) * (1 + ac) * vel * np.exp(-t / (float(p.get("fdecay", 0.25)) * (1 - 0.4 * min(ac, 1.0))))
+            else:
+                cut = cut + float(p["env"]) * vel * np.exp(-t / float(p.get("fdecay", 0.25)))
         if "cutoff" in mods:
             cut = cut * 2 ** mods["cutoff"]
         if drift > 0:
@@ -304,6 +312,8 @@ def voice(p, f, vel, dur, oscs):
     if "level" in mods:
         amp = amp * 10 ** (mods["level"] / 20)
     out = np.stack([L, R]) * amp * vel * float(p.get("out", 0.55))
+    if p.get("_accent"):
+        out = out * (1 + 0.5 * float(p.get("accent", 0.0)))
     if "pan" in mods:
         a = (np.clip(mods["pan"], -1, 1) + 1) * np.pi / 4
         out = out * np.stack([np.cos(a), np.sin(a)]) * np.sqrt(2)

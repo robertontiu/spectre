@@ -66,6 +66,7 @@ TYPE_ROLE = {
     "acguitar": "acoustic", "vox": "vocal", "vox2": "vocal", "singer": "vocal", "violin": "lead", "fiddle": "lead",
     "kokle": "pluck", "cimbalom": "pluck", "oud": "pluck", "lira": "pluck", "nai": "lead", "ney": "lead",
     "dudas": "lead", "trembita": "lead", "tridksnis": "perc",
+    "acid": "upper-bass", "snare909": "snare", "clap909": "clap", "ride909": "cymbals",
 }
 # name keywords (checked in order); `drums` ones may also re-label a drum-type track (a "cinel" played on a toba)
 NAME_ROLE = [(r"cinel|cymbal|ride|crash", "cymbals", True), (r"rim", "perc", True), (r"tom", "perc", True),

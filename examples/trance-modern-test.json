@@ -1,0 +1,52 @@
+{
+ "title": "trance-modern-test",
+ "bpm": 138,
+ "swing": 0.5,
+ "seed": 7,
+ "seeds": "per-track",
+ "genre": "trance",
+ "tracks": {
+  "kick": {"inst": {"type": "clubkick", "tune": 50}, "humanize_ms": 0, "vel_jitter": 0.02},
+  "clap": {"inst": {"type": "clap909"}, "humanize_ms": 1, "send_reverb": 0.05},
+  "snare": {"inst": {"type": "snare909"}, "humanize_ms": 1, "gain_db": -3},
+  "ride": {"inst": {"type": "ride909", "decay": 0.25}, "humanize_ms": 1},
+  "acid": {"inst": {"type": "acid", "cutoff": 300, "env_mod": 0.55, "reso": 0.8, "decay": 0.4, "accent": 0.7,
+                    "drive": 0.35},
+           "humanize_ms": 0, "vel_jitter": 0, "sidechain": {"source": "kick", "depth": 0.5, "release_ms": 110},
+           "fx": [{"type": "suppress", "depth": 6}], "sends": {"echo": 0.12}},
+  "pluck": {"inst": {"type": "polysynth", "osc": [{"shape": "saw", "voices": 3, "detune": 14}], "cutoff": 900,
+                     "env": 5000, "fdecay": 0.12, "sustain_level": 0, "decay": 0.25, "release": 0.2,
+                     "glide_ms": 70, "accent": 0.8,
+                     "lfo": [{"dest": "cutoff", "rate": 0.25, "depth": 0.1}]},
+            "role": "pluck", "eq": "auto", "sends": {"shimmer": 0.35, "cloud": 0.4},
+            "fx": [{"type": "granular", "id": "grain", "mix": 0.0, "density": 30, "grain_ms": 120}]},
+  "pad": {"inst": {"type": "supersaw", "model": 2, "detune": 18, "attack": 0.8, "release": 1.5, "cutoff": 3000,
+                   "drift": 0.2},
+          "role": "pad", "eq": "auto", "sends": {"shimmer": 0.3},
+          "sidechain": {"source": "kick", "depth": 0.6, "release_ms": 170}}
+ },
+ "patterns": {
+  "drums": {"bars": 1, "kick": "X...X...X...X...", "clap": "....X.......X...", "ride": "..x...x...x...x."},
+  "fill": {"bars": 1, "snare": "x.x.x.x.xxxxXXXX"},
+  "acidA": {"bars": 2, "acid": "0:A1:2 2:A2:1! 3:A1:1 4:C2:2~ 6:A1:1 7:E2:1! 8:A1:2 10:G2:2~ 12:A1:1 13:A2:1! 14:A1:2 16:A1:2 18:A2:1! 19:A1:1 20:C2:2 22:D2:2~ 24:A1:1! 25:A1:1! 26:A1:1! 27:A2:1 28:G2:4~"},
+  "pluckA": {"bars": 2, "pluck": "0:A4:2 2:C5:2 4:E5:2 6:A5:2~ 8:G5:2 10:E5:2! 12:C5:2 14:E5:2~ 16:A4:2 18:C5:2 20:E5:2! 22:B5:2~ 24:A5:4 28:E5:4"},
+  "padA": {"bars": 2, "pad": {"chords": "Am9:16 Fmaj7:16", "style": "sustain", "register": "A3", "voicing": "keys", "vel": 0.6}}
+ },
+ "arrangement": [
+  {"name": "intro", "bars": 4, "play": ["drums", "acidA"],
+   "auto": {"acid": {"inst": {"cutoff": [200, 600, "log"], "env_mod": [0.3, 0.7]}}}},
+  {"name": "break", "bars": 4, "play": ["pluckA", "padA"],
+   "auto": {"pluck": {"inst": {"lfo.0.depth": [0.1, 0.8], "env": [3000, 7000]}, "fx": {"grain": {"mix": [0, 0.5]}}},
+            "pad": {"inst": {"drift": [0.1, 0.6], "detune": [14, 30]}},
+            "return:shimmer": {"amount": [0.3, 0.9]}}},
+  {"name": "freeze", "bars": 4, "play": ["drums", "acidA", "padA"], "fill": {"pattern": "fill"},
+   "auto": {"return:cloud": {"scan": 0, "density": [20, 60]}, "ride": {"inst": {"decay": [0.15, 0.45]}}}}
+ ],
+ "mix": {"reverb": {"size": 0.6, "return_db": -8},
+         "returns": {"shimmer": {"type": "shimmer", "decay": 7, "amount": 0.6, "predelay_ms": 30, "return_db": -8},
+                     "cloud": {"type": "granular", "grain_ms": 140, "density": 30, "position_ms": 200,
+                               "spray_ms": 80, "pitch_spread": 0.1, "intervals": [0, 12], "return_db": -10},
+                     "echo": {"type": "delay", "beats": 0.75, "pingpong": true, "offset_ms": 7, "feedback": 0.35,
+                              "return_db": -12}}},
+ "master": {"lufs": -10.5}
+}

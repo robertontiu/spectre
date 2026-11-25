@@ -34,6 +34,12 @@ engine/
                   (several reverbs/delays, filtered, ducked), fx ott / dyneq / clip / mseq, correlated humanizing
   synth.py        production sounds: `supersaw` model 2 (Szabo), `polysynth` (LFOs, envelopes, drift), `sub`, kick
                   layers (`kicksub`, `kickpunch`, `kickclick`), `metalhat` (tonal hats), `air`
+  acid.py         `acid`: a 303-style monophonic line (accent coupled to filter envelope and level, slide, resonant
+                  18/24 dB zero-delay ladder, drive); numba
+  tr909.py        `snare909`, `clap909`, `ride909`: TR-909-style drums fitted to a recorded TR-909
+                  (examples/production/modern/measure909.py)
+  spacefx.py      `shimmer` (pitch-shifted feedback reverb), `granular` (grain cloud / freeze / stretch) as fx and return
+                  types, `suppress` (dynamic resonance suppressor); numba; section automation curves come from studio.py
   eqmaps.json     the genre EQ maps as data (per role: high-pass, cut and owned regions; core roles), from the genre docs
   master.py       the release mastering stage (see docs/MASTERING.md)
   genres.json     genre configurations (target curve, loudness and mastering settings, length, form, tempo, sources);
@@ -79,11 +85,15 @@ examples/
   chamberscore/   chamber-score instruments A/B (old stand-ins vs celesta, glockenspiel, vibraphone, cello, viola,
                   strings_section) and spectrograms against reference recordings (build.py)
   production/     the production upgrade A/B: First Light and Half of Me excerpts as published vs rebuilt with stacks
-                  (mp3, clarity numbers, spectrograms; build.py)
+                  (mp3, clarity numbers, spectrograms; build.py); modern/: the modern-strand tools (shimmer, granular,
+                  acid, 909, slide and accent, automated sounds, suppress) as short A/Bs (build.py) and the 909 fit
+                  (measure909.py)
   joc/            lăutar band A/B (old fiddle vs violin, the violin's articulations, acguitar, toba, a tempo ramp; build.py)
   vocals/         svs/: the singer's voices (auditions in voices/, voices.py; male.py for the male ones), the DiffSinger trial (dsinger.py, build.py),
                   the mix study (blend.py), choir and vibrato tests (vibrato.py), Spanish and Romanian checks; the
                   wordless vox and vox2 on a trance hook and session 009's hook (mp3 only)
   engine-test.json  a small project that exercises most engine features (render it to smoke-test changes)
   trance-test.json, poprock-test.json  small projects that exercise the trance and pop rock sounds
+  trance-modern-test.json  a small project that exercises acid, the 909 drums, shimmer and granular returns, suppress,
+                  polysynth slide and accent, and section automation of instrument, fx and return parameters
 ```

@@ -34,4 +34,4 @@ cd /tmp/smoke && export BEAT_DIR=$PWD
 python3 <repo>/engine/studio.py render && python3 <repo>/engine/studio.py listen
 python3 <repo>/engine/studio.py master --genre trap   # writes renders/v001.master.{wav,mp3,png,report.json}
 ```
-Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
+Open `ear.png` and `renders/v001.master.png` to check that the pipeline works. After a change to the modern-strand tools (`acid`, the 909 drums, `shimmer`, `granular`, `suppress`, section automation of sounds), also render `examples/trance-modern-test.json` (about 10 s; it exercises all of them) and, for engine changes in general, check that an earlier project's premaster stays bit-identical.

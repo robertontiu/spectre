@@ -37,6 +37,7 @@ DEFAULT_GAIN.update({"celesta": -12, "glockenspiel": -12, "cello": -12, "viola":
                      "vibraphone": -14})
 DEFAULT_GAIN.update({"polysynth": -12, "sub": -4, "kicksub": -1, "kickpunch": -8, "kickclick": -6, "metalhat": -13,
                      "air": -20})
+DEFAULT_GAIN.update({"acid": -6, "snare909": -1, "clap909": -7, "ride909": -19})
 
 # Opt-in production features (stacks, buses, returns, role EQ, ott/dyneq/clip/mseq, correlated humanizing) live in
 # engine/mixbus.py; _CTX carries the render's events and genre to the fx that need them (dyneq, role EQ).
@@ -130,8 +131,9 @@ def room_fx(st, size=0.3, mix=0.25, damp=0.5):
     return (st * (1 - mix * 0.5) + wet * mix).astype(np.float32)
 
 
-def apply_fx(st, fx_list, bpm):
-    """st: (2, n) float32. fx_list: list of dicts."""
+def apply_fx(st, fx_list, bpm, owner=None):
+    """st: (2, n) float32. fx_list: list of dicts. owner: the track, layer ("track.layer") or bus whose chain this
+    is (section automation of the shimmer / granular / suppress fx looks it up)."""
     chain = []
     beat = 60.0 / bpm
 
@@ -145,6 +147,8 @@ def apply_fx(st, fx_list, bpm):
         k = fx["type"]
         if k in ("hpf", "lpf") and fx.get("slope"):  # steeper filters (opt-in; plain hpf/lpf stay first-order)
             st = MB.butter(flush(st), k, fx.get("hz", 120 if k == "hpf" else 5000), fx["slope"])
+        elif k in ("shimmer", "granular", "suppress"):
+            st = _space_fx(flush(st), fx, owner)
         elif k in ("ott", "dyneq", "clip", "mseq"):
             st = flush(st)
             if k == "ott":
@@ -489,6 +493,172 @@ def _warn_once(key, msg):
         print(msg, file=sys.stderr)
 
 
+# ------------------------------------------------------------------ section automation of sounds (since 2026-11-25)
+# A section's `auto` for a track can also move the instrument's own parameters (`"inst": {"<param or path>": value}`,
+# read at each note's onset), the parameters of its shimmer, granular and suppress fx (`"fx": {"<fx id or type>":
+# {...}}`, per sample), and a shimmer or granular return's (`"return:<name>": {...}`). Values: a number (held
+# through the section), [from, to] (a ramp), [a, b, c, ...] (evenly spaced points), with "log" last for a geometric
+# ramp. Only projects that use these keys reach this code (docs/MANUAL.md "SECTION", "Automating sounds").
+
+def auto_value(v, x):
+    """A section automation value at x (0-1 through the section)."""
+    if not isinstance(v, list):
+        return v
+    log = bool(v) and v[-1] == "log"
+    pts = [float(a) for a in (v[:-1] if log else v)]
+    if len(pts) == 1:
+        return pts[0]
+    pos = min(max(float(x), 0.0), 1.0) * (len(pts) - 1)
+    i = min(int(pos), len(pts) - 2)
+    fr = pos - i
+    a, b = pts[i], pts[i + 1]
+    if log and a > 0 and b > 0:
+        return a * (b / a) ** fr
+    return a + (b - a) * fr
+
+
+def auto_values(v, x):
+    """auto_value for an array of positions."""
+    x = np.clip(np.asarray(x, dtype=np.float64), 0.0, 1.0)
+    if not isinstance(v, list):
+        return np.full(len(x), float(v))
+    log = bool(v) and v[-1] == "log"
+    pts = np.array([float(a) for a in (v[:-1] if log else v)])
+    if len(pts) == 1:
+        return np.full(len(x), pts[0])
+    grid = np.linspace(0, 1, len(pts))
+    if log and np.all(pts > 0):
+        return np.exp(np.interp(x, grid, np.log(pts)))
+    return np.interp(x, grid, pts)
+
+
+def _auto_index(P, sections):
+    """Every instrument, fx and return automation of the project: {key: [(start s, end s, param, value), ...]}."""
+    idx = {}
+    for sec, S in zip(P["arrangement"], sections):
+        for owner, au in (sec.get("auto") or {}).items():
+            if not isinstance(au, dict):
+                continue
+            if owner.startswith("return:"):
+                for k, v in au.items():
+                    if k not in ("gain_db", "lpf", "hpf", "mute"):
+                        idx.setdefault(("ret", owner[len("return:"):]), []).append((S["start"], S["end"], k, v))
+                continue
+            for path, v in (au.get("inst") or {}).items():
+                idx.setdefault(("inst", owner), []).append((S["start"], S["end"], path, v))
+            for fid, d in (au.get("fx") or {}).items():
+                for k, v in (d or {}).items():
+                    idx.setdefault(("fx", owner, fid), []).append((S["start"], S["end"], k, v))
+    return idx
+
+
+def _set_path(q, path, val):
+    """Set q[a][b][c] for the path "a.b.c" (list items by index: "lfo.0.depth"); missing dict levels are made."""
+    keys = str(path).split(".")
+    cur = q
+    for i, k in enumerate(keys):
+        last = i == len(keys) - 1
+        if isinstance(cur, list):
+            j = int(k)
+            if not 0 <= j < len(cur):
+                raise ValueError(f'auto "inst": "{path}": item {j} does not exist (the list has {len(cur)})')
+            if last:
+                cur[j] = val
+            else:
+                cur = cur[j]
+        else:
+            if last:
+                cur[k] = val
+            else:
+                if cur.get(k) is None:
+                    cur[k] = {}
+                cur = cur[k]
+
+
+def _inst_at(p, owners, t):
+    """The instrument params of one note at time t: p with every value a section around t automates (a copy), and a
+    signature of the changes (for caches); p itself and () when nothing moves."""
+    import copy
+    idx = _CTX.get("auto") or {}
+    q, sig = None, ()
+    for ow in owners:
+        for a, b, path, v in idx.get(("inst", ow), ()):
+            if a - 0.03 <= t < b - 0.03:  # a note played up to 30 ms early (humanized, a chord's spread) is the next section's
+                if q is None:
+                    q = copy.deepcopy(p)
+                val = auto_value(v, (t - a) / max(b - a, 1e-9))
+                _set_path(q, path, val)
+                sig += ((path, val if not isinstance(val, (list, dict)) else repr(val)),)
+    return (q, sig) if q is not None else (p, ())
+
+
+def _auto_curves(key, kind, cfg, n):
+    """Per-sample curves of the automated parameters of one shimmer / granular / suppress fx or return: the section's
+    value inside each section that names the parameter, the fx's own value (or its default) elsewhere."""
+    import spacefx as SF
+    out = {}
+    ents = (_CTX.get("auto") or {}).get(key, ()) if key else ()
+    for a, b, k, v in ents:
+        if k not in out:
+            base = cfg.get(k, SF.DEFAULTS[kind].get(k))
+            if base is None or isinstance(base, (list, dict, str, bool)):
+                raise ValueError(f'auto: "{k}" of a {kind} cannot be automated (numbers only: '
+                                 f'{", ".join(sorted(SF.AUTOMATABLE[kind]))})')
+            if k not in SF.AUTOMATABLE[kind]:
+                raise ValueError(f'auto: "{k}" of a {kind} cannot be automated ({", ".join(sorted(SF.AUTOMATABLE[kind]))})')
+            out[k] = np.full(n, float(base))
+        i0, i1 = max(0, int(a * SR)), min(n, int(b * SR))
+        if i1 > i0:
+            out[k][i0:i1] = auto_values(v, (np.arange(i0, i1) - a * SR) / max((b - a) * SR, 1.0))
+    return out
+
+
+def _space_fx(st, fx, owner):
+    """The shimmer, granular and suppress fx on a track, layer or bus (engine/spacefx.py)."""
+    import spacefx as SF
+    k = fx["type"]
+    n = st.shape[1]
+    cv = _auto_curves(("fx", owner, fx.get("id", k)), k, fx, n) if owner else {}
+    if k == "suppress":
+        return SF.suppress(st, fx, cv)
+    if k == "shimmer":
+        wet = SF.shimmer(MB.predelay(st, float(fx.get("predelay_ms", 0))), fx, cv)
+        hp, lp = fx.get("hpf", 250), fx.get("lpf", 12000)
+        if hp:
+            wet = MB.butter(wet, "hpf", hp, 12)
+        if lp:
+            wet = MB.butter(wet, "lpf", lp, 12)
+    else:
+        wet = SF.granular(st, fx, cv, seed=_CTX.get("seed", 1), owner=owner or "fx", sections=_CTX.get("sections"))
+    mix = cv["mix"] if "mix" in cv else float(fx.get("mix", SF.DEFAULTS[k]["mix"]))
+    return (st * (1 - mix) + wet * mix).astype(np.float32)
+
+
+def _return_moves(P, rn, wet, sec_by_name, n):
+    """`"auto": {"return:<name>": {"gain_db": ..., "lpf": ..., "hpf": ..., "mute": ...}}` on a named return's output."""
+    for sec in P["arrangement"]:
+        au = (sec.get("auto") or {}).get(f"return:{rn}")
+        if not au or not any(k in au for k in ("gain_db", "lpf", "hpf", "mute")):
+            continue
+        S = sec_by_name[sec["name"]]
+        a, b = int(S["start"] * SR), int(S["end"] * SR)
+        if b <= 0 or a >= n:
+            continue
+        wet = _window_auto(wet, au, a, b, n)
+    return wet
+
+
+def _prev_pitch(sorted_evs, e):
+    """The pitch a slid note comes from: the nearest note of the previous onset (chord) before it."""
+    t = e["t"] - 0.03
+    prev = [x for x in sorted_evs if x["t"] < t]
+    if not prev:
+        return None
+    t1 = prev[-1]["t"]
+    grp = [x["midi"] for x in prev if x["t"] > t1 - 0.03]
+    return min(grp, key=lambda m: abs(m - e["midi"]))
+
+
 def _layer_events(evs, L, parent_is_drum):
     """A stack layer's copy of the parent's events: `notes` all / lowest / highest (per chord), `offset_ms`, `vel`
     (a factor), and for a tonal layer under drum steps a fixed `note` held `len` 16ths."""
@@ -545,7 +715,7 @@ def render_stack(name, tr, evs, holds, total_n, bpm):
         role = L.get("role")
         fx = _role_fx(dict(L, eq=L.get("eq", "auto")), role) if role else []
         ltr = {"inst": inst, "gain_db": L.get("gain_db", 0), "pan": L.get("pan", 0), "width": L.get("width", 0),
-               "fx": fx + list(L.get("fx") or [])}
+               "fx": fx + list(L.get("fx") or []), "_stack": name}
         if _CTX.get("layer_rng"):
             _CTX["layer_rng"](f"{name}.{lname}")
         x = render_track(f"{name}.{lname}", ltr, _layer_events(evs, L, parent_is_drum), holds, total_n, bpm)
@@ -559,7 +729,7 @@ def render_stack(name, tr, evs, holds, total_n, bpm):
         st = (st * np.array([[np.cos(a)], [np.sin(a)]]) * np.sqrt(2)).astype(np.float32)
     if tr.get("width"):
         st = widen(st, tr["width"])
-    return apply_fx(st, _role_fx(tr) + list(tr.get("fx") or []), bpm)
+    return apply_fx(st, _role_fx(tr) + list(tr.get("fx") or []), bpm, owner=name)
 
 
 def render_track(name, tr, evs, holds, total_n, bpm):
@@ -571,6 +741,8 @@ def render_track(name, tr, evs, holds, total_n, bpm):
     p = tr["inst"]
     mono = np.zeros(total_n, dtype=np.float32)
     st_buf = None
+    owners = ([tr["_stack"]] if tr.get("_stack") else []) + [name]
+    autod = bool(_CTX.get("auto")) and any(("inst", o) in _CTX["auto"] for o in owners)
     if typ in DRUM_TYPES:
         fn = I.DRUMS[typ]
         if typ == "clap" and p.get("spread", 0.009) > 0.05:  # warning only: the sound stays as it was
@@ -583,8 +755,12 @@ def render_track(name, tr, evs, holds, total_n, bpm):
             key = (round(e["vel"] * 24), round(e.get("ps", 0) * 4))
             if rr > 1:  # round-robin kit pieces: 12 velocity layers x rr variants
                 key = (2 * round(e["vel"] * 12), key[1], j % rr)
+            pe = p
+            if autod:  # section automation of the instrument: this hit's params
+                pe, sig = _inst_at(p, owners, e["t"])
+                key = key + sig
             if key not in cache:
-                cache[key] = fn(p, key[0] / 24, key[1] / 4)
+                cache[key] = fn(pe, key[0] / 24, key[1] / 4)
             x = cache[key]
             i = max(0, int(e["t"] * SR))  # hits pushed before 0:00 play at 0:00
             if i >= total_n:
@@ -602,13 +778,36 @@ def render_track(name, tr, evs, holds, total_n, bpm):
                 nt["syl"] = e["syl"]
             if "art" in e:  # violin: articulations written after the note length
                 nt["art"] = e["art"]
+            if typ == "acid":  # accents, and the note's automated params
+                if e.get("acc"):
+                    nt["acc"] = True
+                if autod:
+                    pa = _inst_at(p, owners, e["t"])[1]
+                    if pa:
+                        nt["pa"] = dict(pa)
+        if autod and typ != "acid":
+            _warn_once(f"auto-mono-{typ}", f"warning: track '{name}': section \"inst\" automation does not reach the "
+                       f"monophonic '{typ}' (it reaches acid, polyphonic and drum instruments); ignored")
         mono = I.mono_voice(typ, p, notes, total_n)
         if mono.ndim == 2:  # stereo voices (singer with a double): pan acts as balance
             st_buf, mono = mono, np.zeros(total_n, dtype=np.float32)
     elif typ in I.TONAL:
         fn = I.TONAL[typ]
+        modern = typ == "polysynth" or (typ == "supersaw" and p.get("model", 1) == 2)
+        slide = modern and p.get("glide_ms") is not None      # opt-in: `~` slides polysynth / supersaw model 2
+        accent = modern and bool(p.get("accent"))              # opt-in: `!` deepens the filter envelope
+        sevs = sorted(evs, key=lambda e: e["t"]) if slide else None
         for e in evs:
-            x = fn(p, midi_to_hz(e["midi"] + p.get("transpose", 0)), e["vel"], max(e["dur"], 0.02))
+            pe = p
+            if autod:  # section automation of the instrument: this note's params
+                pe = _inst_at(p, owners, e["t"])[0]
+            if slide and e.get("glide"):
+                m0 = _prev_pitch(sevs, e)
+                if m0 is not None:
+                    pe = dict(pe, _glide_from=midi_to_hz(m0 + pe.get("transpose", 0)))
+            if accent and e.get("acc"):
+                pe = dict(pe, _accent=True)
+            x = fn(pe, midi_to_hz(e["midi"] + pe.get("transpose", 0)), e["vel"], max(e["dur"], 0.02))
             i = max(0, int(e["t"] * SR))  # hits pushed before 0:00 play at 0:00
             if i >= total_n:
                 continue
@@ -621,6 +820,8 @@ def render_track(name, tr, evs, holds, total_n, bpm):
             m = min(len(x), total_n - i)
             mono[i:i + m] += x[:m]
     elif typ in I.TEXTURES:
+        if autod:
+            _warn_once(f"auto-tex-{typ}", f"warning: track '{name}': section \"inst\" automation does not reach textures; ignored")
         if holds:
             src = I.TEXTURES[typ](p, total_n)
             g = np.zeros(total_n, dtype=np.float32)
@@ -646,7 +847,7 @@ def render_track(name, tr, evs, holds, total_n, bpm):
         st = st + (st_buf * db(gain) * np.array([[np.cos(a)], [np.sin(a)]]) * np.sqrt(2)).astype(np.float32)
     if tr.get("width"):
         st = widen(st, tr["width"])
-    st = apply_fx(st, tr.get("fx"), bpm)
+    st = apply_fx(st, tr.get("fx"), bpm, owner=name)
     return st
 
 
@@ -798,6 +999,15 @@ def _process_return(rn, cfg, x, beat, duck_env):
         wet = pb.Pedalboard([pb.Reverb(cfg.get("size", 0.75), cfg.get("damping", 0.55), 1.0, 0.0,
                                        cfg.get("width", 1.0))])(x, SR)
         hp, lp = cfg.get("hpf", 250), cfg.get("lpf", 7000)
+    elif typ in ("shimmer", "granular"):  # engine/spacefx.py; section automation by "return:<name>"
+        import spacefx as SF
+        cv = _auto_curves(("ret", rn), typ, cfg, x.shape[1])
+        if typ == "shimmer":
+            wet = SF.shimmer(x, cfg, cv)
+            hp, lp = cfg.get("hpf", 250), cfg.get("lpf", 12000)
+        else:
+            wet = SF.granular(x, cfg, cv, seed=_CTX.get("seed", 1), owner=f"return:{rn}", sections=_CTX.get("sections"))
+            hp, lp = cfg.get("hpf", 0), cfg.get("lpf", 0)
     elif typ == "delay":
         if cfg.get("pingpong"):
             wet = MB.pingpong(x, beat, cfg.get("beats", 0.75), cfg.get("feedback", 0.35), cfg.get("offset_ms", 0.0))
@@ -806,7 +1016,7 @@ def _process_return(rn, cfg, x, beat, duck_env):
             wet = pb.Pedalboard([pb.Delay(d, cfg.get("feedback", 0.35), 1.0)])(x, SR)
         hp, lp = cfg.get("hpf", 300), cfg.get("lpf", 3500)
     else:
-        raise ValueError(f'return "{rn}": type must be reverb or delay')
+        raise ValueError(f'return "{rn}": type must be reverb, delay, shimmer or granular')
     if hp:
         wet = MB.butter(wet, "hpf", hp, 12)
     if lp:
@@ -838,6 +1048,7 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
         events, holds, sections, total, offset = _window(events, holds, sections, total, window, pre)
     per_track = per_track_seeds(P)
     shared_rng = I.RNG
+    _CTX.update(auto=_auto_index(P, sections), sections=sections, seed=P.get("seed", 1))
     _CTX.update(events=events, genre=P.get("genre"), bpm=P["bpm"], layer_hook=layer_hook,
                 layer_rng=(lambda nm: setattr(I, "RNG", track_rng(P, nm, 1))) if per_track else None)
     tail = 3.0
@@ -928,7 +1139,7 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
             st = (st * np.array([[np.cos(a)], [np.sin(a)]]) * np.sqrt(2)).astype(np.float32)
         if B.get("width"):
             st = widen(st, B["width"])
-        st = apply_fx(st, B.get("fx"), P["bpm"])
+        st = apply_fx(st, B.get("fx"), P["bpm"], owner=bname)
         sc = B.get("sidechain")
         if sc and sc.get("source") in events:
             st = _sidechain(st, sc, events, total_n)
@@ -1010,6 +1221,8 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
         for rn, cfg in returns_cfg.items():  # named returns (mix.returns)
             if np.any(returns_in[rn]):
                 wet = _process_return(rn, cfg, returns_in[rn], beat, duck_env)
+                if any(f"return:{rn}" in (sec.get("auto") or {}) for sec in P["arrangement"]):
+                    wet = _return_moves(P, rn, wet, sec_by_name, total_n)
                 mix += wet
                 if stem_hook is not None:
                     stem_hook(f"({rn})", wet)

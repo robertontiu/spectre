@@ -11,6 +11,7 @@ items.append(('808', I.mono_voice('808',{},[dict(t0=0,n=30000,f=55,vel=.9,glide=
 items.append(('bass', I.mono_voice('bass',{},[dict(t0=0,n=30000,f=55,vel=.9,glide=False)],50000)))
 items.append(('lead', I.mono_voice('lead',{},[dict(t0=0,n=40000,f=440,vel=.9,glide=False)],60000)))
 items.append(('vox', I.mono_voice('vox',{},[dict(t0=0,n=40000,f=440,vel=.9,glide=False),dict(t0=40000,n=40000,f=523,vel=.9,glide=True)],90000)))
+items.append(('acid', I.mono_voice('acid',{},[dict(t0=0,n=5000,f=55,vel=.9,glide=False,acc=True),dict(t0=11000,n=5000,f=110,vel=.9,glide=False),dict(t0=22000,n=11000,f=82.4,vel=.9,glide=True)],60000)))
 cols=6; rows=int(np.ceil(len(items)/cols))
 fig,axs=plt.subplots(rows,cols,figsize=(21,2.9*rows)); axs=axs.ravel()
 for ax,(k,x) in zip(axs,items):
