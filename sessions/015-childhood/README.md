@@ -39,3 +39,7 @@ Two clocks superimposed instead of sections alternated; no lone intro (two notes
 
 ## Spectre's note
 "I kept wanting to write the sad part, and the track kept telling me the sad part is just the happy part at half speed. Once the far celesta was running at the old tempo inside the slow bars I stopped arranging and started listening. The detail I'd keep if I lost everything else is the finger arriving late on the high note, and the grown hand doing the same thing thirty years on. The top end is duller than I'd like; that's the piano I had."
+
+## Remix (2026-11-25)
+
+Remix, no compositional change (journal entry 29; `remix.py`). The track is now mastered against its own target, `chamberscore_ref` (30 film-score reference albums), instead of the borrowed rock curve, which was far too bright for a score. In the mix, the boosts made for that curve are partly undone: less low warmth on the waltz and watcher's pianos and the plucked cello, and less top on the bowed strings in the swell. Nothing was added: no layers, buses or compression. Version v030: -15.0 LUFS, -1.08 dBTP, PLR 13.9, no warnings. Every section stays within 0.7 LU of the previous release (`again` +1.0 LU, two glockenspiel notes). Against the target, the swell's presence and air came down by about 4 dB. The opening is darker than before, because one master EQ follows the swell. The previous release is v028, kept as `project-published.json`; the tables above describe it. `ear-overview.png` still shows v028.
