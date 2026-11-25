@@ -29,12 +29,18 @@ Session 001 ("Bleachers") sounded clunky on MacBook speakers. Analysis showed th
 Settings come from a **genre configuration** (`engine/genres.json`), chosen with `--genre`; explicit flags override single values. There is **no default genre**: `studio.py master` stops with an error listing the genres when neither `--genre` nor `--target` is given. An old `--target`-only command still works and takes the matching genre's settings (`--target beat` is an alias of `trap`). Every report records `genre`, `settings` (the values used), `eq_at_limit` and `warnings`, plus the stereo width (`width_side_minus_mid_lu`).
 
 ## Genre configurations (`--genre`)
-| Genre | Target curve | `--lufs` | `--tp` | `--eq` | `--translate` | Status |
-|---|---|---|---|---|---|---|
-| `trap` | `beat` (hand-tuned) | -10.5 | -1 | 0.7 | 0.5 | **Trap / beats: the configuration of the first releases of sessions 001-006**, the former engine default, preserved exactly (craft brief: docs/CRAFT.md; with `--legacy-master` it reproduces those masters). Verified: `--genre trap` re-masters session 005's v025 sample-identically to the pre-change engine and to its stored report |
-| `hiphop` | `hiphop` (measured) | -10.5 | -1 | 0.7 | 0.5 | `trap` with the measured hip-hop curve: the configuration for beat sessions; sessions 001-006 were remastered with it on 2026-11-24 (see "Top end"), with the caveats below |
-| `trance` | `trance` (measured) | -10 | -1 | 0.7 | 0.4 | docs/TRANCE.md |
-| `rock` | `rock` (measured) | -10 | -1 | 0.7 | 0.3 | docs/POP_ROCK.md |
+| Genre | Target curve (since 2026-11-25) | `--lufs` | `--tp` | `--eq` | `--translate` | Released tracks used (`--published`) | Status |
+|---|---|---|---|---|---|---|---|
+| `trap` | `beat` (hand-tuned) | -10.5 | -1 | 0.7 | 0.5 | unchanged | **Trap / beats: the configuration of the first releases of sessions 001-006**, the former engine default, preserved exactly (craft brief: docs/CRAFT.md; with `--legacy-master` it reproduces those masters). Verified: `--genre trap` re-masters session 005's v025 sample-identically to the pre-change engine and to its stored report |
+| `hiphop` | `hiphop_2015` (catalogue, 347 tracks) | -10.5 | -1 | 0.7 | 0.5 | `hiphop` (remasters of 001-006; 011) | the configuration for beat sessions; docs/HIPHOP.md |
+| `trance`, `trance_radio` | `trance_2015` (catalogue, 558 tracks) | -9 | -1 | 0.7 | 0.4 | `trance` (007, 013) | docs/TRANCE.md |
+| `rock` | `rock_2015` (catalogue, 408 tracks) | -8.5 | -1 | 0.7 | 0.3 | `rock` (008, 009) | docs/POP_ROCK.md |
+| `joc` | `joc_taraf` (103 Taraf de Haïdouks recordings) | -11 | -1 | 0.4 | 0.3 | `rock`, eq 0.7 (010) | docs/JOC_TIGANESC.md |
+| `caroling` | `caroling_ref` (5 albums), no low-end boosts | -14 | -1 | 0.3 | 0.2 | `rock`, eq 0.5 (012) | docs/CAROLING.md |
+| `latinpop` | `latinpop_ref` (24 albums); `latinpop_dark`, `latinpop_bright` by strand | -11 | -1 | 0.6 | 0.3 | `rock` (014) | docs/LATIN_POP.md |
+| `chamberscore` | `chamberscore_ref` (30 albums) | -15 | -1 | 0.4 | 0.2 | `rock` (015) | docs/CHAMBER_SCORE.md |
+
+Each genre's provenance is in `engine/genres.json` (`target_source`, `target_era`, `target_tracks`, `target_method`, `target_date`, `target_change`), the curves with their spreads in `engine/targets.json`, and every master report carries `target_provenance`. The settings the released tracks were mastered with stay in `master_published`; `master --published` uses them, and the master prints a note whenever a genre's default has changed, so nothing changes silently. Re-mastering a released track with its era target is a separate step, track by track, with the owner's approval (docs/PRODUCTION.md, "Remixing and remastering"). `max_low_boost_db` (optional, `caroling`: 0) caps the tonal EQ's boosts below 200 Hz; every other setting and the +2 dB cap on top-end boosts are as before.
 
 Session 001 was mastered with `--eq 0.9 --lufs -11` (the engine's flags at the time); reproduce it with `--genre trap --eq 0.9 --lufs -11`. The engine-wide fallbacks `--eq 0.7`, `--mono-below 120` and the stage settings are hand-tuned, not sourced.
 
@@ -90,13 +96,77 @@ Values in brackets are interpolated by the engine between the `beat` curve's anc
 
 **Genre mapping.** `hiphop` = Fig. 5 hip-hop. `trance` = Fig. 5 electronic. `rock` = the mean of Fig. 5 pop and rock (pop rock; the two differ by at most 1.5 dB per band).
 
-**Measured on 2026-11-25** (docs/PRODUCTION.md "Era-appropriate targets"; tables in docs/TRANCE.md, section C, and in each genre doc): against open catalogue data (MusicBrainz tags with AcousticBrainz spectra, 1995-2021, power-averaged like this engine's analyser) all three measured curves share one shape error: 3-6 dB too little in the kick-and-bass band (about 32-97 Hz), 3-5 dB too much at 97-183 Hz, and 2-6 dB too little above 7.7 kHz; for choirs and scores, which borrow `rock`, the curve is 7-12 dB too bright above 4 kHz. Interim catalogue-fitted curves and a plan for curves measured on reference masters are proposed there; nothing in the engine was changed.
+**Measured on 2026-11-25** (docs/PRODUCTION.md "Era-appropriate targets"; tables in docs/TRANCE.md, section C, and in each genre doc): against open catalogue data (MusicBrainz tags with AcousticBrainz spectra, 1995-2021, power-averaged like this engine's analyser) all three measured curves share one shape error: 3-6 dB too little in the kick-and-bass band (about 32-97 Hz), 3-5 dB too much at 97-183 Hz, and 2-6 dB too little above 7.7 kHz; for choirs and scores, which borrow `rock`, the curve is 7-12 dB too bright above 4 kHz. The same day the catalogue-fitted curves were adopted as era targets ("Era targets" below); these curves stay available by name.
 
 **What's uncertain.**
 - *Era.* The genre curves pool 1950-2010. The paper shows spectra getting louder, flatter and more extended over time, with more low end after 2000. Rock and pop #1s lean on 1960s-1980s records, so `rock` is probably too dark above 8 kHz for a modern master, and `hiphop` (largely 1990-2010) probably has less sub at 31-50 Hz than 2010s-2020s 808 trap. The per-decade panels of Fig. 2 have no common mid reference, so an era correction couldn't be derived without guessing; none was applied.
 - *Genre labels.* "Electronic" means #1 singles tagged electronic (mostly dance-pop and house-pop), not trance specifically; no trance-only measurement was found. Genre sample sizes aren't reported.
 - *Low end.* At 31.5-50 Hz a 1/3-octave band holds only one or two FFT bins, so those values are interpolations (about ±2 dB). The paper averages normalised magnitude spectra, not power, which slightly understates bands dominated by short loud events (kicks).
 - *Not used:* Elowsson & Friberg (AES 142, 2017, [e-library 18638](https://www.aes.org/e-lib/browse.cfm?elib=18638)) found that the LTAS differences between genres are mainly explained by how prominent the percussion is (more percussion, more relative bass and treble); their numbers weren't accessible. iZotope's genre targets (Tonal Balance Control) aren't published as numbers.
+
+## Era targets (2026-11-25)
+**What they are.** One curve per genre measured on what that genre sounds like in its current period (trance, hip hop and pop rock: 2015-2021, the last years with open data) or on the reference records its genre doc chose (joc, caroling, Latin pop, chamber score), with provenance next to it. They are the interim targets docs/PRODUCTION.md recommends (source 2, the open catalogue); the definitive ones are reference masters measured locally (source 1), with the same tool.
+
+**How they were made: `tools/refcurve.py`.**
+- `catalogue`: MusicBrainz recordings by tag and first-release year (`--tag trance --years 2015-2021 --per-year 300`), by artist (`--artist "Taraf de Haïdouks" --limit 300`) or by release (`--release <mbid>`, repeatable), joined to AcousticBrainz low-level data (Essentia's analysis of users' own files, CC0; no audio is downloaded). Per track the mean energy in Essentia's 27 Bark bands, in dB relative to the track's level over 510 Hz-2 kHz (the mean of those eight bands' dB values); medians and interquartile ranges per band; tracks under 90 s are skipped for tag sets, under 30 s for album sets (film cues are short). Then a smooth 1/3-octave curve is fitted (least squares over all Bark bands, a second-difference smoothness penalty of 0.4; the band under 32 Hz, which reads unreliably, at half weight; 15.5-20.5 kHz at half weight on the lossless files only, when at least 20 are lossless, because lossy files are cut there) so that the curve, read through the same Bark analysis, reproduces the medians. The Bark reading of a curve is computed analytically: the expected Hann-windowed (2048-point) spectrum of noise shaped like the curve after this master's 28 Hz clean-up filter.
+- `measure <files>`: the same output from local reference masters with this master's own analyser (gated 1/3-octave mid and side spectra, loudness, true peak, PLR, LRA, width, low-end correlation, crest per region, and the Bark reading for comparison with the catalogue). Analysis only: the files stay in `~/.cache/spectre/refs/<genre>/`, only medians, spreads and the list of titles enter the repo.
+- `check <curve> --against <file>`: any curve read through the Bark analysis against a catalogue file's medians (the comparison tables in the genre docs). `add <file>`: puts a curve into `engine/targets.json` (never over a built-in curve).
+Downloads are cached in `~/.cache/spectre/refs/catalogue/` (only the few numbers used); the run for all nine curves took about 20 minutes, mostly MusicBrainz's one-request-per-second limit.
+
+**Validation** (as the research did, plus two checks it did not have):
+1. *The analysis equals AcousticBrainz's.* Three Creative Commons tracks with AcousticBrainz data (Nine Inch Nails, *Ghosts I-IV*, tracks 1, 2 and 4, CC BY-NC-SA, FLAC from archive.org; deleted after the check): the tool's Bark reading of the audio agrees with AcousticBrainz within 0.01-0.06 dB on average per band from 32 Hz to 15.5 kHz (at most 0.5 dB in one band); under 32 Hz -0.7 to +1.6 dB.
+2. *The catalogue medians reproduce the research.* For all seven sets the research measured (trance, hip hop and pop rock 2015-21; the caroling, chamber-score and Latin albums; Taraf de Haïdouks), the medians agree with the tables in TRANCE.md C and the genre docs within 0.0-0.4 dB in every band checked (n differs by 0-8% because MusicBrainz's search results drift; the chamber-score set has 544 tracks against 502 because short cues are now kept).
+3. *The curve model equals noise.* Noise shaped like a curve and analysed frame by frame reads within 0.1 dB of the analytic model in every band; this master's own analyser reads the same noise back within 0.7 dB of the curve.
+4. *The fits.* Residuals from 32 Hz to 15.5 kHz: at most 0.5-1.5 dB, mean 0.13-0.52 dB per band. Against the research's interim fits (TRANCE.md C and the genre docs, made with a different, unkept script): within 2 dB from 50 Hz to 12.5 kHz (the largest differences at 50 Hz) and within 1.5 dB at 16 kHz; at 31.5-40 Hz these curves are 0.5-4.5 dB higher, the band both fits call uncertain (±3 dB: one Bark band, 32-97 Hz, and the unreliable one under it, decide it).
+
+**The curves** (dB re 1 kHz per 1/3 octave; `engine/targets.json` also holds each band's spread):
+
+| Hz | `trance_2015` | `hiphop_2015` | `rock_2015` | `joc_taraf` | `caroling_ref` | `chamberscore_ref` | `latinpop_ref` | `latinpop_dark` | `latinpop_bright` |
+|---|---|---|---|---|---|---|---|---|---|
+| 31.5 | +0.5 | +4.5 | -9 | -16 | -18.5 | -11.5 | -8.5 | -11 | -9.5 |
+| 40 | +4 | +7 | -4.5 | -10 | -14 | -8.5 | -4 | -6 | -5 |
+| 50 | +6.5 | +8.5 | -0.5 | -4.5 | -9.5 | -6 | 0 | -1.5 | -1 |
+| 63 | +8 | +8.5 | +2.5 | +0.5 | -6.5 | -3 | +2.5 | +1.5 | +1.5 |
+| 80 | +7.5 | +7.5 | +4 | +3 | -4.5 | -1 | +3.5 | +2.5 | +3 |
+| 100 | +5.5 | +5.5 | +3.5 | +3.5 | -4 | +0.5 | +3 | +2 | +3 |
+| 125 | +3.5 | +3.5 | +3 | +2.5 | -4.5 | +1 | +2 | +1 | +2.5 |
+| 160 | +2 | +2.5 | +3 | +1 | -5 | +1.5 | +1.5 | +0.5 | +2 |
+| 200 | +1 | +1.5 | +2.5 | +0.5 | -3.5 | +2.5 | +2 | +1 | +2 |
+| 250 | +1 | +1 | +2 | +0.5 | -1 | +3.5 | +2 | +1.5 | +3 |
+| 315 | +0.5 | +1 | +1.5 | +1 | 0 | +4 | +2 | +2 | +3.5 |
+| 400 | +0.5 | +1.5 | +1.5 | +1.5 | +2 | +4.5 | +2 | +1.5 | +3 |
+| 500 | +0.5 | +2.5 | +1.5 | +2 | +4 | +3.5 | +2.5 | +1.5 | +3 |
+| 630 | +0.5 | +2 | +2 | +2 | +4 | +2.5 | +2.5 | +2.5 | +3.5 |
+| 800 | +0.5 | +0.5 | +1 | +1 | +1.5 | +1.5 | +1.5 | +2 | +2 |
+| 1000 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1250 | -0.5 | -0.5 | -1 | -0.5 | -1.5 | -1.5 | -1 | -2.5 | -1.5 |
+| 1600 | -1.5 | -1 | -1 | -1.5 | -4 | -3 | -2 | -4 | -2 |
+| 2000 | -2 | -2 | -2 | -2.5 | -6.5 | -5 | -3 | -5 | -2.5 |
+| 2500 | -3 | -3 | -3 | -4 | -7 | -6.5 | -4 | -6.5 | -3.5 |
+| 3150 | -4 | -4 | -4 | -6 | -8.5 | -9 | -5.5 | -7.5 | -5.5 |
+| 4000 | -4 | -5 | -5.5 | -8 | -13 | -12 | -6.5 | -9.5 | -7 |
+| 5000 | -4.5 | -6 | -6.5 | -11 | -17 | -15 | -7.5 | -10.5 | -7.5 |
+| 6300 | -4.5 | -5.5 | -7 | -14 | -18 | -18 | -6.5 | -11 | -5.5 |
+| 8000 | -4 | -5.5 | -8 | -17 | -18 | -21.5 | -6.5 | -11.5 | -4.5 |
+| 10000 | -4.5 | -7 | -10 | -20 | -20.5 | -24 | -7.5 | -13 | -5.5 |
+| 12500 | -7 | -11 | -14 | -22.5 | -28 | -27 | -11.5 | -17.5 | -8.5 |
+| 16000 | -11 | -16.5 | -20 | -27.5 | -36 | -32.5 | -17.5 | -22.5 | -12.5 |
+
+| Target | Source (provenance) | Era | n | Est. loudness, median (middle half) | Against the curve it replaces (both laid over a mix at 500 Hz-2 kHz) |
+|---|---|---|---|---|---|
+| `trance_2015` | MusicBrainz tag `trance`, first release 2015-2021, up to 300 per year | 2015-2021 | 558 | -10.7 (-12.0 to -9.6) | `trance`: +8 to +12 dB at 31.5-63 Hz, -2 to -5 dB at 100-315 Hz, +2 to +7 dB at 8-16 kHz |
+| `hiphop_2015` | tag `hip hop`, 2015-2021, up to 100 per year | 2015-2021 | 347 | -10.6 (-12.1 to -9.4) | `hiphop`: +6 to +12 dB at 31.5-63 Hz, -2 to -5 dB at 100-250 Hz, +1 to +3 dB from 6.3 kHz; within about 1.5 dB of the hand-tuned `beat` curve below 6 kHz |
+| `rock_2015` | tag `pop rock`, 2015-2021, up to 100 per year | 2015-2021 | 408 | too scattered to quote | `rock`: +6 to +7.5 dB at 31.5-63 Hz, -1 to -3.5 dB at 100-400 Hz, +1.5 to +3.5 dB at 6.3-16 kHz |
+| `joc_taraf` | MusicBrainz artist Taraf de Haïdouks (the reference band of docs/JOC_TIGANESC.md) | releases 1993-2015 | 103 | -13.1 (-15.5 to -12.1) | `rock` (borrowed): +2 to +4 dB at 40-80 Hz, -4 to -5 dB at 125-250 Hz, -3 to -7 dB from 4 kHz |
+| `caroling_ref` | the five albums of docs/CAROLING.md | 1986-2014 | 67 | -19.1 (-20.6 to -13.6) | `rock` (borrowed): -8 to -11 dB at 100-200 Hz, +2.5 dB at 500-630 Hz, -4 to -12 dB from 2 kHz |
+| `chamberscore_ref` | the 30 albums of docs/CHAMBER_SCORE.md | 1981-2025 | 544 | -17.4 (-20.8 to -14.5) | `rock` (borrowed): -2 to -5 dB at 80-200 Hz, +2 dB at 400-500 Hz, -3 to -11 dB from 2.5 kHz |
+| `latinpop_ref` | the 24 albums of docs/LATIN_POP.md with data | 1990-2025 | 301 | -11.1 (-15.0 to -9.5) | `rock` (borrowed): +6 to +8 dB at 31.5-63 Hz, -2.5 to -4.5 dB at 125-250 Hz, +2 to +6 dB from 6.3 kHz |
+| `latinpop_dark` | boleros and acoustic: Luis Miguel's *Romance* trilogy, Natalia Lafourcade's *Musas* and *Hasta la raíz* | 1994-2017 | 66 | -11.9 (-14.1 to -11.1) | 4.5-6 dB darker than `latinpop_ref` at 6.3-12.5 kHz |
+| `latinpop_bright` | bachata: Aventura, Romeo Santos, Prince Royce (two albums each) | 2002-2016 | 81 | -10.4 (-11.7 to -9.0) | 1-3 dB brighter than `latinpop_ref` at 6.3-12.5 kHz |
+
+**What they ask of a mix.** In trance, hip hop and pop rock: the kick-and-sub band about 5-9 dB over 1 kHz at 50-80 Hz (where the older curves had their hump at 100-125 Hz), less 100-300 Hz, and a top 2-7 dB brighter at 8-16 kHz. Session 007's kick fundamental was carved by 5-11 dB to satisfy the old `trance` curve (docs/TRANCE.md C); with `trance_2015` that carving is no longer asked for. In the acoustic genres the top is far darker than the borrowed `rock` curve (caroling and chamber score -15 to -25 dB at 8-12.5 kHz) and the low mids leaner. **Unchanged rules:** the master boosts the top by at most +2 dB from 5 kHz up, so a brighter target must be met by the sounds (tonal content: saw harmonics, air layers, metallic hats), not by lifting synthesized noise (see "Top end"); the -8/+4 dB limits per band stay.
+
+**Caveats.** Catalogue data are user-submitted files (12-51% lossless per set), mono, coarse (Bark bands) and end in 2021-2022: nothing here measures 2023-2026. Tags are broad (`trance` spans uplifting, progressive, psy and vocal; `hip hop` mixes boom-bap revival and trap). The reference-album sets are small (66-103 tracks for joc, caroling and the Latin strands) and wide (the middle half of the caroling albums spans 15-18 dB at the low end and on top; chamber score 9-21 dB above 4 kHz), which is why caroling, joc and chamber score keep a light `eq` (0.3-0.4) and caroling gets no low-end boosts at all. 31.5-40 Hz rest on one Bark band and the smoothness term (±3 dB); 16 kHz on the lossless files or, where fewer than 20 are lossless (joc, caroling, the two Latin strands), on the smoothness term (±2-4 dB).
 
 ### Test masters with the measured targets (example projects, 2026-11-24)
 | Project | Command | LUFS | dBTP | PLR | Width (S-M) | EQ at its limit | Diagnosis |

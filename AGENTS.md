@@ -49,9 +49,13 @@ engine/
                   automation and transitions, quick master, CLI (render / listen / master)
   ear.py          the ears: arrangement lanes, mel spectrogram, band energy, loudness, per-section stats,
                   warnings; zoom view with onset grid and timing roll
+  clarity.py      ears for stems (`listen --clarity`): a section re-rendered in memory, layer census, masked and own
+                  share per stem, occupancy, low-mid build-up, crest, flags against the genre's EQ map
+  eqmaps.json     the genre EQ maps as data (per role: high-pass, cut and owned regions; core roles), from the genre docs
   master.py       the release mastering stage (see docs/MASTERING.md)
   genres.json     genre configurations (target curve, loudness and mastering settings, length, form, tempo, sources);
                   `studio.py master --genre <name>`, no default genre
+  targets.json    the era target curves with provenance (written by tools/refcurve.py; docs/MASTERING.md "Era targets")
   gallery.py      dev tool: spectrogram gallery of every instrument (sanity-check sound design)
   solos.sh        diagnostic: per-track RMS and band levels via solo renders (written by the producer in session 002)
 docs/
@@ -67,6 +71,8 @@ site/             the website (Next.js; Vercel, spectre.robertontiu.com); data/t
 tools/
   sync_tracks.py  copies each session's mastered MP3 into site/public/tracks
   pestana_ltas.py derives the measured mastering curves from Pestana et al. (2013), Fig. 5 (see docs/MASTERING.md)
+  refcurve.py     era target curves: from the open catalogue (MusicBrainz + AcousticBrainz, no audio) or from local
+                  reference masters (analysis only); n, spread, provenance (docs/MASTERING.md "Era targets")
   humanref.py     measures how human singers time English syllables in the GTSinger corpus (the evidence in
                   docs/voice/GENERAL.md "Timing"; data cached in ~/.cache/spectre/refs, never committed)
 sessions/
@@ -118,7 +124,7 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 ## 5. Engine conventions
 
 - Sample rate 44.1 kHz, float32 internally, stereo `(2, n)` arrays.
-- Rendering is **deterministic** for a given `project.json` (the seed is in the project). Re-rendering an old project reproduces it bit-for-bit; that's how `renders/` can stay out of git.
+- Rendering is **deterministic** for a given `project.json` (the seed is in the project). Re-rendering an old project reproduces it bit-for-bit; that's how `renders/` can stay out of git. New projects set `"seeds": "per-track"` (each track its own random streams, so adding a track leaves the others sample-identical); without it (every project before 2026-11-25) tracks share one stream in order.
 - `DEFAULT_GAIN` in `studio.py` sets per-instrument starting levels; a track's `gain_db` is relative to that.
 - Every render writes `vNNN.wav` (quick master, for listening while working), `vNNN.premaster.wav` (the raw mix bus, float), `vNNN.meta.json` (sections, events, per-track level envelopes) and `vNNN.project.json`.
 - `master.py` only ever reads a premaster. It never touches the mix.
@@ -131,7 +137,7 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 1. **The ears can't hear attitude.** Structure reads well on spectrograms; timbre and emotional "bite" don't. Session 001 aimed for defiance and came across as longing. Ideas: an audio-capable model as a critic ("describe what you hear, without naming emotions"), CLAP-style embeddings as a weak signal, or a human checkpoint ear after the loop stage.
 2. **Synth timbres lean soft.** No real samples. Real drum one-shots or sample packs (the user would provide them; the sandbox network is restricted) would raise quality a lot.
 3. **Vocals are new.** `singer` sings with DiffSinger voices (approved by the owner by ear, 2026-11-24), English and Spanish. Male voices: `hanami-male` and `hanami-male-es` (Hanami sung an octave up and moved down inside the synthesizer; approved by the owner by ear, 2026-11-25; docs/voice/VOICES.md "Male voices"). No Romanian voice. A generative model as a "session musician" (stems on demand) is the planned v2 for metal and pop.
-4. **Mastering targets** are per-genre configurations (`engine/genres.json`, `--genre trap|hiphop|trance|rock`, no default). The `hiphop`, `trance` and `rock` curves are measured from published genre spectra (Pestana et al. 2013; docs/MASTERING.md) but pool 1950-2010 records; the `trap` curve (`beat`, sessions 001-006) is hand-tuned. Measuring modern reference tracks per genre would help.
+4. **Mastering targets** are per-genre configurations (`engine/genres.json`, `--genre <name>`, no default). Since 2026-11-25 every genre except `trap` masters toward an era target measured from open catalogue data (trance, hip hop, pop rock: 2015-2021) or from the reference records its genre doc chose (joc, caroling, Latin pop, chamber score), with provenance (`tools/refcurve.py`, docs/MASTERING.md "Era targets"); the older Pestana-derived curves stay available and `--published` reproduces the released masters' settings. Still open: the data end in 2021-2022, so the definitive targets are 20-30 current reference masters per genre measured locally (`refcurve.py measure`), with the owner.
 5. **Speed.** A full-length render takes 20-45 s. Per-track caching would make the loop faster.
 
 ## 7. Git
