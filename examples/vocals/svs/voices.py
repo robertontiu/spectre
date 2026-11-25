@@ -94,7 +94,9 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     from svs import voices
     # a voice may give "audition_transpose" (the male voices sing the line an octave down: male.py measures them)
-    jobs = [(v["id"], v["id"], {}, int(v.get("audition_transpose", 0)), "") for v in voices()["voices"]]
+    # the voices converted from Hanami (`convert`: hanami-male, male-svc) are auditioned and measured by svc.py
+    jobs = [(v["id"], v["id"], {}, int(v.get("audition_transpose", 0)), "") for v in voices()["voices"]
+            if not v.get("convert")]
     jobs += [(k, v, p, tr, what) for k, (v, p, tr, what) in DEMOS.items()]
     res = {}
     import subprocess

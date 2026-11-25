@@ -12,8 +12,10 @@ diffusion noise fed from a seeded generator instead of onnxruntime's own, so eve
 regardless of what was rendered before (the models are patched once: their RandomNormalLike node becomes an input).
 
 Banks with `"engine": "soulx"` in voices.json are not DiffSinger banks: engine/svs_soulx.py renders their phrases
-(SoulX-Singer, a zero-shot model that continues a prompt recording: the male voices). Everything around the phrase
-(phrase splitting, cache, fades, doubles, levelling) is the same code below.
+(SoulX-Singer, a zero-shot model that continues a prompt recording: the male voices). Voices with a `"convert"` entry
+are a DiffSinger phrase sung in the bank's own register and then made male (engine/svs_convert.py: an in-synth octave
+and a formant filter, or a voice conversion model). Everything around the phrase (phrase splitting, cache, fades,
+doubles, levelling) is the same code below.
 
 Voices are listed in engine/voices.json (id, bank, vocal mode, licence, credit, tags); docs/voice/VOICES.md describes
 them. Model files never go in the repo: banks live in ~/.cache/spectre/svs/<bank>/bank/ (SPECTRE_SVS_DIR moves it),
@@ -303,11 +305,14 @@ class Bank:
 
     # -------------------------------------------------------------------------------------------- one phrase
     def render(self, sylls, notes, mode, seed, steps=20, pitch_steps=10, gender=0.0, velocity=1.0, breath=False,
-               tail_sp_ms=300.0, detune_cents=0.0, mix=None, vibrato=1.0):
+               tail_sp_ms=300.0, detune_cents=0.0, mix=None, vibrato=1.0, f0_shift=0.0):
         """sylls: [phonemes per syllable]; notes: [(start_ms, dur_ms, midi, syllable index)] contiguous, in order
         (melisma notes repeat the syllable index). Returns (wave, t0_ms, phones).
         vibrato: scales the pitch model's vibrato and other fast pitch movement inside held notes (transitions
-        between notes are kept). 1.0 = as the model sings it (bit-identical)."""
+        between notes are kept). 1.0 = as the model sings it (bit-identical).
+        f0_shift: semitones added to the pitch curve after the pitch model, before the acoustic model and the
+        vocoder: the duration and pitch models work at the written register (where the bank was trained), the sound is
+        made lower or higher (the `hanami-male` voices: engine/svs_convert.py). 0 = off (bit-identical)."""
         fm = self.frame_ms
         rng = np.random.default_rng(seed)
         first_note = {}
@@ -384,6 +389,8 @@ class Bank:
         curve = pitch.run(None, {k: v for k, v in pf.items() if k in names})[0][0]
         if vibrato != 1.0:
             curve = scale_vibrato(curve, [((n[0] - t0) / fm, (n[0] + n[1] - t0) / fm) for n in notes], fm, vibrato)
+        if f0_shift:
+            curve = curve + np.float32(f0_shift)
         f0 = (440.0 * 2 ** ((curve + detune_cents / 100.0 - 69) / 12)).astype(np.float32)
         # acoustic + vocoder
         if self.ac_inner:
@@ -496,6 +503,13 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
     steps = int(p.get("svs_steps", info.get("steps", 16) if soulx else 20))
     tune = float(p.get("svs_tune", v.get("tune", info.get("tune", 1.0)))) if soulx else 0.0
     vib = float(p.get("svs_vibrato", 1.0))
+    # a voice made by converting this bank's phrase (the male voices from Hanami: engine/svs_convert.py); `svs_convert`
+    # on the instrument overrides the voice's own entry (the study in examples/vocals/svs/svc.py uses that)
+    conv = p.get("svs_convert") or v.get("convert")
+    if conv:
+        import svs_convert
+        c_sing, c_f0 = svs_convert.source_render_args(conv)
+        c_steps = p.get("svc_steps")
     groups = _groups(p, notes)
     lang = str(p.get("lang") or v.get("lang") or "en")
     if lang != "en" and lang not in info.get("languages", ["en"]):
@@ -526,13 +540,16 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
                    words, [(round(a, 1), round(d, 1), m, k) for a, d, m, k in ns], pseed,
                    *(() if lang == "en" else ("lang", lang, LANG_VERSION)),
                    *(() if vib == 1.0 else ("vib", vib)),
-                   *(() if not soulx else ("soulx", v.get("prompt"), __import__("svs_soulx").VERSION, tune)))
+                   *(() if not soulx else ("soulx", v.get("prompt"), __import__("svs_soulx").VERSION, tune)),
+                   *(() if not conv else ("convert", conv, svs_convert.VERSION, c_steps)))
         path = os.path.join(PHRASES, key[:2], key + ".npz")
         if os.path.exists(path):
             z = np.load(path)
             wav, t0 = z["wav"], float(z["t0"])
         elif soulx:
             import svs_soulx
+            if "svs_convert" in sys.modules:  # the conversion model and the singing model don't fit together
+                sys.modules["svs_convert"].drop()
             wav, t0 = svs_soulx.render(v, info, words, ns, pseed, steps=steps, tune=tune)
             os.makedirs(os.path.dirname(path), exist_ok=True)
             _atomic_save(path, lambda t: np.savez(open(t, "wb"), wav=wav, t0=t0))
@@ -554,8 +571,14 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
                 if kk not in done:
                     done[kk] = bank.syllables(word, n, lang, prev)
                 phs.append(done[kk][si])
-            wav, t0, _ = bank.render(phs, ns, mode, pseed, steps=steps, gender=gender, velocity=velocity,
-                                     breath=br, detune_cents=detune_cents, mix=mix, vibrato=vib)
+            if conv:  # the source sings `c_sing` semitones up (its trained register), then the conversion
+                wav, t0, _ = bank.render(phs, [(a, d, m + c_sing, k) for a, d, m, k in ns], mode, pseed, steps=steps,
+                                         gender=gender, velocity=velocity, breath=br, detune_cents=detune_cents,
+                                         mix=mix, vibrato=vib, f0_shift=c_f0)
+                wav = svs_convert.apply(conv, wav, pseed, steps=c_steps)
+            else:
+                wav, t0, _ = bank.render(phs, ns, mode, pseed, steps=steps, gender=gender, velocity=velocity,
+                                         breath=br, detune_cents=detune_cents, mix=mix, vibrato=vib)
             os.makedirs(os.path.dirname(path), exist_ok=True)
             _atomic_save(path, lambda t: np.savez(open(t, "wb"), wav=wav, t0=t0))
         wav = wav.copy()

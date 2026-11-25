@@ -29,5 +29,41 @@
              ["your", 50, 2, 0.30], ["boat", 52, 2, 0.84], ["gently", 52, 2, 0.50], ["gently", 50, 3, 0.32],
              ["down", 52, 2, 0.52], ["the", 53, 2, 0.28], ["stream", 55, 2, 1.32], ["<SP>", 0, 1, 0.22]]
   }
+ },
+ "svc_targets_about": "Reference recordings (targets) for the voice conversion route (engine/svs_convert.py; docs/voice/VOICES.md 'Male voices from Hanami'). A target gives the converted voice its timbre, so each one states whose voice it is and on what basis it is used. Never in git: `python3 engine/svs_convert.py setup` writes ~/.cache/spectre/svs/soulx/targets/<id>.wav (24 kHz mono). `make` engine: a line sung by one of the engine's own voices; `make` download: files fetched from their source, each trimmed and cut to `each_s`, joined, cut to `max_s`. Only `arctic-bdl` is used by a catalogue voice (male-svc); the others are the study's (examples/vocals/svs/svc.py).",
+ "svc_targets": {
+  "arctic-bdl": {
+   "make": "download",
+   "whose": "the speaker `bdl` of the CMU ARCTIC databases: a US English male, described by the database page as an experienced voice talent",
+   "basis": "recorded at Carnegie Mellon University (Language Technologies Institute, 2003) for databases 'designed for the purpose of speech synthesis research' and 'distributed as free software, without restriction on commercial or non-commercial use' (report CMU-LTI-03-177); the database's COPYING: 'This voice is free for use for any purpose (commercial or otherwise)' under a BSD-style licence (keep the copyright notice, mark modifications, keep the authors' names). The talent recorded so that synthetic voices would be built from his voice and given away. Not covered in writing: singing, music, or neural voice conversion (2003 predates it); no consent form is published.",
+   "licence": "CMU ARCTIC licence (BSD-style), Carnegie Mellon University, copyright 2003",
+   "url": "http://festvox.org/cmu_arctic/",
+   "max_s": 9.0,
+   "files": ["http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0001.wav",
+             "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0002.wav",
+             "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0003.wav"]
+  },
+  "arctic-blend": {
+   "make": "download",
+   "whose": "nobody's alone: 2.6 s each of four CMU ARCTIC male voice talents (bdl, rms, jmk, awb) in one reference. Whether the converter blends them or follows one of them was not measured.",
+   "basis": "as arctic-bdl, for each of the four",
+   "licence": "CMU ARCTIC licence (BSD-style), Carnegie Mellon University, copyright 2003",
+   "url": "http://festvox.org/cmu_arctic/",
+   "max_s": 11.0,
+   "each_s": 2.6,
+   "files": ["http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_bdl_arctic/wav/arctic_a0001.wav",
+             "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_rms_arctic/wav/arctic_a0002.wav",
+             "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_jmk_arctic/wav/arctic_a0003.wav",
+             "http://festvox.org/cmu_arctic/cmu_arctic/cmu_us_awb_arctic/wav/arctic_a0004.wav"]
+  },
+  "hanami-male": {
+   "make": "engine",
+   "whose": "nobody's: a line sung by the engine's `hanami-male` voice (Hanami's model an octave down with lowered formants), a synthetic target",
+   "basis": "Lotte V's terms for Hanami (a derivative voice made with the synthesizer's own settings is allowed)",
+   "voice": "hanami-male",
+   "bpm": 100,
+   "lyrics": "o-pen skies and morn-ing light, o-ver hills and sea",
+   "melody": "D3:4 F#3:4 A3:4 F#3:2 E3:2 G3:4 B3:8 r:4 A3:4 F#3:4 D3:4 E3:4 D3:8"
+  }
  }
 }

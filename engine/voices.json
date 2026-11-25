@@ -1,5 +1,5 @@
 {
- "about": "Voices for singer source 'svs' (engine/svs.py). Pick one with \"voice\": \"<id>\". Descriptions, measurements and auditions: docs/voice/VOICES.md. Every voice here is licence-clean for Spectre's CC BY 4.0 tracks only with the credit line given; never use a Lotte V voice in a track with a political subject. The male voices (bank soulx-vocalset) are another kind of model (engine/svs_soulx.py) and carry a `status` note until the owner approves them.",
+ "about": "Voices for singer source 'svs' (engine/svs.py). Pick one with \"voice\": \"<id>\". Descriptions, measurements and auditions: docs/voice/VOICES.md. Every voice here is licence-clean for Spectre's CC BY 4.0 tracks only with the credit line given; never use a Lotte V voice in a track with a political subject. The male voices (bank soulx-vocalset) are another kind of model (engine/svs_soulx.py) and carry a `status` note until the owner approves them. The voices with a `convert` entry are Hanami's phrase made male (engine/svs_convert.py; VOICES.md 'Male voices from Hanami'): `hanami-male` inside the synthesizer, `male-svc` through a voice conversion model onto a consenting target; Lotte V's terms and credit apply to both, and both carry a `status` note until the owner approves them.",
  "default": "hanami",
  "banks": {
   "hanami": {
@@ -498,14 +498,223 @@
    "settings": "tune 1 (two passes: notes pulled onto the written pitch); svs_steps 16; no gender, velocity, inhale or svs_vibrato controls",
    "audition": "examples/vocals/svs/voices/male-deep.mp3",
    "status": "new (2026-11-25): awaiting the owner's verdict by ear and his decision on the prompt singers (docs/voice/VOICES.md 'Male voices'); not for a released track before that"
+  },
+  {
+   "id": "hanami-male",
+   "bank": "hanami",
+   "mode": "Root",
+   "gender": -0.2,
+   "convert": {
+    "route": "synth",
+    "sing": 12,
+    "formant": 1.0
+   },
+   "audition_transpose": -12,
+   "range": "B2-E4 (tested; Hanami sings the line an octave higher, inside her trained range, and the synthesizer moves it down)",
+   "range_midi": [
+    45,
+    65
+   ],
+   "tags": {
+    "gender": "male (Hanami's model an octave down with its formants lowered: no male singer was recorded)",
+    "register": "baritone / low tenor colour",
+    "timbre": [
+     "dark (tilt -20 dB)",
+     "soft",
+     "a little breathy (0.14)",
+     "even",
+     "Hanami's vibrato and phrasing"
+    ],
+    "emotions": [
+     "tender",
+     "calm",
+     "sincere",
+     "intimate"
+    ],
+    "genres": [
+     "ballad",
+     "folk",
+     "lo-fi",
+     "Latin pop lines (hanami-male-es)",
+     "choir tenor and bass under Hanami and LEONA",
+     "low doubles of a female line"
+    ],
+    "bad_at": [
+     "brightness and bite (tilt -20 dB against -14 for the SoulX male voices): give it the 8 kHz shelf",
+     "grit, shouting",
+     "a trained male singer's ring: no male singer is in it",
+     "gender below -0.4, or a formant ratio under 0.9 on top of it: words fail",
+     "one take in four blurs a word boundary for Whisper (6 of 8 seeds read the audition line in full): check the line, change `seed`"
+    ],
+    "timbre_note": "timbre words here are read from measurements, not yet from listening"
+   },
+   "settings": "Hanami Root, gender -0.2, sung an octave above the written notes and moved down inside the synthesizer (`convert`: route synth). All of Hanami's controls work (seed, double, velocity, inhale, svs_vibrato, lang); `gender` -0.3 is brighter and larger. Real time, 44.1 kHz. Hanami's credit line and terms.",
+   "audition": "examples/vocals/svs/voices/svc-synth.mp3",
+   "status": "new (2026-11-25): awaiting the owner's verdict by ear (docs/voice/VOICES.md 'Male voices from Hanami'); not for a released track before that"
+  },
+  {
+   "id": "hanami-male-es",
+   "bank": "hanami",
+   "mode": "Root",
+   "gender": -0.2,
+   "lang": "es",
+   "convert": {
+    "route": "synth",
+    "sing": 12,
+    "formant": 1.0
+   },
+   "audition_transpose": -12,
+   "range": "B2-E4 (tested; Hanami sings the line an octave higher, inside her trained range, and the synthesizer moves it down)",
+   "range_midi": [
+    45,
+    65
+   ],
+   "tags": {
+    "gender": "male (Hanami's model an octave down with its formants lowered: no male singer was recorded)",
+    "register": "baritone / low tenor colour",
+    "timbre": [
+     "dark (tilt -20 dB)",
+     "soft",
+     "a little breathy (0.14)",
+     "even",
+     "Hanami's vibrato and phrasing"
+    ],
+    "emotions": [
+     "tender",
+     "calm",
+     "sincere",
+     "intimate"
+    ],
+    "genres": [
+     "Latin pop",
+     "bolero and bachata lines",
+     "ballad",
+     "a male answer to hanami-es"
+    ],
+    "bad_at": [
+     "brightness and bite (tilt -20 dB against -14 for the SoulX male voices): give it the 8 kHz shelf",
+     "grit, shouting",
+     "a trained male singer's ring: no male singer is in it",
+     "gender below -0.4, or a formant ratio under 0.9 on top of it: words fail",
+     "one take in four blurs a word boundary for Whisper (6 of 8 seeds read the audition line in full): check the line, change `seed`",
+     "a native accent (as hanami-es: 7 minutes of Spanish data)"
+    ],
+    "language": "Spanish (Latin American: seseo, yeismo)",
+    "timbre_note": "timbre words here are read from measurements, not yet from listening"
+   },
+   "settings": "hanami-male singing Spanish (`\"lang\": \"es\"`); lyrics hyphenated by Spanish syllables, as for hanami-es",
+   "audition": "examples/vocals/svs/voices/svc-synth-es.mp3",
+   "status": "new (2026-11-25): awaiting the owner's verdict by ear (docs/voice/VOICES.md 'Male voices from Hanami'); not for a released track before that"
+  },
+  {
+   "id": "male-svc",
+   "bank": "hanami",
+   "mode": "Root",
+   "gender": 0.0,
+   "convert": {
+    "route": "svc",
+    "sing": 12,
+    "target": "arctic-bdl"
+   },
+   "audition_transpose": -12,
+   "range": "B2-E4 (audition at F#3-B3; the edges are not measured for this voice)",
+   "range_midi": [
+    45,
+    65
+   ],
+   "credit": "Vocals: Hoshino Hanami (DiffSinger voicebank by Lotte V, lottev.moe), Potluck Vocoder by tigermeat (https://github.com/mrtigermeat/potluck-vocoder, licence: see repo), converted with SoulX-Singer-SVC (Soul AI Lab, Apache 2.0, https://github.com/Soul-AILab/SoulX-Singer) to the voice of the CMU ARCTIC speech synthesis database `bdl` (Carnegie Mellon University, Language Technologies Institute, 2003, http://festvox.org/cmu_arctic/)",
+   "tags": {
+    "gender": "male (Hanami's phrase converted to a male speaker's timbre)",
+    "register": "baritone",
+    "timbre": [
+     "medium-dark (tilt -15.5 dB)",
+     "clean (breathiness 0.08)",
+     "a speaker's tone with Hanami's vibrato and phrasing"
+    ],
+    "emotions": [
+     "sincere",
+     "warm",
+     "plain-spoken"
+    ],
+    "genres": [
+     "ballad",
+     "folk",
+     "pop rock lines",
+     "Latin pop lines (male-svc-es)",
+     "choir tenor or bass"
+    ],
+    "bad_at": [
+     "diction from take to take: about half of the takes soften a consonant ('round' heard as 'brown'): check every line with Whisper and change `seed` until it reads",
+     "air above 12 kHz (the converter works at 24 kHz)",
+     "grit, shouting",
+     "a trained singer's ring (the target is a speaking voice recorded at 16 kHz)",
+     "speed: about 85 s per new phrase, 5.3 GB of RAM"
+    ],
+    "timbre_note": "timbre words here are read from measurements, not yet from listening"
+   },
+   "settings": "Hanami Root sings the line an octave up (her own register); SoulX-Singer-SVC keeps her words, timing and melody, moves it down 12 semitones and gives it the target's timbre (`convert`: route svc, target arctic-bdl; `svc_steps` 16). Hanami's `seed`, `double`, `velocity`, `inhale`, `svs_vibrato` and `lang` work; `gender` changes only what the converter hears. Setup: python3 engine/svs_convert.py setup",
+   "audition": "examples/vocals/svs/voices/svc-arctic.mp3",
+   "status": "new (2026-11-25): awaiting the owner's verdict by ear and his decision on the conversion target's consent basis and on asking Lotte V (docs/voice/VOICES.md 'Male voices from Hanami'); not for a released track before that"
+  },
+  {
+   "id": "male-svc-es",
+   "bank": "hanami",
+   "mode": "Root",
+   "gender": 0.0,
+   "lang": "es",
+   "convert": {
+    "route": "svc",
+    "sing": 12,
+    "target": "arctic-bdl"
+   },
+   "audition_transpose": -12,
+   "range": "B2-E4 (audition at F#3-B3; the edges are not measured for this voice)",
+   "range_midi": [
+    45,
+    65
+   ],
+   "credit": "Vocals: Hoshino Hanami (DiffSinger voicebank by Lotte V, lottev.moe), Potluck Vocoder by tigermeat (https://github.com/mrtigermeat/potluck-vocoder, licence: see repo), converted with SoulX-Singer-SVC (Soul AI Lab, Apache 2.0, https://github.com/Soul-AILab/SoulX-Singer) to the voice of the CMU ARCTIC speech synthesis database `bdl` (Carnegie Mellon University, Language Technologies Institute, 2003, http://festvox.org/cmu_arctic/)",
+   "tags": {
+    "gender": "male (Hanami's phrase converted to a male speaker's timbre)",
+    "register": "baritone",
+    "timbre": [
+     "medium-dark (tilt -15.5 dB)",
+     "clean (breathiness 0.08)",
+     "a speaker's tone with Hanami's vibrato and phrasing"
+    ],
+    "emotions": [
+     "sincere",
+     "warm",
+     "plain-spoken"
+    ],
+    "genres": [
+     "Latin pop",
+     "bolero and bachata lines",
+     "ballad"
+    ],
+    "bad_at": [
+     "diction from take to take: about half of the takes soften a consonant ('round' heard as 'brown'): check every line with Whisper and change `seed` until it reads",
+     "air above 12 kHz (the converter works at 24 kHz)",
+     "grit, shouting",
+     "a trained singer's ring (the target is a speaking voice recorded at 16 kHz)",
+     "speed: about 85 s per new phrase, 5.3 GB of RAM",
+     "a native accent (as hanami-es)"
+    ],
+    "language": "Spanish (Latin American: seseo, yeismo)",
+    "timbre_note": "timbre words here are read from measurements, not yet from listening"
+   },
+   "settings": "male-svc singing Spanish (`\"lang\": \"es\"`): hanami-es converted; lyrics hyphenated by Spanish syllables",
+   "audition": "examples/vocals/svs/voices/svc-arctic-es.mp3",
+   "status": "new (2026-11-25): awaiting the owner's verdict by ear and his decision on the conversion target's consent basis and on asking Lotte V (docs/voice/VOICES.md 'Male voices from Hanami'); not for a released track before that"
   }
  ],
  "controls": {
-  "gender": "-1..1 (0): formant shift; negative = formants down (darker, larger, older), positive = up (brighter, younger). Measured on hanami: -0.5 F1/F2 617/987 -> 498/1009 Hz. Not a male voice: at -1 an octave down it stays a low female voice (examples/vocals/svs/voices/ctl-hanami-male-fake.mp3).",
+  "gender": "-1..1 (0): formant shift; negative = formants down (darker, larger, older), positive = up (brighter, younger). Measured on hanami: -0.5 F1/F2 617/987 -> 498/1009 Hz. Not a male voice by itself: at -1 with the line written an octave down the pitch model wobbles and the words are lost (examples/vocals/svs/voices/ctl-hanami-male-fake.mp3). `hanami-male` is the measured way: gender -0.2 with the octave moved inside the synthesizer.",
   "velocity": "0.5..2 (1): consonant speed; small effect on these banks",
   "mix": "a voice entry may give \"mix\": {mode: weight} instead of \"mode\" to blend vocal modes (speaker embeddings interpolated)",
   "not available": "these banks have no breathiness, tension, voicing or energy controls (their models were trained without them)",
   "lang": "\"en\" (default) or \"es\" (Hanami only): the language the lyrics are read in. A voice id may set it (hanami-es, hanami-es-soft); a track's `lang` overrides it. Spanish: engine/lang_es.py, docs/voice/languages/es.md",
-  "male voices (soulx)": "the SoulX-Singer voices take none of gender, velocity, inhale, svs_vibrato or lang. Theirs: svs_tune 0..1 (1: a second pass pulls every note's median onto the written pitch; 0: the model's own pitch, 10-60 cents off), svs_steps (16), seed, double."
+  "male voices (soulx)": "the SoulX-Singer voices take none of gender, velocity, inhale, svs_vibrato or lang. Theirs: svs_tune 0..1 (1: a second pass pulls every note's median onto the written pitch; 0: the model's own pitch, 10-60 cents off), svs_steps (16), seed, double.",
+  "converted voices (convert)": "hanami-male, hanami-male-es, male-svc, male-svc-es: a voice entry's \"convert\" makes the bank sing `sing` semitones above the written notes and then lowers it. route synth: the pitch curve is moved down before the acoustic model (no other model), `formant` is an optional formant filter on the result (1.0 = off). route svc: SoulX-Singer-SVC onto `target` (engine/soulx_prompts.json 'svc_targets'); `svc_steps` (16) on the instrument. Their credit: the voice's own `credit` if it has one, else the bank's."
  }
 }

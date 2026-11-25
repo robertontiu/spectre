@@ -13,3 +13,7 @@ pyworld>=0.3.4  # measurement (examples/vocals/svs/voices.py, vibrato.py): F0, e
 # Male voices only (engine/svs_soulx.py, docs/voice/VOICES.md "Male voices"); not installed by this file:
 #   pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu && pip install omegaconf
 #   python3 engine/svs_soulx.py setup
+# `male-svc` voices only (engine/svs_convert.py, VOICES.md "Male voices from Hanami"): the above, then
+#   pip install transformers && python3 engine/svs_convert.py setup
+# (`hanami-male` needs nothing beyond the DiffSinger packages.) The study examples/vocals/svs/svc.py also uses
+# praat-parselmouth and safetensors (measurement only).
