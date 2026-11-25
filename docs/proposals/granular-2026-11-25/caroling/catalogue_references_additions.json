@@ -1,0 +1,192 @@
+{
+ "caroling_choir": [
+  {
+   "artist": "Choir of King's College, Cambridge",
+   "album": "Christmas Carols From King's College",
+   "year": "1986",
+   "release": "690d994c-6f78-4e2c-ac76-28ff831564c6"
+  },
+  {
+   "artist": "Choir of King's College, Cambridge",
+   "album": "Christmas Carols",
+   "year": "1997",
+   "release": "089a1b66-73ab-478d-ac3f-5187bd1cc06c"
+  },
+  {
+   "artist": "Choir of King's College, Cambridge",
+   "album": "Carols From King’s",
+   "year": "1991",
+   "release": "7431d24f-f371-4b86-957b-f5a0c7de99cf"
+  },
+  {
+   "artist": "Choir of King's College, Cambridge",
+   "album": "Noël: Christmas at King's",
+   "year": "1995",
+   "release": "601c195e-2a21-4a8c-8779-2a6fc3e33d9f"
+  },
+  {
+   "artist": "The Choir of St John's College, Cambridge",
+   "album": "Christmas Carols From St. John's",
+   "year": "1986",
+   "release": "8f43912e-4268-44d6-b7a7-6b7568681d9a"
+  },
+  {
+   "artist": "The Choir of St John's College, Cambridge",
+   "album": "On Christmas Night",
+   "year": "2011",
+   "release": "0e532324-8945-4eef-a282-7e528a83372b"
+  },
+  {
+   "artist": "The Choir of St John's College, Cambridge",
+   "album": "Christmas at St John's",
+   "year": "2006",
+   "release": "c0b3980c-ed15-4301-8259-d8b21d48c918"
+  },
+  {
+   "artist": "The Cambridge Singers, John Rutter",
+   "album": "Christmas Night: Carols of the Nativity",
+   "year": "1993",
+   "release": "eee830ad-1ddb-44e0-b327-af5d0d7a1aec"
+  },
+  {
+   "artist": "The Cambridge Singers, John Rutter",
+   "album": "Christmas Star",
+   "year": "1997",
+   "release": "79086ce7-628e-45db-b7d6-8ef6d916a4e4"
+  },
+  {
+   "artist": "Tenebrae, Nigel Short",
+   "album": "What Sweeter Music: Songs and Carols for",
+   "year": "2009",
+   "release": "e0ab6509-56d5-4fda-a9fd-2f63ac4ad54f"
+  },
+  {
+   "artist": "Tenebrae, Nigel Short",
+   "album": "A Very English Christmas",
+   "year": "2015",
+   "release": "519ef1f3-b5a8-46c7-85c4-f748167f11d3"
+  },
+  {
+   "artist": "Voces8",
+   "album": "Christmas",
+   "year": "2012",
+   "release": "dd9e24f1-7a12-4a28-9f86-b1f8560e4482"
+  },
+  {
+   "artist": "The Tallis Scholars",
+   "album": "Christmas Carols and Motets",
+   "year": "1986",
+   "release": "ed65197e-18c4-4a1f-b7b1-6192e20a8823"
+  },
+  {
+   "artist": "Chanticleer",
+   "album": "A Chanticleer Christmas",
+   "year": "2010",
+   "release": "5f65ba72-196c-46b0-85fa-c7a12a45bbc5"
+  },
+  {
+   "artist": "Chanticleer",
+   "album": "Sing We Christmas",
+   "year": "1995",
+   "release": "076af14a-400b-4793-8457-79c0f9efbe8f"
+  },
+  {
+   "artist": "Chanticleer feat. Dawn Upshaw",
+   "album": "Christmas With Chanticleer",
+   "year": "2001",
+   "release": "3cde4bc4-6c20-4cbe-af3d-25cccd74531a"
+  },
+  {
+   "artist": "Chanticleer",
+   "album": "Chanticleer Sings Christmas",
+   "year": "2020",
+   "release": "9339f4a7-0f70-423b-8aa6-33d32c2d05ba"
+  },
+  {
+   "artist": "Chanticleer",
+   "album": "Our Heart's Joy: A Chanticleer Christmas",
+   "year": "1990",
+   "release": "2804712e-8956-471d-a1d5-876e654dc7f2"
+  },
+  {
+   "artist": "Robert Shaw Chorale",
+   "album": "A Festival of Carols",
+   "year": "1987",
+   "release": "27dbdb87-48ae-44de-8f6a-ddecc40d7055"
+  },
+  {
+   "artist": "Mormon Tabernacle Choir",
+   "album": "Noel: A Worldwide Christmas Celebration",
+   "year": "1993",
+   "release": "9d152d00-9949-4cd4-92f6-77cbf2735b64"
+  },
+  {
+   "artist": "Mormon Tabernacle Choir",
+   "album": "Christmas Carols Around the World",
+   "year": "1996",
+   "release": "05c6a6ba-63f4-403e-a143-b1f38813d08a"
+  },
+  {
+   "artist": "Mormon Tabernacle Choir",
+   "album": "This Is Christmas",
+   "year": "1994",
+   "release": "836c22c6-962f-328f-9805-d76da95df84b"
+  },
+  {
+   "artist": "The Mormon Tabernacle Choir & The Canadian Brass",
+   "album": "A Christmas Gloria",
+   "year": "1998",
+   "release": "618ee7fb-7125-40ef-a61b-4ebed941f168"
+  }
+ ],
+ "caroling_acappella": [
+  {
+   "artist": "Pentatonix",
+   "album": "That’s Christmas to Me",
+   "year": "2014",
+   "release": "d4a03a1d-3d19-4868-acfe-5c3c890393b3"
+  },
+  {
+   "artist": "Pentatonix",
+   "album": "A Pentatonix Christmas",
+   "year": "2016",
+   "release": "f89ac131-0b6b-4067-81d4-2cee7ec4aab6"
+  },
+  {
+   "artist": "Pentatonix",
+   "album": "Christmas Is Here!",
+   "year": "2018",
+   "release": "15c12c37-4538-4eed-a7ce-5be1908ee175"
+  },
+  {
+   "artist": "Straight No Chaser",
+   "album": "Holiday Spirits",
+   "year": "2008",
+   "release": "ff026852-5125-4a27-8f8e-8ad2e4beec90"
+  },
+  {
+   "artist": "Straight No Chaser",
+   "album": "Christmas Cheers",
+   "year": "2009",
+   "release": "3ee3fad8-0940-4d65-9b4a-ee070e6f210a"
+  },
+  {
+   "artist": "Straight No Chaser",
+   "album": "I'll Have Another...Christmas Album",
+   "year": "2016",
+   "release": "36463ba3-7533-4779-959c-e6c78579d85e"
+  },
+  {
+   "artist": "Home Free",
+   "album": "Christmas, Vol. 1",
+   "year": "2010",
+   "release": "38900b22-dff2-4af9-8168-e353c0017a1e"
+  },
+  {
+   "artist": "Take 6",
+   "album": "He Is Christmas",
+   "year": "1991",
+   "release": "873bf1ce-1586-321f-9301-49e6afceb00a"
+  }
+ ]
+}
