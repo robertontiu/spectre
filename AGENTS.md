@@ -41,6 +41,9 @@ engine/
                   `vox2` (improved wordless voice: LF glottal source, consonant onsets for chops); see docs/MANUAL.md "Voices"
   svs.py          `singer`'s singing voice synthesizer (`"source": "svs"`, the default): DiffSinger voicebanks, ONNX, CPU;
                   OpenUtau's code path, seeded and phrase-cached, deterministic; banks in ~/.cache/spectre/svs (never in git)
+  svs_soulx.py    svs voices of banks with `"engine": "soulx"` (the male voices): SoulX-Singer, a zero-shot singing model that
+                  continues a prompt recording (soulx_prompts.json: the prompts' sources and scores); torch, CPU; setup:
+                  `python3 engine/svs_soulx.py setup` (files in ~/.cache/spectre/svs/soulx, never in git)
   lang_es.py      Spanish letters to DiffSinger phonemes for svs voices with `"lang": "es"` (Hanami; docs/voice/languages/es.md)
   voices.json     the svs voice catalogue: ids, banks, licences and credit lines, tags (docs/voice/VOICES.md)
   hand.py         the hand: step/note/chord notation parser, swing, humanization, voicing, rolls, arps
@@ -129,7 +132,7 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 
 1. **The ears can't hear attitude.** Structure reads well on spectrograms; timbre and emotional "bite" don't. Session 001 aimed for defiance and came across as longing. Ideas: an audio-capable model as a critic ("describe what you hear, without naming emotions"), CLAP-style embeddings as a weak signal, or a human checkpoint ear after the loop stage.
 2. **Synth timbres lean soft.** No real samples. Real drum one-shots or sample packs (the user would provide them; the sandbox network is restricted) would raise quality a lot.
-3. **Vocals are new.** `singer` sings with DiffSinger voices (approved by the owner by ear, 2026-11-24): female only, English and Spanish. No male voice yet: find a licence-clean male singing model (see the search in docs/voice/VOICES.md "What is missing"); queued in docs/ORCHESTRATION.md. No Romanian voice. A generative model as a "session musician" (stems on demand) is the planned v2 for metal and pop.
+3. **Vocals are new.** `singer` sings with DiffSinger voices (approved by the owner by ear, 2026-11-24): female only, English and Spanish. Male voices `male-light` and `male-deep` (SoulX-Singer with VocalSet prompt singers, `engine/svs_soulx.py`) are wired and measured since 2026-11-25 and wait for the owner's verdict (docs/voice/VOICES.md "Male voices"); queued in docs/ORCHESTRATION.md. No Romanian voice. A generative model as a "session musician" (stems on demand) is the planned v2 for metal and pop.
 4. **Mastering targets** are per-genre configurations (`engine/genres.json`, `--genre trap|hiphop|trance|rock`, no default). The `hiphop`, `trance` and `rock` curves are measured from published genre spectra (Pestana et al. 2013; docs/MASTERING.md) but pool 1950-2010 records; the `trap` curve (`beat`, sessions 001-006) is hand-tuned. Measuring modern reference tracks per genre would help.
 5. **Speed.** A full-length render takes 20-45 s. Per-track caching would make the loop faster.
 
