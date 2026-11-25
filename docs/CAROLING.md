@@ -124,7 +124,7 @@ What it shows:
 Fixes in order: alto on `hanami` and under the soprano; a rest before "Peace" and `push_ms` 0 on the quote; no low-pass on the voices in the door bar (filter the organ only); sends of about 0.12 into `size` 0.3; the short EQ chain.
 
 ## Catalogue measurements (AcousticBrainz, 2026-11-24)
-Track lengths from MusicBrainz; tempo, key and ReplayGain from AcousticBrainz (Essentia 2.1-beta2 low-level data, submitted by users for any edition of each recording). ReplayGain was converted to loudness with **LUFS ≈ -23.7 - RG**, fitted on Spectre's own eleven masters (Essentia ReplayGain against pyloudnorm, spread ±0.7 dB on those; choral spectra may shift it by another dB or two). Tempo estimates on unaccompanied choirs are unreliable (rubato, no drums, octave errors). Scripts in the orchestrator's workspace; the raw numbers are reproduced here.
+Track lengths from MusicBrainz; tempo, key and ReplayGain from AcousticBrainz (Essentia 2.1-beta2 low-level data, submitted by users for any edition of each recording). ReplayGain was converted to loudness with **LUFS ≈ -23.7 - RG**, fitted on Spectre's own eleven masters (Essentia ReplayGain against pyloudnorm, spread ±0.7 dB on those; choral spectra may shift it by another dB or two). Tempo estimates on unaccompanied choirs are unreliable (rubato, no drums, octave errors). Reproduce the table with `python3 tools/catalogue_stats.py albums caroling` (album list in `data/catalogue_references.json`) and the calibration with `python3 tools/catalogue_stats.py calibrate` (needs `pip install essentia`).
 
 | album (MusicBrainz release) | tracks | median length (middle half) | est. LUFS median (range) |
 |---|---|---|---|

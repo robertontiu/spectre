@@ -473,6 +473,18 @@ def load_curve(name_or_path):
     raise SystemExit(f"no curve {name_or_path!r}: give a target name ({', '.join(sorted(M.TARGETS))}) or a file")
 
 
+def catalogue_median(name_or_path):
+    """the Bark-band median (dB re 510 Hz-2 kHz, bands as bark_labels()) behind a catalogue or measured target:
+    from engine/targets.json ("bark_median") for a target name, or from a curve file written by `catalogue`/`measure`."""
+    if os.path.exists(name_or_path):
+        return np.array(json.load(open(name_or_path))["bark"]["median"], dtype=float)
+    t = json.load(open(os.path.join(ENGINE, "targets.json")))
+    if name_or_path not in t or "bark_median" not in t[name_or_path]:
+        have = sorted(k for k, v in t.items() if isinstance(v, dict) and "bark_median" in v)
+        raise SystemExit(f"no catalogue median for {name_or_path!r}: targets with one: {', '.join(have)}")
+    return np.array(t[name_or_path]["bark_median"], dtype=float)
+
+
 def cmd_check(args):
     anchors, _ = load_curve(args.curve)
     rd = rel_ref(bark_of_curve(anchors))

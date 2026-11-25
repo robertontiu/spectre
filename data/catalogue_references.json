@@ -1,0 +1,476 @@
+{
+ "_about": "Reference lists for tools/catalogue_stats.py and the era targets in engine/targets.json (tools/refcurve.py). Chosen during the genre research of 2026-11-24 (albums: docs/CAROLING.md, docs/LATIN_POP.md, docs/CHAMBER_SCORE.md, 'Catalogue measurements'; targets: docs/MASTERING.md 'Era targets'). Identifiers only: MusicBrainz release MBIDs (MusicBrainz core data, CC0) and the query parameters. No audio and no per-track data. 'style' records how each doc table computed its middle half (statistics.quantiles method) and whether m:ss was truncated.",
+ "albums": {
+  "caroling": {
+   "source": "docs/CAROLING.md 'Catalogue measurements'",
+   "releases": [
+    {
+     "artist": "Ray Conniff Singers",
+     "album": "Here We Come A-Caroling",
+     "release": "e42549b1-d584-32f5-9c05-371da9bc15b0"
+    },
+    {
+     "artist": "Pentatonix",
+     "album": "That's Christmas to Me",
+     "release": "d4a03a1d-3d19-4868-acfe-5c3c890393b3"
+    },
+    {
+     "artist": "Straight No Chaser",
+     "album": "Holiday Spirits",
+     "release": "ff026852-5125-4a27-8f8e-8ad2e4beec90"
+    },
+    {
+     "artist": "Chanticleer",
+     "album": "A Chanticleer Christmas",
+     "release": "5f65ba72-196c-46b0-85fa-c7a12a45bbc5"
+    },
+    {
+     "artist": "King's College Choir",
+     "album": "Christmas Carols from King's College",
+     "release": "690d994c-6f78-4e2c-ac76-28ff831564c6"
+    }
+   ],
+   "style": {
+    "quantiles": "exclusive",
+    "floor": false
+   }
+  },
+  "latinpop": {
+   "source": "docs/LATIN_POP.md 'Catalogue measurements'; tempo folded per strand",
+   "since": 2010,
+   "fold": {
+    "bachata": [
+     100,
+     200
+    ],
+    "bolero": [
+     56,
+     112
+    ],
+    "ballad": [
+     56,
+     112
+    ],
+    "acoustic": [
+     56,
+     112
+    ],
+    "reggaeton-pop": [
+     80,
+     160
+    ]
+   },
+   "releases": [
+    {
+     "strand": "bachata",
+     "artist": "Juan Luis Guerra 4.40",
+     "album": "Bachata Rosa",
+     "release": "44a5b129-8fa5-408c-9c45-5028129d5ba5"
+    },
+    {
+     "strand": "bachata",
+     "artist": "Aventura",
+     "album": "We Broke the Rules",
+     "release": "a33ffece-9275-4c6f-b7fc-3c03f340ae07"
+    },
+    {
+     "strand": "bachata",
+     "artist": "Aventura",
+     "album": "God's Project",
+     "release": "267efbe5-4904-4f47-ac5d-c9506dbbc62a"
+    },
+    {
+     "strand": "bachata",
+     "artist": "Romeo Santos",
+     "album": "Formula, Vol. 1",
+     "release": "47ae6935-c648-4d6f-8e2d-680cfb69d870"
+    },
+    {
+     "strand": "bachata",
+     "artist": "Romeo Santos",
+     "album": "Formula, Vol. 2",
+     "release": "09bb36e0-41ee-4645-a9d4-88bc386f3605"
+    },
+    {
+     "strand": "bachata",
+     "artist": "Prince Royce",
+     "album": "Prince Royce",
+     "release": "0a03cc00-064f-4983-a603-dd425cd15cec"
+    },
+    {
+     "strand": "bachata",
+     "artist": "Prince Royce",
+     "album": "Phase II",
+     "release": "f8df96c5-0b87-449d-b7fe-5ab2192b9db9"
+    },
+    {
+     "strand": "bolero",
+     "artist": "Luis Miguel",
+     "album": "Romance",
+     "release": "bdc8c51e-8055-4ec3-8fd2-8ae0f8da38f3"
+    },
+    {
+     "strand": "bolero",
+     "artist": "Luis Miguel",
+     "album": "Segundo Romance",
+     "release": "3ce44fd3-c434-4497-9a13-5877e5831e3d"
+    },
+    {
+     "strand": "bolero",
+     "artist": "Luis Miguel",
+     "album": "Romances",
+     "release": "6cdcb0a8-1e65-4819-8a16-5bcddd16317f"
+    },
+    {
+     "strand": "bolero",
+     "artist": "Natalia Lafourcade",
+     "album": "Musas",
+     "release": "e795c26e-772c-4389-9848-7ae5efab3ec0"
+    },
+    {
+     "strand": "ballad",
+     "artist": "Alejandro Sanz",
+     "album": "Más",
+     "release": "32b7c683-9b2b-4ed4-8baa-560236e0baf5"
+    },
+    {
+     "strand": "ballad",
+     "artist": "Alejandro Sanz",
+     "album": "El alma al aire",
+     "release": "741aa257-9a84-4b2d-8e1e-22ebefde1493"
+    },
+    {
+     "strand": "ballad",
+     "artist": "Sin Bandera",
+     "album": "Sin Bandera",
+     "release": "168ab091-5c9a-495d-9957-ff840abfe745"
+    },
+    {
+     "strand": "ballad",
+     "artist": "Reik",
+     "album": "Reik",
+     "release": "d95751d8-e622-4fa1-b745-b69c4596889c"
+    },
+    {
+     "strand": "ballad",
+     "artist": "Camila",
+     "album": "Todo cambió",
+     "release": "bde425a2-23ef-49fb-acf9-dee36da74185"
+    },
+    {
+     "strand": "ballad",
+     "artist": "Jesse & Joy",
+     "album": "¿Con quién se queda el perro?",
+     "release": "3e9612b9-bbc2-49cb-b9a5-cf8f108b3786"
+    },
+    {
+     "strand": "acoustic",
+     "artist": "Morat",
+     "album": "Sobre el amor y sus efectos secundarios",
+     "release": "c25ef042-7e74-46d8-bb8d-70b61c68dfcd"
+    },
+    {
+     "strand": "acoustic",
+     "artist": "Natalia Lafourcade",
+     "album": "Hasta la raíz",
+     "release": "afa1f4bd-c707-47a2-9a6c-9a203eb34c05"
+    },
+    {
+     "strand": "acoustic",
+     "artist": "Jesse & Joy",
+     "album": "Electricidad",
+     "release": "3e496103-3aab-3aa5-bd7d-c46569e99087"
+    },
+    {
+     "strand": "reggaeton-pop",
+     "artist": "Camilo",
+     "album": "Por primera vez",
+     "release": "900b201c-332a-42c2-be6c-45577cb6ea89"
+    },
+    {
+     "strand": "reggaeton-pop",
+     "artist": "Sebastián Yatra",
+     "album": "Fantasía",
+     "release": "a505ae95-83af-49d3-b26f-7d10c42a5e71"
+    },
+    {
+     "strand": "reggaeton-pop",
+     "artist": "Luis Fonsi",
+     "album": "Vida",
+     "release": "b56f7fc7-6960-4330-8e5b-4fd0ba13291e"
+    },
+    {
+     "strand": "reggaeton-pop",
+     "artist": "Karol G",
+     "album": "Ocean",
+     "release": "c3174186-db7d-4d58-9082-3ce5b8347581"
+    },
+    {
+     "strand": "reggaeton-pop",
+     "artist": "Reik",
+     "album": "Ahora",
+     "release": "74f1f165-c9a5-444a-9af9-eb46be731098"
+    }
+   ],
+   "style": {
+    "quantiles": "inclusive",
+    "floor": true
+   }
+  },
+  "chamberscore": {
+   "source": "docs/CHAMBER_SCORE.md 'Catalogue measurements'; tempo folded into 60-150",
+   "since": 2005,
+   "fold": {
+    "*": [
+     60,
+     150
+    ]
+   },
+   "releases": [
+    {
+     "strand": "score",
+     "artist": "Yann Tiersen",
+     "album": "Le Fabuleux Destin d'Amélie Poulain",
+     "release": "0ecf61e2-f4dd-4f45-b18d-6dd8a966b511"
+    },
+    {
+     "strand": "score",
+     "artist": "Michael Giacchino",
+     "album": "Up",
+     "release": "9cc809ab-e8bc-43eb-955d-ede4dd09af43"
+    },
+    {
+     "strand": "score",
+     "artist": "Michael Giacchino",
+     "album": "Ratatouille",
+     "release": "734b8bc5-deb1-43bf-be9c-e89a5135461d"
+    },
+    {
+     "strand": "score",
+     "artist": "Joe Hisaishi",
+     "album": "My Neighbor Totoro",
+     "release": "04ea6591-d2b1-44ff-8e9c-884bb6e7fc0a"
+    },
+    {
+     "strand": "score",
+     "artist": "Joe Hisaishi",
+     "album": "Kiki's Delivery Service",
+     "release": "7faf3d79-238c-4806-82dc-14ff2592294c"
+    },
+    {
+     "strand": "score",
+     "artist": "Joe Hisaishi",
+     "album": "Kikujiro",
+     "release": "0ec7d32d-6baf-3e96-84a4-80d5da6ce218"
+    },
+    {
+     "strand": "score",
+     "artist": "Joe Hisaishi",
+     "album": "Spirited Away",
+     "release": "5df4f9c7-dc3a-465d-a6ae-c429f89ab03e"
+    },
+    {
+     "strand": "score",
+     "artist": "Alexandre Desplat",
+     "album": "Moonrise Kingdom",
+     "release": "d1dca239-e521-4bd3-a892-ea455b434a34"
+    },
+    {
+     "strand": "score",
+     "artist": "Alexandre Desplat",
+     "album": "Fantastic Mr. Fox",
+     "release": "a89b48b1-768c-4f1b-ad24-b629025cfad5"
+    },
+    {
+     "strand": "score",
+     "artist": "Thomas Newman",
+     "album": "Finding Nemo",
+     "release": "ee93ec58-ccc6-44b9-aeec-a5f3a55d4ab8"
+    },
+    {
+     "strand": "score",
+     "artist": "Patrick Doyle",
+     "album": "A Little Princess",
+     "release": "eef3a450-14c3-4d22-80c5-f387ffa2868e"
+    },
+    {
+     "strand": "score",
+     "artist": "Rachel Portman",
+     "album": "Chocolat",
+     "release": "e4a03a37-442b-46bb-af28-4c22f3eee26e"
+    },
+    {
+     "strand": "score",
+     "artist": "Jon Brion",
+     "album": "Eternal Sunshine of the Spotless Mind",
+     "release": "bba3116b-78e9-48d4-b30d-f1841b201741"
+    },
+    {
+     "strand": "score",
+     "artist": "Danny Elfman",
+     "album": "Big Fish",
+     "release": "0b3bb6e2-9efa-4a34-ab47-15522398c8ba"
+    },
+    {
+     "strand": "score",
+     "artist": "Mark Mothersbaugh",
+     "album": "The Royal Tenenbaums",
+     "release": "6dbbe7cf-dc38-4e39-80db-5462704043d1"
+    },
+    {
+     "strand": "score",
+     "artist": "Thomas Newman",
+     "album": "WALL·E",
+     "release": "39dcc931-fa2e-473f-b4b0-20d69c21b303"
+    },
+    {
+     "strand": "neo-classical",
+     "artist": "Ludovico Einaudi",
+     "album": "Le onde",
+     "release": "55396529-5a29-4874-a472-073920d48ab7"
+    },
+    {
+     "strand": "neo-classical",
+     "artist": "Ludovico Einaudi",
+     "album": "I giorni",
+     "release": "008d96b6-cff0-318f-b0cd-4a258b2c5220"
+    },
+    {
+     "strand": "neo-classical",
+     "artist": "Ludovico Einaudi",
+     "album": "Nightbook",
+     "release": "a28745d2-8a22-4afc-a70f-1169139a3492"
+    },
+    {
+     "strand": "neo-classical",
+     "artist": "Yiruma",
+     "album": "First Love",
+     "release": "382464b7-893c-4ea7-8b25-24cc1f33a125"
+    },
+    {
+     "strand": "neo-classical",
+     "artist": "Ólafur Arnalds",
+     "album": "…And They Have Escaped the Weight of Darkness",
+     "release": "a0063e3a-15d8-4ed2-a481-60059480928b"
+    },
+    {
+     "strand": "neo-classical",
+     "artist": "Max Richter",
+     "album": "The Blue Notebooks",
+     "release": "a9d48861-2401-4f71-9447-fc931826233c"
+    },
+    {
+     "strand": "neo-classical",
+     "artist": "Nils Frahm",
+     "album": "Felt",
+     "release": "b0e16b9e-5853-4f8b-93ad-b4ddc1a958cf"
+    },
+    {
+     "strand": "neo-classical",
+     "artist": "Joep Beving",
+     "album": "Solipsism",
+     "release": "365f338c-1771-49f2-b14a-9c96d0c59b7e"
+    },
+    {
+     "strand": "neo-classical",
+     "artist": "Dustin O'Halloran",
+     "album": "Lumiere",
+     "release": "66c8a4e5-5bcd-43e7-a6a7-0a2dc56d2cc2"
+    },
+    {
+     "strand": "indie-folk / chamber",
+     "artist": "Penguin Cafe Orchestra",
+     "album": "Broadcasting From Home",
+     "release": "b2222ae0-db4b-4259-aa58-d7a35e9d6644"
+    },
+    {
+     "strand": "indie-folk / chamber",
+     "artist": "Penguin Cafe Orchestra",
+     "album": "Penguin Cafe Orchestra",
+     "release": "6503447b-d42a-4a7d-b23b-278eb0bcc851"
+    },
+    {
+     "strand": "indie-folk / chamber",
+     "artist": "Yann Tiersen",
+     "album": "Rue des cascades",
+     "release": "be4dfc70-fb62-3589-aeb4-4680cea68c50"
+    },
+    {
+     "strand": "indie-folk / chamber",
+     "artist": "Lullatone",
+     "album": "Little Songs About Raindrops",
+     "release": "f9076c85-4e65-4dd4-95cd-ead678567f11"
+    },
+    {
+     "strand": "indie-folk / chamber",
+     "artist": "The Album Leaf",
+     "album": "In a Safe Place",
+     "release": "b3da6b8b-fab2-3ae0-985e-db2d157a2421"
+    }
+   ],
+   "style": {
+    "quantiles": "inclusive",
+    "floor": false
+   }
+  }
+ },
+ "targets": {
+  "trance_2015": {
+   "tag": [
+    "trance"
+   ],
+   "years": "2015-2021",
+   "per_year": 300
+  },
+  "hiphop_2015": {
+   "tag": [
+    "hip hop"
+   ],
+   "years": "2015-2021",
+   "per_year": 100
+  },
+  "rock_2015": {
+   "tag": [
+    "pop rock"
+   ],
+   "years": "2015-2021",
+   "per_year": 100
+  },
+  "joc_taraf": {
+   "artist": [
+    "Taraf de Haïdouks"
+   ],
+   "limit": 300
+  },
+  "caroling_ref": {
+   "albums": "caroling"
+  },
+  "chamberscore_ref": {
+   "albums": "chamberscore"
+  },
+  "latinpop_ref": {
+   "albums": "latinpop"
+  },
+  "latinpop_dark": {
+   "albums": "latinpop",
+   "releases": [
+    "bdc8c51e-8055-4ec3-8fd2-8ae0f8da38f3",
+    "3ce44fd3-c434-4497-9a13-5877e5831e3d",
+    "6cdcb0a8-1e65-4819-8a16-5bcddd16317f",
+    "e795c26e-772c-4389-9848-7ae5efab3ec0",
+    "afa1f4bd-c707-47a2-9a6c-9a203eb34c05"
+   ]
+  },
+  "latinpop_bright": {
+   "albums": "latinpop",
+   "releases": [
+    "a33ffece-9275-4c6f-b7fc-3c03f340ae07",
+    "267efbe5-4904-4f47-ac5d-c9506dbbc62a",
+    "47ae6935-c648-4d6f-8e2d-680cfb69d870",
+    "09bb36e0-41ee-4645-a9d4-88bc386f3605",
+    "0a03cc00-064f-4983-a603-dd425cd15cec",
+    "f8df96c5-0b87-449d-b7fe-5ab2192b9db9"
+   ]
+  }
+ }
+}

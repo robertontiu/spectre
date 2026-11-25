@@ -3,7 +3,9 @@
 GTSinger (Zhang et al., NeurIPS 2024; https://huggingface.co/datasets/GTSinger/GTSinger; CC BY-NC-SA 4.0) has
 studio singing with phoneme-level alignment, the score's note durations, and the same lyrics read by the same singer
 ("paired speech"). We only measure it: nothing from it is copied into the repo or used in a track. Files are cached
-in ~/.cache/spectre/refs/gtsinger (outside git).
+in ~/.cache/spectre/refs/gtsinger (outside git), and so is the per-syllable table this tool writes (--json, default
+_summary.json there): it is an adaptation of CC BY-NC-SA data, so it stays out of this MIT repository; the summary
+numbers it prints are quoted in docs/voice/GENERAL.md, and this tool regenerates the table from the corpus.
 
 What it measures (on the "Control_Group" takes, i.e. plain singing):
 - which point of a sung syllable singers put on the beat: the score grid (running sum of the notes' score durations,

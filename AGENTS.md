@@ -79,8 +79,13 @@ tools/
   pestana_ltas.py derives the measured mastering curves from Pestana et al. (2013), Fig. 5 (see docs/MASTERING.md)
   refcurve.py     era target curves: from the open catalogue (MusicBrainz + AcousticBrainz, no audio) or from local
                   reference masters (analysis only); n, spread, provenance (docs/MASTERING.md "Era targets")
+  catalogue_stats.py  the genre docs' catalogue numbers (album lengths, tempos, keys, est. loudness; trance radio
+                  edits; era rows; the ReplayGain-to-LUFS calibration) and the commands that rebuild engine/targets.json
   humanref.py     measures how human singers time English syllables in the GTSinger corpus (the evidence in
                   docs/voice/GENERAL.md "Timing"; data cached in ~/.cache/spectre/refs, never committed)
+data/
+  catalogue_references.json  the reference lists behind the catalogue numbers and the era targets (MusicBrainz
+                  release ids per genre and strand, tags and years; identifiers only, no audio; data/README.md)
 sessions/
   NNN-name/       one folder per session: project.json, journal.md, mastered mp3, ear and master images,
                   README.md with the result. A local working area: published sessions live in the S3 bucket
