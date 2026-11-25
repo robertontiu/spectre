@@ -204,6 +204,27 @@ The cross-genre method is in [PRODUCTION.md](PRODUCTION.md). Labels: **[M]** mea
 
 Sources for these two sections: iZotope, EQ cheat sheet: https://izotope.com/en/learn/eq-cheat-sheet ; M. Houghton, How to achieve better separation in your mixes, Sound On Sound (2022): https://www.soundonsound.com/techniques/how-achieve-better-separation-your-mixes ; M. Senior, Q. What should I EQ to improve my muddy mixes?, Sound On Sound (2008): https://www.soundonsound.com/sound-advice/q-what-should-eq-improve-my-muddy-mixes ; a professional trance producer's EQ map (2026; docs/TRANCE.md); MusicBrainz search API and AcousticBrainz low-level data (CC0; https://acousticbrainz.org/), measured 2026-11-25; everything else in docs/PRODUCTION.md "Sources". Also: Thinkspace Education, Great mixing advice can ruin your orchestral mix: https://thinkspace.ac.uk/blog/great-mixing-advice-can-ruin-your-orchestral-mix/ ; Beat Kitchen, Orchestral mixing: https://beatkitchen.io/guides/orchestral/11-orchestral-mixing/
 
+## Where the joc sits: regions, scenes and their settings (researched 2026-11-25)
+The full map of Romanian folk music by region and scene (nine regions, eight scenes, the shared core, a current-practice checklist and the sources) is in docs/ROMANIAN.md, "Regions, scenes and eras". This section says where this brief sits on that map and what changes when a brief moves off it (docs/PRODUCTION.md section 5, item 10). Labels as above: [S] sourced (source keys from docs/ROMANIAN.md), [M] measured, [H] hand-tuned.
+
+**This brief is one cell of the map: Muntenia (the Clejani taraf and the southern wedding), from the village taraf to today's wedding band.** Its violin idiom, 2/4 afterbeat, augmented-second modes, preludes and accelerating rounds are the southern lăutar dialect: "abundant melismatic writing", "chromatic modes with an augmented second", "high virtuosity (lăutari style)" (ROMANIAN.md, the RTM dialect table). A brief that names another region or scene changes these elements:
+
+| Element | This brief (Muntenia, taraf / wedding) | Moves to | Source |
+|---|---|---|---|
+| "Joc țigănesc" itself | a fast 2/4 Romani dance, a slow rar part in 6/8 first | **Transylvanian Plain:** *țigănește* is the **slow csárdás** of a string trio (violin, three-string contră, double bass); this brief's tempo doesn't apply | [S: BUZA; MEZ] |
+| Accompaniment | guitar or cobza chops on the afterbeat; țambal rhythmic | **Transylvania:** bowed contră triads, two chords per bow stroke ("românesc") or the off-beats only ("nemțesc"); **Maramureș:** strummed zongoră with dobă; **Banat:** țambal arpeggios | [S: EZ-vio; EZ-tam; MAR] |
+| Percussion | toba, snare, claps | **Transylvanian string band:** none; **Moldavian fanfare:** big drum with cymbal, or the "jaz" kit | [S: EZ-inst; RTM] |
+| Lead | violin | **Moldavia:** violin with țambal, or the fanfare's trumpet, clarinet and saxophone; **Banat, south Transylvania:** taragot and saxophone; **Muntenia today:** clarinet or accordion often lead | [S: EZ-inst; EZ-brass; EZ-tar] |
+| Meter | 2/4 | **Dobrogea and the Danube plain:** geampara 7/16, cadâneasca 9/16; **Banat:** brâu in 7/8; **south Transylvania:** învârtita in 10/16 | [S: EZ-aksak; EZ-banatbrau; EZ-invart] |
+| Shouts | strigături and comandă | **Banat:** none; **Maramureș:** shouted couplets as a second, deliberately discordant rhythmic layer | [S: EZ-strig; MAR] |
+| Sound | the dry ("rece") acoustic taraf | **today's wedding band:** amplified, synthesizer, a long plate reverb; **manele:** synth-led, one singer | [S: BEI; STO; MAR; ROMM] |
+
+**Master settings per scene.** The measurements and the reasoning are in docs/ROMANIAN.md, "Mastering by subdivision". For a joc brief:
+- **The acoustic taraf (this brief's default):** `joc_taraf`, `eq` 0.4, as now. **Loudness: a flagged contradiction.** The Configuration above sets -11 LUFS as "a choice inside a sourced range"; the measured taraf records sit at **-13.1** (middle half -15.5 to -12.1, 103 tracks) [M], so -11 is louder than three quarters of them. Research decides: **-13** for an acoustic taraf brief, -12 at most for a dance-floor version; proposed for `engine/genres.json`, not changed here (the released tracks keep their masters).
+- **A joc played by today's amplified wedding band, or a manele-flavoured joc:** `--target ro_fusion` (proposed), `eq` 0.5, -11 LUFS: the nearest measured amplified sound, 7-12 dB brighter above 5 kHz than the taraf [M, indirect: no wedding recordings were measured].
+- **A joc played by a Moldavian fanfare:** `--target ro_fanfare` (proposed), `eq` 0.5, -12 LUFS [M, 105 tracks of one band].
+- **A Transylvanian țigănește (slow csárdás) by a string trio:** `--target ro_transylvania_revival` (proposed, interim proxy), `eq` 0.3, -15 LUFS [M, 69 tracks of revival bands].
+
 ## Sources
 - Wikipedia, "Romanian folk violin": https://en.wikipedia.org/wiki/Romanian_folk_violin (read via the mirror https://wiki.krisyotam.com/content/wikipedia_en_all_nopic_2026-03/Romanian_folk_violin)
 - Wikipedia, "Lăutărească music": https://en.wikipedia.org/wiki/L%C4%83ut%C4%83reasc%C4%83_music (mirror: https://wiki.krisyotam.com/content/wikipedia_en_all_nopic_2026-03/L%C4%83ut%C4%83reasc%C4%83_music)

@@ -42,6 +42,234 @@ The hustle: grinding, working hard to make it, underground, not happy but not de
 - Uneven (aksak) Romanian rhythms: https://folkdancefootnotes.org/dance/dance-information/romanian-dance-rhythms-uneven/
 - Geamparale in 7/16 (Theodor Vasilescu): https://sfdh.us/encyclopedia/romanian_dance_and_music.html
 
+## Regions, scenes and eras: the granularity of Romanian folk music (researched 2026-11-25)
+Romanian folk music is not one sound. The owner's note: "very vast and nuanced based on regions while keeping the same core principles". This section names the dimensions it varies along, the core every subdivision keeps, and per region and per scene the elements a producer can check, each with a source (docs/PRODUCTION.md section 5, item 10). Labels: **[S]** a named source (keys in "Sources for the granularity section" at its end), **[M]** measured here (AcousticBrainz, see "Mastering by subdivision"), **[H]** hand-tuned or inferred, no source. "Shared" = holds across the subdivisions; "varies" = differs, with how much. A brief names its region and its scene; a brief that names neither gets the current practice (the checklist near the end).
+
+### The two dimensions, and why the boundaries are where they are
+**1. Region (the main dimension).** Ethnomusicology splits Romanian music into *musical dialects* whose borders "often coincide with historical provinces": Bartók (about 3,500 melodies collected 1908-1918 in Bihor, Maramureș and elsewhere) and Brăiloiu built the classification [S: RTM, "Regional stylistics and dialects", "History of research"]. The splits below are the ones where the sources show a real change in sound, not just a border:
+- **Habsburg north and west against Ottoman south and east.** Transylvanian bands come from the Central European string ensemble; Wallachian and Moldavian ones carry "more eastern/Turkish influences in the instrumentation" [S: EZ-taraf]. Brass bands are found in Banat, Transylvania and Moldavia "but not southern Romania" [S: EZ-brass].
+- **Where the aksak rhythms live.** Asymmetric dance rhythms are used "in the southern regions: southern Moldavia, Dobrogea, Muntenia, Oltenia" [S: EZ-aksak]; Transylvania has its own asymmetric 10/16 (4+3+3) in the south (Mureș to Sălaj, Cluj and the Banat plain) [S: EZ-invart].
+- **How the accompaniment is played.** The țambal's accompaniment formulas are "generally rhythmical in Wallachia and Muntenia, and harmonic (arpeggios etc.) in Transylvania and Banat" [S: EZ-tam]; Transylvania has a bowed chord instrument (contră or braci), the south the cobza, later the țambal and the guitar, Maramureș the zongoră [S: EZ-inst; EZ-vio; EZ-plucked].
+- **Which dances lead.** In the south and Moldavia the hora opens the dance cycle; in Transylvania and Maramureș it is rarely danced, and couple dances and men's solo dances come in suites that accelerate from slow to fast [S: EZ-hora; RTM "Dance music"].
+- **Who sings the ritual songs.** In Transylvania wedding songs are sung by the participants (mostly women); in Muntenia, Oltenia, Moldova and Bukovina the job "has almost entirely passed to professional lăutari" [S: RTM "Wedding music"].
+
+So nine regions: **central Transylvania** (with the Transylvanian Plain, Câmpia Transilvaniei / Mezőség, and the Romanian-Hungarian string bands), **southern Transylvania** (Sibiu, Hunedoara, Hațeg, Făgăraș), **Maramureș and Oaș**, **Crișana and Bihor** (with Arad), **Banat**, **Moldavia and Bukovina** (with the Republic of Moldova), **Muntenia** (with the Bucharest lăutari), **Oltenia**, **Dobrogea**. Bartók's dialect table groups Muntenia with Oltenia and Moldavia with Bukovina [S: RTM]; they are split here only where the instruments differ (Oltenia kept pipes and a guitar tuned like a cobza; Muntenia moved first to accordion and clarinet; Bukovina kept the țilincă and the cobza) [S: EZ-inst].
+
+**2. Timeline and scene.** The tradition has two layers from the start: peasant music (amateur, monodic, functional) and lăutărească music (professional, ensemble, virtuosic, paid) [S: RTM "Dualism of the tradition"]. Its sound changed at five points the sources document, which set the scenes below:
+- **mid-19th century**: the abolition of Roma slavery; rural lăutar tarafs take over village dance music, bringing "faster tempi, developed ornamentation, a clear rhythmic pulse, and the presence of chordal accompaniment" [S: RTM "Dance music"; EZ-taraf];
+- **1930s**: the accordion enters the taraf and displaces cobza and țambal; the brass fanfare dominates Moldavian villages "from around the 1930s" [S: RTM "Professional instruments of the lăutari"; EZ-brass];
+- **1949 and the 1950s**: state folk orchestras of 40-100 lăutari (Barbu Lăutaru, Ciocârlia, regional "Doina" orchestras) and the commercial *muzică populară*: standardized short forms, no improvisation, a "nice and easy" manner [S: EZ-orch; MUZP];
+- **1980s-1990s**: keyboards, electric guitars and amplification at weddings; the underground "muzică sîrbească / turcească" surfaces after 1989 as *muzică orientală* and becomes *manele* [S: ROMM; MANW; BEI]; tarafs and fanfares reach the world-music market (Taraf de Haïdouks; Fanfare Ciocărlia from 1996) [S: FCW];
+- **2015 onward**: trap reaches Romania (2015) and fuses with manele ("trapmanele"); folk fused with electro and rap gains "a touch of cool" with the young [S: RFE].
+
+So eight scenes: **peasant / pastoral**, **village taraf**, **urban lăutărească (mahala)**, **folk orchestra and muzică populară**, **fanfare (brass)**, **today's wedding band**, **manele**, **contemporary fusion**. A scene and a region combine: a Moldavian fanfare, a Transylvanian village string band, a Bucharest mahala song.
+
+### The shared core (holds across every region and scene)
+| Element | What holds everywhere | Source |
+|---|---|---|
+| The tune is re-made in performance | no fixed original: a "latent archetype" varied by each performer; variation, not repetition, is the form | [S: RTM, after Brăiloiu 1931] |
+| Function first | music for dancing and for rites (weddings above all), rarely for listening alone; one village may know up to 50 dances | [S: RTM "Character", "Dance music"] |
+| Dance meter | mostly duple (2/4), phrases of 2 or 4 bars; the asymmetric meters are regional additions to it | [S: RTM; EZ-hora] |
+| Lead over a pulse | one melody instrument leads (the violin almost everywhere; pipe, clarinet, saxophone or trumpet in some regions and scenes); a chord instrument marks the afterbeats; a bass marks the beats | [S: EZ-inst; RTM "Professional tradition"] |
+| Ornament is the melody | mordents, trills, glissandi and grace notes are "an integral part of melodic development", not decoration | [S: RTM "Musical language"] |
+| Modes | diatonic modes with mobile degrees (Dorian, Phrygian, Mixolydian dominate); the augmented second is a southern and lăutar colour, not a national one | [S: RTM "Musical language"] |
+| Heterophony | the players play slightly different versions of one line at once | [S: RTM] |
+| The voice in the dance | rhymed shouted couplets (strigături) in eight-syllable lines on the steps' rhythm, everywhere except Banat | [S: EZ-strig; RTM] |
+| The long, free song | every region has a doina-family song in free rhythm (parlando rubato) under a local name: hore lungă, cântec lung, de codru, ca pe luncă | [S: RTM "Doina"] |
+| Dance cycles accelerate | a dance sequence goes from slower to faster dances, and tunes speed up | [S: RTM "Dance music"; EZ-invart] |
+
+A track that keeps these keeps its identity, whatever the region or scene. Losing the first two (one fixed loop played as written, with no dance or rite behind it) is the nearest wrong *approach* in every subdivision [H].
+
+### Regions: the checkable elements
+"Varies" says how far the region departs from the shared core. Tempo is the weakest data: no regional tempo survey was found; the tempo numbers in "Mastering by subdivision" are AcousticBrainz estimates by scene, not by region.
+
+**Central Transylvania, the Transylvanian Plain (Mezőség) and the string bands**
+- *Band:* a trio: lead violin (prímás), contră or braci (a violin or viola with three strings on a flat bridge, tuned G-D-A, bowing **triads**), double bass played with a short rustic bow to "dig" into the dance beat; sometimes a cimbalom [S: EZ-inst; EZ-vio; RTM "Chordophones"; MEZ; BUZA]. **Varies strongly** from the south: no plucked chord instrument, no drum, no accordion in the old form.
+- *Accompaniment rhythm:* the contră bows **two chords per bow stroke** with a pulse of the wrist ("românesc"); playing only the off-beat chords is "nemțesc" (German) [S: EZ-vio]; contră and bass give "a characteristic hard rhythmic pulse" [S: RTM]. **Varies**: a bowed, sustained afterbeat, not a plucked chop.
+- *Dance cycle:* couple dances and men's dances in suites from slow to fast: Romanian de-a lungul, purtata, învârtita, bătuta, feciorește and ponturi; Hungarian (Mezőség) akasztós, ritka (slow) csárdás, szökős, sűrű (fast) csárdás [S: RTM; MEZ; BUZA]. The Mezőség *akasztós* is "very slow" and asymmetric, quick-slow, "often in 5/8 or 6/8", turning regular as it speeds up [S: MEZ]. In Buza, *țigănește* (cigánytánc) is the **slow csárdás** [S: BUZA].
+- *Meter:* the straight 2/4 învârtita across Transylvania; a syncopated învârtita (slow-quick-slow-quick-slow) to an asymmetric **10/16 (4+3+3)** in the south (Mureș, Sălaj, Cluj, the Banat plain) [S: EZ-invart].
+- *Melody and mode:* syllabic songs (one syllable, one note); a pentatonic substrate or plain diatonic modes; four-line stanzas (AABB, AAcBB) [S: RTM dialect table]. **Varies** from the south: little augmented-second chromaticism.
+- *Voice:* strigături shouted by dancers and wedding guests; wedding songs sung by the women of the community [S: RTM].
+- *Sound:* three bowed strings and no drum: the beat lives in the contră's bow and the bass's attack [S: EZ-inst; EZ-vio]. The same bands play for Romanian and Hungarian villages, and the repertoire is shared [S: EZ-taraf; EZ-vio].
+
+**Southern Transylvania** (Sibiu, Hunedoara, Hațeg, Făgăraș)
+- *Band:* "the most popular sound is now a saxophone backed by accordion" [S: EZ-inst]; the saxophone is "the main instrument for dance music throughout Banat and south Transylvania" [S: EZ-tar]. In remote areas the music came from Romanian fluier players [S: EZ-inst].
+- *Dances and meter:* feciorește (lads' dances, many "in the local asymmetric rhythm"), învârtita, hațegana; the 10/16 (4+3+3) învârtita; *hodoroaga* in 2+2+2+4 [S: EZ-fec; EZ-invart; EZ-aksak].
+- **Varies**: a reed lead over accordion, not a string trio.
+
+**Maramureș and Oaș**
+- *Band:* ceteră (the fiddle) + zongoră (a guitar with a special tuning, held vertically, its strings bunched in the middle of the fingerboard for fast strumming, major chords only; two strings in 1913, three to five now) + dobă (a drum with a cymbal, struck with a padded stick and a metal tool); all three players are called *ceterași* [S: MAR; EZ-plucked; ZONG]. Taragot (made popular by Dumitru Fărcaș), saxophone and accordion came later [S: EZ-inst; EZ-tar].
+- *Oaș:* the violin's bridge moved up towards the fingerboard for a "shrill penetrating sound", sometimes with zongoră; singing "very shrill" [S: EZ-vio; EZ-inst].
+- *Dances:* *bărbăteşte* (men's circle dance, duple meter, equal symmetrical phrases, couplets shouted on a strict rhythm) and *de învârtit* (couples; since Bartók's visit faster, with **consecutive triplets in duple meter** now standard, phrases that stray from two bars of two beats, and couplets shouted "in deliberate discordance" with zongoră and dobă) [S: MAR]. Dance tunes are "short elements put together by the musician", so phrase lengths vary [S: EZ-inst].
+- *Voice:* *hori* (lyrical songs), *de băut* (feast songs, now shouted by men and women in two competing groups); *horea lungă* / *hore cu noduri* (the long song with "knots", throat sobs) is almost gone except as fiddle pieces; *țâpurituri* shouts make "a complex polyrhythm" with the tune [S: MAR; RTM "Doina", "Dance music"]. Archaic pentatonic and pre-pentatonic modes; short couplets; iambic song rhythm [S: RTM dialect table].
+- *Now:* at weddings the ceteră is "accompanied by synthesizers, and its timbre is severely distorted by amplification"; acoustic playing survives at family parties [S: MAR, "2012: Twenty Years Later"].
+- **Varies strongly**: drum and strummed chords with no bass instrument; shouts as a second rhythmic layer.
+
+**Crișana and Bihor** (with Arad)
+- *Band:* the violin dominates; in some areas a second violin accompanies (older than the Transylvanian contră); the **vioară cu goarnă** (a horn violin, the folk Stroh violin, only its upper three strings used) in Bihor; the dobă; the taragot in Arad (Petrică Pașca) [S: EZ-inst; EZ-vio; RTM].
+- *Melody and mode:* richly ornamented, parlando rubato; the **Lydian mode** (a raised fourth); three-line stanzas; the cadence on the **low seventh degree**, a whole tone below the tonic [S: RTM dialect table].
+- *Dances:* ardeleana in a column of couples: slow, syncopated (*pe picior*), fast (*mărunțel*) [S: EZ-ardel].
+- **Varies**: the brassy horn-violin timbre and the Lydian fourth (the raised fourth of "Scales and modes" above is at home here, not everywhere).
+
+**Banat**
+- *Band:* the violin first, then the taragot (brought in the 1920s by a Banat lăutar who had played it in the Habsburg army), and today alto and soprano saxophones beside it; town ensembles mix "many violins" with taragots and saxophones; accordion melodies "in the Serbian style" [S: EZ-inst; EZ-tar; EZ-acc]. The țambal plays harmonic arpeggios [S: EZ-tam]; brass bands exist [S: EZ-brass].
+- *Rhythm:* "syncopated rhythmic structures; high mobility" [S: RTM dialect table]; the Banat brâu in 2/4 or asymmetric **7/8 (3+2+2)** [S: EZ-banatbrau]; couple dances in a column (ardeleana, de doi, and on the plain lența, duba, desca), de doi fast [S: EZ-ardel; EZ-banatcol].
+- *Melody and mode:* mostly diatonic, with a strong major-minor pull; the "refrain dialect" (a refrain longer and more complex than the stanza); the taragot's style shapes the singing [S: RTM dialect table].
+- *Voice:* **no strigături**: the one region without them [S: EZ-strig].
+- **Varies**: a reed-led sound, major-minor tonality and refrains. The Serbian link is documented here for the accordion style and for dances shared across the border [S: EZ-acc; EZ-banatcol]; no source reached describes the kolo's direct influence on Banat Romanian music.
+
+**Moldavia and Bukovina** (with the Republic of Moldova)
+- *Band:* violin and țambal are "now the basis of Moldavian dance music"; until the early 20th century the cobza accompanied (now rare: Bukovina, Vrancea, the Csángó) [S: EZ-inst]. **Brass fanfares** (trumpets, tenor and baritone horns, tubas, clarinets, saxophones, bass drum) dominated village music from the 1930s, mostly in central and northern Moldavia; taragot, accordion and electronic keyboard joined in the 1980s [S: EZ-brass; FCW; RTM]. The Moldavian drum kit "jaz": a bass drum with cymbals, sometimes a snare [S: RTM "Membranophones"]. Bukovina kept the **țilincă** (an overtone flute without finger holes) and the fluier mare [S: EZ-pipes; RTM].
+- *Rhythm:* hora mare and moldovenească (large circles that whirl), sârba, bătuta, arcanul; small steps with **syncopated stamps on the weak beat**; the *ostropăț* in 2+2+3 at weddings; the *hora mare bucovineasca* "between 5/16 and 3/8"; the southern Moldavian *șchioapa* in 2+2+2+4 [S: RTM "Dance music"; EZ-hora; EZ-aksak].
+- *Melody and mode:* restrained; giusto syllabic rhythm; **half cadences on the second degree**; recto tono recitation [S: RTM dialect table]. Klezmer and lăutar repertoires exchanged doine and horas; the țambal may have entered the Moldavian taraf through klezmer musicians [S: RTM "Professional tradition"].
+- *Voice:* old doine ("bătrâneasca") with restrained ornament and recto tono; the "Bride's sorrow" (*jalea miresei*) as an instrumental on violin or trumpet [S: RTM "Doina", "Wedding music"].
+- **Varies**: brass and țambal are the Moldavian sounds; the voice is plainer than in the south.
+
+**Muntenia and the Bucharest lăutari**
+- *Band:* the classic southern taraf: violin lead, cobza (later țambal) and double bass, often nai [S: RTM "Professional tradition"]. Muntenia moved earliest from cobza to țambal mare to accordion; today the melody is "commonly led by the clarinet or accordion", with a very fast, smooth, crisp accordion style (Ilie Udilă, Vasile Pandelescu, Fărâmiță Lambru, Marcel Budală) [S: EZ-inst; EZ-acc]. The țambal's accompaniment is rhythmic [S: EZ-tam].
+- *Rhythm:* hora (a closed circle, 2- or 4-bar phrases), sârba (2/4 with triplet melodies, a 6/8 feel), brâu (fast, **120-160 beats per minute**, syncopated), geamparale (7/16) [S: RTM "Dance music"; EZ-sarba; EZ-hora; EZ-aksak]. Lăutar timing: "micro-rhythmic deviations and deliberate metric instability" [S: RTM].
+- *Melody and mode:* abundant melisma, parlando rubato, **chromatic modes with an augmented second**, oriental influence, developed ballads and doine (cântec lung) [S: RTM dialect table]; lăutar harmony joins Western chords to maqam-like modes and non-tempered intonation [S: RTM].
+- *Forms and voice:* music for listening (de ascultare), toasts (de pahar), epic ballads (recto tono, melodic recitative, a half-spoken *parlato*) opened by an instrumental *taxîm* and closed by a dance tune [S: RTM "Lăutari tradition"]; the mahala vocal style with "developed melisma and high emotional expressiveness" (Romica Puceanu, Gabi Luncă) [S: RTM].
+- **Varies**: the most chromatic, virtuosic and urban region. The joc țigănesc of docs/JOC_TIGANESC.md belongs here.
+
+**Oltenia**
+- *Band:* pipes (fluier, caval; transverse flaute and piculine near the Olt) and violins still lead; a guitar tuned like a cobza (*chitară cobzită*, three or four strings) and the țambal replaced the cobza; folk trumpet (Constantin Gherghina) [S: EZ-inst; EZ-plucked; EZ-pipes; EZ-brass; RTM]. The frame drum *dairea* in the Olt valley into the 20th century [S: RTM "Membranophones"].
+- *Rhythm:* the Danubian brâuleț (galaonul, alunelul) with fast crossing footwork in 2/4; compound-rhythm dances in Dolj (tepeșul, dianca); ciuleandra (a sârba of north Oltenia and Muntenia) [S: EZ-brau; EZ-aksak; EZ-sarba].
+- *Voice:* **doina cu noduri** ("with knots") in the Gorj foothills and the **doina with hăulit** (the melody broken by powerful vibrating cries high up); the *fifă*, a one-note pipe alternating with the voice [S: RTM "Doina", "Aerophones"].
+- **Varies**: older instrumentation than Muntenia (pipes, the cobza-guitar) and the hăulit cry.
+
+**Dobrogea**
+- *Band:* Romanian instrumentation as in Muntenia, beside Tatar, Turkish and Bulgarian communities with their own [S: EZ-inst]; cimpoi and the Bulgarian kaval; a seven-hole Dobrujan fluier [S: RTM].
+- *Rhythm:* a "dominance of asymmetric rhythms (aksak)": geampara **7/16 (2+2+3)**, short-short-long, the long beat about 1.5 times the short; cadâneasca **9/16 (2+2+2+3)** with all nine pulses played (the Romanian way splits the last beat 1+1+1, the Bulgarian daichovo 2+1); rustem **5/16 (2+3)**, drifting towards 3/8 or 2/4 [S: RTM dialect table; EZ-aksak; EZ-geampara; EZ-cadaneasca].
+- *Mode:* chromatic and diatonic Balkan modes; Bulgarian and Turkish influence [S: RTM].
+- **Varies most in meter**: the only region where aksak dominates.
+
+### Scenes and eras: the checkable elements
+| Scene | Era | Band and sound | Rhythm, form, voice | Source |
+|---|---|---|---|---|
+| **Peasant / pastoral** | archaic; now mostly archives and festivals | solo pipes (fluier, caval, tilincă), cimpoi, bucium / tulnic (signals, funerals), leaf, drâmbă; monody to rudimentary heterophony; older pipe players sing gutturally into the pipe and tongue sharply for dancing | free rhythm (doina); giusto syllabic (colinde, durations in 2:1) | [S: RTM "Shepherd music", "Folk musical instruments"; EZ-pipes] |
+| **Village taraf** | mid-19th century on; world-music records from the 1990s | the regional bands above; acoustic, for dancers; some villages harmonise in thirds, others keep a "roughness" | dance cycles, rounds, accelerations; strigături | [S: EZ-taraf; RTM] |
+| **Urban lăutărească (mahala)** | 18th century to the 1970s; the recording and radio boom of the mid-20th century | violin, țambal mare, accordion (from the 1930s), double bass, nai; virtuoso soloists | music for listening and dancing: romances, ballads with taxîm, horas and sârbe; a melismatic, expressive voice | [S: RTM "Professional tradition"; EZ-acc] |
+| **Folk orchestra and muzică populară** | 1949 on; today on dedicated TV channels | 40-100 players with a conductor; nai and cobza revived; rural melodies arranged for the concert hall; recorded for Electrecord | short simple structures, no improvisation, trained voices in a "nice and easy" manner; regional styles "blurred" | [S: EZ-orch; MUZP; RFE] |
+| **Fanfare** | Moldavian villages from the 1930s; also Banat and Transylvania | trumpets, tenor and baritone horns, tubas, trombone, clarinets, saxophones, bass drum; 12-13 players; "fiery", fast | hora, sârba, bătută played fast; a march for each guest; bagpipe imitations; tunes from radio and film | [S: EZ-brass; FCW; SL31] |
+| **Today's wedding band** | after 1989 | accordions, violin, guitar, bass, cimbalom, synthesizer, amplified to "ear-splitting volume"; keyboards replacing brass bands and the accordion; the ceteră "severely distorted by amplification"; musicians ask for a long plate reverb on records | the night-long wedding cycle, manele beside lăutar horas | [S: BEI; MAR; SL31; EZ-acc; STO] |
+| **Manele** | underground in the 1970s-80s; "muzică orientală" after 1989; "manele" from the early 2000s; trap fusion after 2015 | synthesizer (much of the "oriental" sound), electric violin, accordion, clarinet, saxophone, drums; small studios; one singer over a backing | the čoček / kyuchek rhythm in 2/4 and 4/4; Turkish-derived scales (hicaz) with microtones; a free-rhythm vocal introduction of melismatic virtuosity; backing singers repeat verses | [S: ROMM; MANW; ROMM-Salam; KAP] |
+| **Contemporary fusion** | 1994 on (Zdob și Zdub), 2010 on (Subcarpați), now | folk melodies, folk singers and traditional instruments over hip hop, dub, trip hop, dubstep, dancehall, punk, electronica; cobza and saz with electronics | the folk material as the foundation; the host genre's song form | [S: SUB; ZSZ; BI; RFE] |
+
+### Rhythm cells per subdivision (and how the engine can write them)
+Placement of accents follows the sources; drum and chord layouts are **[H]** applications. **Engine note:** drum `steps` and chord-stab `rhythm` strings take any grid (string length / bars), so a 7-, 9-, 10- or 5-character string makes one pattern bar one aksak bar, with the project `bpm` set so that the pattern bar lasts as long as the dance's bar (bpm = 240 / bar seconds). Melodic `step:note:len` tokens are always 16ths of a four-beat bar, so an aksak *melody* only fits approximately: a gap, listed under "Current practice".
+| Dance (region) | Meter | Grouping | How to write it |
+|---|---|---|---|
+| Hora, sârba, brâu, învârtita (most regions) | 2/4 | 2 beats | one pattern bar = two bars of 2/4 (docs/MANUAL.md "Other meters"); bass on steps 0 4 8 12, afterbeat chords on 2 6 10 14 |
+| Sârba (south, Moldavia) | 2/4, triplet melody, a 6/8 feel | 3+3 per beat | triplets over the duple bass [S: EZ-sarba]; drums and stabs on a 12- or 24-character grid; melodic triplets only approximately |
+| De învârtit (Maramureș, now) | 2/4 with consecutive triplets | 3+3 | as sârba; shouts off the grid [S: MAR] |
+| Învârtita, feciorește (south Transylvania, Banat plain) | 10/16 | 4+3+3 | a 10-character grid, accents on 0 4 7 [S: EZ-invart] |
+| Banat brâu | 7/8 | 3+2+2 | a 7-character grid, accents on 0 3 5 [S: EZ-banatbrau] |
+| Geampara (Dobrogea, Danube plain) | 7/16 | 2+2+3, short-short-long | a 7-character grid, accents on 0 2 4 [S: EZ-geampara] |
+| Cadâneasca (Dobrogea) | 9/16 | 2+2+2+3, the last as 1+1+1 | a 9-character grid, accents on 0 2 4 6, all nine pulses played [S: EZ-cadaneasca] |
+| Rustem (south) | 5/16 | 2+3, drifting to 3/8 or 2/4 | a 5-character grid, accents on 0 2 [S: EZ-aksak] |
+| Șchioapa, hodoroaga (south Moldavia, south Transylvania) | 5/4 (also written 9/8) | 2+2+2+4, short-short-short-long | a 10-character grid, accents on 0 2 4 6 [S: EZ-aksak] |
+| Hora lentă, hora mare bucovineasca | between 5/16 and 3/8 | short-long | a 5-character grid (2+3) or 6 (3/8) [S: EZ-hora] |
+| Akasztós (Mezőség) | "5/8 or 6/8", very slow, quick-slow | 2+3 | a 5-character grid, the second beat long [S: MEZ] |
+| Manea (kyuchek) | 2/4 and 4/4 | variants | the exact pattern was not found in a source reached here [S: ROMM] |
+
+**A correction to "Rhythms" above:** the 3-3-2 kick layout suggested there for a geampara feel in a 4/4 trap grid is *long-long-short*; geampara is *short-short-long* (2+2+3) [S: EZ-geampara]. 3-3-2 is a 4/4 approximation of an aksak feel, not of geampara: say so in a brief, or write a real 7/16 grid.
+
+### Mastering by subdivision
+**What was measured** [M]: per scene, the recordings of reference artists in the open catalogue (MusicBrainz artist credits joined to AcousticBrainz low-level data, CC0; `tools/refcurve.py catalogue` and the same features read by a scratch script; measured 2026-11-25; method, validation and limits in docs/MASTERING.md "Era targets"). Loudness is estimated from ReplayGain (LUFS ≈ -23.7 - RG, ±1-2 dB); "dyn. complexity" is Essentia's `dynamic_complexity` (the mean deviation of the loudness from its average, in dB: a rough stand-in for loudness range, not LRA); spectra are Bark bands in dB relative to 510 Hz-2 kHz. AcousticBrainz is mono (no width or side data), has no true peak, and ends in 2022: **nothing here measures 2023-2026**. Artist sets were checked by hand (exact name, country, disambiguation) and are passed to the tool as MusicBrainz ids; three curves are proposed for `engine/targets.json`: `ro_fanfare`, `ro_fusion`, `ro_transylvania_revival`.
+
+| Scene (artists) | n | Release years | Est. loudness, median (middle half) | Dyn. complexity | Length, median | 32-97 Hz | 140-183 Hz | 5.3-6.4 kHz | 7.7-9.5 kHz | 12-15.5 kHz |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Village taraf, Muntenia (Taraf de Haïdouks) | 103 | 1993-2015 | -13.1 (-15.5 to -12.1) | 3.7 | 4:35 | +7.8 | +2.6 | -12.2 | -16.9 | -20.7 |
+| Fanfare, Moldavia (Fanfare Ciocărlia) | 105 | 1997-2016 | -11.7 (-13.3 to -10.8) | 3.0 | 3:18 | +7.9 | +2.1 | -8.3 | -10.2 | -16.1 |
+| Transylvanian string band, **proxy** (Muzsikás, Kálmán Balogh: Hungarian revival musicians playing Transylvanian village music) | 69 | 1986-2008 | -15.1 (-17.0 to -13.5) | 3.6 | 4:18 | +5.1 | -0.1 | -9.7 | -13.4 | -22.7 |
+| Urban lăutărească and folk-orchestra soloists, period recordings (Maria Tănase, Romica Puceanu, Gabi Luncă, Toni Iordache, Fănică Luca, Dona Dumitru Siminică, Gheorghe Zamfir) | 56 | reissues 1980-2009 of mostly earlier recordings | -13.6 (-16.2 to -11.3) | 4.9 | 3:52 | +0.6 | -4.7 | -18.4 | -23.3 | -32.1 |
+| Contemporary fusion (Subcarpați 19, Zdob și Zdub 29, Mahala Raï Banda 43, Shukar Collective 14, Balkan Taksim 5, Dirty Shirt 28) | 138 | 1997-2022 | -10.9 (-13.0 to -9.1) | 3.3 | 3:51 | +11.6 | +4.3 | -5.2 | -6.7 | -11.1 |
+| Manele (Adrian Copilul Minune, Costi Ioniță, Nicolae Guță, Florin Salam, Sorinel Puștiu, Dan Armeancă) | **14** | 2001-2018 | -11.0 (-12.1 to -9.5) | 3.4 | 4:09 | +10.9 | +3.1 | -6.7 | -7.1 | -9.7 |
+| Muzică populară, folk orchestra | **17** (12 of them one singer, Grigore Leșe) | 1997-2008 | -15.5 | 5.5 | 3:09 | not used | | | | |
+
+The taraf row reproduces the existing `joc_taraf` measurement (docs/JOC_TIGANESC.md "Era assessment": within 0.8 dB in every band shown; the refitted curve is identical to `joc_taraf`) and the fanfare row the Fanfare Ciocărlia column there (within 0.4 dB). Tempo estimates (AcousticBrainz, octave errors possible) have scene medians of 115-129 bpm with wide middle halves: **they don't separate the scenes**, so no tempo is taken from them.
+
+**What the numbers say** (medians of 69-138 tracks differ by more than their sampling error, about ±1 dB, wherever they differ by 3 dB or more; the 14- and 17-track rows are thin):
+- **The scenes split on top and in the low end, not in the mids.** Against the acoustic taraf, the fanfare is **4-8 dB brighter** at 5-15 kHz (brass) and as heavy at 32-97 Hz; the fusion records are **7-12 dB brighter** at 5-15 kHz and **3-7.5 dB heavier** at 50-80 Hz (about 4 dB in the 32-97 Hz band: drum kits, bass, electronics [H]). These are real differences in what is sounded, so separate targets are justified for the fanfare and fusion scenes.
+- **The string band without a drum is lighter low.** The Transylvanian proxy is 2-3.5 dB lighter at 50-183 Hz than the taraf (no toba, a bowed bass [H]), 2.5-3.5 dB brighter at 5-10 kHz and 2 dB darker above 12 kHz. It is a proxy (Hungarian revival records, 1986-2008), so its target is interim.
+- **Loudness follows the scene.** Acoustic string bands are the quietest (-15.1 Transylvanian proxy, -13.1 taraf), the fanfare -11.7, fusion -10.9; the thin manele set agrees with fusion (-11.0). Lower dynamic complexity goes with the louder scenes (fanfare 3.0, fusion 3.3 against taraf 3.7 and period recordings 4.9): more compression or a steadier arrangement. A Moldavian village brass record is described as "rather compressed" [S: SL31].
+- **Period recordings are band-limited**: 4-11 dB under the taraf above 4 kHz (more the higher), 7 dB under it at 32-97 Hz. That is the recording technology of the period [H], not a mastering choice: **not a target**. A brief that wants that sound gets it from sound design (a low-pass on the band, a narrow room) [H], mastered to `joc_taraf`.
+- **Manele and today's wedding band:** no target. Manele are too thin here (14 tracks, none lossless); they agree with the fusion medians within 1-3 dB, so the fusion target is the nearest measured. No wedding-band recordings were measured; Mahala Raï Banda (a modern amplified band, in the fusion set) is the nearest, and the JOC brief's era table already shows it 9-11 dB brighter on top than the taraf.
+- **The fusion records against the host genres:** `ro_fusion` matches `hiphop_2015` within 2 dB from 160 Hz up, with 1.5-8.5 dB less at 31.5-80 Hz (fewer 808 subs [H]); it sits between `hiphop_2015` and `rock_2015` in the low end.
+
+**What the sources say about the playback each scene is made for** (no measurements of PLR, true peak, width or the loudest section were possible):
+- *Peasant / pastoral:* archive and field recordings (UNESCO, Ethnophonie), made at the event ("live recordings of such a party") [S: MAR]; no loudness practice. Folk masters generally: -14 to -10 LUFS, at least 6 LU of loudness range, acoustic genres often "near -16" (docs/JOC_TIGANESC.md, Sage Audio).
+- *Village taraf and fanfare:* world-music CDs of the 1990s-2010s (Fanfare Ciocărlia's debut was recorded in Electrecord's Bucharest studio for a Berlin label) [S: FCW]; lăutari ask for a plate reverb "with a long audible tail" on their own recordings [S: STO].
+- *Urban lăutărească and muzică populară:* Electrecord records and radio, now CD reissues and folk TV [S: EZ-orch; RFE].
+- *Today's wedding band:* live PA, "ear-splitting" [S: BEI]; the amplified ceteră's distortion is part of the sound [S: MAR]: sound design, not a master setting.
+- *Manele:* small studios owned by the singers, video and social media (TikTok) [S: MANW; KAP].
+- *Fusion:* streaming and festivals (Spotify normalises to -14 LUFS, Apple Music to -16: docs/JOC_TIGANESC.md).
+- How the loudness is reached (limiting, clipping, saturation) is not documented for any scene; true peak and width are not either. Spectre's defaults stay: **-1 dBTP**, **mono below 120 Hz** (folk mastering guidance in docs/JOC_TIGANESC.md), no extra width.
+
+**Settings per kind of brief** (`studio.py master vNNN ...`; the new targets are proposals until the orchestrator adds them to `engine/targets.json`; `eq` and `translate` are **[H]**, set by the spread and the size of each set as the other genres do):
+| Brief | Target | `eq` | LUFS | True peak | Basis |
+|---|---|---|---|---|---|
+| Acoustic village taraf, Muntenia or Oltenia (the joc brief) | `joc_taraf` | 0.4 | **-13** (the measured median; -12 is the upper quartile, for a dance-floor version) | -1 | [M] 103 tracks |
+| Moldavian fanfare | `ro_fanfare` (proposed) | 0.5 | -12 | -1 | [M] 105 tracks, one band: keep `eq` moderate |
+| Transylvanian string band (village trio) | `ro_transylvania_revival` (proposed, **interim proxy**) | 0.3 | -15 | -1 | [M] 69 tracks of revival bands; replace with village recordings measured locally |
+| Maramureș, Bihor, Banat, Dobrogea, peasant and pastoral | `joc_taraf` | 0.3 | -14 | -1 | **no data**: the nearest acoustic set, lighter, quieter [H] |
+| Urban lăutărească, folk orchestra, muzică populară | `joc_taraf` | 0.3 | -13.5 | -1 | period sets too band-limited and thin to be a target; the loudness median of the period set [M] |
+| Today's amplified wedding band | `ro_fusion` (proposed) | 0.5 | -11 | -1 | no wedding data; the nearest measured amplified band [M, indirect] |
+| Manele, trapmanele | `ro_fusion`; with an 808 trap beat, the host genre (`--genre trap` or `hiphop_2015`) | 0.5 | -11 | -1 | 14 tracks agree with fusion [M, thin] |
+| Contemporary fusion (the current-practice default; folk over hip hop or electronics) | `ro_fusion` (proposed); with a dominant 808, `hiphop_2015` | 0.6 | -11 | -1 | [M] 138 tracks, 6 artists, 1997-2022; 2023-2026 extrapolated |
+
+### Current practice (2023-2026): a checklist for briefs that ask for the newest Romanian folk sound
+What Romanians listen to now, and where folk sits in it: in an INSCOP survey (November 2023, 1,100 respondents) 47.3% listen to *muzică populară* (49.7% ten years earlier) and 21.6% to manele (14.2% in 2013); on Spotify, trap and manele were the most-streamed genres in Romania in 2023 [S: RFE]. "Contemporary Romanian folk" in a brief can mean four different things (items 1-4), and the brief should say which. A brief that names none takes item 1, folk material over a current beat, which is what Spectre's Romanian briefs have meant so far ("The reference: Subcarpați" above).
+
+| # | Element (2023-2026) | Evidence | Engine today |
+|---|---|---|---|
+| 1 | **Folk material over hip hop and electronic beats**, with real folk singers and traditional instruments as the foundation, not a sample on top (Subcarpați's *Valea Voltului*, 2023; Argatu); folk now carries "a touch of cool" with the young | [S: RFE (V. S. Cosma); SUB] | **yes** for the beat and the lead instruments: `808`, trap and boom-bap kits, `violin` (lăutar articulations), `nai`, `cimbalom`, `oud` as cobza, `dudas` as a stand-in cimpoi; **no** sung folk voice: no voice sings Romanian (docs/voice/languages/ro.md) |
+| 2 | **"Trapmanele"**: manele vocals and "oriental" melodies (hicaz, melisma) over trap production, "more cool", "more polished, more pop"; the most-streamed song of 2023 was a manele-pop crossover | [S: RFE (A. Șchiop); KAP; ROMM] | **partly**: `808`, trap hats and rolls, `darbuka`, `polysynth` and `lead` for the synth lines, `violin` through a `drive` fx as an electric violin [H]; **no** clarinet or saxophone; the free-rhythm melismatic vocal intro has no Romanian voice (wordless `vox2` only) |
+| 3 | **Folklore electronica, downtempo**: cobza and electric saz over electronics (Balkan Taksim, *Disko Telegraf* 2021, *Acide Balkanique* recorded 2025), "elegiac", "atmospheric", built on years of collecting village songs and instruments | [S: BI] | **yes** for the cobza (`oud`, bright, damped) and the electronics; **no** saz (`oud` is the nearest) |
+| 4 | **Folk-punk and a brass party** with a folk duo (Zdob și Zdub with the Advahov Brothers, "Trenulețul", Eurovision 2022: 7th, 2nd in the public vote) | [S: ZSZ; RI] | **partly**: `eguitar`, kit, `violin`, `nai`; **no** brass, **no** accordion |
+| 5 | **The wedding and party band as it sounds now**: the ceteră "accompanied by synthesizers", its timbre "severely distorted by amplification"; keyboards replacing village brass bands (one Moldavian area: about a dozen bands down to three since 1989) and the accordion | [S: MAR; SL31; EZ-acc; BEI] | **partly**: `violin` through a `drive` fx and a plate return [H]; no model of an arranger keyboard ("orgă"; `organ`, `polysynth` as stand-ins); **no** accordion |
+| 6 | **Muzică populară on television**: dedicated channels (Etno, Favorit TV, Hora TV) keep the folk-orchestra style alive and bring it to the young through grandparents and migration | [S: RFE; MUZP] | **partly**: `violin`, `cimbalom`, `nai`, `strings_section`; **no** accordion, taragot or clarinet, double bass |
+| 7 | **The cobza in the spotlight**: "the art of playing the cobza" inscribed by UNESCO (Romania and the Republic of Moldova, 2025) | [S: RTM] | `oud` as cobza (an approximation, no dedicated model) |
+| 8 | **Folk symbols in politics**: right-wing figures took up folk dress and instruments in the 2024-25 elections; musicians push back | [S: BI] | a *meaning* risk, not a sound: a brief on Romanian folk today says what it stands for and keeps clear of nationalist imagery unless that is its subject |
+
+**What none of the current scenes drops** (so a "newest" brief still keeps the shared core): a real folk melody or a real Romanian dance rhythm underneath, ornamented lead lines, the afterbeat or the dance meter, a voice or a shout in the room [H, from items 1-5].
+
+**Missing instruments, ranked by how many subdivisions need them** (proposals; none is built):
+1. **Accordion**: in the taraf since the 1930s, the main accompaniment and often the lead of 20th-century village music, Muntenia's fast melodic style, today's wedding bands [S: EZ-acc; RTM]. Needed by Muntenia, Moldavia, south Transylvania, the folk orchestras, weddings, Zdob și Zdub.
+2. **Clarinet, taragot, saxophone** (single-reed leads): the main dance instruments of Banat and south Transylvania, the Maramureș taragot, the fanfares, manele [S: EZ-tar; EZ-brass; ROMM].
+3. **Brass** (trumpet, tenor and baritone horns, tuba, trombone): the fanfare [S: EZ-brass; FCW].
+4. **Double bass** (plucked; bowed with a short bow; the struck *gordon*): every string band's bass [S: EZ-vio; EZ-inst]. `ebass` is an electric bass guitar; `cello` is bowed but an octave high and classical.
+5. **Contră / braci** (a three-string viola bowing triads, two pulses per stroke): the Transylvanian string band [S: EZ-vio]. `viola` plays single lines and two-note `d=` stops.
+6. **Zongoră** (a strummed vertical guitar, major chords): Maramureș [S: EZ-plucked; MAR]. `acguitar` strums can stand in [H].
+7. **Pipes** (fluier, caval, tilincă) and **bucium / tulnic**: pastoral music, Oltenia, Bukovina [S: EZ-pipes; RTM]. `nai` and `ney` stand in; nothing plays an overtone flute or an alphorn.
+8. **An arranger keyboard ("orgă")** for weddings and manele [S: KAP; MAR].
+9. **A Romanian singing voice** (docs/voice/languages/ro.md), and shouted couplets.
+10. **Aksak melodic grids**: melodic notes sit only on 16ths of a four-beat bar ("Rhythm cells").
+
+### Contradictions with the earlier briefs (flagged; the research is followed)
+- **"Romanian minor / Dorian #4" as *the* Romanian scale** ("Scales and modes" above): the sources describe Dorian *with a mobile fourth* in the doina, the Lydian raised fourth as a **Bihor** trait, and augmented-second modes as a **southern and lăutar** colour [S: RTM]. Use the #4 for Bihor, the south and lăutar music, not as the default for "Romanian".
+- **Geampara and 3-3-2**: see the correction under "Rhythm cells".
+- **"Percussion (essential)"** (docs/JOC_TIGANESC.md): right for Muntenian, Moldavian and Maramureș bands and for today's wedding band; wrong for the Transylvanian string trio, which has no drum [S: EZ-inst; MEZ].
+- **"Joc țigănesc" means different dances in different regions**: a fast 2/4 dance in Muntenia (docs/JOC_TIGANESC.md), but *țigănește* is the **slow csárdás** of the Transylvanian Plain [S: BUZA]; the 1972 Ördöngösfüzes "joc ţigănesc" cited in that doc is a Transylvanian string band. The joc brief is Muntenian; a brief that names Transylvania doesn't reuse its tempo.
+- **Brâu tempo**: "Brâul: fast" above is right; RTM gives 120-160 beats per minute [S: RTM]. In Banat the brâu may be in 7/8 [S: EZ-banatbrau].
+
+### Sources for the granularity section
+- **RTM**: Wikipedia, "Romanian traditional music" (read 2026-11-25), sections "Regional stylistics and dialects" (the dialect table after Bartók and Brăiloiu), "Musical language", "Dance music", "Wedding music", "Folk musical instruments", "Professional tradition", "Contemporary situation": https://en.wikipedia.org/wiki/Romanian_traditional_music . It cites Brăiloiu 1931 (*Esquisse d'une méthode de folklore musical*), Tiberiu Alexandru (1956, 1975/1980), Kahane 2007 and the New Grove "Romania" article.
+- **eliznik** (a long-running ethnographic site on Romanian traditions, citing Giurchescu, Marcu and Bartók; read 2026-11-25), all under https://eliznik.org.uk/traditions-in-romania/ : EZ-inst `traditional-music/taraf-ensembles/typical-instrumentation-by-region/`; EZ-taraf `traditional-music/taraf-ensembles/`; EZ-vio `traditional-music/violins/`; EZ-tam `traditional-music/tambal/`; EZ-brass `traditional-music/brass-and-fanfare/`; EZ-orch `traditional-music/folk-orchestras/`; EZ-acc `traditional-music/acordeon-accordion/`; EZ-plucked `traditional-music/plucked-strings/`; EZ-tar `traditional-music/reed-instruments/taragot/`; EZ-pipes `traditional-music/pipes/`; EZ-aksak `traditional-dance/chain-dances/danubian-asymmetric-rhythm-dances/`; EZ-geampara `.../danubian-asymmetric-rhythm-dances/geampara-dance/`; EZ-cadaneasca `.../danubian-asymmetric-rhythm-dances/cadaneasca-9-16-dance/`; EZ-hora `traditional-dance/chain-dances/hora/`; EZ-sarba `traditional-dance/chain-dances/sarba/`; EZ-brau `traditional-dance/chain-dances/braul/`; EZ-banatbrau `traditional-dance/chain-dances/braul/banat-braul/`; EZ-invart `traditional-dance/couple-dances/invartita-turning-dances/`; EZ-ardel `traditional-dance/couple-dances/ardeleana-couple-dance/`; EZ-banatcol `.../ardeleana-couple-dance/banat-plain-column-dances-duba-lenta-desca-etc/`; EZ-fec `traditional-dance/ceata-mens-group-dances/fecioreste-lads-dances/`; EZ-strig `traditional-dance/strigaturi-and-comanda/`.
+- **MAR**: S. Rădulescu with J. Bouët, notes to *Romania: Festive Music from the Maramureş Region* (recorded 1992; UNESCO Collection of Traditional Music, Smithsonian Folkways UNES 08310, 2013, with "2012: Twenty Years Later"): https://folkways-media.si.edu/docs/folkways/artwork/UNES08310.pdf
+- **ZONG**: Wikipedia, "Zongora": https://en.wikipedia.org/wiki/Zongora
+- **MEZ**: Y. Kotansky, "Mezőségi táncok" (Folk Dance Federation of California, South): https://socalfolkdance.org/articles/mezosegi_tancok_kotansky.htm
+- **BUZA**: notes to *Buza: Original Village Music from the Transylvanian Plain* (Fonó, New Patria series, 2011): https://fono.hu/en/webshop/termek/buza-eszak-mezosegi-nepzene/
+- **MUZP**: Wikipedia, "Muzică populară": https://en.wikipedia.org/wiki/Muzic%C4%83_popular%C4%83
+- **MANW**: Wikipedia, "Manele": https://en.wikipedia.org/wiki/Manele ; **ROMM**: RomArchive, "Manele": https://www.romarchive.eu/en/music/balkan/manele/ ; **ROMM-Salam**: RomArchive, "Florin Salam: manele vocal performance": https://www.romarchive.eu/en/music/balkan/florin-salam-manele-vocal-performance/ ; **KAP**: Kaput, "EM Guide: reflections on the past and the present of manele music in Romania": https://kaput-mag.com/stories_en/em-guide_reflections-on-the-past-and-the-present-of-manele-music-in-romania/
+- **RFE**: S. Horșia, "Ce ascultă românii", Europa Liberă România, 31 December 2023 (INSCOP survey for News.ro, November 2023, 1,100 respondents; Spotify 2023; quotes from A. Șchiop and V. S. Cosma): https://romania.europalibera.org/a/ce-asculta-romanii-muciza-populara-manele/32725540.html
+- **FCW**: Wikipedia, "Fanfare Ciocărlia": https://en.wikipedia.org/wiki/Fanfare_Cioc%C4%83rlia ; **SL31**: Songlines, review of *Peasant Brass Bands from Moldavia* (Ethnophonie, Collection of Traditional Musics 31): https://songlines.co.uk/review/collection-of-traditional-musics-31-peasant-brass-bands-from-moldavia
+- **SUB**: Wikipedia, "Subcarpați" (its discography lists *Valea Voltului*, 2023, and a 2026 album not otherwise verified here): https://en.wikipedia.org/wiki/Subcarpa%C8%9Bi ; **ZSZ**: Wikipedia, "Zdob și Zdub": https://en.wikipedia.org/wiki/Zdob_%C8%99i_Zdub ; **RI**: Romania Insider on "Trenulețul": https://www.romania-insider.com/life/romanian-song-zdob-zdub-advahov-brothers-trenuletul-eurovision-2022
+- **BI**: Balkan Insight, "Balkan Taksim: Romanian duo defending folk sounds against right-wing hijackers", 23 April 2025: https://balkaninsight.com/2025/04/23/balkan-taksim-romanian-duo-defending-folk-sounds-against-right-wing-hijackers/bi/
+- **BEI**, **STO**: Beissinger 2007 and Stoichiță 2024, as listed in docs/JOC_TIGANESC.md.
+- Cited by the sources above but not read here (their claims enter only through those sources): Bartók, *Rumanian Folk Music* (1967-75) and *Volksmusik der Rumänen von Maramureş* (1923); Garfias, "Survivals of Turkish characteristics in Romanian musica lautareasca", Yearbook for Traditional Music 13 (1981); Miller, *Instrumental Music in Maramureș, Romania: the Zongora and Violin* (1986); Beissinger, Rădulescu & Giurchescu (eds), *Manele in Romania* (2016).
+
 ## Anthem: "Deșteaptă-te, române!" (researched 2026-11-24 for Session 011)
 Romania's national anthem. What a producer needs to quote it with respect: where the melody comes from, what the law says, what it means to people, and what is known about the music. Not legal advice.
 
