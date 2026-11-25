@@ -70,7 +70,8 @@ Create a Vercel project from the GitHub repo with:
 
 - **Root Directory:** `site`
 - **Include files outside the root directory in the Build Step:** enabled (it is by default). Only needed without a bucket: the prebuild then reads the masters from `../sessions/`.
-- Framework preset Next.js, default build command (`npm run build`) and output. No `vercel.json`.
+- Framework preset Next.js, default build command (`npm run build`) and output.
+- **Ignored Build Step:** [`vercel.json`](vercel.json) sets `ignoreCommand` to [`scripts/ignore-build.sh`](scripts/ignore-build.sh), so a push to `main` deploys only when something the site uses changed since the last deployed commit (`VERCEL_GIT_PREVIOUS_SHA`): anything under `site/`, or a session master `../sessions/*/*-mastered.mp3` (the prebuild's fallback). Engine, docs, tools and journal commits are skipped. It builds whenever it can't tell (first deploy, previous commit not fetchable). To force a deploy, use Redeploy in Vercel. A command set in the dashboard under Project → Settings → Git → Ignored Build Step is overridden by `vercel.json`.
 - **Environment variables:** the five `SPECTRE_S3_*` variables above with the read-only key, for Production and Preview (and `SPECTRE_SIGNED_URL_TTL` if the default doesn't suit). Without them the site serves the local copies (see "Audio").
 - Domain: add `spectre.robertontiu.com` and point a `CNAME` for `spectre` at `cname.vercel-dns.com`. Absolute URLs in the metadata, sitemap, share links and OG cards use `https://spectre.robertontiu.com` (`src/lib/site.ts`).
 
