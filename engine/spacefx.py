@@ -36,8 +36,9 @@ except Exception:  # pragma: no cover
 DEFAULTS = {
     "shimmer": dict(decay=6.0, size=0.6, damping=0.45, amount=0.5, shift=12.0, shift2=19.0, mix2=0.0, grain_ms=90.0,
                     mod=0.4, mod_rate=0.35, low_cut=350.0, width=1.0, mix=0.35),
-    "granular": dict(grain_ms=90.0, density=30.0, position_ms=150.0, scan=1.0, spray_ms=40.0, pitch=0.0,
-                     pitch_spread=0.0, pan_spread=0.8, reverse=0.0, jitter=0.6, smooth=2.0, smooth_ms=40.0, blur_ms=200.0, mix=0.5),
+    "granular": dict(grain_ms=300.0, density=80.0, position_ms=150.0, scan=1.0, spray_ms=800.0, pitch=0.0,
+                     pitch_spread=0.0, pan_spread=0.8, reverse=0.0, jitter=0.6, smooth=2.0, smooth_ms=40.0,
+                     blur_ms=1000.0, tone_hz=7000.0, dissolve=0.0, mix=0.5),
     "suppress": dict(depth=6.0, threshold=2.0, sharpness=0.5, ratio=3.0, lo=300.0, hi=16000.0, attack_ms=5.0,
                      release_ms=80.0, mix=1.0),
 }
@@ -310,6 +311,40 @@ def _blur(y, ms):
     return out
 
 
+def _dissolve(y, scan, dis, starts=()):
+    """A freeze that dissolves like a tail: wherever the read head stands still (scan under 0.02), the cloud falls 60 dB
+    and its low-pass closes from 16 kHz by 4 octaves over `dis` seconds from the moment the freeze began; it stays
+    dissolved after the freeze until the next section start (so it does not come back in the song's tail)."""
+    n = y.shape[1]
+    frozen = scan < 0.02
+    if not frozen.any():
+        return y
+    tau = np.full(n, -1.0)
+    edges = np.flatnonzero(np.diff(np.concatenate([[0], frozen.astype(np.int8), [0]])))
+    later = sorted(int(v) for v in starts)
+    for a, b in zip(edges[::2], edges[1::2]):
+        nxt = next((v for v in later if v >= b), n)
+        tau[a:nxt] = np.arange(nxt - a) / SR
+    fz = tau >= 0
+    g = np.ones(n)
+    g[fz] = 10 ** (-3 * tau[fz] / dis)
+    out = y * g
+    B = 1024
+    zi = np.zeros((2, 2))
+    for s0 in range(0, n, B):
+        s1 = min(n, s0 + B)
+        if not fz[s0:s1].any():
+            zi[:] = 0
+            continue
+        t0 = max(tau[s0:s1].max(), 0.0)
+        fc = float(np.clip(16000 * 2 ** (-4 * t0 / dis), 150, SR * 0.45))
+        b_, a_ = signal.butter(2, fc, fs=SR)
+        for c in range(2):
+            out[c, s0:s1], zi[c] = signal.lfilter(b_, a_, out[c, s0:s1], zi=zi[c] if zi[c].any() else
+                                                  signal.lfilter_zi(b_, a_) * out[c, s0])
+    return out
+
+
 def _sections_heads(n, sections, scan, position_s, anchor):
     """The read head (samples, float) for every output sample: at each section start (anchor "section") it sits
     `position_s` behind the playhead, then moves at `scan` x real time (1 follows, 0.25 stretches 4x, 0 freezes)."""
@@ -327,16 +362,18 @@ def _sections_heads(n, sections, scan, position_s, anchor):
 
 
 def granular(x, cfg, curves=None, seed=1, owner="granular", sections=None):
-    """x: (2, n) input. cfg: grain_ms (90), density (grains per second, 30), position_ms (150: how far behind the
+    """x: (2, n) input. cfg: grain_ms (300), density (grains per second, 80), position_ms (150: how far behind the
     playhead the read head starts), scan (1.0: the read head's speed against real time; 0 = freeze, 0.25 = stretched
-    4x), spray_ms (40: random extra distance back per grain), pitch (semitones, 0), pitch_spread (semitones, 0: each
+    4x), spray_ms (800: random extra distance back per grain; wide reads make a pad, not a slowed melody), pitch (semitones, 0), pitch_spread (semitones, 0: each
     grain detuned at random within +-), intervals (a list of semitones, e.g. [0, 12, 7]: each grain picks one),
     window (hann, triangle, tukey, gauss), window_shape (tukey: the fraction that fades, 0.5; gauss: sigma, 0.18),
     pan_spread 0-1 (0.8), reverse 0-1 (0: the share of grains played backwards), jitter 0-1 (0.6: how irregular the
     grain onsets are), anchor ("section": the read head returns to the playhead at every section start; "none":
     it never does), smooth (0-3, 2: the input's attacks flattened before the grains read it, over smooth_ms 40, so
-    a grain that starts on an attack does not replay it as a stray note), blur_ms (200: the cloud's spectrum averaged
-    over this time, phases kept; 0 for audible single grains), seed. curves: per-sample arrays for density, grain_ms, scan, position_ms, spray_ms, pitch,
+    a grain that starts on an attack does not replay it as a stray note), blur_ms (1000: the cloud's spectrum averaged
+    over this time, phases kept; 0 for audible single grains), tone_hz (7000: a 12 dB/oct low-pass on the cloud; 0 =
+    off), dissolve (s, 0 = hold: where scan is 0 the cloud falls 60 dB and darkens over this time, and stays gone until
+    the next section), seed. Slow-motion settings: spray_ms 40, grain_ms 90, density 30, smooth 0, blur_ms 0. curves: per-sample arrays for density, grain_ms, scan, position_ms, spray_ms, pitch,
     pitch_spread. Returns the cloud (2, n) float32, level-matched to its input (RMS over the active part)."""
     curves = curves or {}
     n = x.shape[1]
@@ -347,11 +384,11 @@ def granular(x, cfg, curves=None, seed=1, owner="granular", sections=None):
                    float(cfg.get("smooth_ms", DEFAULTS["granular"]["smooth_ms"])))
     rng = np.random.default_rng([int(seed) & 0xFFFFFFFF, zlib.crc32(owner.encode("utf-8")), 7,
                                  int(cfg.get("seed", 0))])
-    dens = np.clip(_curve(curves.get("density", cfg.get("density")), n, 30.0), 0.5, 400.0)
-    gms = np.clip(_curve(curves.get("grain_ms", cfg.get("grain_ms")), n, 90.0), 5.0, 2000.0)
+    dens = np.clip(_curve(curves.get("density", cfg.get("density")), n, DEFAULTS["granular"]["density"]), 0.5, 400.0)
+    gms = np.clip(_curve(curves.get("grain_ms", cfg.get("grain_ms")), n, DEFAULTS["granular"]["grain_ms"]), 5.0, 2000.0)
     scan = _curve(curves.get("scan", cfg.get("scan")), n, 1.0)
-    pos_ms = _curve(curves.get("position_ms", cfg.get("position_ms")), n, 150.0)
-    spray = np.maximum(_curve(curves.get("spray_ms", cfg.get("spray_ms")), n, 40.0), 0.0)
+    pos_ms = _curve(curves.get("position_ms", cfg.get("position_ms")), n, DEFAULTS["granular"]["position_ms"])
+    spray = np.maximum(_curve(curves.get("spray_ms", cfg.get("spray_ms")), n, DEFAULTS["granular"]["spray_ms"]), 0.0)
     pitch = _curve(curves.get("pitch", cfg.get("pitch")), n, 0.0)
     pspread = np.maximum(_curve(curves.get("pitch_spread", cfg.get("pitch_spread")), n, 0.0), 0.0)
     head = _sections_heads(n, sections, scan, float(pos_ms[0]) / 1000, cfg.get("anchor", "section"))
@@ -397,11 +434,17 @@ def granular(x, cfg, curves=None, seed=1, owner="granular", sections=None):
     bl = float(cfg.get("blur_ms", DEFAULTS["granular"]["blur_ms"]))
     if bl > 0:
         y = _blur(y, bl)
+    tone = float(cfg.get("tone_hz", DEFAULTS["granular"]["tone_hz"]))
+    if tone > 0:  # the cloud's damping: a 12 dB/oct low-pass, so the held top does not turn shrill
+        y = signal.sosfilt(signal.butter(2, min(tone, SR * 0.45), fs=SR, output="sos"), y, axis=-1)
     act = np.abs(src) > np.abs(src).max() * 1e-3
     r_in = np.sqrt(np.mean(x[:, act].astype(np.float64) ** 2)) if act.any() else 0.0
     r_out = np.sqrt(np.mean(y[:, act] ** 2)) if act.any() else 0.0
     if r_out > 0 and r_in > 0:
         y *= r_in / r_out
+    dis = float(cfg.get("dissolve", DEFAULTS["granular"]["dissolve"]))
+    if dis > 0:
+        y = _dissolve(y, scan, dis, [S["start"] * SR for S in (sections or [])])
     return y.astype(np.float32)
 
 

@@ -60,13 +60,13 @@ def case_granular():
     pats = {"p": {"bars": 2, "pluck": ARP}}
     arr = [{"name": "play", "bars": 4, "play": ["p"]}, {"name": "hold", "bars": 4, "play": []}]
     A = proj(tr, pats, arr, {"space": HALL})
-    cloud = {"type": "granular", "grain_ms": 160, "density": 40, "position_ms": 250, "spray_ms": 120,
-             "pitch_spread": 0.08, "intervals": [0, 0, 12], "scan": 0.5, "return_db": -9}
+    cloud = {"type": "granular", "pitch_spread": 0.08, "intervals": [0, 0, 12], "scan": 0.5, "dissolve": 6,
+             "return_db": -9}
     arrB = copy.deepcopy(arr)
-    arrB[1]["auto"] = {"return:space": {"scan": 0, "density": [40, 90]}}
+    arrB[1]["auto"] = {"return:space": {"scan": 0}}
     B = proj(tr, pats, arrB, {"space": cloud})
-    return A, B, ("A: the pluck into a long hall; B: the same send into a granular return: stretched to half speed "
-                  "while the pluck plays, then frozen (scan 0) on its last moment for 4 bars, density 40 to 90")
+    return A, B, ("A: the pluck into a long hall; B: the same send into a granular return (its pad defaults): "
+                  "stretched to half speed while the pluck plays, then frozen (scan 0) and dissolving over 6 s")
 
 
 ACID_NOTES = ("0:A1:2 2:A2:1! 3:A1:1 4:C2:2~ 6:A1:1 7:E2:1! 8:A1:2 10:G2:2~ 12:A1:1 13:A2:1! 14:A1:2 16:A1:2 "
@@ -201,6 +201,33 @@ def measure(name, a, b):
     return m
 
 
+def chroma_events(x, a, b, thr=0.15):
+    """Harmonic events of a mono signal over [a, b) s: 12-bin chroma (4096-point STFT, 11.6 ms hop) averaged over
+    100 ms; novelty = 1 - cosine between the chroma now and 150 ms before; events = novelty peaks over 0.15, at least
+    116 ms apart. Returns [events per second, 95th percentile of the novelty]: a melody (new notes) scores high, a
+    held pad near 0."""
+    import librosa
+    from scipy.ndimage import uniform_filter1d
+    from scipy.signal import find_peaks
+    seg = np.asarray(x[int(a * SR):int(b * SR)], dtype=np.float32)
+    C = uniform_filter1d(librosa.feature.chroma_stft(y=seg, sr=SR, n_fft=4096, hop_length=512), 9, axis=1)
+    A_, B_ = C[:, 13:], C[:, :-13]
+    nv = 1 - (A_ * B_).sum(0) / (np.linalg.norm(A_, axis=0) * np.linalg.norm(B_, axis=0) + 1e-9)
+    pk, _ = find_peaks(nv, height=thr, distance=10)
+    return [round(len(pk) / (b - a), 2), round(float(np.percentile(nv, 95)), 3)]
+
+
+def timbre(x, a, b):
+    """Spectral centroid (Hz), the strongest peak (Hz) and its share of the energy (+-1 semitone), share above 2 kHz."""
+    seg = np.asarray(x[int(a * SR):int(b * SR)], dtype=np.float64)
+    X = np.abs(np.fft.rfft(seg)) ** 2
+    f = np.fft.rfftfreq(len(seg), 1 / SR)
+    k = int(np.argmax(X * (f > 80)))
+    m = (f > f[k] * 2 ** (-1 / 12)) & (f < f[k] * 2 ** (1 / 12))
+    return {"centroid": int((f * X).sum() / X.sum()), "peak_hz": int(f[k]), "peak_share": round(float(X[m].sum() / X.sum()), 2),
+            "above_2k": round(float(X[f > 2000].sum() / X.sum()), 2)}
+
+
 def bumps(x, a, b):
     """Level bumps of a mono signal over [a, b) s: 10 ms RMS frames against their 200 ms running median (dB); returns
     [frames more than 3 dB over it, the largest excess]: what is heard as single grains or stray notes in a cloud."""
@@ -255,15 +282,28 @@ def main():
             x[:, -fo:] *= np.linspace(1, 0, fo)
             outs.append(x)
         a, b = outs
-        if name == "granular":  # the cloud alone: level bumps (stray "notes") with and without smooth / blur
+        if name == "granular":  # the cloud alone, as first built and now: stray notes, harmonic events, freeze timbre
             extra_g = {}
-            for lab, over in (("before (smooth 0, blur_ms 0)", {"smooth": 0, "blur_ms": 0}), ("B (defaults)", {})):
+            before = {"grain_ms": 160, "density": 40, "spray_ms": 120, "position_ms": 250, "smooth": 2,
+                      "blur_ms": 200, "tone_hz": 0, "dissolve": 0}
+            for lab, over in (("as heard in the second demo (grain 160 ms, density 40, spray 120 ms, blur 200 ms, no "
+                               "tone or dissolve)", before), ("now (defaults, dissolve 6 s)", {})):
                 Pq = copy.deepcopy(B)
                 Pq["mix"]["returns"]["space"].update(over)
                 st = {}
                 ST.render(Pq, stem_hook=lambda nm, x: st.__setitem__(nm, x.mean(0).copy()))
-                extra_g[f"cloud alone, frozen bars 5-8: 10 ms frames over their 200 ms running median, count > 3 dB "
-                        f"and max dB, {lab}"] = bumps(st["(space)"], 4.3 * BAR, 7.8 * BAR)
+                c = st["(space)"]
+                extra_g[f"cloud alone, {lab}"] = {
+                    "stretch bars 1-4, harmonic events per s and p95 chroma novelty": chroma_events(c, 0.7, 4 * BAR),
+                    "freeze bars 5-8, 10 ms level bumps > 3 dB over the 200 ms running median, count and max dB":
+                        bumps(c, 4.3 * BAR, 7.8 * BAR),
+                    "freeze bars 5-6, timbre": timbre(c, 4.5 * BAR, 6 * BAR),
+                    "freeze level every 1 s from its start, dB": [round(rms_db(c[int((4 * BAR + k) * SR):int((4 * BAR + k + 1) * SR)])
+                                                                  - rms_db(c[int(4 * BAR * SR):int((4 * BAR + 1) * SR)]), 1)
+                                                            for k in range(6)]}
+            dry = st["pluck"]
+            extra_g["dry pluck, bars 1-4: harmonic events per s and p95 chroma novelty"] = chroma_events(dry, 0.2, 4 * BAR)
+            extra_g["dry pluck timbre"] = timbre(dry, 0, 4 * BAR)
         else:
             extra_g = {}
         if name == "automation":  # the values each chord of B was rendered with (read back from the engine)

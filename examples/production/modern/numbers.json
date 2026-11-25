@@ -7,19 +7,69 @@
   "B tail: 4-16 kHz vs 1-4 kHz, dB": -5.8
  },
  "granular": {
-  "what": "A: the pluck into a long hall; B: the same send into a granular return: stretched to half speed while the pluck plays, then frozen (scan 0) on its last moment for 4 bars, density 40 to 90",
+  "what": "A: the pluck into a long hall; B: the same send into a granular return (its pad defaults): stretched to half speed while the pluck plays, then frozen (scan 0) and dissolving over 6 s",
   "A tail (bars 6-8) vs playing (bars 1-4), dB": -33.7,
   "A tail: 4-16 kHz vs 1-4 kHz, dB": -16.0,
-  "B tail (bars 6-8) vs playing (bars 1-4), dB": 0.6,
-  "B tail: 4-16 kHz vs 1-4 kHz, dB": -8.4,
-  "cloud alone, frozen bars 5-8: 10 ms frames over their 200 ms running median, count > 3 dB and max dB, before (smooth 0, blur_ms 0)": [
-   126,
-   10.2
+  "B tail (bars 6-8) vs playing (bars 1-4), dB": -29.5,
+  "B tail: 4-16 kHz vs 1-4 kHz, dB": -10.6,
+  "cloud alone, as heard in the second demo (grain 160 ms, density 40, spray 120 ms, blur 200 ms, no tone or dissolve)": {
+   "stretch bars 1-4, harmonic events per s and p95 chroma novelty": [
+    2.4,
+    0.631
+   ],
+   "freeze bars 5-8, 10 ms level bumps > 3 dB over the 200 ms running median, count and max dB": [
+    1,
+    3.3
+   ],
+   "freeze bars 5-6, timbre": {
+    "centroid": 1702,
+    "peak_hz": 1315,
+    "peak_share": 0.49,
+    "above_2k": 0.23
+   },
+   "freeze level every 1 s from its start, dB": [
+    0.0,
+    -1.2,
+    -0.4,
+    -0.2,
+    -2.1,
+    -1.4
+   ]
+  },
+  "cloud alone, now (defaults, dissolve 6 s)": {
+   "stretch bars 1-4, harmonic events per s and p95 chroma novelty": [
+    0.16,
+    0.07
+   ],
+   "freeze bars 5-8, 10 ms level bumps > 3 dB over the 200 ms running median, count and max dB": [
+    0,
+    2.4
+   ],
+   "freeze bars 5-6, timbre": {
+    "centroid": 1116,
+    "peak_hz": 440,
+    "peak_share": 0.19,
+    "above_2k": 0.11
+   },
+   "freeze level every 1 s from its start, dB": [
+    0.0,
+    -9.3,
+    -20.5,
+    -30.7,
+    -41.2,
+    -51.9
+   ]
+  },
+  "dry pluck, bars 1-4: harmonic events per s and p95 chroma novelty": [
+   4.44,
+   0.945
   ],
-  "cloud alone, frozen bars 5-8: 10 ms frames over their 200 ms running median, count > 3 dB and max dB, B (defaults)": [
-   0,
-   3.0
-  ]
+  "dry pluck timbre": {
+   "centroid": 1082,
+   "peak_hz": 657,
+   "peak_share": 0.2,
+   "above_2k": 0.13
+  }
  },
  "acid": {
   "what": "A: the old approximation (polysynth saw, resonant filter with an envelope, drive): no accent coupling, no slide; B: `acid` (accents `!`, slides `~`), cutoff 180 to 700 Hz and decay 0.25 to 0.7 s automated over the 8 bars"
