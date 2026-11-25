@@ -201,6 +201,17 @@ def measure(name, a, b):
     return m
 
 
+def bumps(x, a, b):
+    """Level bumps of a mono signal over [a, b) s: 10 ms RMS frames against their 200 ms running median (dB); returns
+    [frames more than 3 dB over it, the largest excess]: what is heard as single grains or stray notes in a cloud."""
+    from scipy.ndimage import median_filter
+    seg = np.asarray(x[int(a * SR):int(b * SR)], dtype=np.float64)
+    k = int(0.01 * SR)
+    e = 20 * np.log10(np.sqrt((seg[:len(seg) // k * k].reshape(-1, k) ** 2).mean(1)) + 1e-12)
+    d = e - median_filter(e, 21)
+    return [int(np.sum(d > 3)), round(float(d.max()), 1)]
+
+
 def mp3(x, path):
     with tempfile.TemporaryDirectory() as td:
         import soundfile as sf
@@ -244,6 +255,17 @@ def main():
             x[:, -fo:] *= np.linspace(1, 0, fo)
             outs.append(x)
         a, b = outs
+        if name == "granular":  # the cloud alone: level bumps (stray "notes") with and without smooth / blur
+            extra_g = {}
+            for lab, over in (("before (smooth 0, blur_ms 0)", {"smooth": 0, "blur_ms": 0}), ("B (defaults)", {})):
+                Pq = copy.deepcopy(B)
+                Pq["mix"]["returns"]["space"].update(over)
+                st = {}
+                ST.render(Pq, stem_hook=lambda nm, x: st.__setitem__(nm, x.mean(0).copy()))
+                extra_g[f"cloud alone, frozen bars 5-8: 10 ms frames over their 200 ms running median, count > 3 dB "
+                        f"and max dB, {lab}"] = bumps(st["(space)"], 4.3 * BAR, 7.8 * BAR)
+        else:
+            extra_g = {}
         if name == "automation":  # the values each chord of B was rendered with (read back from the engine)
             ev = []
             for t in sorted(e["t"] for e in meta["events"]["pad"]):
@@ -260,7 +282,7 @@ def main():
         mp3(a, os.path.join(HERE, f"{name}-A.mp3"))
         mp3(b, os.path.join(HERE, f"{name}-B.mp3"))
         picture(name, a, b, os.path.join(HERE, f"{name}.png"), desc)
-        numbers[name] = dict(what=desc, **measure(name, a, b), **extra)
+        numbers[name] = dict(what=desc, **measure(name, a, b), **extra, **extra_g)
         print(name, json.dumps(numbers[name], indent=1))
     json.dump(numbers, open(npath, "w"), indent=1)
 

@@ -37,7 +37,7 @@ DEFAULTS = {
     "shimmer": dict(decay=6.0, size=0.6, damping=0.45, amount=0.5, shift=12.0, shift2=19.0, mix2=0.0, grain_ms=90.0,
                     mod=0.4, mod_rate=0.35, low_cut=350.0, width=1.0, mix=0.35),
     "granular": dict(grain_ms=90.0, density=30.0, position_ms=150.0, scan=1.0, spray_ms=40.0, pitch=0.0,
-                     pitch_spread=0.0, pan_spread=0.8, reverse=0.0, jitter=0.6, mix=0.5),
+                     pitch_spread=0.0, pan_spread=0.8, reverse=0.0, jitter=0.6, smooth=2.0, smooth_ms=40.0, blur_ms=200.0, mix=0.5),
     "suppress": dict(depth=6.0, threshold=2.0, sharpness=0.5, ratio=3.0, lo=300.0, hi=16000.0, attack_ms=5.0,
                      release_ms=80.0, mix=1.0),
 }
@@ -262,6 +262,54 @@ def _grains_kernel(src, out_l, out_r, starts, lens, pos, rates, gl, gr, rev, wty
 _WINDOWS = {"hann": 0, "triangle": 1, "tukey": 2, "gauss": 3}
 
 
+@njit(cache=True)
+def _env_follow(x, att, rel):
+    y = np.empty_like(x)
+    cur = 0.0
+    for i in range(len(x)):
+        v = x[i]
+        a = att if v > cur else rel
+        cur = v + (cur - v) * a
+        y[i] = cur
+    return y
+
+
+def deattack(src, amount, attack_ms=40.0):
+    """The source with its attacks flattened (a transient shaper turned all the way down): a fast and a slow envelope
+    of |src| (attack 0.5 ms and `attack_ms`, both releasing over 30 ms); where the fast one runs ahead of the slow one,
+    a note is starting, and the source is turned down by (slow / fast) ** amount, so a note's first tens of ms come out
+    at the level of what follows them. Grains read from this, so a grain that starts on a pluck's attack does not
+    replay it as a new note."""
+    if amount <= 0:
+        return src
+    a = np.abs(src)
+    rel = np.exp(-1 / (0.030 * SR))
+    fast = _env_follow(a, np.exp(-1 / (0.0005 * SR)), rel)
+    slow = _env_follow(a, np.exp(-1 / (attack_ms / 1000 * SR)), rel)
+    g = np.minimum(1.0, (slow + 1e-9) / (fast + 1e-9)) ** amount
+    g = _env_follow(g[::-1].copy(), np.exp(-1 / (0.002 * SR)), np.exp(-1 / (0.002 * SR)))[::-1]  # no clicks
+    return src * g
+
+
+def _blur(y, ms):
+    """Smooth the cloud's spectrum over time: every STFT bin's magnitude is replaced by its average over `ms` (phases
+    kept), so what is left of single grains (a level bump, a brighter moment) melts into the texture."""
+    from scipy.ndimage import uniform_filter1d
+    nfft, hop = 2048, 512
+    n = y.shape[1]
+    w = np.sqrt(np.hanning(nfft + 1)[:-1])
+    _, _, Z = signal.stft(y, fs=SR, window=w, nperseg=nfft, noverlap=nfft - hop, boundary="even", padded=True)
+    M = np.abs(Z)
+    k = max(1, int(round(ms / 1000 * SR / hop)))
+    Ms = uniform_filter1d(M, k, axis=-1, mode="nearest")
+    g = np.clip(Ms / (M + 1e-9), 0.0, 4.0)
+    _, out = signal.istft(Z * g, fs=SR, window=w, nperseg=nfft, noverlap=nfft - hop, boundary=True)
+    out = out[:, :n]
+    if out.shape[1] < n:
+        out = np.pad(out, ((0, 0), (0, n - out.shape[1])))
+    return out
+
+
 def _sections_heads(n, sections, scan, position_s, anchor):
     """The read head (samples, float) for every output sample: at each section start (anchor "section") it sits
     `position_s` behind the playhead, then moves at `scan` x real time (1 follows, 0.25 stretches 4x, 0 freezes)."""
@@ -286,13 +334,17 @@ def granular(x, cfg, curves=None, seed=1, owner="granular", sections=None):
     window (hann, triangle, tukey, gauss), window_shape (tukey: the fraction that fades, 0.5; gauss: sigma, 0.18),
     pan_spread 0-1 (0.8), reverse 0-1 (0: the share of grains played backwards), jitter 0-1 (0.6: how irregular the
     grain onsets are), anchor ("section": the read head returns to the playhead at every section start; "none":
-    it never does), seed. curves: per-sample arrays for density, grain_ms, scan, position_ms, spray_ms, pitch,
+    it never does), smooth (0-3, 2: the input's attacks flattened before the grains read it, over smooth_ms 40, so
+    a grain that starts on an attack does not replay it as a stray note), blur_ms (200: the cloud's spectrum averaged
+    over this time, phases kept; 0 for audible single grains), seed. curves: per-sample arrays for density, grain_ms, scan, position_ms, spray_ms, pitch,
     pitch_spread. Returns the cloud (2, n) float32, level-matched to its input (RMS over the active part)."""
     curves = curves or {}
     n = x.shape[1]
     src = np.ascontiguousarray(x.mean(0), dtype=np.float64)
     if not np.any(src):
         return np.zeros((2, n), dtype=np.float32)
+    src = deattack(src, float(cfg.get("smooth", DEFAULTS["granular"]["smooth"])),
+                   float(cfg.get("smooth_ms", DEFAULTS["granular"]["smooth_ms"])))
     rng = np.random.default_rng([int(seed) & 0xFFFFFFFF, zlib.crc32(owner.encode("utf-8")), 7,
                                  int(cfg.get("seed", 0))])
     dens = np.clip(_curve(curves.get("density", cfg.get("density")), n, 30.0), 0.5, 400.0)
@@ -342,6 +394,9 @@ def granular(x, cfg, curves=None, seed=1, owner="granular", sections=None):
     _grains_kernel(src, out_l, out_r, onsets[ok], lens[ok], pos[ok], rates[ok], gl[ok], gr[ok], rev[ok],
                    _WINDOWS[win], wpar)
     y = np.stack([out_l, out_r])
+    bl = float(cfg.get("blur_ms", DEFAULTS["granular"]["blur_ms"]))
+    if bl > 0:
+        y = _blur(y, bl)
     act = np.abs(src) > np.abs(src).max() * 1e-3
     r_in = np.sqrt(np.mean(x[:, act].astype(np.float64) ** 2)) if act.any() else 0.0
     r_out = np.sqrt(np.mean(y[:, act] ** 2)) if act.any() else 0.0

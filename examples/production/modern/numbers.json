@@ -10,8 +10,16 @@
   "what": "A: the pluck into a long hall; B: the same send into a granular return: stretched to half speed while the pluck plays, then frozen (scan 0) on its last moment for 4 bars, density 40 to 90",
   "A tail (bars 6-8) vs playing (bars 1-4), dB": -33.7,
   "A tail: 4-16 kHz vs 1-4 kHz, dB": -16.0,
-  "B tail (bars 6-8) vs playing (bars 1-4), dB": 0.5,
-  "B tail: 4-16 kHz vs 1-4 kHz, dB": -6.7
+  "B tail (bars 6-8) vs playing (bars 1-4), dB": 0.6,
+  "B tail: 4-16 kHz vs 1-4 kHz, dB": -8.4,
+  "cloud alone, frozen bars 5-8: 10 ms frames over their 200 ms running median, count > 3 dB and max dB, before (smooth 0, blur_ms 0)": [
+   126,
+   10.2
+  ],
+  "cloud alone, frozen bars 5-8: 10 ms frames over their 200 ms running median, count > 3 dB and max dB, B (defaults)": [
+   0,
+   3.0
+  ]
  },
  "acid": {
   "what": "A: the old approximation (polysynth saw, resonant filter with an envelope, drive): no accent coupling, no slide; B: `acid` (accents `!`, slides `~`), cutoff 180 to 700 Hz and decay 0.25 to 0.7 s automated over the 8 bars"
