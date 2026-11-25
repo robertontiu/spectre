@@ -71,8 +71,8 @@ data/
 sessions/
   NNN-name/       one folder per session: project.json, journal.md, mastered mp3, ear and master images,
                   README.md with the result. A local working area: published sessions live in the S3 bucket
-                  under their track's uuid (docs/agents/track-storage.md); the folders still in git leave it after
-                  the migration
+                  under their track's uuid (docs/agents/track-storage.md); out of git since 2026-11-25
+                  (.gitignore); `upload_track.py --fetch <id>` restores one
 examples/
   anthem/         the verified melody of Romania's anthem: a piano check render, the CC BY-SA score it was read
                   from, the check scripts (transcription in docs/ROMANIAN.md, "Verified melody")

@@ -1,3 +1,5 @@
+# session folders are a local working area; published sessions live in the bucket (docs/agents/track-storage.md)
+/sessions/
 renders/
 *.wav
 ear.png

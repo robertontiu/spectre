@@ -16,7 +16,7 @@ Every published track's files live in an S3-compatible bucket configured through
 | `<uuid>/ear-overview.png` | `ear-overview.png` |
 | `<uuid>/tools/<path>` | every other published file (build and helper scripts), its path in the folder kept |
 
-**What is published, and nothing else:** the files git tracks in the session folder (the sessions from before the move), plus the named files above and helper scripts (`*.py`, `*.sh`) anywhere in the folder. Never `renders/`, WAVs, `__pycache__`, listen dumps, trial masters, A/B excerpts or other scratch: they stay local and are cleaned up (ORCHESTRATION.md, standing rule 12). A session must have exactly one `*-mastered.mp3`, `journal.md`, `README.md` and `project.json`. The tool takes tracks by id, slug or uuid from `tracks.json`, never by file path, and refuses anything else.
+**What is published, and nothing else:** the named files above and helper scripts (`*.py`, `*.sh`) anywhere in the folder. (Before 2026-11-25 every file git tracked in a session folder was published too; those objects stay in the bucket, and `--check` lists them as objects no longer in the local session, not as problems.) Never `renders/`, WAVs, `__pycache__`, listen dumps, trial masters, A/B excerpts or other scratch: they stay local and are cleaned up (ORCHESTRATION.md, standing rule 12). A session must have exactly one `*-mastered.mp3`, `journal.md`, `README.md` and `project.json`. The tool takes tracks by id, slug or uuid from `tracks.json`, never by file path, and refuses anything else.
 
 ## Workflow
 
