@@ -148,6 +148,8 @@ class Hand:
 
     def humanize(self, t, tr):
         t += tr.get("push_ms", 0) / 1000.0
+        if isinstance(tr.get("humanize"), dict):  # correlated drift instead (engine/mixbus.py, after scheduling)
+            return t
         h = tr.get("humanize_ms", 4) / 1000.0
         if h > 0:
             t += float(np.clip(self.rng.normal(0, h), -2.5 * h, 2.5 * h))
@@ -155,7 +157,9 @@ class Hand:
 
     def vel(self, v, tr, pos16=None):
         j = tr.get("vel_jitter", 0.06)
-        v = v * (1 + self.rng.normal(0, j))
+        h = tr.get("humanize")
+        if not (isinstance(h, dict) and h.get("vel")):  # a correlated velocity drift replaces the jitter
+            v = v * (1 + self.rng.normal(0, j))
         dyn = tr.get("dyn")
         if dyn and pos16 is not None:
             v *= dyn[int(pos16) % len(dyn)]
