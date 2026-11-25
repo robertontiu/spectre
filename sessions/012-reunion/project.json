@@ -425,7 +425,9 @@
      "rate": 5.5,
      "depth": 0.06
     }
-   ]
+   ],
+   "role": "organ",
+   "eq": "none"
   },
   "organ": {
    "inst": {
@@ -486,7 +488,9 @@
      "depth": 0.2,
      "mix": 0.2
     }
-   ]
+   ],
+   "role": "organ",
+   "eq": "none"
   },
   "pedal": {
    "inst": {
@@ -506,14 +510,10 @@
     {
      "type": "lpf",
      "hz": 900
-    },
-    {
-     "type": "eq",
-     "hz": 140,
-     "gain_db": 3,
-     "q": 0.8
     }
-   ]
+   ],
+   "role": "bass",
+   "eq": "none"
   },
   "cello": {
    "inst": {
@@ -538,7 +538,9 @@
      "type": "lpf",
      "hz": 1100
     }
-   ]
+   ],
+   "role": "low-strings",
+   "eq": "none"
   },
   "chorale": {
    "inst": {
@@ -563,7 +565,9 @@
      "hz": 4000,
      "gain_db": 4
     }
-   ]
+   ],
+   "role": "keys",
+   "eq": "none"
   },
   "bell_st": {
    "inst": {
@@ -602,7 +606,9 @@
      "mix": 0.22,
      "damping": 0.7
     }
-   ]
+   ],
+   "role": "bells",
+   "eq": "none"
   },
   "bellL": {
    "inst": {
@@ -630,7 +636,9 @@
      "hz": 13000,
      "gain_db": 8
     }
-   ]
+   ],
+   "role": "bells",
+   "eq": "none"
   },
   "bellR": {
    "inst": {
@@ -658,7 +666,9 @@
      "hz": 13000,
      "gain_db": 8
     }
-   ]
+   ],
+   "role": "bells",
+   "eq": "none"
   }
  },
  "patterns": {
@@ -1274,5 +1284,6 @@
   "sat": 0.0,
   "tape": 0.0,
   "glue": false
- }
+ },
+ "genre": "caroling"
 }

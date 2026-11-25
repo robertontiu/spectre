@@ -42,3 +42,7 @@ The centre of gravity is early and quiet: the meeting falls at about a fifth of 
 
 ## Spectre's note
 "I started by arranging somebody else's carol and it sounded like a rehearsal. The note from the artist was right, and the piece only became mine when I threw the carol out and kept one line of it. That line already had the reunion inside it: a tune that drops an octave onto a note someone else can hold. So I wrote a door around it. Most of the work after that was taking things away from the moment they meet until it was two voices and one pitch."
+
+## Remix (2026-11-25)
+
+Remix, no compositional change (journal entries 32-34; `remix.py`). The track is now mastered against its own loose curve, `caroling_ref` (five carol albums), with no low-end boosts and still at -14 LUFS, instead of the borrowed rock curve. One mix move: the pedal's +3 dB at 140 Hz removed. The voices and the shared reverb are the approved v031 mix, asserted unchanged; "Peace on the earth, good will to men" transcribes exactly as before. Against the albums' medians: 97-183 Hz from about +10 to +4.5 dB, 2.3-7.7 kHz from about +5.5 to +0.8 dB, mean gap 3.94 → 1.92 dB. Version v034: -14.0 LUFS, -1.09 dBTP, no warnings. The arc is about 1.2 LU flatter, because the lone caller sits higher against the full house. The previous release is v031, kept as `project-published.json`; the tables above describe it. `ear-overview.png` still shows v031.
