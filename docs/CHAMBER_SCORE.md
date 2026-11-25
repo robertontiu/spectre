@@ -104,6 +104,62 @@ Roles in short: the piano holds the harmony and is the narrator; a struck or blo
 
 Built for session 015 on 2026-11-24, each modelled on measured recordings (docs/MANUAL.md "Chamber score instruments"; A/B and spectrograms against the recordings in `examples/chamberscore/`): `celesta`, `glockenspiel`, `vibraphone`, `cello`, `viola`, `strings_section` (with section pizzicato and a swelling long bow), and `bell` `"clean": true`. Still missing: toy piano, ukulele, harp, whistle, woodwinds, brass (no French horn for the swell: the section swell carries it), free reeds, timpani and cymbal rolls, double bass. The producer works with the approximations for those and judges each soloed: the whistle is now the weakest link.
 
+## Layering and EQ carving (researched 2026-11-25)
+The cross-genre method is in [PRODUCTION.md](PRODUCTION.md). Labels: **[M]** measured, **[S]** a named source, **[P]** carried over from a professional trance producer's EQ map (2026) where it applies, **[H]** hand-tuned.
+
+**Here orchestration is the mix.** The trance producer who prompted this research compared trance layering to classical music; the direction of the lesson runs the other way too. An orchestral sound is made of doublings (one line on two timbres in unison or at the octave) and of register spacing, and the mixing sources say plainly that pop habits harm it: carving each instrument its own frequency slot "breaks up the natural blend of sections"; EQ should be "gentle and broad, subtle tonal shaping, not frequency surgery"; fix balance with dynamics and voicing first; keep the dynamic contrast (Thinkspace) [S]. Strings work as three layers, highs (violins), mids (violas), lows (celli and basses), with parts spaced by fifths and octaves "rather than packing them closely" (Thinkspace) [S].
+
+**Layer roles** (doubling as layering):
+| Part | Layers and their jobs | Label |
+|---|---|---|
+| **Theme** | the narrator instrument (piano, or a whimsical lead) plus one doubling colour: glockenspiel or celesta an octave or two above for the attack and the air; a violin or whistle in unison for sustain; pizzicato under a legato line for articulation | [S] "Instruments and roles" above; the pairings [H], standard orchestration practice (Rimsky-Korsakov's *Principles of Orchestration* treats such doublings; not re-read for this brief) |
+| **Harmony** | piano left hand and guitar for the pulse; violas and second violins as the sustained middle; one pad-like source at a time | [S] this brief |
+| **Bass** | celli (pizzicato or bowed) and the piano's bottom octave; no double bass in the engine | [M] "Engine mapping" above |
+| **The swell** | all three string layers at once, the one place where everything doubles | [S] this brief |
+| **Space** | the piano near, the strings behind it in a hall: two depths | [S] "Mixing and recording practice" above |
+
+**EQ map** (the lightest of any genre: broad moves of 1-2 dB, mostly on groups):
+| Instrument | High-pass | Cut / control | Emphasise | Source |
+|---|---|---|---|---|
+| Piano | 20-60 Hz (sub rumble only; its low octave is the bass here) | 200-500 Hz mud, 1-2 dB, when strings sit on it | 60-200 Hz body | iZotope EQ cheat sheet (piano) |
+| Violins | about 200 Hz | harshness in 1-4 kHz, small | air above 10 kHz | Beat Kitchen; iZotope (orchestral strings) |
+| Violas, celli | below 100 Hz (violas higher) | 200-500 Hz build-up: a broad 1-2 dB cut on the string *bus*, not per part | | Beat Kitchen; iZotope |
+| Celesta, glockenspiel, vibraphone, music box | 250-500 Hz [H] | 3-5 kHz if they bite | their fundamentals; 8-12 kHz as a casting decision ("Mixing and recording practice") | [P] air layer; [M] this repo |
+| Acoustic guitar, pizzicato | 70-100 Hz | 200-400 Hz | 1.5-2.5 kHz | iZotope (acoustic guitar) |
+| Whistle, reed, wordless voice | 200-300 Hz [H] | 500 Hz-1.2 kHz nasal | 2-4 kHz | iZotope (vocals), applied |
+| Hall reverb return | 200-300 Hz [H] (lower than in band genres: the hall is part of the low strings) | 300-600 Hz if it clouds | low-pass at 6-10 kHz | [P]; Beat Kitchen (one hall for the ensemble) |
+
+**Glue** [S]: one hall reverb for the whole ensemble, sent pre-fader so the space stays constant; section buses compressed only if a section peaks badly; on the mix bus at most 2:1 with a slow attack and 1-2 dB of reduction; a limiter only to catch peaks (Beat Kitchen).
+
+**Where Spectre stands** [M] (stems of session 015's tutti, rendered in memory, 2026-11-25; 10 sounding stems): seven sources within 10 dB of each other at 150-400 Hz (cello, piano, solo cello, violas, the reverb return, celesta, celli), the densest low-mid of the five tracks analysed, with the celli and the solo cello about half masked; six sources at 2-6 kHz; **only the glockenspiel above 6 kHz**. The fix is orchestration, not EQ: thin the 150-400 Hz doublings (one sustained source there at a time), move one of them up an octave, and let a string line or the room carry some of the air.
+
+## Era assessment of the master target (2026-11-25)
+**What the current target is.** `chamberscore` reuses the `rock` curve (Pestana et al. 2013, pop and rock number-one singles 1950-2010) at `eq` 0.4 and -15 LUFS ("The mastering decision" above: "replace with a curve measured on scores or neo-classical records when one exists").
+
+**Measured** [M] (method, validation and limits in docs/TRANCE.md, section C; AcousticBrainz Bark-band data, medians, dB relative to each track's level at 510 Hz-2 kHz). Two yardsticks: the MusicBrainz tags `soundtrack`, `score`, `film score` (1,852 tracks 1995-2021, mostly large orchestra), and the **30 albums of "Catalogue measurements" below** (502 tracks with data: the animation and indie-film scores and the neo-classical piano records this brief is built on).
+| Band (Hz, as analysed) | tags, 2015-21 | the 30 albums (middle-half width) | `rock` curve | 015 Again, Again |
+|---|---|---|---|---|
+| 32-97 | +8.8 | +4.5 (10.5 dB) | +6.2 | +6.5 |
+| 97-140 | +5.3 | +4.7 | **+9.1** | **+8.7** |
+| 140-183 | +2.7 | +3.9 | **+8.2** | +6.5 |
+| 183-291 | +5.4 | +7.8 | +9.2 | +9.1 |
+| 291-400 | +5.3 | +7.4 | +6.0 | +4.6 |
+| 400-510 | +4.5 | +6.1 | +3.8 | +3.4 |
+| 2320-2700 | -5.4 | -6.5 | -3.0 | -2.7 |
+| 3150-3700 | -7.6 | -9.2 | -4.0 | -6.0 |
+| 4400-5300 | -12.4 | -13.6 (9 dB) | **-6.0** | **-7.9** |
+| 6400-7700 | -16.7 | -18.8 (11 dB) | **-8.6** | **-12.2** |
+| 7700-9500 | -18.7 | -20.9 (12 dB) | -9.8 | -18.0 |
+| 9500-12000 | -21.4 | -22.8 (13 dB) | -12.3 | -24.4 |
+| 12000-15500 | -24.2 | -25.8 (16 dB) | -16.6 | -27.0 |
+
+- **The curve against scores:** `rock` asks for 4.4 dB more at 97-183 Hz, about 2 dB less at 291-510 Hz (where pianos and strings actually live), and 3-11 dB more from 2 kHz up than the 30 albums have: at 6.4-12 kHz it is 10 dB too bright. Acoustic scores fall away steeply above 2 kHz; a rock curve does not.
+- **015 Again, Again** was pulled toward it even at `eq` 0.4: 2.7-4 dB more at 97-183 Hz and about 3-6.5 dB more in most bands from 1.7 to 7.7 kHz than its own reference albums (the glockenspiel and celesta; the master's EQ sat at its boost limit at 4 kHz and at 31.5-80 Hz), while above 9.5 kHz it sits with them. Estimated loudness of the albums: median -17.4 LUFS (middle half -20.8 to -14.4); 015 is at -15, the loud end.
+- **Spread:** the middle half of the albums is 9-16 dB wide above 4 kHz (a felt piano record and a full Pixar orchestra). A curve can only be a loose guard; the existing low `eq` is right, the curve under it is not.
+- **A current target.** *Interim* [M, fitted to the 30 albums as in TRANCE.md C; not adopted]: 31.5 Hz -16, 40 -12.5, 50 -8, 63 -4.5, 80 -1, 100 +1, 125 +1.5, 160 +1.5, 200 +2, 250 +4, 315 +4, 400 +4.5, 500 +3.5, 630 +3, 800 +1.5, 1k 0, 1.25k -1.5, 1.6k -3, 2k -5, 2.5k -6.5, 3.15k -9, 4k -11.5, 5k -15, 6.3k -18, 8k -21, 10k -24, 12.5k -26, 16k -33 (dB re 1 kHz). Keep `eq` at 0.3-0.4 [H]. *Definitive:* the same albums, or 20-30 tracks chosen with the owner, measured locally in stereo with `master.py`'s analyser (PRODUCTION.md "Era-appropriate targets"); the catalogue data are mono and coarse.
+
+Sources for these two sections: iZotope, EQ cheat sheet: https://izotope.com/en/learn/eq-cheat-sheet ; M. Houghton, How to achieve better separation in your mixes, Sound On Sound (2022): https://www.soundonsound.com/techniques/how-achieve-better-separation-your-mixes ; M. Senior, Q. What should I EQ to improve my muddy mixes?, Sound On Sound (2008): https://www.soundonsound.com/sound-advice/q-what-should-eq-improve-my-muddy-mixes ; a professional trance producer's EQ map (2026; docs/TRANCE.md); MusicBrainz search API and AcousticBrainz low-level data (CC0; https://acousticbrainz.org/), measured 2026-11-25; everything else in docs/PRODUCTION.md "Sources". Also: Thinkspace Education, Great mixing advice can ruin your orchestral mix: https://thinkspace.ac.uk/blog/great-mixing-advice-can-ruin-your-orchestral-mix/ ; Beat Kitchen, Orchestral mixing: https://beatkitchen.io/guides/orchestral/11-orchestral-mixing/
+
 ## Catalogue measurements (MusicBrainz + AcousticBrainz, 2026-11-24)
 Track lengths from MusicBrainz; tempo, key and ReplayGain from AcousticBrainz (Essentia low-level data for some edition of each recording). ReplayGain converted to loudness with **LUFS ≈ -23.7 - RG** (fitted on Spectre's own masters, docs/CAROLING.md; about ±1-2 dB). Tempo estimates folded into 60-150 bpm; unreliable on rubato and triple meter, so not used for the configuration. Editions: the release with the most AcousticBrainz data among the best MusicBrainz matches; some are reissues or expanded editions (the year is the edition's: *Amélie* 2011, *A Little Princess* 2025 with 35 cues, *The Blue Notebooks* 2018). A match for Balmorhea's *All Is Wild, All Is Silent* returned its remix album and was dropped. Script: Spectre's workspace (MusicBrainz search and release recordings, AcousticBrainz `low-level` in batches of 25).
 

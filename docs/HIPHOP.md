@@ -75,5 +75,64 @@ A Spectre beat leaves the verses to a rapper who isn't there; its own voices are
 
 **Unsourced here:** the levels of ad-libs, chops and pads; everything about a choir in a beat; the sends.
 
+## Layering and EQ carving (researched 2026-11-25)
+The cross-genre method is in [PRODUCTION.md](PRODUCTION.md); the trance tables in docs/TRANCE.md are the worked example. Labels: **[M]** measured, **[S]** a named source, **[P]** carried over from a professional trance producer's EQ map (2026) for instruments both genres share, **[H]** hand-tuned.
+
+**Layer roles.** A beat is few parts, each made of two or three sources:
+| Part | Layers and their jobs | Label |
+|---|---|---|
+| **Kick and 808** | one low-end instrument made of two: the **kick** is the hit (a short body at 50-70 Hz and a click), the **808** is the sustained note under it. Keep them apart in time (shorten the kick's decay so only its punch is left), in frequency (a dynamic notch on the 808 at the kick's fundamental, 62 Hz in iZotope's example) and in level (the 808 ducked by the kick) | [S] iZotope, "How to mix 808s" |
+| **808** | itself a stack: a sine for the fundamental; an octave above or added 2nd and 3rd harmonics (a little square in the oscillator, tube saturation) so it "rings out in many more types of speakers" | [S] iZotope |
+| **Snare / clap** | a snare for body (150-250 Hz) and crack (2-3.5 kHz) plus a clap for width and top, the clap a few ms early (docs/CRAFT.md); in drill and trap often a rim or snap as a third colour | [S] iZotope EQ cheat sheet; CRAFT |
+| **Hats** | closed hats, an open hat, sometimes a shaker or ride: different decay and tone, panned a little apart | [H] |
+| **Melody / sample** | the main instrument (keys, a folk lead, a chopped phrase) plus what it lacks: an octave double, a pad or strings underneath for body, a bell or pluck on top for the attack, a texture (vinyl, tape) as the "air" | [S] the layering rules in PRODUCTION.md; choices [H] |
+| **Voice** | lead, doubles, ad-libs in different spaces (this brief, "Mixing the voice") | [S] |
+
+**EQ map** (starting ranges; "there are no specific frequencies that will always work", Mike Senior, Sound On Sound 2008; confirm on the actual sounds with the clarity analysis proposed in PRODUCTION.md):
+| Instrument | High-pass | Cut / control | Emphasise | Source |
+|---|---|---|---|---|
+| Kick | 25-30 Hz | 200-500 Hz (boxiness); keep the tail short under an 808 | 50-80 Hz punch, 100-200 Hz knock, 1-5 kHz attack | iZotope cheat sheet; [P] |
+| 808 | 20-25 Hz [H] | a dynamic notch at the kick's fundamental; 200-400 Hz if it clouds the melody | 30-60 Hz fundamental; harmonics at 100-300 Hz and 700 Hz-1.5 kHz from saturation, not from EQ | iZotope 808; ranges [H] |
+| Snare | 80-120 Hz | 300-500 Hz boxiness, 400-700 Hz ring, 900 Hz-1.5 kHz papery | 150-250 Hz body, 2-3.5 kHz attack, 8 kHz up air | iZotope cheat sheet |
+| Clap | 120-250 Hz | 400-800 Hz | 1-2 kHz snap, 2-8 kHz | [P]; Sound On Sound (TRANCE.md "Claps") |
+| Hats, shakers | 500-2,000 Hz | 3-7 kHz harshness | 8-12 kHz | iZotope; [P] |
+| Keys, piano, sample | 100-200 Hz (they must leave the 808 alone: CRAFT.md) | 200-500 Hz mud | 2-5 kHz | iZotope; [P] |
+| Pads, strings, choir | 150-250 Hz | 200-500 Hz | 1-3 kHz; air above 8 kHz | [P]; iZotope |
+| Lead (flute, reed, synth, fiddle) | 200-300 Hz [H] | 300-600 Hz; harsh resonances | 1-4 kHz | [P] (lead layers) |
+| Plucked folk instruments (oud, cobza, kokle, cimbalom) | 100-150 Hz [H] | 200-400 Hz | 1.5-2.5 kHz presence, 8-12 kHz air | iZotope (acoustic guitar), applied [H] |
+| Voice | 80-120 Hz (svs voices: 150-220 Hz, this brief) | 200-400 Hz; 5-8 kHz sibilance | 2-5 kHz; air from 10 kHz | [P]; iZotope |
+| Textures (vinyl, rain, tape) | 300-500 Hz [H] | everything above about 4-6 kHz unless it is the only "air" (docs/MASTERING.md "Top end") | | [M] this repo |
+| Reverb and delay returns | 200-500 Hz | 300-600 Hz | low-pass at 6-12 kHz | [P]; Houghton, Sound On Sound 2022 |
+
+**Glue** [S]: drums on one bus with light compression and saturation; the melody stack on one bus; hip-hop masters are dense (about 3.5 dB of limiter gain reduction, this brief's Configuration), so the low end must be settled in the mix. The engine has no buses yet (PRODUCTION.md, proposals).
+
+**Where Spectre stands** [M] (stems of session 011's last hook, rendered in memory, 2026-11-25): the snare alone supplies everything above 2 kHz (no hat, melody or texture within 10 dB of it there); the 808 is 59% masked by the kick (the kick is the loudest stem at 60-400 Hz; no notch or ducking separates them); one or two sources per band everywhere. Sessions 001-006 use one `808`, one `kick` and one melody instrument per role in the same way (their project files). Thin, as in trance, and with the kick and 808 in each other's way.
+
+## Era assessment of the master target (2026-11-25)
+**What the current curves are.** `hiphop`: Pestana et al. (2013), Fig. 5 "hip-hop": UK and US number-one singles tagged hip-hop, in practice about 1990-2010, magnitude-averaged (docs/MASTERING.md). `trap` / `beat`: hand-tuned for sessions 001-006.
+
+**Measured against the catalogue** [M] (method, validation and limits in docs/TRANCE.md, section C: MusicBrainz recordings tagged `hip hop`, up to 100 per year, with AcousticBrainz Bark-band data; 2,158 tracks 1995-2021; dB relative to each track's 510 Hz-2 kHz level; medians):
+| Band (Hz, as analysed) | 1995-99 | 2000-04 | 2005-09 | 2010-14 | 2015-21 | `hiphop` curve | `beat` curve | Spectre masters 001-006, 011 (range) |
+|---|---|---|---|---|---|---|---|---|
+| tracks | 497 | 428 | 419 | 461 | 353 | | | |
+| under 32 (reads about 1-4 dB high for curves and masters) | +2.5 | +2.4 | +3.0 | +4.8 | **+6.2** | -1.0 | +8.2 | -2.3 to +5.2 |
+| 32-97 (kick and 808) | +16.2 | +15.1 | +14.5 | +14.2 | **+15.8** | **+10.8** | +14.0 | **+9.5 to +13.6** |
+| 97-140 | +11.0 | +8.8 | +8.3 | +7.4 | +7.8 | +11.1 | +8.3 | +8.7 to +11.0 |
+| 140-183 | +7.2 | +5.5 | +5.0 | +4.7 | **+4.4** | **+7.9** | +5.5 | +6.6 to +8.2 |
+| 183-291 | +7.8 | +7.3 | +6.7 | +7.0 | +5.8 | +7.6 | +6.7 | +7.5 to +9.0 |
+| 6400-7700 | -4.9 | -6.5 | -5.3 | -5.3 | -5.1 | -6.8 | -7.1 | -8.7 to -6.7 |
+| 7700-9500 | -5.8 | -7.4 | -6.1 | -6.0 | -5.3 | -7.3 | -7.7 | -9.4 to -6.9 |
+| 9500-12000 | -8.3 | -9.1 | -8.0 | -7.6 | -6.5 | -8.8 | -9.0 | -10.3 to -8.1 |
+| 12000-15500 | -11.8 | -12.5 | -11.5 | -11.0 | -10.6 | -13.0 | -11.1 | -14.1 to -11.8 |
+| est. LUFS, median (middle half) | -12.5 (-15.8 to -10.8) | -12.2 (-15.8 to -9.7) | -11.3 (-14.1 to -9.6) | -11.0 (-12.8 to -9.6) | -10.6 (-12.2 to -9.3) | | | 001-006: -11.1 to -10.1 (measured) |
+
+- **What changed in hip hop** [M]: the band under about 32 Hz rose by nearly 4 dB between the late 1990s and 2015-21 (the 808 era; the lossless-only subset shows the same step, +2.6 to +5.5); 97-183 Hz fell by about 3 dB; the top rose 1-2 dB; estimated loudness rose about 2 dB.
+- **Where the targets stand** [M]: the measured `hiphop` curve asks for 5 dB less in the kick-and-808 band than 2015-21 hip hop has, 3.5 dB more at 97-183 Hz and about 2 dB less from 6.4 kHz up. The hand-tuned `beat` curve is the closer one below 300 Hz (-1.8 dB in the kick-and-808 band, within about 1 dB from 97 to 300 Hz) and about as dark up to 12 kHz. So the 2026-11-24 remasters of 001-006 with `hiphop` corrected the top end, as intended, and moved the low end away from current hip hop: this brief's "Decision" section should be revisited with these numbers.
+- **Spectre's masters** [M]: 2-6 dB short in the kick-and-808 band (001 least, 011 most), 1-4 dB heavy at 97-183 Hz, 1-4 dB dark from 6.4 kHz up.
+- **A current target.** *Interim* [M, fitted as in TRANCE.md C; not adopted]: 31.5 Hz +1, 40 +4.5, 50 +7, 63 +8.5, 80 +7, 100 +6, 125 +3, 160 +1.5, 200 +1, 250 +1, 315 +0.5, 400 +1.5, 500 +2, 630 +1.5, 800 0, 1k 0, 1.25k -1.5, 1.6k -2, 2k -2.5, 2.5k -3, 3.15k -4, 4k -5.5, 5k -7, 6.3k -6, 8k -6.5, 10k -7.5, 12.5k -11, 16k -18 (dB re 1 kHz; 31.5-40 Hz ±3 dB). The `hip hop` tag mixes boom-bap revival with trap; a `trap`-only curve needs its own measurement. *Definitive:* 20-30 current reference masters per pocket (boom-bap, trap), measured locally with `master.py`'s analyser, numbers only in the repo (PRODUCTION.md "Era-appropriate targets").
+- **The top end has the same condition as in trance:** more top must come from tonal content, not from the noise sources that read as static on phones.
+
+Sources for these two sections: iZotope, EQ cheat sheet: https://izotope.com/en/learn/eq-cheat-sheet ; M. Houghton, How to achieve better separation in your mixes, Sound On Sound (2022): https://www.soundonsound.com/techniques/how-achieve-better-separation-your-mixes ; M. Senior, Q. What should I EQ to improve my muddy mixes?, Sound On Sound (2008): https://www.soundonsound.com/sound-advice/q-what-should-eq-improve-my-muddy-mixes ; a professional trance producer's EQ map (2026; docs/TRANCE.md); MusicBrainz search API and AcousticBrainz low-level data (CC0; https://acousticbrainz.org/), measured 2026-11-25; everything else in docs/PRODUCTION.md "Sources". Also: iZotope, How to mix 808s for a powerful low end: https://www.izotope.com/en/learn/how-to-mix-808s
+
 ## Unsourced in this brief
 The 85-100 window for a hard boom-bap pocket (inside the measured ranges, but chosen by craft), the rate of change, the aggression cues beyond the emotion research in CRAFT.md, and the "two pockets" framing.

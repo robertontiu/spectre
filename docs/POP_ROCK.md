@@ -137,6 +137,64 @@ Researched 2026-11-24 under standing rule 8. The proposed configuration, the eng
 - The wordless `vox` gets buried behind guitars; a lead guitar or piano can carry the melody, or push the vox at 2.8 kHz.
 - Playing a section 20-30 ms behind the beat reads as weight; playing on top reads as momentum.
 
+## Layering and EQ carving (researched 2026-11-25)
+The cross-genre method is in [PRODUCTION.md](PRODUCTION.md). Labels: **[M]** measured, **[S]** a named source, **[P]** carried over from a professional trance producer's EQ map (2026) where the instrument is shared, **[H]** hand-tuned.
+
+**Layer roles.** A rock band is layered by the way it is recorded and doubled, not by stacking synths:
+| Part | Layers and their jobs | Label |
+|---|---|---|
+| **Rhythm guitars** | two takes hard left and right with *different* tones or voicings (one low and anchored, one higher; one muted while the other rings: "Guitars" above), optionally a third in the centre in the last chorus; a clean or acoustic layer under the driven pair for note definition | [S] this brief; the third layer [H] |
+| **Kick** | the shell's weight (60-80 Hz), the knock (100-200 Hz), the beater (1-5 kHz): one drum heard through close and room microphones; in the engine one `kitkick` plus its `room` | [S] iZotope EQ cheat sheet |
+| **Snare** | body (150-250 Hz), crack (2-3.5 kHz), wires and air (8 kHz up), the room; a tambourine or clap layered on the chorus backbeat | [S] iZotope; the chorus layer [H] |
+| **Bass guitar** | low end (40-120 Hz) and definition (800 Hz-1 kHz, the pick or the amp's growl), often recorded as a clean and a driven signal blended | [S] iZotope; the two-signal habit [H] |
+| **Keys** | organ or pad as glue under the guitars, piano for attack on top of them | [H] |
+| **Voice (or the vocal lead)** | lead in the centre, a quieter wide double, harmonies and gang vocals in the last chorus ("Mixing the voice") | [S] |
+
+**EQ map** (starting ranges; confirm on the actual sounds):
+| Instrument | High-pass | Cut / control | Emphasise | Source |
+|---|---|---|---|---|
+| Kick | 30-40 Hz [H] | 200-500 Hz boxiness | 60-80 Hz punch, 100-200 Hz knock, 1-5 kHz attack | iZotope cheat sheet |
+| Snare | 80 Hz | 300-500 Hz boxiness, 400-700 Hz ring, 900 Hz-1.5 kHz papery | 150-250 Hz body, 2-3.5 kHz attack, 8 kHz up | iZotope |
+| Toms | 50-60 Hz [H] | 250-600 Hz mud | 60-120 Hz body, 800 Hz-1.5 kHz attack | iZotope |
+| Hats, ride, crashes | 150 Hz at least; 300-500 Hz on hats [H] | about 4 kHz harshness (3-7 kHz on hats) | 8-12 kHz air | iZotope |
+| Bass guitar | 30-40 Hz [H] | 300-500 Hz mud | 40-120 Hz low end, 800 Hz-1 kHz definition | iZotope |
+| Driven guitars | 100 Hz | 200-300 Hz tubbiness, 3-6 kHz fizz | 300 Hz-1.5 kHz, the body of the sound | iZotope. **Local caveat [M]:** the engine's `eguitar` is thin at 100-300 Hz, so session 008 added low-shelf body at 160-260 Hz ("What session 008 learned"); cut there only on a guitar that has it |
+| Clean and acoustic guitar | 70-100 Hz | 200-400 Hz mud | 1.5-2.5 kHz presence, 8-12 kHz air | iZotope |
+| Piano | 60 Hz; 100-200 Hz under a full band [P] | 200-500 Hz mud | 2-5 kHz in a dense mix [P] (iZotope lists 2-4 kHz as possible harshness on an exposed piano) | iZotope; [P] |
+| Organ, pads | 150-250 Hz | 200-500 Hz | 1-3 kHz | [P] |
+| Voice | 80-120 Hz (svs voices: this brief's chain) | 200-400 Hz; nasal 500 Hz-1.2 kHz; 5-8 kHz sibilance | 2-5 kHz; air from 10 kHz | iZotope; [P] |
+| Reverb and delay returns | 200-500 Hz | 300-600 Hz | low-pass at 6-12 kHz | [P]; Houghton, Sound On Sound 2022 |
+
+General moves [S]: a 70 Hz, 12 dB/octave high-pass on most sources except kick and bass; decide which of two clashing sources matters and cut the other there, a small boost on the first and a small cut on the second; a sidechained dynamic EQ cut in place of broadband ducking (Houghton, Sound On Sound 2022). Measured reference for the voice level: lead vocal against accompaniment averages +0.2 dB in rock and +2.7 dB in pop (A-weighted, Grammy nominees 1990-2020; Gerdes and Siedenburg 2023).
+
+**Glue** [S], [H]: the kit on one bus (the engine's `room` on each piece stands in for it); both guitars on one bus with a little compression; light mix-bus compression (2:1, 1-2 dB) is the rock norm. The engine has no buses yet (PRODUCTION.md, proposals).
+
+**Where Spectre stands** [M] (stems of session 009's last chorus, rendered in memory, 2026-11-25; 15 sounding stems): the voice is the loudest stem in every region from 150 Hz to 18 kHz; both guitars, the bass and the kick are 44-66% masked; the organ is 98% masked, in effect absent; five sources sit within 10 dB at 150-400 Hz (voice, both guitars, snare, bass). The voice is carved well; what is under it has no slots of its own. Nothing but the voice, the snare and the cymbals reaches above 6 kHz.
+
+## Era assessment of the master target (2026-11-25)
+**What the current curve is.** `rock`: the mean of Pestana et al.'s (2013) "pop" and "rock" genre averages: number-one singles 1950-2010, leaning on 1960s-1980s records, magnitude-averaged (docs/MASTERING.md). The earlier `rock_handtuned` curve is kept for comparison.
+
+**Measured against the catalogue** [M] (method, validation and limits in docs/TRANCE.md, section C: MusicBrainz recordings tagged `pop rock`, up to 100 per year, with AcousticBrainz data; 1,387 tracks 1995-2021):
+| Band (Hz, as analysed), dB re 510 Hz-2 kHz | 1995-99 | 2000-04 | 2005-09 | 2010-14 | 2015-21 | `rock` curve | `rock_handtuned` | 008 Anyway | 009 Here You Are |
+|---|---|---|---|---|---|---|---|---|---|
+| tracks | 266 | 220 | 225 | 252 | 424 | | | | |
+| 32-97 (kick and bass) | +6.1 | +6.9 | +8.6 | +7.8 | **+9.5** | **+6.2** | +9.3 | +7.0 | +7.1 |
+| 97-140 | +4.9 | +5.5 | +5.7 | +5.4 | +6.5 | +9.1 | +6.7 | +8.2 | +8.1 |
+| 140-183 | +3.2 | +3.3 | +3.7 | +3.9 | **+4.8** | **+8.2** | +5.0 | +7.4 | +6.2 |
+| 183-291 | +5.6 | +6.0 | +5.7 | +6.5 | +6.6 | +9.3 | +6.8 | +9.2 | +8.9 |
+| 291-400 | +2.9 | +3.1 | +3.1 | +4.3 | +4.0 | +6.0 | +4.3 | +6.9 | +5.6 |
+| 6400-7700 | -8.2 | -8.6 | -7.7 | -9.2 | -7.5 | -8.6 | -5.9 | -9.1 | -9.6 |
+| 7700-9500 | -9.6 | -9.8 | -8.5 | -10.1 | -8.4 | -9.8 | -6.5 | -11.0 | -10.6 |
+| 9500-12000 | -12.0 | -11.7 | -10.6 | -12.1 | **-9.6** | **-12.3** | -7.8 | **-14.7** | **-13.7** |
+| 12000-15500 | -16.1 | -17.1 | -14.7 | -16.9 | -13.2 | -16.5 | -10.1 | -18.6 | -17.3 |
+
+- **What changed in pop rock** [M]: the kick-and-bass band rose by about 3.4 dB from the late 1990s to 2015-21 and the top (9.5-15.5 kHz) by 2.4-2.9 dB; the low mids rose slightly. The loudness estimate for this tag is too scattered to quote (middle half about -18 to -10 LUFS in every period); the chart figures in "Configuration" stand.
+- **Where the target stands** [M]: `rock` matches pop rock of the late 1990s in the kick-and-bass band and on top, as its sources suggest, but it has 1.7-3.4 dB more at 97-400 Hz than any period. Against 2015-21 it is 3.3 dB short at 32-97 Hz and 1-3.3 dB dark from 6.4 kHz up. `rock_handtuned` fits 2015-21 within 0.4 dB from 32 to 510 Hz but is 1.6-3.2 dB too bright from 4.4 kHz up.
+- **Spectre's masters** [M]: 2.5 dB short in the kick-and-bass band, 1.5-3 dB heavy from 97 to 510 Hz, and 1.6-5.4 dB dark from 6.4 kHz up (darker than the curve itself: the master may boost the top by at most 2 dB, and little in these mixes is up there to boost).
+- **A current target.** *Interim* [M, fitted as in TRANCE.md C; not adopted]: 31.5 Hz -11.5, 40 -7.5, 50 -2.5, 63 +2, 80 +4, 100 +5, 125 +3.5, 160 +3, 200 +2.5, 250 +2.5, 315 +2, 400 +1.5, 500 +2, 630 +2, 800 +1.5, 1k 0, 1.25k -0.5, 1.6k -0.5, 2k -2, 2.5k -2.5, 3.15k -4, 4k -5.5, 5k -7, 6.3k -7.5, 8k -8, 10k -10.5, 12.5k -13, 16k -20 (dB re 1 kHz). *Definitive:* 20-30 current pop rock masters measured locally (PRODUCTION.md "Era-appropriate targets"). This curve is also borrowed by `joc`, `caroling`, `latinpop` and `chamberscore`; each of those docs has its own assessment.
+
+Sources for these two sections: iZotope, EQ cheat sheet: https://izotope.com/en/learn/eq-cheat-sheet ; M. Houghton, How to achieve better separation in your mixes, Sound On Sound (2022): https://www.soundonsound.com/techniques/how-achieve-better-separation-your-mixes ; M. Senior, Q. What should I EQ to improve my muddy mixes?, Sound On Sound (2008): https://www.soundonsound.com/sound-advice/q-what-should-eq-improve-my-muddy-mixes ; a professional trance producer's EQ map (2026; docs/TRANCE.md); MusicBrainz search API and AcousticBrainz low-level data (CC0; https://acousticbrainz.org/), measured 2026-11-25; everything else in docs/PRODUCTION.md "Sources". Also: K. Gerdes and K. Siedenburg (2023), Lead-vocal level in recordings of popular music 1946-2020, JASA Express Letters 3(4), doi:10.1121/10.0017773
+
 ## Sources
 - MusicRadar, Anatomy of an arrangement (song sections): https://www.musicradar.com/how-to/song-sections-explained-intro-verse-chorus-middle8-outro-tag-bridge
 - Mastering The Mix, How to mix big, punchy rock drums: https://www.masteringthemix.com/blogs/learn/how-to-mix-big-punchy-rock-drums

@@ -170,6 +170,60 @@ Track lengths from MusicBrainz; tempo, key and ReplayGain from AcousticBrainz (E
 
 Strand summaries (all years): bachata 99 tracks, length 3:59 (3:34-4:20), tempo 128 (122-133), est. LUFS -10.9 (since 2010: -9.7); bolero 49, 3:35 (3:18-4:00), 82 (77-92), -12.7; ballad 77, 4:00 (3:18-4:47), 77 (70-96), -10.2; acoustic 43, 4:00 (3:44-4:19), 75 (68-96), -11.0; reggaeton-pop 62, 3:21 (2:58-3:44), 96 (91-114), -10.6.
 
+## Layering and EQ carving (researched 2026-11-25)
+The cross-genre method is in [PRODUCTION.md](PRODUCTION.md). Labels: **[M]** measured, **[S]** a named source, **[P]** carried over from a professional trance producer's EQ map (2026) where it applies, **[H]** hand-tuned. No mixing guide specific to bachata or bolero was found; guitar and bass ranges apply general guidance, the percussion notes come from Sound On Sound's Latin percussion article.
+
+**Layer roles.** An intimate Latin band is a small acoustic stack with fixed jobs ("Instruments and roles" above):
+| Part | Layers and their jobs | Label |
+|---|---|---|
+| **Lead (requinto, or the voice)** | the requinto alone, bright and forward; often with a chorus effect, which is a built-in double; answered, not doubled, by the voice | [S] this brief; the chorus remark is unsourced there |
+| **Harmony (segunda)** | all eight 8ths with bass notes on 1, 3 and 4: the body layer under the requinto, an octave lower in feel; in the bolero, arpeggios or soft syncopated hits; piano or strings as a pad layer in the ballad | [S] this brief |
+| **Bass** | one bass, sparse, "avoids overcrowding the vocal line" | [S] this brief |
+| **Percussion** | one layer made of two bands: **bongó** in the mids (martillo) and **güira or maracas** on top; they share the 8ths, so they must not share a frequency range | [S] this brief; the band split [H] |
+| **Voice** | lead with a soft double; a second voice in thirds (the trío romántico) | [S] this brief |
+
+**EQ map** (starting ranges; gentle on the guitars, they are the sound of the genre):
+| Instrument | High-pass | Cut / control | Emphasise | Source |
+|---|---|---|---|---|
+| Requinto (lead guitar) | 100-150 Hz [H] (its lowest string is A2, 110 Hz) | 200-400 Hz mud | 1.5-2.5 kHz presence, 2-5 kHz when it leads; 8-12 kHz air | iZotope EQ cheat sheet (acoustic guitar); [P] plucks |
+| Segunda (rhythm guitar) | 70-100 Hz | 200-400 Hz, a little more than on the requinto; give way at 2-4 kHz to the lead and the voice | 100-200 Hz body of its bass notes; 8-12 kHz strum air | iZotope; Houghton (cut the secondary source where the primary lives) |
+| Bass guitar | 30-40 Hz | 300-500 Hz mud | 40-120 Hz; 800 Hz-1 kHz definition. Keep lines on A1 and above (docs/MANUAL.md) | iZotope (bass guitar); [M] this repo |
+| Bongó, congas | 80-100 Hz [H] | around 200 Hz | a little at 300-400 Hz, "just enough to bring some air around it, some presence"; compress lightly, a fast attack dulls the slap | Sound On Sound 2006 (congas; applied to bongó) |
+| Güira, maracas, shakers | 500-2,000 Hz | 3-4 dB around 6 kHz to leave room | 8-12 kHz | Sound On Sound 2006 (shakers, tambourines); [P] hats |
+| Piano | 60-100 Hz | 200-500 Hz mud | 60-200 Hz body; 2-5 kHz if masked | iZotope; [P] |
+| Strings, pads | 150-250 Hz | 300-600 Hz | 2-4 kHz; air | [P] |
+| Voice | this brief, "Mixing the voice" | | | |
+| Dembow kit (soft reggaetón-pop) | docs/HIPHOP.md map (kick, 808, snare, clap, hats) | | | |
+| Reverb return | 200-500 Hz | 300-600 Hz | low-pass at 6-12 kHz | [P]; Houghton |
+
+Timbales and congas are kept nearer the centre or spread to avoid clashing with each other; timbales usually get no reverb (Sound On Sound 2006) [S].
+
+**Glue** [H]: both guitars to one short room; percussion together; a gentle mix-bus compressor.
+
+**Where Spectre stands** [M] (session 014's project): nine `acguitar` tracks (requinto variants and segunda variants: articulations, not simultaneous layers), one bass, three `darbuka` tracks standing in for the bongó, a shaker for the maracas, one voice. No instrument reaches the top octave: the master measures 5.5-6 dB under the reference albums' median from 5.3 to 12 kHz and 10 dB under at 12-15.5 kHz, which is as dark as the bolero and acoustic albums and far darker than bachata (next section). If a brief wants the bachata brightness, the missing layer is the top of the percussion (a real güira or maracas sound) and string noise on the guitars.
+
+## Era assessment of the master target (2026-11-25)
+**What the current target is.** `latinpop` reuses the `rock` curve (Pestana et al. 2013, pop and rock number-one singles 1950-2010) at `eq` 0.6 and -11 LUFS; docs/MANUAL.md already warns that a nylon-guitar-and-bass band "shows a hole at 100-160 Hz against it".
+
+**Measured** [M] (method, validation and limits in docs/TRANCE.md, section C; AcousticBrainz Bark-band data, medians, dB relative to each track's level at 510 Hz-2 kHz). Two yardsticks: the MusicBrainz tags `latin pop`, `bachata`, `bolero`, `latin` (1,932 tracks 1995-2021; from 2015 heavy with urbano), and the **albums of "Catalogue measurements" above** (299 tracks with data, 24 albums).
+| Band (Hz, as analysed) | tags 1995-99 | tags 2010-14 | tags 2015-21 | the 24 albums | boleros (Luis Miguel, *Romance* trilogy) | acoustic (Lafourcade, *Musas*, *Hasta la raíz*) | bachata (Aventura, Romeo Santos, Prince Royce) | `rock` curve | 014 Lo que no supe decir |
+|---|---|---|---|---|---|---|---|---|---|
+| 32-97 (bass) | +8.7 | +9.9 | +12.2 | +9.5 | +6 to +9 | +11 | +6 to +13 | +6.2 | +7.7 |
+| 97-140 | +6.2 | +5.7 | +6.1 | +5.6 | +2.5 to +5 | +7 to +8 | +3 to +8 | +9.1 | +8.8 |
+| 140-183 | +3.9 | +2.9 | +3.4 | +3.4 | +2 to +4 | +4 to +5 | +2 to +7 | +8.2 | +7.7 |
+| 183-291 | +6.7 | +6.3 | +6.4 | +6.7 | +5 to +7 | +8 to +11.5 | +5 to +9 | +9.2 | +10.0 |
+| 5300-6400 | -6.8 | -6.8 | -6.6 | -6.2 | -5 to -10 | -13 to -15 | -4 to -7 | -7.3 | -12.0 |
+| 7700-9500 | -7.4 | -6.9 | -6.4 | -5.8 | -7 to -10 | -13 to -14 | -3 to -6 | -9.8 | -11.4 |
+| 9500-12000 | -8.9 | -7.9 | -7.5 | -6.9 | -9 to -12 | -13 | +1 to -7 | -12.3 | -13.1 |
+| 12000-15500 | -12.0 | -11.5 | -10.3 | -11.3 | -12 to -15 | -21 | -4 to -11 | -16.6 | -21.7 |
+
+- **What changed** [M]: the bass band rose 3.5 dB, almost all of it after 2014 (the urbano years); the top rose about 1.5 dB. Estimated loudness of the 24 albums: median -11.1 LUFS (middle half -14.9 to -9.5), in line with this brief's -11.
+- **The curve against Latin records:** `rock` asks for 3.3 dB less in the bass band, 2.5-5 dB more at 97-291 Hz and 2.5-5.5 dB less from 6.4 kHz up than the 24 albums have. The "hole at 100-160 Hz" the manual warns about is the curve's hump, not a hole in the band.
+- **014 Lo que no supe decir** carries the curve's low mids (3-4 dB over the albums from 97 to 510 Hz). Its top, 5.5-6 dB under the all-album median and 10 dB under at 12-15.5 kHz, is **inside the range of the two strands it belongs to**: the bolero trilogy and the acoustic albums are just as dark. It is dark for bachata, not for a bolero with nylon guitars.
+- **A current target.** *Interim* [M, fitted to the 24 albums as in TRANCE.md C; not adopted]: 31.5 Hz -11, 40 -7, 50 -2, 63 +2.5, 80 +4, 100 +4, 125 +2, 160 +2, 200 +1.5, 250 +3, 315 +2.5, 400 +2, 500 +2.5, 630 +3, 800 +2, 1k 0, 1.25k -1, 1.6k -1.5, 2k -3, 2.5k -3.5, 3.15k -5, 4k -6.5, 5k -7, 6.3k -6.5, 8k -6, 10k -7.5, 12.5k -10.5, 16k -17.5 (dB re 1 kHz). The strands differ by up to 10 dB on top, so one `latinpop` curve is too coarse: at least a bright one (bachata, pop) and a dark one (bolero, acoustic) are needed. *Definitive:* 20-30 current masters per strand measured locally (PRODUCTION.md "Era-appropriate targets").
+
+Sources for these two sections: iZotope, EQ cheat sheet: https://izotope.com/en/learn/eq-cheat-sheet ; M. Houghton, How to achieve better separation in your mixes, Sound On Sound (2022): https://www.soundonsound.com/techniques/how-achieve-better-separation-your-mixes ; M. Senior, Q. What should I EQ to improve my muddy mixes?, Sound On Sound (2008): https://www.soundonsound.com/sound-advice/q-what-should-eq-improve-my-muddy-mixes ; a professional trance producer's EQ map (2026; docs/TRANCE.md); MusicBrainz search API and AcousticBrainz low-level data (CC0; https://acousticbrainz.org/), measured 2026-11-25; everything else in docs/PRODUCTION.md "Sources". Also: D. Daley, Recording Latin percussion, Sound On Sound (2006): https://www.soundonsound.com/techniques/recording-latin-percussion
+
 ## Sources
 - Catalogue: [MusicBrainz](https://musicbrainz.org/) web service (release search, recordings), [AcousticBrainz](https://acousticbrainz.org/) `low-level` API (Essentia 2.1-beta2: `rhythm.bpm`, `tonal.key_key`/`key_scale`, `metadata.audio_properties.replay_gain`); releases linked in the table.
 - Mixgraph, reggaeton BPM (317 tracks, measured 22 Nov 2026): https://www.mixgraph.io/bpm-for/reggaeton (the site has no bachata, bolero or Latin pop pages; https://www.mixgraph.io/bpm-for/bachata failed to load).

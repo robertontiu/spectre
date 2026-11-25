@@ -143,6 +143,61 @@ A voice in a joc is a call, a shout or a short wordless line, never the lead: th
 - **Violin idiom in the engine:** hand-check double stops for playability (`d=` accepts impossible pairs; a same-pitch unison renders well); mark 16ths `nv` at slow tempos; velocity goes after the articulations (`step:note:len/art:vel`).
 - **Mix:** body comes from the sources (guitar body EQ, bass drive, the toba tuned and notched away from the bass notes); the dry band's top end stays 5-6 dB under the borrowed rock curve above 10 kHz, and that is the band, not a fault. A measured folk/acoustic curve is still open.
 
+## Layering and EQ carving (researched 2026-11-25)
+The cross-genre method is in [PRODUCTION.md](PRODUCTION.md). Labels: **[M]** measured, **[S]** a named source, **[P]** carried over from a professional trance producer's EQ map (2026) where it applies, **[H]** hand-tuned. No source specific to mixing lăutar bands was found; the map below applies general acoustic-instrument guidance to this band and is marked accordingly.
+
+**An acoustic band is not carved like a synth mix.** In acoustic ensemble music, giving each instrument its own frequency slot "breaks up the natural blend"; EQ should be "gentle and broad", and what sounds muddy is usually balance or arrangement (Thinkspace) [S]. The lăutar sound the brief chose is the dry, clean, "cold" one ("Chitară rece" above). So: few sources, each whole; high-pass only what has no business in the bass; cuts of 1-3 dB, wide.
+
+**Layer roles.** The stack is the band, and the "layers" of the lead are doublings:
+| Part | Layers and their jobs | Label |
+|---|---|---|
+| **Lead (violin)** | alone for the tune; at climaxes doubled in thirds, sixths or octaves by a second violin, by its own double stops, or shadowed by cimbalom or accordion; the bow noise is its "air", the body modes at 275 and 470-540 Hz its warmth (docs/MANUAL.md) | [H] from this brief's roles |
+| **Afterbeat (țiitură)** | guitar chops as the dry, percussive mid layer; accordion or cimbalom can double the afterbeat for width and sustain | [S] this brief ("Instruments and roles") |
+| **Bass** | one bass, roots and fifths on the beats: the only low instrument besides the drum | [S] this brief |
+| **Drum (tobă)** | one player, two layers by construction: the boom (60 Hz head) and the cymbal on top; the snare drum or claps on the afterbeats add the crack | [S] this brief |
+| **Dancers** | claps, snaps, shouts: the room | [S] this brief |
+
+**EQ map** (starting ranges, all [H] applications of the cited general guidance; confirm on the engine's instruments):
+| Instrument | High-pass | Cut / control | Emphasise | Source of the range |
+|---|---|---|---|---|
+| Violin | 180-200 Hz (its lowest note, G3, is 196 Hz) | 200-500 Hz only if boxy with the guitar; harshness somewhere in 1-4 kHz, narrow and small | 2-4 kHz so it leads; air above 10 kHz | iZotope EQ cheat sheet (orchestral strings); Beat Kitchen (violins roll off below about 200 Hz); [P] strings |
+| Acoustic guitar (chops) | 100-120 Hz (docs/MANUAL.md) | 200-400 Hz mud | 1.5-2.5 kHz presence; 8-12 kHz air sparingly (the chop is percussion) | iZotope (acoustic guitar) |
+| Bass guitar | 30-40 Hz | 300-500 Hz mud | 40-120 Hz low end; 800 Hz-1 kHz definition (the finger) | iZotope (bass guitar) |
+| Tobă, boom | 30-40 Hz | 200-500 Hz boxiness | 60-80 Hz, 100-200 Hz knock | iZotope (kick) |
+| Tobă, cymbal; hats | 150-500 Hz | about 4 kHz harshness | 8-12 kHz | iZotope (cymbals) |
+| Snare drum (tobă mică) | 80-120 Hz | 300-700 Hz boxiness and ring | 150-250 Hz body, 2-3.5 kHz | iZotope (snare) |
+| Cimbalom | 100-150 Hz | 200-400 Hz | 2-5 kHz hammer, 8-12 kHz | iZotope (piano, acoustic guitar), applied |
+| Accordion | 100-150 Hz | 300-600 Hz; reediness at 1-3 kHz against the violin | 1-3 kHz when it leads | [P] pads and strings, applied |
+| Claps, snaps | 200-300 Hz | 400-800 Hz | 1-2 kHz snap, 2-8 kHz | docs/TRANCE.md "Claps" |
+| Voice (shouts, a refrain) | this brief, "Mixing the voice" | | | |
+| Reverb return (the plate the lăutari ask for) | 200-500 Hz | 300-600 Hz | low-pass at 6-12 kHz | [P]; Houghton, Sound On Sound 2022 |
+
+**Glue** [H]: one shared short room or plate for the whole band, sent from every instrument in different amounts, is what makes five dry sources one band; a gentle mix-bus compressor (2:1, 1-2 dB: Beat Kitchen) at most.
+
+**Where Spectre stands** [M] (session 010's project): violin, guitar, bass, tobă (four strokes), snare, snaps and claps, one track each; the layering is in the writing (double stops, the two motifs fusing). No stem analysis was run on 010 for this brief; run the clarity analysis proposed in PRODUCTION.md before any remix.
+
+## Era assessment of the master target (2026-11-25)
+**What the current target is.** `joc` reuses the `rock` curve (Pestana et al. 2013, pop and rock number-one singles 1950-2010) at `eq` 0.7 and -11 LUFS: a stand-in, never measured on lăutar music.
+
+**Measured** [M] (method, validation and limits in docs/TRANCE.md, section C; AcousticBrainz Bark-band data, medians, dB relative to each track's level at 510 Hz-2 kHz). Two yardsticks: the broad MusicBrainz tags `folk`, `balkan`, `romanian folk` (2,084 tracks 1995-2017, mostly not Romanian), and **100 recordings by Taraf de Haïdouks** (releases 1992-2007), the string taraf this brief already uses as its reference. For contrast, 125 recordings by Fanfare Ciocărlia (brass) and 44 by Mahala Raï Banda (a modern amplified band).
+| Band (Hz, as analysed) | `folk` tags 2010-14 | Taraf de Haïdouks | Fanfare Ciocărlia | Mahala Raï Banda | `rock` curve | 010 Unison |
+|---|---|---|---|---|---|---|
+| 32-97 (bass, drum) | +5.6 | +7.9 | +7.9 | +9.7 | +6.2 | +7.6 |
+| 97-140 | +4.5 | +5.8 | +4.9 | +6.3 | +9.1 | +8.8 |
+| 140-183 | +3.8 | +2.4 | +2.4 | +3.9 | +8.2 | +6.4 |
+| 183-291 | +7.5 | +5.2 | +5.6 | +6.0 | +9.2 | +10.0 |
+| 5300-6400 | -11.8 | -11.8 | -8.3 | -5.7 | -7.3 | -9.5 |
+| 7700-9500 | -11.9 | -17.7 | -10.3 | -6.9 | -9.8 | -13.5 |
+| 9500-12000 | -13.8 | -20.3 | -12.6 | -9.1 | -12.3 | -17.6 |
+| 12000-15500 | -17.9 | -20.8 | -16.2 | -10.9 | -16.6 | -22.6 |
+
+- Estimated loudness of the Taraf recordings: median -13.2 LUFS (middle half -15.5 to -12.1), a little quieter than the -11 this brief uses.
+- **The curve against the taraf:** `rock` asks for 3-6 dB more at 97-291 Hz and 4.5-8 dB more from 5.3 to 12 kHz than Taraf de Haïdouks' records have. An acoustic string band is leaner in the low mids and much darker on top than pop rock. Against a modern amplified band (Mahala Raï Banda) the same curve is 1.5-6 dB too *dark*: the two lăutar worlds are 9-11 dB apart above 7.7 kHz, which is the "cold" acoustic sound against the amplified one, in numbers.
+- **010 Unison** follows the curve in the low mids (3-5 dB over the taraf at 97-291 Hz) and sits between the taraf and the folk tag on top: 2-6 dB brighter than Taraf de Haïdouks from 2 to 9.5 kHz, 1.6-4.7 dB darker than the `folk` tags above 7.7 kHz. For the dry acoustic reading the brief chose, its top is in the right place; its low mids are the borrowed curve's.
+- **A current target.** *Interim* [M, fitted to the 100 Taraf recordings as in TRANCE.md C; not adopted]: 31.5 Hz -16.5, 40 -12, 50 -6, 63 -0.5, 80 +3, 100 +4, 125 +2, 160 +0.5, 200 0, 250 +1.5, 315 +1.5, 400 +2, 500 +2, 630 +2, 800 +1.5, 1k 0, 1.25k -1, 1.6k -1.5, 2k -3, 2.5k -4, 3.15k -6, 4k -8.5, 5k -11, 6.3k -13.5, 8k -17.5, 10k -20.5, 12.5k -21.5, 16k -28.5 (dB re 1 kHz). One band's records from 1992-2007, and the lăutar recordings as a set spread widely on top (middle half 8-11 dB wide above 6.4 kHz): use it lightly (`eq` 0.3-0.4 [H]) or only as a check. *Definitive:* the owner chooses which lăutar sound is meant (the acoustic taraf or today's wedding bands) and 20-30 recordings of it are measured locally (PRODUCTION.md "Era-appropriate targets").
+
+Sources for these two sections: iZotope, EQ cheat sheet: https://izotope.com/en/learn/eq-cheat-sheet ; M. Houghton, How to achieve better separation in your mixes, Sound On Sound (2022): https://www.soundonsound.com/techniques/how-achieve-better-separation-your-mixes ; M. Senior, Q. What should I EQ to improve my muddy mixes?, Sound On Sound (2008): https://www.soundonsound.com/sound-advice/q-what-should-eq-improve-my-muddy-mixes ; a professional trance producer's EQ map (2026; docs/TRANCE.md); MusicBrainz search API and AcousticBrainz low-level data (CC0; https://acousticbrainz.org/), measured 2026-11-25; everything else in docs/PRODUCTION.md "Sources". Also: Thinkspace Education, Great mixing advice can ruin your orchestral mix: https://thinkspace.ac.uk/blog/great-mixing-advice-can-ruin-your-orchestral-mix/ ; Beat Kitchen, Orchestral mixing: https://beatkitchen.io/guides/orchestral/11-orchestral-mixing/
+
 ## Sources
 - Wikipedia, "Romanian folk violin": https://en.wikipedia.org/wiki/Romanian_folk_violin (read via the mirror https://wiki.krisyotam.com/content/wikipedia_en_all_nopic_2026-03/Romanian_folk_violin)
 - Wikipedia, "Lăutărească music": https://en.wikipedia.org/wiki/L%C4%83ut%C4%83reasc%C4%83_music (mirror: https://wiki.krisyotam.com/content/wikipedia_en_all_nopic_2026-03/L%C4%83ut%C4%83reasc%C4%83_music)

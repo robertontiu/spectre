@@ -136,6 +136,60 @@ Track lengths from MusicBrainz; tempo, key and ReplayGain from AcousticBrainz (E
 
 Carols on the caroling album (Conniff), length / tempo estimate / key estimate / est. LUFS: "Here We Come A-Caroling" 2:28 / 100 / -20.2; "Silent Night" 2:48 / 148 (eighths: dotted quarter about 49) / F / -20.6; "God Rest Ye Merry, Gentlemen" 2:43 / 148 / -17.9; "Away in a Manger" 2:13 / 112 / A / -19.2; "Joy to the World" 2:14 / 86 / A-flat / -19.2; "It Came Upon the Midnight Clear" 2:46 / 130 / A-flat / -20.4; "O Little Town of Bethlehem" 2:48 / 122 / G / -19.2. Robert Shaw Chorale and Mormon Tabernacle Choir albums were looked up too but have (almost) no AcousticBrainz data.
 
+## Layering and EQ carving (researched 2026-11-25)
+The cross-genre method is in [PRODUCTION.md](PRODUCTION.md). Labels: **[M]** measured, **[S]** a named source, **[P]** carried over from a professional trance producer's EQ map (2026) where it applies, **[H]** hand-tuned.
+
+**A choir is already a stack.** Several voices on each part are the unison layers; the parts are the registers; bells and organ are the doublings above and below. The mixing sources for acoustic ensembles are plain that this blend must not be carved apart: slot-by-slot EQ "breaks up the natural blend of sections", EQ should be "gentle and broad", and mud is usually balance or voicing (Thinkspace) [S]. A choir is recorded as one group at a distance and compressed, if at all, as a group ("Mixing and recording practice" above) [S].
+
+**Layer roles:**
+| Part | Layers and their jobs | Label |
+|---|---|---|
+| **The tune (sopranos)** | 2-4 voices in unison, slightly apart in time and pitch (the group), one of them nearer; at the last verse a descant above | [S] this brief; "Mixing the voice" |
+| **Inner parts (alto; tenor on an instrument)** | fill the 250 Hz-1 kHz body under the tune; kept softer than the tune | [S] this brief |
+| **Bass** | organ pedal (the "only real bass"), or cello | [S] this brief |
+| **Bells** | double the tune at the octave or ring the harmony: fundamental plus a strong third harmonic; they are the "air" and the transient of the choir | [S] Rossing et al., this brief |
+| **Brass, organ manuals, strings** | sustain the harmony in the middle; one of them at a time is enough | [H] |
+
+**EQ map** (starting ranges; gentle, broad moves of 1-3 dB):
+| Instrument | High-pass | Cut / control | Emphasise | Source |
+|---|---|---|---|---|
+| Choir, upper voices (svs voices: follow "Mixing the voice") | 100-250 Hz by voice | 200-400 Hz on the group if the organ is under it; nasal 500 Hz-1.2 kHz; 5-8 kHz harshness and sibilance | 2-5 kHz for words; air from 10 kHz for the *group* only (a shelf that suits five voices is hiss on one: docs/LESSONS.md, 012) | iZotope EQ cheat sheet (vocals); [P]; [M] this repo |
+| Handbells, glockenspiel | 300-500 Hz [H] | harsh partials at 3-5 kHz | the fundamental and third harmonic; 8-12 kHz shimmer | [P] air layer; Rossing |
+| Brass (chorale) | 150 Hz | 500-800 Hz boxiness; 1-5 kHz harshness | 5 kHz up only if it must speak | iZotope (brass) |
+| Organ manuals | 100-150 Hz [H] | 200-500 Hz under the choir | reeds at 1-3 kHz to fill a presence gap (LESSONS, 012) | [P] pads; [M] this repo |
+| Organ pedal, cello bass | 30-40 Hz | 200-400 Hz | 60-200 Hz body | iZotope (piano low end, strings) |
+| Piano | 60 Hz | 200-500 Hz mud | 60-200 Hz body; 2-5 kHz only if masked | iZotope |
+| Sleigh bells | 1-2 kHz [H] | 5-8 kHz | 8-12 kHz, quiet | [P] hats |
+| Reverb return (the church or the street) | 200-500 Hz | 300-600 Hz | low-pass at 6-12 kHz | [P]; Houghton, Sound On Sound 2022 |
+
+**Glue** [S]: one space for everything (a street's short reflections or a church's long tail, chosen per moment: this brief); the vocal group compressed together, about 6 dB on peaks in the Sound On Sound live recording; nothing on single voices that the others don't get.
+
+**Where Spectre stands** [M] (session 012's project): eleven `singer` tracks as the choir, three organ tracks (door, manuals, pedal), strings as cello, piano, three bell tracks: the richest stack of any Spectre track, built from voices. Its known weak point is the low end against the borrowed curve (next section), not layering. No stem analysis was run on 012 for this brief.
+
+## Era assessment of the master target (2026-11-25)
+**What the current target is.** `caroling` reuses the `rock` curve (Pestana et al. 2013, pop and rock number-one singles 1950-2010) at `eq` 0.5 and -14 LUFS; this brief already notes that "a choir-and-bells arrangement without low instruments will show low-end boosts at the EQ limit, which is the borrowed curve, not a mix fault".
+
+**Measured** [M] (method, validation and limits in docs/TRANCE.md, section C; AcousticBrainz Bark-band data, medians, dB relative to each track's level at 510 Hz-2 kHz). Two yardsticks: the MusicBrainz tags `christmas`, `carol`, `choral` (1,195 tracks 1995-2021: cathedral choirs and pop Christmas mixed), and the **five albums of "Catalogue measurements" above** (Ray Conniff Singers, Pentatonix, Straight No Chaser, Chanticleer, King's College; 67 tracks).
+| Band (Hz, as analysed) | tags, 2015-21 | the five albums (middle-half width) | `rock` curve | 012 The Note She Kept |
+|---|---|---|---|---|
+| 32-97 | -0.9 | +1.4 (18 dB) | +6.2 | +3.6 |
+| 97-140 | +0.2 | -0.1 (15 dB) | **+9.1** | **+9.7** |
+| 140-183 | -1.0 | -3.1 (9 dB) | **+8.2** | **+7.6** |
+| 183-291 | +2.8 | +3.9 | +9.2 | +8.9 |
+| 510-630 | +3.4 | +6.1 | +2.4 | +3.6 |
+| 3700-4400 | -12.6 | -13.3 | -4.9 | -3.7 |
+| 5300-6400 | -17.7 | -17.4 (12 dB) | -7.3 | -11.4 |
+| 7700-9500 | -20.3 | -16.7 (15 dB) | -9.8 | -14.1 |
+| 9500-12000 | -23.2 | -19.5 (17 dB) | -12.3 | -18.8 |
+| 12000-15500 | -27.5 | -28.4 (18 dB) | -16.6 | -22.7 |
+
+- **The curve against carol records:** `rock` asks for 9-11 dB more at 97-183 Hz, 5 dB more at 32-97 and 183-291 Hz, and 7-12 dB more from 3.7 kHz up than the five albums have at their median. A choir's energy sits at 300 Hz-1.5 kHz; it has neither a rock band's low mids nor its cymbals.
+- **012 The Note She Kept** was pulled toward that curve: about 10 dB more at 97-183 Hz than the reference albums (the organ pedal and cello in the mix; the master's EQ also sat at its boost limit at 31.5-63 Hz), 5-10 dB more at 3.7-7.7 kHz. Estimated loudness of the albums: median -19.1 LUFS (middle half -20.6 to -13.6); 012 was mastered to the genre setting, -14.
+- **The spread is the second finding:** between these albums the low end differs by 15-18 dB and the top by 12-18 dB (an a cappella pop group, a 1965 studio chorus and a chapel choir share little but the repertoire). No single curve describes "caroling". A tonal target can only be a loose guard here.
+- **A current target.** *Interim* [M, fitted to the five albums as in TRANCE.md C; residual up to 1.8 dB; not adopted]: 31.5 Hz -20.5, 40 -16.5, 50 -11.5, 63 -7, 80 -4, 100 -2.5, 125 -4, 160 -4.5, 200 -3.5, 250 0, 315 +1, 400 +2.5, 500 +3.5, 630 +4, 800 +2.5, 1k 0, 1.25k -2, 1.6k -3, 2k -5.5, 2.5k -7, 3.15k -9.5, 4k -12, 5k -15.5, 6.3k -19, 8k -17, 10k -20, 12.5k -27.5, 16k -34.5 (dB re 1 kHz). Recommended use [H]: `eq` 0.2-0.3, no low-end boosts at all (clean-up and a ceiling only), and the loudness decision revisited (-16 to -18 LUFS would sit inside the references). *Definitive:* the owner names the carol sound meant (street carolers and bells, or a chapel choir) and 20-30 such recordings are measured locally (PRODUCTION.md "Era-appropriate targets").
+
+Sources for these two sections: iZotope, EQ cheat sheet: https://izotope.com/en/learn/eq-cheat-sheet ; M. Houghton, How to achieve better separation in your mixes, Sound On Sound (2022): https://www.soundonsound.com/techniques/how-achieve-better-separation-your-mixes ; M. Senior, Q. What should I EQ to improve my muddy mixes?, Sound On Sound (2008): https://www.soundonsound.com/sound-advice/q-what-should-eq-improve-my-muddy-mixes ; a professional trance producer's EQ map (2026; docs/TRANCE.md); MusicBrainz search API and AcousticBrainz low-level data (CC0; https://acousticbrainz.org/), measured 2026-11-25; everything else in docs/PRODUCTION.md "Sources". Also: Thinkspace Education, Great mixing advice can ruin your orchestral mix: https://thinkspace.ac.uk/blog/great-mixing-advice-can-ruin-your-orchestral-mix/
+
 ## Public-domain carols (melody AND words published before 1929)
 Dates come from the linked references (the Wikipedia list of carols, hymnary.org, the carol books); "to confirm" marks a date not checked in a source during this research. Confirm every date again when a carol is verified.
 
