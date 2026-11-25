@@ -153,9 +153,10 @@ OTT_BANDS = [dict(thr_a=-33.8, thr_b=-40.8, ra=66.7, att=47.8, rel=282.0, out=10
 
 def ott(st, fx):
     """fx: depth 0-1 (0.5; dry/wet), time (1.0; scales attack and release), upward 0-1 (1), downward 0-1 (1),
-    rb (4; the upward ratio), max_up_db (24; a cap on the upward gain so silence is not lifted), in_ref (-18; the
-    level, dBFS RMS of the active signal, the input is brought to before the thresholds: the preset's thresholds assume
-    a full-scale signal, so the effect does not change with gain_db), makeup ("auto": the output RMS is matched to the
+    rb (4; the upward ratio), max_up_db (24; a cap on the upward gain so silence is not lifted), in_ref (-30; the
+    level, dBFS RMS of the active signal, the input is brought to before the thresholds, so the effect does not change
+    with gain_db; at -30 the processed signal comes out within about 1.5 dB of the dry one on a supersaw line, so
+    `depth` blends like for like [H]), makeup ("auto": the output RMS is matched to the
     input, so OTT changes density and tone, not level; or a number of dB), low/mid/high (dB, output trim per band)."""
     depth = float(fx.get("depth", 0.5))
     if depth <= 0:
@@ -167,7 +168,7 @@ def ott(st, fx):
     rms = np.sqrt(np.mean(mono[act] ** 2)) if act.any() else 0.0
     if rms <= 0:
         return st
-    g_in = db(float(fx.get("in_ref", -18.0))) / rms
+    g_in = db(float(fx.get("in_ref", -30.0))) / rms
     xn = x * g_in * db(5.2)
     low, rest = _lr4(xn, 88.3)
     mid, high = _lr4(rest, 2500.0)
@@ -369,3 +370,14 @@ def apply_humanize(P, events, tracks, total, bar):
             e["t"] = t + float(np.interp(t, grid, dt))
             if "vel" in e and h.get("vel"):
                 e["vel"] = float(np.clip(e["vel"] * np.interp(t, grid, dv), 0.03, 1.0))
+
+
+if __name__ == "__main__":  # print a role's EQ preset: python3 engine/mixbus.py trance lead [cut_db own_db]
+    import sys
+    g, r = sys.argv[1], sys.argv[2]
+    spec = {}
+    if len(sys.argv) > 3:
+        spec["cut_db"] = float(sys.argv[3])
+    if len(sys.argv) > 4:
+        spec["own_db"] = float(sys.argv[4])
+    print(json.dumps(role_eq(g, r, spec or "auto")))

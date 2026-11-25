@@ -396,6 +396,7 @@ def run(a, renders, latest, meta):
     drum_types = set(ST.DRUM_TYPES)
     roles = {n: role_of(n, tr, drum_types) for n, tr in P["tracks"].items()}
     roles.update({"(reverb)": ("return", False), "(delay)": ("return", False), "(fx)": ("fx", False)})
+    roles.update({f"({r})": ("return", False) for r in (P.get("mix") or {}).get("returns") or {}})  # named returns
     print(f"CLARITY: {os.path.basename(latest)}  genre {genre or '(none: no EQ map, no target; give --genre)'}"
           + (f"  EQ map {gname}" if eqmap else "") + (f"  target {target}" if target else "")
           + "  (* = role inferred from name/instrument; set \"role\" on the track)")
