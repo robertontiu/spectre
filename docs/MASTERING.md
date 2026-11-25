@@ -90,6 +90,8 @@ Values in brackets are interpolated by the engine between the `beat` curve's anc
 
 **Genre mapping.** `hiphop` = Fig. 5 hip-hop. `trance` = Fig. 5 electronic. `rock` = the mean of Fig. 5 pop and rock (pop rock; the two differ by at most 1.5 dB per band).
 
+**Measured on 2026-11-25** (docs/PRODUCTION.md "Era-appropriate targets"; tables in docs/TRANCE.md, section C, and in each genre doc): against open catalogue data (MusicBrainz tags with AcousticBrainz spectra, 1995-2021, power-averaged like this engine's analyser) all three measured curves share one shape error: 3-6 dB too little in the kick-and-bass band (about 32-97 Hz), 3-5 dB too much at 97-183 Hz, and 2-6 dB too little above 7.7 kHz; for choirs and scores, which borrow `rock`, the curve is 7-12 dB too bright above 4 kHz. Interim catalogue-fitted curves and a plan for curves measured on reference masters are proposed there; nothing in the engine was changed.
+
 **What's uncertain.**
 - *Era.* The genre curves pool 1950-2010. The paper shows spectra getting louder, flatter and more extended over time, with more low end after 2000. Rock and pop #1s lean on 1960s-1980s records, so `rock` is probably too dark above 8 kHz for a modern master, and `hiphop` (largely 1990-2010) probably has less sub at 31-50 Hz than 2010s-2020s 808 trap. The per-decade panels of Fig. 2 have no common mid reference, so an era correction couldn't be derived without guessing; none was applied.
 - *Genre labels.* "Electronic" means #1 singles tagged electronic (mostly dance-pop and house-pop), not trance specifically; no trance-only measurement was found. Genre sample sizes aren't reported.
