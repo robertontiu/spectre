@@ -21,7 +21,7 @@ The chat orchestrator handed over here after the remix pass and the S3 upload.
   - **`--clarity` sums to mono, and reads stems before buses.** It under-reads hard-panned parts and doesn't see bus fx.
   - **Whisper:** medium for A/B decisions; small swings 20-30 points.
   - **Gated loudness misreads one-hit-plus-tail sections.** Check them second by second.
-- **Fix pending:** `tools/refcurve.py` keeps only the first 150 characters of a query as its cache key (two long queries can collide; existing targets unaffected).
+- **Fixed 2026-11-25:** `tools/refcurve.py` cache keys longer than 150 characters now end in a hash of the whole query, so two long queries can no longer collide (short keys unchanged, so the existing cache still hits).
 - **Cleanup still to do:** /tmp scratch, ~/beat (3.2 GB pre-repo workspace, superseded), ~/ext (third-party clones), ~/lottev1991.
 
 ## 1. What Spectre is

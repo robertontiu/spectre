@@ -34,6 +34,7 @@ Data: MusicBrainz (https://musicbrainz.org/doc/MusicBrainz_API), AcousticBrainz 
 """
 import argparse
 import datetime
+import hashlib
 import json
 import os
 import subprocess
@@ -213,7 +214,10 @@ def mb(path, params):
             time.sleep(wait)  # MusicBrainz: at most one request per second
         _last_mb[0] = time.time()
         return _get(MB + path + "?" + urllib.parse.urlencode(dict(params, fmt="json")))
-    key = "mb_" + path.replace("/", "_") + "_" + urllib.parse.quote(json.dumps(params, sort_keys=True), safe="")[:150]
+    q = urllib.parse.quote(json.dumps(params, sort_keys=True), safe="")
+    if len(q) > 150:  # keep the file name short, but key it on the whole query so two long queries can't collide
+        q = q[:150] + "_" + hashlib.sha256(q.encode()).hexdigest()[:16]
+    key = "mb_" + path.replace("/", "_") + "_" + q
     return _cached(key, go)
 
 
