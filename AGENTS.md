@@ -16,6 +16,7 @@ This file holds only what every request needs. Read the rules, then the route fo
 8. **Clean up after yourself**: delete your scratch (/tmp, test renders, downloads) when your task ends ([ORCHESTRATION.md](docs/ORCHESTRATION.md) standing rule 12).
 9. **Research decides over hand-picked numbers.** Genre values, mastering targets and voice decisions rest on sources and measurement; unsourced values are marked hand-tuned. Where a brief's or the owner's suggestion contradicts the research, flag it, follow the research and say why (standing rules 7, 10, 11).
 10. **It's an experiment**: report misses honestly.
+11. **Nothing reaches the site without the owner's approval by ear.** A new track or a new version of a published one is sent to the owner, who listens and approves it in the chat before `upload_track.py ... --owner-approved` or a `tracks.json` change ([ORCHESTRATION.md](docs/ORCHESTRATION.md) standing rule 21).
 
 ## Routes by role
 

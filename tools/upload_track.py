@@ -11,7 +11,13 @@ the publish set, the required files, the MP3), then lists the files to send to t
 in the chat instead, and exits 0. --all, --cors, --check and --fetch need the bucket;
 without one they say so and are skipped (exit 0).
 
-    python3 tools/upload_track.py 016        # publish: uuid if new, upload what changed, verify
+    python3 tools/upload_track.py 016 --owner-approved   # publish: uuid if new, upload what changed, verify
+
+The owner's approval gate (standing rule 21): the site plays <uuid>/rendition.mp3 straight
+from the bucket, so publishing a new track or a changed master puts it live at once.
+That needs --owner-approved, given only after the owner has listened to that exact master
+and approved it in the chat. Without the flag the tool refuses (exit 2) and changes nothing.
+Uploads that leave the audio as it is (journal, README, project files) need no flag.
 
 Publishing a track (by session id, slug or uuid from tracks.json):
   1. gives it a uuid (v4) in site/data/tracks.json if it has none (made once, never
@@ -396,6 +402,33 @@ def put(s3, cfg, t, folder, path, rel, name, dry_run):
     return verb
 
 
+def needs_approval(t, s3=None, cfg=None):
+    """Why publishing t would change what the site plays, or None: a new track (no uuid yet), or a
+    local master that differs from <uuid>/rendition.mp3 in the bucket."""
+    if "uuid" not in t:
+        return "a new track for the site"
+    if s3 is None:
+        return None
+    _, files = publishable(t)
+    local = md5_of(files[RENDITION][0]).hexdigest()
+    if remote_md5(head(s3, cfg, f"{t['uuid']}/{RENDITION}")) != local:
+        return f"a new or changed master ({files[RENDITION][1]})"
+    return None
+
+
+def gate(chosen, approved, s3=None, cfg=None):
+    """Refuse, before anything changes, to publish audio the owner hasn't approved (standing rule 21)."""
+    if approved:
+        return
+    why = [(t, needs_approval(t, s3, cfg)) for t in chosen]
+    why = [(t, w) for t, w in why if w]
+    if why:
+        raise Refused("the owner has not approved what the site would play: "
+                      + "; ".join(f"{t['id']} {t['title']}: {w}" for t, w in why)
+                      + ". Send the owner the master, wait for their approval by ear, then rerun with "
+                      "--owner-approved (standing rule 21). Nothing was changed.")
+
+
 def publish(s3, cfg, t, dry_run=False):
     folder, files = publishable(t)
     u = t.get("uuid", "<new uuid>")
@@ -517,6 +550,9 @@ def main():
     ap.add_argument("--fetch", metavar="TRACK", action="append", default=[], help="restore a session folder")
     ap.add_argument("--force", action="store_true", help="with --fetch: replace local files that differ")
     ap.add_argument("--dry-run", action="store_true", help="say what would happen, change nothing")
+    ap.add_argument("--owner-approved", action="store_true",
+                    help="the owner listened to and approved this exact master (needed to publish a new track "
+                         "or a changed master; standing rule 21)")
     a = ap.parse_args()
     if not (a.tracks or a.all or a.cors or a.check or a.fetch):
         ap.error("name tracks to publish, or use --all, --cors, --check or --fetch")
@@ -533,6 +569,7 @@ def main():
             if not chosen:
                 return 0
             if not a.dry_run:
+                gate(chosen, a.owner_approved)
                 assign_uuids(tracks, chosen)
             print("No S3 bucket configured: nothing uploaded. Deliver these files to the user in the chat:")
             for t in chosen:
@@ -547,6 +584,7 @@ def main():
         if a.cors:
             set_cors(s3, cfg, a.dry_run)
         if not a.dry_run:
+            gate(chosen, a.owner_approved, s3, cfg)
             assign_uuids(tracks, chosen)
         for t in chosen:
             publish(s3, cfg, t, a.dry_run)

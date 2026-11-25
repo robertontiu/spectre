@@ -23,7 +23,8 @@ Every published track's files live in an S3-compatible bucket configured through
 Work happens locally in `sessions/<id>-<name>/`. Publishing a track, or a new version of one (a remix, a remaster), is one step:
 
 ```bash
-python3 tools/upload_track.py <id>        # 1. a uuid in tracks.json if the track is new
+python3 tools/upload_track.py <id> --owner-approved   # only after the owner approved this master by ear (standing rule 21)
+                                          # 1. a uuid in tracks.json if the track is new
                                           # 2. upload every new or changed file (MD5 compared; unchanged skipped)
                                           # 3. verify (Content-MD5 on upload, then size and ETag)
 python3 tools/upload_track.py --check     # the bucket against tracks.json and the local sessions

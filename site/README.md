@@ -62,7 +62,7 @@ Set them in Vercel (Project → Settings → Environment Variables, Production a
 
    `id` selects the session folder; `file` is the track's slug plus `.mp3` (the slug is its URL, `/track/016-title-slug`, and `file` its name in `public/tracks/` when played locally); `duration` comes from `ffprobe`, `genre` is the short label shown beside the tempo, and `colors` are 2-3 colours that fit the track (the page mutes them).
 
-3. **Publish:** `python3 ../tools/upload_track.py 016` (with the workspace's write key in the environment) gives the track its `uuid` in `data/tracks.json` and uploads its session files to the bucket. Without a bucket it uploads nothing, runs the same local checks and lists the files to send to the user instead (exit 0); the session folder stays local and the site plays its master from it. Then check `npm run build` and commit `data/tracks.json`; the site picks the track up on its next deploy.
+3. **Publish,** only after the owner has listened to and approved the master (docs/ORCHESTRATION.md standing rule 21): `python3 ../tools/upload_track.py 016 --owner-approved` (with the workspace's write key in the environment) gives the track its `uuid` in `data/tracks.json` and uploads its session files to the bucket. Without a bucket it uploads nothing, runs the same local checks and lists the files to send to the user instead (exit 0); the session folder stays local and the site plays its master from it. Then check `npm run build` and commit `data/tracks.json`; the site picks the track up on its next deploy.
 
 ## Deploy on Vercel
 
