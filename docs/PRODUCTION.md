@@ -171,7 +171,7 @@ Reading it:
 - *Therefore the owner's ear, and now a professional's, are part of the instrument, not a review at the end.* Proposed protocol: (a) **sound audition before arrangement**: for the two or three sounds a track stands on (kick, bass, lead; snare, guitar; the voice), render 2-3 candidate stacks as 8-bar loops and let the owner choose by ear before the session builds on them: cheap, and it is where 007 went wrong twice; (b) **one mid-session checkpoint** at the first full drop or chorus; (c) verdicts recorded as symptoms with a timestamp ("0:55 thin", "the pad disappears"), never as prescriptions (standing rule 10 already does this for voices); (d) every verdict logged next to the measurements of that version in docs/LESSONS.md, so that over time the numbers that agree with human ears can be told from those that don't. That log is the only way the "ears" can be calibrated; no amount of analysis replaces it.
 - *An audio-capable critic model* (docs/agents/known-limits.md, item 1) could add a weak second opinion on timbre; it is unvalidated here and must not replace (a)-(d).
 
-## 5. Checklist: what the research for a NEW genre must produce
+## 5. Checklist: what the research for a NEW genre must produce (existing genres are brought up to item 10 too)
 Standing rules 7 and 8 (docs/ORCHESTRATION.md) already ask for sourced genre settings and industry mastering practice; standing rule 16 (2026-11-25) adds layering, carving and a current target. The genre brief `docs/<GENRE>.md` is complete only when it also has:
 1. **Layer roles.** For every part of the genre's ensemble (low end, rhythm, harmony, lead, voice, percussion, space): which sources make it up, what each supplies (sub, body, mid bite, air, transient, width, centre), how many, at which octaves, and which role each source must *not* play. From producer or engineer sources for that genre; where none exist, say so and derive it from the genre's instrumentation, marked [H].
 2. **An EQ map.** A table per instrument: high-pass point, region to cut or control, region it owns, with a source per row and a "cross-check" against at least one independent source; disagreements noted, not averaged away. For acoustic and orchestral genres the map states how light the moves are and that orchestration and balance come first.
@@ -182,6 +182,13 @@ Standing rules 7 and 8 (docs/ORCHESTRATION.md) already ask for sourced genre set
 7. **The nearest wrong *sounds*** next to the nearest wrong feelings: which sound-design choices would make it read as another decade or another genre.
 8. **A census of a reference arrangement** where a published multitrack breakdown exists: how many sources sound at once per region at the peak section.
 9. **An entry in the remix table** of this document if earlier tracks in a neighbouring genre are affected.
+10. **Granularity: the genre's dimensions and its bleeding edge** (owner, 2026-11-25). A genre is rarely one sound. Name the dimensions along which it really varies: always the timeline, and where they apply region, scene or strand (Romanian folk music by region, hip hop by city and wave, Latin pop by strand). For each dimension:
+    - **Split where the evidence shows real change, not on fixed dates or borders.** Say why each boundary is there.
+    - **State the shared core** that holds across every subdivision, so a producer never loses the genre's identity.
+    - **List each subdivision's nuances as concrete, checkable elements**, with a source each and measured where data exists: tempo and groove, rhythm patterns, low end, lead and harmony sources, instruments and ornaments, form and length, voice use, mixing moves, and loudness and tonal target. Mark each element "shared" or "varies", and how much.
+    - **Close with a current-practice checklist** ("bleeding edge": the newest elements of the last two or three years) for briefs that ask for the newest sound, and say which elements the engine can already do.
+    - **Give a separate master target per subdivision** only where measurements differ, and say which target each kind of brief uses. Mark thin data or extrapolation (AcousticBrainz stops in 2022) as such.
+    - **The brief names its subdivision** (era, region, strand). A brief that names none takes the current practice.
 
 ## 6. Gaps and proposals
 Ranked by expected effect on what a listener hears, per unit of work [H]. Built so far (2026-11-25, queue item 9b): measurement side, engine items 1, 2 and 6; sound side, items 3, 4, 5 and 7 (marked below; A/B in examples/production/); item 8 is open.
