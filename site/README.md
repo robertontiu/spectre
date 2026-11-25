@@ -43,7 +43,7 @@ Set them in Vercel (Project → Settings → Environment Variables, Production a
 
 | Variable                       | Value                                                                                       |
 | ------------------------------ | ------------------------------------------------------------------------------------------- |
-| `SPECTRE_S3_ENDPOINT`          | the bucket's S3 endpoint, e.g. `https://s3.<region>.example.com` (path-style URLs are used)  |
+| `SPECTRE_S3_ENDPOINT`          | the bucket's S3 endpoint, e.g. `https://s3.<region>.example.com` (path-style URLs are used) |
 | `SPECTRE_S3_REGION`            | e.g. `<region>`                                                                             |
 | `SPECTRE_S3_BUCKET`            | the bucket's name, e.g. `<your-bucket>`                                                     |
 | `SPECTRE_S3_ACCESS_KEY_ID`     | the site's **read-only** key (the workspace's upload key is a different, read-write one)    |
