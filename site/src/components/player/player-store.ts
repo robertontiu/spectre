@@ -2,7 +2,7 @@ import { AudioEngine } from "@/lib/audio-engine";
 import { paletteFrom } from "@/lib/color";
 import { PaletteAnimator } from "@/lib/palette-animator";
 import { IS_PREVIEW, audioPath, trackPath } from "@/lib/site";
-import type { Track } from "@/lib/tracks";
+import { type Family, type Track, familyFromSlug, familySlug } from "@/lib/tracks";
 
 export type RepeatMode = "all" | "one" | "off";
 
@@ -10,9 +10,20 @@ export type RepeatMode = "all" | "one" | "off";
 export const FADE_MS = 2000;
 const REPEAT_MODES: readonly RepeatMode[] = ["all", "one", "off"];
 
+/** Indices (into the full list, in its order) of the tracks a filter shows; null is all. */
+export function filterIndices(tracks: readonly Track[], family: Family | null): number[] {
+  const indices: number[] = [];
+  tracks.forEach((t, i) => {
+    if (!family || t.family === family) indices.push(i);
+  });
+  return indices;
+}
+
 export type PlayerState = {
-  /** Index of the selected track. */
+  /** Index of the selected track (into the full list; it may be outside the filter). */
   current: number;
+  /** The playlist's genre filter (`?genre=`); null shows every track. */
+  family: Family | null;
   playing: boolean;
   /** Playback position and length of the selected track, in seconds. */
   time: number;
@@ -68,6 +79,7 @@ export class PlayerStore {
     const colors = tracks[initial]?.colors ?? [];
     this.state = {
       current: initial,
+      family: null,
       playing: false,
       time: 0,
       duration: tracks[initial]?.duration ?? 0,
@@ -106,6 +118,9 @@ export class PlayerStore {
     }
     this.restore();
     this.applyVolume();
+    // The filter comes from the address (`?genre=<slug>`), read here because the pages are
+    // prerendered: they render "All" on the server and apply the filter on hydration.
+    this.set({ family: familyFromSlug(new URLSearchParams(location.search).get("genre")) });
     if (this.tracks.length) this.select(this.state.current, false, { syncUrl: false });
 
     const on: Record<string, () => void> = {
@@ -216,9 +231,7 @@ export class PlayerStore {
     this.set({ current: index, time: 0, duration: track.duration, message: null });
     this.palette.setTarget(paletteFrom(track.colors));
     // Keep the address bar on the playing track without a navigation (no remount, no scroll).
-    if (syncUrl && !IS_PREVIEW && location.pathname !== trackPath(track)) {
-      history.replaceState(history.state, "", trackPath(track));
-    }
+    if (syncUrl) this.syncUrl(trackPath(track));
     if ("mediaSession" in navigator) {
       try {
         navigator.mediaSession.metadata = new MediaMetadata({ title: track.title, artist: track.artist });
@@ -255,6 +268,30 @@ export class PlayerStore {
     }
   };
 
+  /**
+   * Filters the playlist. Playback carries on untouched: a playing track outside the new
+   * filter keeps playing, and next/previous continue from its place in the full list.
+   */
+  setFamily = (family: Family | null): void => {
+    if (family === this.state.family) return;
+    this.set({ family });
+    this.syncUrl(location.pathname);
+  };
+
+  /** Replaces the address with `pathname` and the current filter (no navigation, no scroll). */
+  private syncUrl(pathname: string): void {
+    if (IS_PREVIEW) return;
+    const params = new URLSearchParams(location.search);
+    const { family } = this.state;
+    if (family) params.set("genre", familySlug(family));
+    else params.delete("genre");
+    const query = params.toString();
+    const url = `${pathname}${query ? `?${query}` : ""}${location.hash}`;
+    if (url !== `${location.pathname}${location.search}${location.hash}`) {
+      history.replaceState(history.state, "", url);
+    }
+  }
+
   pause = (): void => this.audio?.pause();
 
   togglePlay = (): void => {
@@ -270,39 +307,43 @@ export class PlayerStore {
     else this.step(-1, false);
   };
 
+  /**
+   * Moves through the filtered list (the queue), in its order. The current track may be
+   * outside the filter (it kept playing when the filter changed): the step then goes to
+   * the first queued track after (or before) its place in the full list. Past either end
+   * it wraps, except that auto-advance stops at the end with repeat off.
+   */
   private step(direction: 1 | -1, auto: boolean): void {
-    const { current, repeat, shuffle } = this.state;
-    const n = this.tracks.length;
-    if (!n || !this.audio) return;
+    const { current, repeat, shuffle, family } = this.state;
+    const queue = filterIndices(this.tracks, family);
+    if (!queue.length || !this.audio) return;
     if (auto && repeat === "one") {
       this.seekTo(0);
       void this.play();
       return;
     }
     if (shuffle) {
-      this.select(this.randomOther(), true);
+      this.select(this.randomFrom(queue), true);
       return;
     }
-    let j = current + direction;
-    if (j >= n) {
+    const ahead = direction === 1 ? queue.filter((i) => i > current) : queue.filter((i) => i < current).reverse();
+    let j = ahead[0];
+    if (j === undefined) {
       if (auto && repeat === "off") {
         this.audio.pause();
-        this.select(0, false);
+        this.select(queue[0], false);
         return;
       }
-      j = 0;
+      j = direction === 1 ? queue[0] : queue[queue.length - 1];
     }
-    if (j < 0) j = n - 1;
     this.select(j, true);
   }
 
-  private randomOther(): number {
-    const n = this.tracks.length;
-    if (n < 2) return 0;
-    let j: number;
-    do j = Math.floor(Math.random() * n);
-    while (j === this.state.current);
-    return j;
+  /** A random queued track other than the current one (the current one if it is alone). */
+  private randomFrom(queue: readonly number[]): number {
+    const others = queue.filter((i) => i !== this.state.current);
+    const pool = others.length ? others : queue;
+    return pool[Math.floor(Math.random() * pool.length)];
   }
 
   /** The best known length of the selected track. */
@@ -353,7 +394,7 @@ export class PlayerStore {
   handleKey = (e: KeyboardEvent): void => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     const target = e.target instanceof Element ? e.target : null;
-    const inField = !!target?.closest("input,select,textarea,[role=slider]");
+    const inField = !!target?.closest("input,select,textarea,[role=slider],[role=radiogroup]");
     if (e.key === " " && !inField && !target?.closest("button")) {
       e.preventDefault();
       this.togglePlay();

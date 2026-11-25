@@ -4,7 +4,7 @@ import { usePlayer, usePlayerStore } from "./player-context";
 import { InfoButton } from "./info-button";
 import { ShareButton } from "./share-button";
 
-/** Title, artist and tempo of the selected track, plus any playback problem. */
+/** Title, artist, tempo and genre of the selected track, plus any playback problem (the model is in the info dialog). */
 export function NowPlaying() {
   const { tracks } = usePlayerStore();
   const current = usePlayer((s) => s.current);
@@ -24,7 +24,6 @@ export function NowPlaying() {
         <p className="m-0 text-[15px] text-mute">
           <span>{track.artist}</span>, <span className="font-semibold whitespace-nowrap text-ice">{track.bpm} BPM</span>
           <span className="whitespace-nowrap">{` · ${track.genre}`}</span>
-          <span className="whitespace-nowrap">{` · ${track.model}`}</span>
         </p>
       )}
       {message && <p className="m-0 basis-full text-[14px] text-[#ffb4a8]">{message}</p>}

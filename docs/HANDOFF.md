@@ -44,7 +44,7 @@ Always-on (AGENTS.md rules 1, 4, 8, 9, 10): the artist is Spectre; no personal d
 - **Research decides voice questions; the owner is the ear tester.** His notes are symptoms to diagnose ("it sounds like reverb" is a hypothesis to measure), not instructions. Where research disagrees with a suggestion, follow the research and tell him why. A/B renders go to him for the verdict.
 - **Voices are instruments, never full songs.** Short lines, hooks, chops, calls, choir textures; no verses carried by a lead vocal.
 - **Every production is unique.** Licensed (public-domain) quotes are ingredients, never covers or re-arrangements; quote whole phrases, cut at phrase boundaries.
-- **Website:** no autoplay, no EQ (tracks play exactly as mastered); the producer model is shown per track beside the tempo; tracks are listed newest first. Other design decisions: ORCHESTRATION.md "Website design decisions".
+- **Website:** no autoplay, no EQ (tracks play exactly as mastered); the producer model is shown only in each track's info dialog; genre filter pills over the playlist (`?genre=`), with the play queue following the filter; tracks are listed newest first. Other design decisions: ORCHESTRATION.md "Website design decisions".
 - **Feedback is recorded only once final.** Candidates and A/B results live in the session journal; README, LESSONS and the site change only when the owner has decided.
 - Record lessons after every genre switch.
 

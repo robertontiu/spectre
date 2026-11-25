@@ -76,6 +76,12 @@
       transform: translateX(4.1667%);
     }
   }
+  /* HeroMotion moves the badge onto the card and fades the title (inline transforms). */
+  .badge,
+  .hero-title {
+    will-change: transform;
+    transform-origin: 50% 50%;
+  }
   .logo-wrap {
     position: relative;
     max-width: 960px;
