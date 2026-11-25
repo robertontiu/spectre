@@ -35,6 +35,13 @@ DEFAULT_GAIN.update({"singer": -9, "vox2": -9})
 DEFAULT_GAIN.update({"violin": -8, "acguitar": -7, "toba": -4})
 DEFAULT_GAIN.update({"celesta": -12, "glockenspiel": -12, "cello": -12, "viola": -10, "strings_section": -17,
                      "vibraphone": -14})
+DEFAULT_GAIN.update({"polysynth": -12, "sub": -4, "kicksub": -1, "kickpunch": -8, "kickclick": -6, "metalhat": -13,
+                     "air": -20})
+
+# Opt-in production features (stacks, buses, returns, role EQ, ott/dyneq/clip/mseq, correlated humanizing) live in
+# engine/mixbus.py; _CTX carries the render's events and genre to the fx that need them (dyneq, role EQ).
+import mixbus as MB  # noqa: E402
+_CTX = {"events": {}, "genre": None}
 
 
 def _attach_lyrics(part, new, tname):
@@ -136,7 +143,19 @@ def apply_fx(st, fx_list, bpm):
         return x
     for fx in fx_list or []:
         k = fx["type"]
-        if k == "hpf":
+        if k in ("hpf", "lpf") and fx.get("slope"):  # steeper filters (opt-in; plain hpf/lpf stay first-order)
+            st = MB.butter(flush(st), k, fx.get("hz", 120 if k == "hpf" else 5000), fx["slope"])
+        elif k in ("ott", "dyneq", "clip", "mseq"):
+            st = flush(st)
+            if k == "ott":
+                st = MB.ott(st, fx)
+            elif k == "dyneq":
+                st = MB.dyneq(st, fx, _CTX["events"])
+            elif k == "clip":
+                st = MB.clip(st, fx)
+            else:
+                st = MB.mseq(st, fx, lambda x, fl: apply_fx(x, fl, bpm))
+        elif k == "hpf":
             chain.append(pb.HighpassFilter(fx.get("hz", 120)))
         elif k == "lpf":
             chain.append(pb.LowpassFilter(fx.get("hz", 5000)))
@@ -387,6 +406,8 @@ def schedule(P, hand):
         t += bars * bar
         bar_i += bars
     hand.rng = shared_rng
+    if any(isinstance(tr.get("humanize"), dict) for tr in tracks.values()):  # opt-in correlated humanizing
+        MB.apply_humanize(P, events, tracks, t, bar)
     if any(sec.get("bpm") for sec in P["arrangement"]):
         return _tempo_warp(P, hand, events, holds, sections, t)
     return events, holds, sections, t
@@ -441,7 +462,111 @@ def _ramp_time(u, b0, b1, U):
     return 60.0 / k * np.log((b0 + k * u) / b0)
 
 
+def _role_fx(tr, role=None):
+    """The role EQ preset of a track or layer with `"eq"` ("auto" or a dict of overrides), from the project genre's
+    map (engine/eqmaps.json via mixbus.role_eq). Nothing without "eq" (or with "eq": "none")."""
+    spec = tr.get("eq")
+    if not spec or spec == "none":
+        return []
+    role = role or tr.get("role")
+    genre = (spec.get("genre") if isinstance(spec, dict) else None) or _CTX.get("genre")
+    if not genre:
+        _warn_once("eq-genre", 'warning: "eq": "auto" needs the project\'s "genre" (or "eq": {"genre": ...}); '
+                   "role EQ presets skipped")
+        return []
+    fx = MB.role_eq(genre, role, spec)
+    if not fx:
+        _warn_once(f"eq-{genre}-{role}", f"warning: no EQ map entry for role '{role}' in genre '{genre}'")
+    return fx
+
+
+_WARNED = set()
+
+
+def _warn_once(key, msg):
+    if key not in _WARNED:
+        _WARNED.add(key)
+        print(msg, file=sys.stderr)
+
+
+def _layer_events(evs, L, parent_is_drum):
+    """A stack layer's copy of the parent's events: `notes` all / lowest / highest (per chord), `offset_ms`, `vel`
+    (a factor), and for a tonal layer under drum steps a fixed `note` held `len` 16ths."""
+    from hand import note_to_midi
+    out = [dict(e) for e in evs]
+    sel = L.get("notes", "all")
+    if sel in ("lowest", "highest") and out and "midi" in out[0]:
+        out.sort(key=lambda e: e["t"])
+        groups, cur = [], [out[0]]
+        for e in out[1:]:
+            if e["t"] - cur[0]["t"] < 0.03:  # a chord's notes (spread a few ms by the hand)
+                cur.append(e)
+            else:
+                groups.append(cur)
+                cur = [e]
+        groups.append(cur)
+        pick = min if sel == "lowest" else max
+        out = [pick(g, key=lambda e: e["midi"]) for g in groups]
+    off = float(L.get("offset_ms", 0)) / 1000
+    vs = float(L.get("vel", 1.0))
+    for e in out:
+        e["t"] = e["t"] + off
+        if "vel" in e:
+            e["vel"] = float(np.clip(e["vel"] * vs, 0.03, 1.0))
+        if parent_is_drum and "midi" not in e and L.get("note"):
+            e["midi"] = note_to_midi(L["note"])
+            e["dur"] = float(L.get("len", 2)) * 60.0 / _CTX["bpm"] / 4
+            e["glide"] = False
+    return out
+
+
+def stack_type(tr):
+    """How a stack's pattern is read: as its own `inst` if it has one, else as its first layer's instrument."""
+    if tr.get("inst"):
+        return tr["inst"]["type"]
+    return tr["layers"][0]["inst"]["type"]
+
+
+def render_stack(name, tr, evs, holds, total_n, bpm):
+    """A track with `"layers"`: every layer plays the track's notes with its own instrument, octave, level, pan,
+    width, role EQ and fx; the layers are summed into the stack's bus, which runs the track's own `fx`, `gain_db`
+    (no per-type default: the layers carry those), `pan` (balance) and `width`. Sends, sidechain, choke and section
+    automation then act on the bus like on any track."""
+    parent_is_drum = stack_type(tr) in DRUM_TYPES
+    acc = np.zeros((2, total_n), dtype=np.float32)
+    for i, L in enumerate(tr["layers"]):
+        if L.get("mute"):
+            continue
+        lname = L.get("name") or f"layer{i + 1}"
+        inst = dict(L["inst"])
+        semis = 12 * float(L.get("octave", 0)) + float(L.get("semi", 0))
+        if semis:
+            inst["transpose"] = inst.get("transpose", 0) + semis
+        role = L.get("role")
+        fx = _role_fx(dict(L, eq=L.get("eq", "auto")), role) if role else []
+        ltr = {"inst": inst, "gain_db": L.get("gain_db", 0), "pan": L.get("pan", 0), "width": L.get("width", 0),
+               "fx": fx + list(L.get("fx") or [])}
+        if _CTX.get("layer_rng"):
+            _CTX["layer_rng"](f"{name}.{lname}")
+        x = render_track(f"{name}.{lname}", ltr, _layer_events(evs, L, parent_is_drum), holds, total_n, bpm)
+        if _CTX.get("layer_hook"):
+            _CTX["layer_hook"](name, lname, role, x)
+        acc += x
+    st = acc * np.float32(db(tr.get("gain_db", 0)))
+    p = float(np.clip(tr.get("pan", 0), -1, 1))
+    if p:
+        a = (p + 1) * np.pi / 4
+        st = (st * np.array([[np.cos(a)], [np.sin(a)]]) * np.sqrt(2)).astype(np.float32)
+    if tr.get("width"):
+        st = widen(st, tr["width"])
+    return apply_fx(st, _role_fx(tr) + list(tr.get("fx") or []), bpm)
+
+
 def render_track(name, tr, evs, holds, total_n, bpm):
+    if tr.get("layers"):
+        return render_stack(name, tr, evs, holds, total_n, bpm)
+    if tr.get("eq") and tr["eq"] != "none":
+        tr = dict(tr, fx=_role_fx(tr) + list(tr.get("fx") or []))
     typ = tr["inst"]["type"]
     p = tr["inst"]
     mono = np.zeros(total_n, dtype=np.float32)
@@ -566,13 +691,144 @@ def _window_auto(st, au, a, b, n):
     return st
 
 
-def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=None, pre_roll=None):
+def _prepare(P):
+    """A stack track without its own `inst` reads its pattern as its first layer's instrument: give the scheduler a
+    copy of the project where it has one (the project itself is not changed)."""
+    if not any(tr.get("layers") and not tr.get("inst") for tr in P["tracks"].values()):
+        return P
+    tracks = {k: (dict(tr, inst={"type": stack_type(tr)}) if tr.get("layers") and not tr.get("inst") else tr)
+              for k, tr in P["tracks"].items()}
+    return dict(P, tracks=tracks)
+
+
+def _sidechain(st, sc, events, total_n):
+    g = np.ones(total_n, dtype=np.float32)
+    depth, rel = sc.get("depth", 0.6), sc.get("release_ms", 140) / 1000
+    k = np.arange(int(rel * 5 * SR)) / SR
+    curve = 1 - depth * np.exp(-k / rel)
+    att = int(0.003 * SR)
+    curve[:att] = np.minimum(curve[:att], np.linspace(1, 1 - depth, att))
+    for e in events[sc["source"]]:
+        i = int(e["t"] * SR) - att
+        if 0 <= i < total_n:
+            m = min(len(curve), total_n - i)
+            g[i:i + m] = np.minimum(g[i:i + m], curve[:m])
+    st *= g
+    return st
+
+
+def _section_moves(P, name, st, sec_by_name, whole, total_n, beat):
+    """Per-section automation and exits that touch the track (or bus) `name`."""
+    for sec in P["arrangement"]:
+        S = sec_by_name[sec["name"]]
+        a, b = int(S["start"] * SR), int(S["end"] * SR)
+        if whole is not None:  # window render: sections outside the span do nothing; clip the rest
+            if b <= 0 or a >= total_n:
+                continue
+            au = (sec.get("auto") or {}).get(name)
+            if au:
+                st = _window_auto(st, au, a, b, total_n)
+            a = max(a, 0)
+        au = (sec.get("auto") or {}).get(name) if whole is None else None
+        if au:
+            if au.get("mute"):
+                st[:, a:b] = 0
+            gdb = au.get("gain_db")
+            if gdb is not None:
+                g0, g1 = (gdb if isinstance(gdb, list) else [gdb, gdb])
+                st[:, a:b] *= db(np.linspace(g0, g1, b - a)).astype(np.float32)
+            lpf = au.get("lpf")
+            if lpf:
+                f0, f1 = (lpf if isinstance(lpf, list) else [lpf, lpf])
+                st = block_lpf(st, a, b, f0, f1)
+            hpf = au.get("hpf")
+            if hpf:
+                f0, f1 = (hpf if isinstance(hpf, list) else [hpf, hpf])
+                st = block_hpf(st, a, b, max(f0, 10), max(f1, 10))
+        ex = sec.get("exit") or {}
+        cut = ex.get("cut")
+        bt_e = S.get("beat_end", beat)  # the local beat in a tempo-mapped section
+        if cut and (name in cut.get("tracks", []) or (cut.get("tracks") == "all")):
+            st *= fade_gate(total_n, [(b - int(cut["beats"] * bt_e * SR), b)])
+        xl = ex.get("lpf")
+        if xl and name in xl.get("tracks", []):
+            st = block_lpf(st, b - int(xl["beats"] * bt_e * SR), b, 18000, xl.get("to_hz", 400))
+    return st
+
+
+def _named_sends(st, tr, returns_in, total_n):
+    """`"sends": {"hall": 0.2, ...}`: into the project's named returns (mix.returns); `reverb_predelay_ms` applies."""
+    for rn, amt in (tr.get("sends") or {}).items():
+        if not amt:
+            continue
+        if rn not in returns_in:
+            raise ValueError(f'send to unknown return "{rn}" (define it in mix.returns)')
+        returns_in[rn] += st * amt
+
+
+def _bus_order(buses):
+    """Buses in processing order: a bus that feeds another (`"bus": "<name>"`) comes before it."""
+    order, seen = [], set()
+
+    def visit(b, path=()):
+        if b in seen:
+            return
+        if b in path:
+            raise ValueError(f"bus cycle: {' -> '.join(path + (b,))}")
+        nxt = (buses.get(b) or {}).get("bus")
+        if nxt:
+            if nxt not in buses:
+                raise ValueError(f'bus "{b}" feeds unknown bus "{nxt}"')
+            visit(nxt, path + (b,))
+        seen.add(b)
+        order.append(b)
+    for b in buses:
+        visit(b)
+    return order[::-1]
+
+
+def _process_return(rn, cfg, x, beat, duck_env):
+    """A named return (mix.returns): `type` reverb (size, damping, predelay_ms, width) or delay (beats, feedback,
+    pingpong, offset_ms), then hpf / lpf (12 dB/oct; defaults 250 Hz / 7 kHz for reverbs, 300 Hz / 3.5 kHz for
+    delays), `fx` (any fx chain: an eq cut at 300-600 Hz, ott...), `duck` ({key, depth_db, attack_ms, release_ms}:
+    the return dips while the key plays), return_db."""
+    typ = cfg.get("type", "reverb")
+    x = MB.predelay(x, float(cfg.get("predelay_ms", 0)))
+    if typ == "reverb":
+        wet = pb.Pedalboard([pb.Reverb(cfg.get("size", 0.75), cfg.get("damping", 0.55), 1.0, 0.0,
+                                       cfg.get("width", 1.0))])(x, SR)
+        hp, lp = cfg.get("hpf", 250), cfg.get("lpf", 7000)
+    elif typ == "delay":
+        if cfg.get("pingpong"):
+            wet = MB.pingpong(x, beat, cfg.get("beats", 0.75), cfg.get("feedback", 0.35), cfg.get("offset_ms", 0.0))
+        else:
+            d = cfg.get("beats", 0.75) * beat + cfg.get("offset_ms", 0.0) / 1000
+            wet = pb.Pedalboard([pb.Delay(d, cfg.get("feedback", 0.35), 1.0)])(x, SR)
+        hp, lp = cfg.get("hpf", 300), cfg.get("lpf", 3500)
+    else:
+        raise ValueError(f'return "{rn}": type must be reverb or delay')
+    if hp:
+        wet = MB.butter(wet, "hpf", hp, 12)
+    if lp:
+        wet = MB.butter(wet, "lpf", lp, 12)
+    wet = apply_fx(wet.astype(np.float32), cfg.get("fx"), 60.0 / beat)
+    du = cfg.get("duck")
+    if du:
+        if du.get("key") not in duck_env:
+            raise ValueError(f'return "{rn}": duck key "{du.get("key")}" is not a track or bus')
+        e = MB.follower_db(duck_env[du["key"]], du.get("attack_ms", 10.0), du.get("release_ms", 250.0))
+        wet = wet * MB.duck_curve(e, du.get("depth_db", 6.0))[None, :].astype(np.float32)
+    return (wet * db(cfg.get("return_db", -4))).astype(np.float32)
+
+
+def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=None, pre_roll=None, layer_hook=None):
     """Render a project. `stem_hook(name, st)` (optional) is called with every track's final stereo signal as it goes
     into the mix, and with the returns "(reverb)", "(delay)" and "(fx)"; it must not change them. `window=(t0, t1)`
     (seconds) renders only that span plus a pre-roll (default two bars) for the ears' stem analysis: the result
     starts `meta["window_offset"]` seconds into the track, has no quick master, and its random draws differ from a
     full render (the stems are the same sounds, not the same samples)."""
     t_start = time.time()
+    P = _prepare(P)
     hand = Hand(P["bpm"], P.get("swing", 0.5), P.get("seed", 1))
     events, holds, sections, total = schedule(P, hand)
     whole, offset = None, 0.0
@@ -582,6 +838,8 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
         events, holds, sections, total, offset = _window(events, holds, sections, total, window, pre)
     per_track = per_track_seeds(P)
     shared_rng = I.RNG
+    _CTX.update(events=events, genre=P.get("genre"), bpm=P["bpm"], layer_hook=layer_hook,
+                layer_rng=(lambda nm: setattr(I, "RNG", track_rng(P, nm, 1))) if per_track else None)
     tail = 3.0
     total_n = int((total + tail) * SR)
     tracks = P["tracks"]
@@ -594,6 +852,12 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
     stems_rms = {}
     beat = 60.0 / P["bpm"]
     sec_by_name = {s["name"]: s for s in sections}
+    buses = P.get("buses") or {}
+    bus_in = {b: np.zeros((2, total_n), dtype=np.float32) for b in buses}
+    returns_cfg = mix_cfg.get("returns") or {}
+    returns_in = {r: np.zeros((2, total_n), dtype=np.float32) for r in returns_cfg}
+    duck_keys = {(c.get("duck") or {}).get("key") for c in list(returns_cfg.values()) + [rv, dl]} - {None}
+    duck_env = {}
     names = list(tracks)
     if solo:
         names = [solo]
@@ -631,64 +895,54 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
         # sidechain ducking from another track's hit times
         sc = tr.get("sidechain")
         if sc and sc.get("source") in events:
-            g = np.ones(total_n, dtype=np.float32)
-            depth, rel = sc.get("depth", 0.6), sc.get("release_ms", 140) / 1000
-            k = np.arange(int(rel * 5 * SR)) / SR
-            curve = 1 - depth * np.exp(-k / rel)
-            att = int(0.003 * SR)
-            curve[:att] = np.minimum(curve[:att], np.linspace(1, 1 - depth, att))
-            for e in events[sc["source"]]:
-                i = int(e["t"] * SR) - att
-                if 0 <= i < total_n:
-                    m = min(len(curve), total_n - i)
-                    g[i:i + m] = np.minimum(g[i:i + m], curve[:m])
-            st *= g
+            st = _sidechain(st, sc, events, total_n)
         # per-section automation and exits that touch this track
-        for sec in P["arrangement"]:
-            S = sec_by_name[sec["name"]]
-            a, b = int(S["start"] * SR), int(S["end"] * SR)
-            if whole is not None:  # window render: sections outside the span do nothing; clip the rest
-                if b <= 0 or a >= total_n:
-                    continue
-                au = (sec.get("auto") or {}).get(name)
-                if au:
-                    st = _window_auto(st, au, a, b, total_n)
-                a = max(a, 0)
-            au = (sec.get("auto") or {}).get(name) if whole is None else None
-            if au:
-                if au.get("mute"):
-                    st[:, a:b] = 0
-                gdb = au.get("gain_db")
-                if gdb is not None:
-                    g0, g1 = (gdb if isinstance(gdb, list) else [gdb, gdb])
-                    st[:, a:b] *= db(np.linspace(g0, g1, b - a)).astype(np.float32)
-                lpf = au.get("lpf")
-                if lpf:
-                    f0, f1 = (lpf if isinstance(lpf, list) else [lpf, lpf])
-                    st = block_lpf(st, a, b, f0, f1)
-                hpf = au.get("hpf")
-                if hpf:
-                    f0, f1 = (hpf if isinstance(hpf, list) else [hpf, hpf])
-                    st = block_hpf(st, a, b, max(f0, 10), max(f1, 10))
-            ex = sec.get("exit") or {}
-            cut = ex.get("cut")
-            bt_e = S.get("beat_end", beat)  # the local beat in a tempo-mapped section
-            if cut and (name in cut.get("tracks", []) or (cut.get("tracks") == "all")):
-                st *= fade_gate(total_n, [(b - int(cut["beats"] * bt_e * SR), b)])
-            xl = ex.get("lpf")
-            if xl and name in xl.get("tracks", []):
-                st = block_lpf(st, b - int(xl["beats"] * bt_e * SR), b, 18000, xl.get("to_hz", 400))
+        st = _section_moves(P, name, st, sec_by_name, whole, total_n, beat)
         pd_n = int(tr.get("reverb_predelay_ms", 0) / 1000 * SR)  # the reverb hears this track later
         if pd_n > 0 and tr.get("send_reverb", 0):
             rev_bus[:, pd_n:] += st[:, :-pd_n] * tr["send_reverb"]
         else:
             rev_bus += st * tr.get("send_reverb", 0)
         del_bus += st * tr.get("send_delay", 0)
-        mix += st
+        if tr.get("sends"):
+            _named_sends(MB.predelay(st, tr.get("reverb_predelay_ms", 0)), tr, returns_in, total_n)
+        if tr.get("bus"):  # a group bus: summed there, processed after every track
+            if tr["bus"] not in bus_in:
+                raise ValueError(f'track "{name}" routes to unknown bus "{tr["bus"]}" (define it in "buses")')
+            bus_in[tr["bus"]] += st
+        else:
+            mix += st
+        if name in duck_keys:
+            duck_env[name] = st.mean(0)
         if stem_hook is not None:
             stem_hook(name, st)
         env = np.sqrt(np.convolve(st.mean(0) ** 2, np.ones(2205) / 2205, mode="same")[::2205])
         stems_rms[name] = env.tolist()
+    # group buses ("buses"): each sums its tracks (and buses), then fx, gain, pan, width, sidechain, section moves and
+    # sends, like a track, and goes on to the mix or to the bus it names
+    for bname in _bus_order(buses):
+        B = buses[bname] or {}
+        st = bus_in[bname] * np.float32(db(B.get("gain_db", 0)))
+        if B.get("pan"):
+            a = (float(np.clip(B["pan"], -1, 1)) + 1) * np.pi / 4
+            st = (st * np.array([[np.cos(a)], [np.sin(a)]]) * np.sqrt(2)).astype(np.float32)
+        if B.get("width"):
+            st = widen(st, B["width"])
+        st = apply_fx(st, B.get("fx"), P["bpm"])
+        sc = B.get("sidechain")
+        if sc and sc.get("source") in events:
+            st = _sidechain(st, sc, events, total_n)
+        st = _section_moves(P, bname, st, sec_by_name, whole, total_n, beat)
+        rev_bus += st * B.get("send_reverb", 0)
+        del_bus += st * B.get("send_delay", 0)
+        if B.get("sends"):
+            _named_sends(st, B, returns_in, total_n)
+        if B.get("bus"):
+            bus_in[B["bus"]] += st
+        else:
+            mix += st
+        if bname in duck_keys:
+            duck_env[bname] = st.mean(0)
     # transition fx (risers, impacts, reverse cymbals) live on their own bus
     fxb = np.zeros((2, total_n), dtype=np.float32)
     if per_track:
@@ -727,18 +981,38 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
         if stem_hook is not None and np.any(fxb):
             stem_hook("(fx)", fxb * 0.9)
         rev_bus += fxb * 0.4
+        extra = ("fx", "duck", "predelay_ms", "hpf", "pingpong", "offset_ms", "width")
         if np.any(rev_bus):
-            wet = pb.Pedalboard([pb.HighpassFilter(250), pb.Reverb(rv.get("size", 0.75), rv.get("damping", 0.55), 1.0, 0.0, 1.0),
-                                 pb.LowpassFilter(rv.get("lpf", 7000))])(rev_bus, SR)
-            mix += wet * db(rv.get("return_db", -4))
-            if stem_hook is not None:
-                stem_hook("(reverb)", wet * db(rv.get("return_db", -4)))
+            if any(k in rv for k in extra):  # opt-in return processing on the shared reverb
+                wet = _process_return("reverb", dict(rv, type="reverb"), rev_bus, beat, duck_env)
+                mix += wet
+                if stem_hook is not None:
+                    stem_hook("(reverb)", wet)
+            else:
+                wet = pb.Pedalboard([pb.HighpassFilter(250), pb.Reverb(rv.get("size", 0.75), rv.get("damping", 0.55), 1.0, 0.0, 1.0),
+                                     pb.LowpassFilter(rv.get("lpf", 7000))])(rev_bus, SR)
+                mix += wet * db(rv.get("return_db", -4))
+                if stem_hook is not None:
+                    stem_hook("(reverb)", wet * db(rv.get("return_db", -4)))
         if np.any(del_bus):
-            wet = pb.Pedalboard([pb.HighpassFilter(300), pb.Delay(dl.get("beats", 0.75) * beat, dl.get("feedback", 0.35), 1.0),
-                                 pb.LowpassFilter(dl.get("lpf", 3500))])(del_bus, SR)
-            mix += wet * db(dl.get("return_db", -6))
-            if stem_hook is not None:
-                stem_hook("(delay)", wet * db(dl.get("return_db", -6)))
+            if any(k in dl for k in extra):
+                wet = _process_return("delay", dict(dl, type="delay", return_db=dl.get("return_db", -6)), del_bus, beat,
+                                      duck_env)
+                mix += wet
+                if stem_hook is not None:
+                    stem_hook("(delay)", wet)
+            else:
+                wet = pb.Pedalboard([pb.HighpassFilter(300), pb.Delay(dl.get("beats", 0.75) * beat, dl.get("feedback", 0.35), 1.0),
+                                     pb.LowpassFilter(dl.get("lpf", 3500))])(del_bus, SR)
+                mix += wet * db(dl.get("return_db", -6))
+                if stem_hook is not None:
+                    stem_hook("(delay)", wet * db(dl.get("return_db", -6)))
+        for rn, cfg in returns_cfg.items():  # named returns (mix.returns)
+            if np.any(returns_in[rn]):
+                wet = _process_return(rn, cfg, returns_in[rn], beat, duck_env)
+                mix += wet
+                if stem_hook is not None:
+                    stem_hook(f"({rn})", wet)
         # section-level whole-mix moves
         for sec in P["arrangement"]:
             S = sec_by_name[sec["name"]]

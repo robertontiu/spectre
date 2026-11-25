@@ -81,7 +81,7 @@ NAME_ROLE = [(r"cinel|cymbal|ride|crash", "cymbals", True), (r"rim", "perc", Tru
 def role_of(name, tr, drum_types):
     if tr.get("role"):
         return tr["role"], False
-    typ = tr["inst"]["type"]
+    typ = (tr.get("inst") or tr["layers"][0]["inst"])["type"]  # a stack without inst: its first layer
     n = name.lower()
     for pat, role, drums in NAME_ROLE:
         if re.search(pat, n) and (drums or typ not in drum_types):
@@ -145,8 +145,9 @@ def _db(v):
     return 10 * np.log10(np.asarray(v, dtype=float) + 1e-20)
 
 
-def analyse(stems, roles, mix, target, eqmap, peak):
-    """stems: {name: (28, frames) power}; roles: {name: (role, inferred)}; mix: mono premaster of the span."""
+def analyse(stems, roles, mix, target, eqmap, peak, layers=None):
+    """stems: {name: (28, frames) power}; roles: {name: (role, inferred)}; mix: mono premaster of the span;
+    layers: {stack: {layer: (role, (28, frames) power)}} for the stack view."""
     names = list(stems)
     P = np.stack([stems[n] for n in names])                          # (S, 28, T)
     tot = P.sum(axis=(1, 2))
@@ -196,7 +197,8 @@ def analyse(stems, roles, mix, target, eqmap, peak):
         rr = dict(name=n, role=role, inferred=inferred, level_db=round(float(_db(eA) - _db(PA.sum())), 1),
                   masked=round(msh, 2), own=round(osh, 2), masker=mk,
                   masker_share=round(mk_share, 2) if mk_share is not None else None)
-        rr["eq"] = eq_check(s, spec, role, eqmap, masked, tcurve)
+        rr["eq"] = eq_check(s, spec, role, eqmap, masked, tcurve) if n not in (layers or {}) else None  # a stack:
+        # its layers are checked one by one (stack view)
         stems_out.append(rr)
     out["stems"] = sorted(stems_out, key=lambda r: -r["level_db"])
     # crest per region (mix, 10 ms envelope)
@@ -218,8 +220,44 @@ def analyse(stems, roles, mix, target, eqmap, peak):
         out["vs_target"] = dict(target=target, kick_sub_50_80=round(sel(50, 80), 1),
                                 buildup_100_250=round(sel(100, 250), 1), lowmid_315_400=round(sel(315, 400), 1),
                                 presence_2k_5k=round(sel(2000, 5000), 1), air_8k_12k=round(sel(8000, 12500), 1))
+    if layers:
+        out["stacks"] = stack_view(layers, eqmap, tcurve)
     out["flags"] = flags(out, eqmap, peak)
     return out
+
+
+def stack_view(layers, eqmap, tcurve):
+    """Per stack: each layer's share of the stack's energy per region and overall, its level against the stack's
+    loudest layer, and its EQ map check under its own role (docs/PRODUCTION.md section 2, item c: a layer that adds
+    nothing shows up here)."""
+    res = []
+    for stack, L in layers.items():
+        names = list(L)
+        P = np.stack([L[n][1] for n in names])                       # (K, 28, T)
+        tot = P.sum(0)
+        rows = []
+        E = P.sum(axis=(1, 2))
+        for i, n in enumerate(names):
+            role = L[n][0] or "other"
+            reg = {}
+            for r, (rn, lo, hi) in enumerate(REGIONS):
+                bm = REGION_OF == r
+                den = tot[bm].sum()
+                reg[rn] = round(float(P[i][bm].sum() / den), 2) if den > 0 else 0.0
+            # where the layer leads the stack: its share of the cells (energy-weighted) it is loudest in
+            lead = P[i] >= P.max(0) - 1e-30
+            row = dict(layer=n, role=role, level_db=round(float(_db(E[i]) - _db(E.max())), 1),
+                       share=round(float(E[i] / (E.sum() + 1e-20)), 3), regions=reg,
+                       leads=round(float(P[i][lead].sum() / (E[i] + 1e-20)), 2))
+            spec = _db(P[i].sum(1))
+            uniq = sum(1 for m in names if (L[m][0] or "other") == role) == 1  # layers sharing a role split its job
+            row["eq"] = (eq_check(P[i], spec, role, eqmap, np.zeros_like(P[i], bool), tcurve)
+                         if eqmap and uniq else None)
+            if row["eq"] and row["eq"].get("cut_over_own_db") is not None:
+                row["eq"]["cut_over_own_db"] = max(row["eq"]["cut_over_own_db"], -30.0)
+            rows.append(row)
+        res.append(dict(stack=stack, layers=rows))
+    return res
 
 
 def eq_check(s, spec, role, eqmap, masked, tcurve=None):
@@ -295,6 +333,7 @@ def flags(out, eqmap, peak):
                 f.append(f"thin {c['region']}: only {c['within_10db'][0][0]} within 10 dB (occupancy {c['occupancy']})")
         if eqmap:
             have = {r["role"] for r in out["stems"]}
+            have |= {l["role"] for st in out.get("stacks", []) for l in st["layers"]}  # a stack's layers fill roles
             for alt in eqmap.get("core", []):
                 if not any(a in have for a in alt.split("|")):
                     f.append(f"role empty in a peak section: {alt}")
@@ -369,14 +408,20 @@ def run(a, renders, latest, meta):
         def hook(name, st):
             a0, a1 = span["a0"], span["a1"]
             stems[name] = band_power(((st[0, a0:a1] + st[1, a0:a1]) * 0.5).astype(np.float32))
+        layers = {}
+
+        def lhook(stack, layer, role, st):
+            a0, a1 = span["a0"], span["a1"]
+            layers.setdefault(stack, {})[layer] = (role, band_power(((st[0, a0:a1] + st[1, a0:a1]) * 0.5)
+                                                                    .astype(np.float32)))
         pre = 2 * 4 * 60.0 / P["bpm"]
         off = max(0.0, t0 - pre)
         span["a0"], span["a1"] = int(round((t0 - off) * SR)), int(round((t1 - off) * SR))
-        _, m = ST.render(P, window=(t0, t1), stem_hook=hook, pre_roll=pre)
+        _, m = ST.render(P, window=(t0, t1), stem_hook=hook, pre_roll=pre, layer_hook=lhook)
         mix = m["_premaster"]
         mix = ((mix[0, span["a0"]:span["a1"]] + mix[1, span["a0"]:span["a1"]]) * 0.5).astype(np.float32)
         is_peak = lv.get(label, top) >= top - 3.0 if label in lv else True
-        r = analyse(stems, roles, mix, target, eqmap, is_peak)
+        r = analyse(stems, roles, mix, target, eqmap, is_peak, layers)
         r.update(section=label, start_s=round(t0, 1), end_s=round(t1, 1), peak=is_peak,
                  seconds=round(time.time() - t_s, 1))
         results.append(r)
@@ -416,5 +461,20 @@ def report(r):
         mk = f"{s['masker']} ({s['masker_share']:.0%})" if s["masker"] else "-"
         print(f"{s['name'][:12]:12s} {(s['role'] + ('*' if s['inferred'] else ''))[:12]:12s} {s['level_db']:6.1f}  "
               f"{s['masked']:5.0%}  {s['own']:4.0%}  {mk[:16]:16s} {'; '.join(eq)}")
+    for stv in r.get("stacks", []):
+        print(f"stack {stv['stack']}: layer (role) share of the stack, per region sub/bass/lowmid/mid/presence/air; "
+              "level vs its loudest layer; EQ map")
+        for l in stv["layers"]:
+            reg = "/".join(f"{l['regions'][rn]:.0%}" for rn, _, _ in REGIONS)
+            e = l.get("eq") or {}
+            eq = []
+            if "cut_over_own_db" in e:
+                eq.append(f"cut {e['cut_over_own_db']:+.1f} dB")
+            if "below_hp" in e:
+                eq.append(f"<{e['hp']} Hz {e['below_hp']:.0%}")
+            if "above_lp" in e:
+                eq.append(f">{e['lp']} Hz {e['above_lp']:.0%}")
+            print(f"  {l['layer'][:10]:10s} {l['role'][:10]:10s} {l['share']:4.0%}  {reg:28s} {l['level_db']:6.1f} dB  "
+                  + "; ".join(eq))
     for f in r["flags"]:
         print("FLAG:", f)
