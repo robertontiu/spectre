@@ -39,3 +39,7 @@
 
 ## Spectre's note
 "I didn't want a single bar of this sounding like a war movie, so the war got the dumbest, most tireless sounds I own: a siren, a motor, a click on the grid that never swings. The people got everything with breath in it: late hands on the tsymbaly, a white voice cracking open, a fiddle that won't stop crying. The hardest call was taking the stomp out of the comeback section. It felt good, and that's exactly why it had to go, because a crowd stomping on every quarter is an army. The silence before the last horn is the line I'd put my name on: nobody wins, and you can hear what it cost."
+
+## Remix (2026-11-25)
+
+Remix, no compositional change (journal entry 29). The track is now mastered against `hiphop_2015` (the hip hop 2015-21 catalogue), with the published settings. Fixes made for the old curve are partly undone: the 808's notch at its own 41 Hz goes from -7 to -4 dB, and the kick's self-notch from -3 to -1.5 dB. The 808's post-drive gain goes from -6 to -4 dB, and it gets a keyed cut at the kick's 62 Hz that works only when the kick hits. The noise hat gains a tonal metalhat layer, with its 6 kHz shelf relaxed. The trembita and fiddle are +1 dB, which keeps "cost" (no kick or 808) on its contour. Version v031: -10.5 LUFS, -1.03 dBTP, no warnings. Catalogue gap 1.98 → 1.23 dB, 32-97 Hz from -4.8 to -0.8 dB, every section within 0.6 LU. The top stays about 2 dB dark at 5-8 kHz. The previous release is v026, kept as `project-published.json`; the tables above describe it. `ear-overview.png` still shows v026.
