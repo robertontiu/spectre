@@ -1,0 +1,23 @@
+# Deploy the site to Vercel only when the site changes.
+# Vercel's automatic Git deployments are off (site/vercel.json, git.deploymentEnabled), so pushes of docs,
+# engine, tools and research never create a deployment (Hobby counts every deployment toward its limits).
+# This workflow calls a Vercel Deploy Hook (repository secret VERCEL_DEPLOY_HOOK; Vercel -> Project ->
+# Settings -> Git -> Deploy Hooks, branch main) when a push to main touches site/**. Run it by hand
+# (Actions -> Deploy site -> Run workflow) to redeploy without a change.
+name: Deploy site
+on:
+  push:
+    branches: [main]
+    paths: ["site/**"]
+  workflow_dispatch:
+permissions: {}
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger the Vercel deploy hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "::error::The VERCEL_DEPLOY_HOOK secret is not set"; exit 1; fi
+          curl -fsS -X POST "$HOOK" > /dev/null && echo "Vercel deployment requested"
