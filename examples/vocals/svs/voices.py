@@ -91,7 +91,6 @@ def measure(y, ns):
 
 def main():
     import singer
-    sys.path.insert(0, os.path.join(REPO, "examples", "vocals", "tts"))
     os.makedirs(OUT, exist_ok=True)
     from svs import voices
     jobs = [(v["id"], v["id"], {}, 0, "") for v in voices()["voices"]]

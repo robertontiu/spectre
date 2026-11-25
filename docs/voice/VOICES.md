@@ -15,11 +15,11 @@ Choosing a voice is half of it; the other half is the mix. The principles for ev
 | LEONA -Ubasti- v0.0.1b (beta), by Lotte V | The voicebank is CC BY 4.0, plus the same Terms of Use as Hanami. | Vocals: LEONA (DiffSinger voicebank by Lotte V, lottev.moe, CC BY 4.0), Potluck Vocoder by tigermeat |
 | Potluck Vocoder (lite) v100, by tigermeat | The engine uses this vocoder for every voice, because both banks' own vocoders are CC BY-NC-SA. Commercial use is allowed only with DiffSinger models. Credit it with a link to its licence (https://github.com/mrtigermeat/potluck-vocoder). Its output may not be used to train generative models. | (included in the lines above) |
 
-**Never use a Lotte V voice in a track with a political subject** (for example session 011, "Corruption" / "Deșteaptă-te, române!"). Their terms forbid political use. For such a track, use `vox`/`vox2` or the `tts` singer.
+**Never use a Lotte V voice in a track with a political subject** (for example session 011, "Corruption" / "Deșteaptă-te, române!"). Their terms forbid political use. For such a track, use the wordless `vox`/`vox2` or no voice.
 
 ## The voices
 
-How to read the measurements: they are taken on the dry audition (pyworld analysis).
+How to read the measurements: they are taken on the dry audition (WORLD analysis, `examples/vocals/svs/voices.py`).
 - **tilt**: energy at 2-5 kHz relative to 0.2-1 kHz. Higher means brighter.
 - **breath**: aperiodicity at 1-4 kHz. 0 is pure harmonics; higher is breathier.
 - **F1/F2**: formants of the long "are" vowel, from LPC.
@@ -41,7 +41,7 @@ How to read the measurements: they are taken on the dry audition (pyworld analys
 **Range.**
 - Hanami: the training data sits at G3-D5 (most of it C4-A#4, peak G4; `midi_distribution.jpg` in the bank). Write A3-D5. A fifth lower (B3-E4) and a fifth higher (C#5-F#5) both still transcribe correctly (`ctl-hanami-low`, `ctl-hanami-high`). The engine warns outside G3-F5.
 - LEONA: trained together with Hanami's data. The range is assumed to be the same, not measured; the engine warns outside A3-F5.
-- Both are female voices. Writing them an octave lower does not make a male voice.
+- Both are female voices. Writing them an octave lower does not make a male voice. No male voice yet: find a licence-clean male singing model (see the search in "What is missing" below); queued in docs/ORCHESTRATION.md.
 
 ## Spanish (`hanami-es`, `hanami-es-soft`; searched and checked 2026-11-24)
 
@@ -79,13 +79,13 @@ They have **no** breathiness, tension, voicing or energy controls: their models 
 | `ctl-hanami-velocity-slow` / `-fast` | velocity 0.6 / 1.6 | nearly identical spectra | a small effect on these banks |
 | `ctl-hanami-low` / `-high` | the line a fifth down / up | both still transcribe correctly | the usable range edges |
 | `ctl-leona-soft-dark` | leona-soft, gender -0.5 | tilt -22.9 dB, breath 0.21 | the darkest, breathiest texture available |
-| `../choir-vibrato-1` / `../choir-vibrato-0.3` | `svs_vibrato` 1 / 0.3 (engine-side: the pitch model's vibrato scaled inside held notes) | fast pitch movement inside held vowels 22.7 -> 16.0 (0.5) -> 11.7 (0) cents sd; Whisper unchanged | straighter tone for choir textures and doubles (GENERAL.md section 6); blend to be judged by ear |
+| `../choir-vibrato-1` / `../choir-vibrato-0.3` | `svs_vibrato` 1 / 0.3 (engine-side: the pitch model's vibrato scaled inside held notes) | fast pitch movement inside held vowels 22.7 -> 16.0 (0.5) -> 11.7 (0) cents sd; Whisper unchanged | straighter tone for choir textures and doubles (GENERAL.md section 5); blend to be judged by ear |
 
 **For choirs and doubles:** combine voices. Different modes and banks, a third or sixth apart, separate takes (each phrase has its own seeded pitch and noise; `seed` changes them). See `examples/vocals/svs/choir-line-dry.mp3`, which uses Hanami Root + Nectar and LEONA Core + CatNap. A real SATB is not possible yet: there is no tenor or bass voice.
 
 ## Romanian (searched and tested 2026-11-24): no voice
 
-No DiffSinger bank sings Romanian, and the catalogue's banks have no Romanian data. A phoneme-mapping experiment (Hanami steered into Romanian with phonemes from its other languages: `examples/vocals/svs/romanian.py`, audition `romanian-hanami-experiment.mp3`) reached 0.90 character accuracy and 48% word accuracy with Whisper forced to Romanian (control through the Spanish G2P: 0.85 and 51%), and Whisper heard Romanian on 1 of 5 lines: partly intelligible, not proper Romanian, and Whisper can't judge ă/î. It is not wired into the engine. The only licence-clean neural Romanian voice found is a speaking voice, Piper `ro_RO-mihai` (male, CC0 data, MIT), not wired either. Details and sources: [languages/ro.md](languages/ro.md).
+No DiffSinger bank sings Romanian, and the catalogue's banks have no Romanian data. A phoneme-mapping experiment (Hanami steered into Romanian with phonemes from its other languages: `examples/vocals/svs/romanian.py`, audition `romanian-hanami-experiment.mp3`) reached 0.90 character accuracy and 48% word accuracy with Whisper forced to Romanian (control through the Spanish G2P: 0.85 and 51%), and Whisper heard Romanian on 1 of 5 lines: partly intelligible, not proper Romanian, and Whisper can't judge ă/î. It is not wired into the engine. Details and sources: [languages/ro.md](languages/ro.md).
 
 ## What is missing: male and hard voices (searched 2026-11-24)
 
@@ -101,5 +101,7 @@ No licence-clean English male DiffSinger voicebank was found. Every male or hard
 
 Options:
 1. Ask a voicebank author for permission (TIGER sells commercial licences; Gardanana approves case by case, but the AI-music clause probably rules Spectre out).
-2. Train a male bank from licensed singing (DiffSinger needs about 1-2 h of clean data and a GPU).
-3. Keep male voices on the `tts` singer (Kokoro `am_michael` / `am_adam`) until then.
+2. Search again (new banks appear often; other singing models count too, if they run locally and their terms fit CC BY tracks).
+3. Train a male bank from licensed singing (DiffSinger needs about 1-2 h of clean data and a GPU).
+
+**No male voice yet:** find a licence-clean male singing model (the search above); queued in docs/ORCHESTRATION.md. Until then write male parts for an instrument or leave them out.

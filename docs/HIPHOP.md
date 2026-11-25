@@ -32,7 +32,7 @@ For sessions that make hip hop beats: boom-bap, hardcore and aggressive rap, and
 - **The low end against the measured curve.** The remasters of 001-005 still sat 7-10 dB over the hip-hop curve at 40 Hz and the master cut there at its limit (docs/MASTERING.md). Get the 808's weight from saturation and its second harmonic (`tone`), tune the kick away from the 808 (002: kick at 62 Hz, 808 notched), and vary the 808's notes so the low end is even (005).
 
 ## Mixing the voice (researched 2026-11-24)
-A Spectre beat leaves the verses to a rapper who isn't there; its own voices are instruments: a sung or chanted hook fragment, ad-libs and shouts, chops, a choir pad. The principles for every genre, the choir research and the check procedure are in [docs/voice/MIXING.md](voice/MIXING.md). Values marked *(hand-tuned)* are Spectre's starting points. Reminder: the svs voices may not be used on a political subject (session 011); use `vox2` or the `tts` singer there.
+A Spectre beat leaves the verses to a rapper who isn't there; its own voices are instruments: a sung or chanted hook fragment, ad-libs and shouts, chops, a choir pad. The principles for every genre, the choir research and the check procedure are in [docs/voice/MIXING.md](voice/MIXING.md). Values marked *(hand-tuned)* are Spectre's starting points. Reminder: the svs voices may not be used on a political subject (session 011); use the wordless `vox`/`vox2` or no voice there.
 
 **What the research says**
 - **Up front and dry-ish, the measured way:** rap leads sit 3.2 dB over the accompaniment on average, second only to country ([Gerdes & Siedenburg 2023](https://www.geidai.ac.jp/~marui/course_enshu_2024/gerdes_siedenburg_202304.pdf)). The vocal must not sit so low that the kick drowns it nor so high that the 808s lose their impact ([Evan LaRay, Sound On Sound](https://www.soundonsound.com/techniques/inside-track-cardi-b-bodak-yellow)).
@@ -55,7 +55,7 @@ A Spectre beat leaves the verses to a rapper who isn't there; its own voices are
                  {"type": "sat", "amount": 0.15}, {"type": "highshelf", "hz": 8000, "gain_db": 3},
                  {"type": "gain", "db": 8}]},
 
-"adlib": {"inst": {"...": "hanami-power or leona-power (or tts male); one word or a shout"},
+"adlib": {"inst": {"...": "hanami-power or leona-power; one word or a shout"},
           "pan": 0.5, "send_reverb": 0.25, "send_delay": 0.3,
           "fx": [{"type": "hpf", "hz": 200}, {"type": "lpf", "hz": 6000}, {"type": "drive", "db": 6},
                  {"type": "comp", "threshold_db": -24, "ratio": 5}]},

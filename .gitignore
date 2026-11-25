@@ -11,8 +11,5 @@ site/tracks/*.mp3
 player/tracks/*.mp3
 .claude/settings.local.json
 
-# singer source "tts": the per-word cache lives outside the repo (~/.cache/spectre/words); keep any local copy out too
+# voice model caches live outside the repo (~/.cache/spectre); keep any local copy out too
 .cache/
-words_cache/
-models/tts/kokoro/kokoro-v1.0.onnx
-models/tts/kokoro/*.tmp*

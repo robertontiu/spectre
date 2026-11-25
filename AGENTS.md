@@ -37,15 +37,12 @@ engine/
                   per line), `bell` `"clean"` (docs/MANUAL.md "Chamber score instruments", examples/chamberscore/)
   violin.py       the bowed violin (`violin`): a waveguide string bowed through a friction curve (numba), a modal violin
                   body, articulations written after the note length (grace, mordent, trill, slides, double stops...)
-  singer.py       voices: `singer` (sings words: words from eSpeak NG or, with `source: "tts"`, sampled from a local
-                  TTS, then laid on the melody with the WORLD vocoder) and `vox2` (improved wordless voice: LF glottal
-                  source, consonant onsets for chops); see docs/MANUAL.md "Voices"
-  svs.py          `singer` `source: "svs"`: a singing voice synthesizer (DiffSinger voicebanks, ONNX, CPU; OpenUtau's code
-                  path, seeded and phrase-cached, deterministic); banks in ~/.cache/spectre/svs (never in git)
+  singer.py       voices: `singer` (sings words; parses the lyrics and hands the line to svs.py, its only source) and
+                  `vox2` (improved wordless voice: LF glottal source, consonant onsets for chops); see docs/MANUAL.md "Voices"
+  svs.py          `singer`'s singing voice synthesizer (`"source": "svs"`, the default): DiffSinger voicebanks, ONNX, CPU;
+                  OpenUtau's code path, seeded and phrase-cached, deterministic; banks in ~/.cache/spectre/svs (never in git)
   lang_es.py      Spanish letters to DiffSinger phonemes for svs voices with `"lang": "es"` (Hanami; docs/voice/languages/es.md)
   voices.json     the svs voice catalogue: ids, banks, licences and credit lines, tags (docs/voice/VOICES.md)
-  tts_words.py    the word sampler for `singer` `source: "tts"`: Kokoro TTS (local, Apache 2.0) speaks each word
-                  neutrally (whole phrases, or single words) into a cache (~/.cache/spectre/words), WORLD analysis, syllable segmentation (phrases aligned to the words by DTW)
   hand.py         the hand: step/note/chord notation parser, swing, humanization, voicing, rolls, arps
   studio.py       project loader, arrangement scheduler, track rendering, fx, sends, sidechain, section
                   automation and transitions, quick master, CLI (render / listen / master)
@@ -61,38 +58,41 @@ docs/
   CRAFT.md        beat craft brief: groove, drums, 808, harmony, timbre, arrangement, transitions, mix
   MASTERING.md    mastering research brief and how master.py implements it
   LESSONS.md      what each session taught us; read before changing the agent prompt or engine
+  voice/          voice research: VOICES.md (the svs voice catalogue, licences, what is missing), MIXING.md (mixing a
+                  voice), GENERAL.md (speech and singing science, timing, intelligibility), languages/<code>.md
 prompts/
   producer.md     the producer agent prompt template (persona, brief, studio, stages, loop, finish)
 site/             the website (Next.js; Vercel, spectre.robertontiu.com); data/tracks.json is the canonical track list
 tools/
   sync_tracks.py  copies each session's mastered MP3 into site/public/tracks
   pestana_ltas.py derives the measured mastering curves from Pestana et al. (2013), Fig. 5 (see docs/MASTERING.md)
+  humanref.py     measures how human singers time English syllables in the GTSinger corpus (the evidence in
+                  docs/voice/GENERAL.md "Timing"; data cached in ~/.cache/spectre/refs, never committed)
 sessions/
   NNN-name/       one folder per session: project.json, journal.md, mastered mp3, ear and master images,
                   README.md with the result
-models/
-  tts/kokoro/     Kokoro v1.0 TTS model files for `singer` `source: "tts"` (the .onnx split in 7 parts; README with source,
-                  licence, size, checksums); may move out of the repo later (SPECTRE_TTS_DIR)
 examples/
   anthem/         the verified melody of Romania's anthem: a piano check render, the CC BY-SA score it was read
                   from, the check scripts (transcription in docs/ROMANIAN.md, "Verified melody")
   chamberscore/   chamber-score instruments A/B (old stand-ins vs celesta, glockenspiel, vibraphone, cello, viola,
                   strings_section) and spectrograms against reference recordings (build.py)
   joc/            lăutar band A/B (old fiddle vs violin, the violin's articulations, acguitar, toba, a tempo ramp; build.py)
-  vocals/         voice A/B renders (diagnostic/: the eSpeak singer; tts/: sampled words autotuned, with build.py)
+  vocals/         svs/: the singer's voices (auditions in voices/, voices.py), the DiffSinger trial (dsinger.py, build.py),
+                  the mix study (blend.py), choir and vibrato tests (vibrato.py), Spanish and Romanian checks; the
+                  wordless vox and vox2 on a trance hook and session 009's hook (mp3 only)
   engine-test.json  a small project that exercises most engine features (render it to smoke-test changes)
   trance-test.json, poprock-test.json  small projects that exercise the trance and pop rock sounds
 ```
 
 ## 3. Setup
 
-Python 3.11+ (developed on 3.13), ffmpeg on PATH, and eSpeak NG for the `singer` voice's eSpeak sources (`apt install espeak-ng`; only projects that use them need it).
+Python 3.11+ (developed on 3.13) and ffmpeg on PATH.
 
 ```bash
-pip install -r requirements.txt   # includes kokoro-onnx (onnxruntime, phonemizer, espeakng-loader) for singer "tts"
+pip install -r requirements.txt
 ```
 
-Sung words (`singer` with `"source": "tts"`) use a local neural text-to-speech, Kokoro v1.0 (Apache 2.0), as a **word sampler only** (approved by the owner; everything else in Spectre stays synthesized). Its model files are versioned in `models/tts/kokoro/` (the 325 MB `kokoro-v1.0.onnx` split into seven parts under 50 MB, `kokoro-v1.0.onnx.part00`-`part06`, which the engine joins and checksum-verifies on first use into the gitignored `kokoro-v1.0.onnx`; `voices-v1.0.bin`, 28 MB; source URL, licence and checksums in `models/tts/kokoro/README.md`); `SPECTRE_TTS_DIR` points the engine elsewhere if they move out of the repo. Generated words are cached in `~/.cache/spectre/words/` (`SPECTRE_WORDS_DIR` to move it): outside the repo, never committed, safe to delete (they regenerate deterministically on the next render). Only projects that use `"source": "tts"` need any of this.
+Sung words (`singer`) use DiffSinger voicebanks, neural models trained on singers (approved by the owner; everything else in Spectre stays synthesized). Their files are not in the repo (the voicebank terms forbid redistributing them): banks go in `~/.cache/spectre/svs/<bank>/bank/` and the Potluck vocoder in `~/.cache/spectre/svs/potluck/` (download links in docs/voice/VOICES.md; `SPECTRE_SVS_DIR` moves them). Rendered phrases are cached in `~/.cache/spectre/svs/phrases/`: safe to delete, they regenerate bit for bit. Only projects with a `singer` track need any of this.
 
 Smoke test (about 20 s to render, 25 s to listen):
 
@@ -129,12 +129,12 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 
 1. **The ears can't hear attitude.** Structure reads well on spectrograms; timbre and emotional "bite" don't. Session 001 aimed for defiance and came across as longing. Ideas: an audio-capable model as a critic ("describe what you hear, without naming emotions"), CLAP-style embeddings as a weak signal, or a human checkpoint ear after the loop stage.
 2. **Synth timbres lean soft.** No real samples. Real drum one-shots or sample packs (the user would provide them; the sandbox network is restricted) would raise quality a lot.
-3. **Vocals are new and unproven.** `singer` with `source: "tts"` sings words sampled from a local TTS and autotuned (2026-11-24; awaiting the owner's listening verdict, A/B in `examples/vocals/tts/`); the eSpeak sources sound robotic. A generative model as a "session musician" (stems on demand) is the planned v2 for metal and pop.
+3. **Vocals are new.** `singer` sings with DiffSinger voices (approved by the owner by ear, 2026-11-24): female only, English and Spanish. No male voice yet: find a licence-clean male singing model (see the search in docs/voice/VOICES.md "What is missing"); queued in docs/ORCHESTRATION.md. No Romanian voice. A generative model as a "session musician" (stems on demand) is the planned v2 for metal and pop.
 4. **Mastering targets** are per-genre configurations (`engine/genres.json`, `--genre trap|hiphop|trance|rock`, no default). The `hiphop`, `trance` and `rock` curves are measured from published genre spectra (Pestana et al. 2013; docs/MASTERING.md) but pool 1950-2010 records; the `trap` curve (`beat`, sessions 001-006) is hand-tuned. Measuring modern reference tracks per genre would help.
 5. **Speed.** A full-length render takes 20-45 s. Per-track caching would make the loop faster.
 
 ## 7. Git
 
 - Default branch `main`. Commit engine changes separately from session results.
-- Don't commit `renders/`, WAVs, `__pycache__`, or the TTS word cache (`~/.cache/spectre/words`). Model files go under `models/` with a README (source, licence, size, checksum); GitHub refuses files over 100 MB and git LFS uploads are blocked from the sandbox, so split larger files into parts under 50 MB (`split -b 48000000 -d -a 2 <file> <file>.part`) and join them in the loader, checksum-verified (see `engine/tts_words.py`).
+- Don't commit `renders/`, WAVs, `__pycache__`, or voice model files and caches (`~/.cache/spectre/`). If a model ever has to be versioned, put it under `models/` with a README (source, licence, size, checksum); GitHub refuses files over 100 MB and git LFS uploads are blocked from the sandbox, so split larger files into parts under 50 MB (`split -b 48000000 -d -a 2 <file> <file>.part`) and join them in the loader, checksum-verified.
 - MIT licensed (see `LICENSE`).

@@ -3,14 +3,13 @@
 python3 examples/vocals/svs/blend.py measure [variant ...]   # render + measure (default: all variants)
 python3 examples/vocals/svs/blend.py master [variant ...]    # also master, write blend-<v>.mp3, Whisper word accuracy
 
-Each variant is the c1 chorus (examples/vocals/tts/build.py: session 009 pre1 + chorus1, the hook sung by the lead)
+Each variant is the c1 chorus (chorus.py: session 009 pre1 + chorus1, the hook sung by the lead)
 with the vocal on `singer` `source: "svs"` (engine/svs.py, voice hanami) and a few changes. For the measurements every
 variant is rendered four times (deterministic): full mix; vocal muted; reverb and delay returns off; vocal muted and
 returns off. Vocal stem = full - muted; its dry part = (returns off) - (muted, returns off); the band likewise.
 Results go to /tmp/spectre_svs/blend/<variant>/ and the printed table.
 """
 import copy
-import importlib.util
 import json
 import os
 import re
@@ -28,21 +27,20 @@ SR = 44100
 LYRICS = ("here you are round and round hold on tight round we go "
           "here you are round and round and you stay on the ride")
 
-_spec = importlib.util.spec_from_file_location("ttsbuild", os.path.join(REPO, "examples", "vocals", "tts", "build.py"))
-tts = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(tts)
+sys.path.insert(0, HERE)
+import chorus  # noqa: E402
 
 GTRS = ["gtrL", "gtrR", "lead", "fig", "figM", "figB", "chug"]
 
 
 def base_track():
-    tr = copy.deepcopy(tts.SING_TRACK)
+    tr = copy.deepcopy(chorus.SING_TRACK)
     tr["inst"] = {"type": "singer", "source": "svs", "voice": "hanami", "double": 0.35, "seed": 3}
     return tr
 
 
 def v_tone(pj, tr):
-    """Undo the "small speaker" voicing: c1's chain was made for the tts voice (hpf 150 Hz, +3 dB at 500 Hz for body),
+    """Undo the "small speaker" voicing: c1's chain (hpf 150 Hz, +3 dB at 500 Hz for body),
     which on the SVS leaves the vocal 7-8 dB mid-heavy at 500 Hz-1 kHz and 4 dB short of air at 8 kHz against the
     band. Lower hpf, no 500 Hz boost, a small 800 Hz dip, air on top."""
     fx = tr["fx"]
@@ -95,7 +93,6 @@ def v_carve_only(pj, tr):
 
 
 VARIANTS = {
-    "c1-tts": None,  # the current tts singer, for reference
     "svs": [],  # the approved Hanami chorus, through the engine
     "a": [v_tone],
     "b": [v_tone, v_room],
@@ -106,28 +103,14 @@ VARIANTS = {
 
 
 def project(variant, mute=False, returns=True):
-    d = os.path.join(TMP, variant + ("-m" if mute else "") + ("" if returns else "-r"))
-    import shutil
-    shutil.rmtree(d, ignore_errors=True)
-    shutil.copytree(os.path.join(REPO, "sessions", "009-carousel"), d,
-                    ignore=shutil.ignore_patterns("renders", "*.mp3", "*.png"))
+    d = chorus.session_copy(os.path.join(TMP, variant + ("-m" if mute else "") + ("" if returns else "-r")))
     pj = json.load(open(os.path.join(d, "project.json")))
-    if VARIANTS[variant] is None:
-        tr = copy.deepcopy(tts.SING_TRACK)
-        tr["inst"].update(tts.VARIANTS["c1-natural"])
-    else:
-        tr = base_track()
-        for f in VARIANTS[variant]:
-            f(pj, tr)
+    tr = base_track()
+    for f in VARIANTS[variant]:
+        f(pj, tr)
     if mute:
         tr["mute"] = True
-    pj["tracks"]["sing"] = tr
-    pj["patterns"]["hookSing"] = {"bars": 8, "sing": {"notes": pj["patterns"]["hookD"]["voxD"],
-                                                      "lyrics": tts.HOOK_LYRICS}}
-    sec = copy.deepcopy(next(s for s in pj["arrangement"] if s["name"] == "chorus1"))
-    pre = next(s for s in pj["arrangement"] if s["name"] == "pre1")
-    sec["play"] = [x for x in sec["play"] if x != "hook"] + ["hookSing"]
-    pj["arrangement"] = [copy.deepcopy(pre), sec, {"name": "tail", "bars": 2, "play": []}]
+    chorus.hook_chorus(pj, tr)
     if not returns:
         pj["mix"]["reverb"]["return_db"] = -200
         pj["mix"]["delay"]["return_db"] = -200
@@ -292,10 +275,8 @@ def master(variant):
         studio(["render"], d)
     studio(["master", "v001", "--genre", "rock"], d)
     y, _ = sf.read(os.path.join(d, "renders", "v001.master.wav"))
-    name = "blend-ref-svs" if variant == "svs" else "blend-ref-tts" if variant == "c1-tts" else f"blend-{variant}"
-    tts.OUT = HERE
-    tts.TMP = TMP
-    tts.mp3(y.T, name, kbps=88, normalize=False)
+    name = "blend-ref-svs" if variant == "svs" else f"blend-{variant}"
+    chorus.mp3(y.T, name, HERE, TMP, kbps=88, normalize=False)
     text = whisper(os.path.join(HERE, name + ".mp3"))
     acc = word_accuracy(text)
     print(f"{variant}: Whisper on the mastered mix: {acc:.0%} words | {text}")

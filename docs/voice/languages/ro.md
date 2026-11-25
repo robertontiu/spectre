@@ -14,19 +14,9 @@ The Romanian profile (standing rule 10), written 2026-11-24 (queue item 5b) for 
   | Romanian mapping | 48% | **0.90** | 1 of 5 lines (others: Polish, Japanese x2, Italian) |
   | control: the Spanish G2P on the same spelling | 51% | 0.85 | 0 of 5 |
 
-  Lines: "acum e primăvară", "în ochii tăi e lumină", "ține-mă de mână", "noaptea vine încet", "dor de casă, dor de voi". Two lines came out right ("Acum e prima vara", "DOR DE CASA, DOR DE VOI"), one nearly ("Sine-mă de mână"); "noaptea" was heard as "nu o te" (the `w` glide of oa sounds like a separate "u") and "tăi e lumină" as "te ieru mine". **Whisper drops diacritics, so it cannot judge ă and î at all**: the Spanish control scored as well while singing every ă as "a". Verdict: partly intelligible, with an audible foreign accent likely; not proper Romanian by this measure. It needs a native ear before any use, and the engine has no `lang: "ro"` (GENERAL.md section 6, item 7).
+  Lines: "acum e primăvară", "în ochii tăi e lumină", "ține-mă de mână", "noaptea vine încet", "dor de casă, dor de voi". Two lines came out right ("Acum e prima vara", "DOR DE CASA, DOR DE VOI"), one nearly ("Sine-mă de mână"); "noaptea" was heard as "nu o te" (the `w` glide of oa sounds like a separate "u") and "tăi e lumină" as "te ieru mine". **Whisper drops diacritics, so it cannot judge ă and î at all**: the Spanish control scored as well while singing every ă as "a". Verdict: partly intelligible, with an audible foreign accent likely; not proper Romanian by this measure. It needs a native ear before any use, and the engine has no `lang: "ro"` (GENERAL.md section 5, item 6).
 - **Licence of that route:** the Hanami terms allow any creative use with credit, commercial included, and derivative voices only through synth settings, which this is; so it would be fit for CC BY tracks with the Hanami credit line, **but never in a track with a political subject** (Lotte V's terms; for example session 011, the anthem). For political Romanian content there is no sung voice.
-- **Speech (`tts`) voices for Romanian:**
-
-  | voice | licence | status |
-  |---|---|---|
-  | **Piper `ro_RO-mihai-medium`** (male) | dataset CC0 (crowdsourced for Home Assistant's "Year of Voice", [OHF-Voice/voice-datasets](https://github.com/OHF-Voice/voice-datasets)); fine-tuned from a CC0 Flemish base model; the [piper-voices](https://huggingface.co/rhasspy/piper-voices) repository is MIT ([model card](https://huggingface.co/rhasspy/piper-voices/tree/main/ro/ro_RO)) | **the only licence-clean neural Romanian voice found**; phonemizes with eSpeak NG `ro`; not wired (`engine/tts_words.py` speaks English through Kokoro and segments English syllables). A Romanian `tts` path would need Piper as a second word sampler plus Romanian syllable rules (below). Male only. |
-  | Kokoro v1.0 | Apache 2.0 | no Romanian voice |
-  | eSpeak NG `ro` | GPL engine, output free | rule-based formant speech: the "robotic" sound that failed the listening test for English |
-  | models trained on SWARA (21 h, 17 speakers; [corpus page](https://speech.utcluj.ro/swarasc/index.html)) | corpus CC BY-NC 4.0 | not fit: non-commercial data |
-  | F5-TTS-RO ([Chivereanu & Boros 2025, arXiv:2512.12297](https://arxiv.org/abs/2512.12297)) | an adapter on F5-TTS, whose "pre-trained models are licensed under the CC-BY-NC license due to the training data Emilia" ([F5-TTS README](https://github.com/SWivid/F5-TTS)) | not fit; it also keeps "residual English accent characteristics" |
-
-  Context: open TTS toolkits are hard to train for Romanian (setup, data preparation, compute; [Răgman, Stânea, Cucu & Stan 2026, arXiv:2603.24116](https://arxiv.org/abs/2603.24116)).
+- **Speech synthesizers are not a route:** Spectre sings with singing models only. A male Romanian voice waits on the male-voice search (VOICES.md, "What is missing").
 
 ## Vowels
 - **Seven vowels: /i e a o u ə ɨ/**, written i e a o u **ă** and **î/â** (î at the start and end of a word, â inside: "în", "coborî", "mână", "român"; the two letters are one sound) ([Chițoran, *The Phonology of Romanian*, Mouton de Gruyter 2002, doi:10.1515/9783110889185](https://doi.org/10.1515/9783110889185); [Renwick, *The Phonetics and Phonology of Contrast: The Case of the Romanian Vowel System*, De Gruyter 2014, doi:10.1515/9783110362770](https://doi.org/10.1515/9783110362770)).
@@ -67,5 +57,4 @@ The Romanian profile (standing rule 10), written 2026-11-24 (queue item 5b) for 
 
 ## Still open
 - A native listener on `examples/vocals/svs/romanian-hanami-experiment.mp3`; if approved, a `lang: "ro"` G2P (like `engine/lang_es.py`) with the mapping, phrase-level elision and a stress-aware warning.
-- A Piper-based `tts` path for a male Romanian voice (and the only voice for political subjects).
 - Romanian intonation and phrase-final lengthening (measured studies not read in this pass), Romanian sung diction in the classical and lăutar traditions (no peer-reviewed source found), and the regional pronunciation of oa as [ɒ].

@@ -1,5 +1,5 @@
 """`singer` `"source": "svs"`: words sung by a singing voice synthesizer (DiffSinger, OpenVPI ONNX voicebanks as
-OpenUtau uses them), instead of speech bent onto the melody.
+OpenUtau uses them).
 
 A neural model trained on a singer's recordings sings the line in one piece: its duration model sets each phoneme's
 length, its pitch model draws the f0 (scoops, transitions, vibrato) around the notes, its acoustic model and a vocoder
@@ -443,7 +443,7 @@ def scale_vibrato(curve, spans, frame_ms, amount, sigma_ms=70.0, edge_ms=100.0, 
 
 # ------------------------------------------------------------------------------------------------ the line
 def _groups(p, notes):
-    """Notes -> syllable groups like singer._plan: [(token, [note indices])]."""
+    """Notes -> syllable groups: [(token, [note indices])] (a `_` token extends the previous group: a melisma)."""
     toks = list(p.get("_lyrics") or [])
     groups = []
     for i, nt in enumerate(notes):
@@ -565,8 +565,7 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
 
 def sing(p, notes, total_n):
     """singer.sing for `source: "svs"`: mono, or stereo (2, N) with a double (a second take: its own seeded pitch
-    and timbre noise, its phrases moved by a few ms, a few cents off, panned opposite), levelled like the other
-    sources (singer._norm)."""
+    and timbre noise, its phrases moved by a few ms, a few cents off, panned opposite), levelled by singer._norm."""
     import singer as _singer
     p = dict(p)
     if "lyrics" in p and not p.get("_lyrics"):

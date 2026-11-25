@@ -1,15 +1,15 @@
 """SVS feasibility trial: DiffSinger voicebanks singing the "Here You Are" line and chorus (examples/vocals/svs/).
 
 python3 examples/vocals/svs/build.py line [bank ...]     # <bank>-line-dry.mp3 + timing table
-python3 examples/vocals/svs/build.py chorus <bank>       # <bank>-chorus.mp3, mixed and mastered exactly like c1-natural
-python3 examples/vocals/svs/build.py timing <bank>       # dry chorus timing table (same metrics as joincheck --timing)
+python3 examples/vocals/svs/build.py chorus <bank>       # <bank>-chorus.mp3: the c1 chorus (chorus.py), mixed and mastered
+python3 examples/vocals/svs/build.py timing <bank>       # dry chorus timing table (P-centres and onsets against the score)
 python3 examples/vocals/svs/build.py choir                # choir-line-dry.mp3: four takes, melody + a third below
 <bank> is hanami, leona or tiger (each with its own vocoder), or hanami-potluck / leona-potluck (Potluck vocoder).
 Renders are deterministic (onnxruntime seeded before the sessions are made).
 
 Banks are OpenUtau DiffSinger voicebanks unpacked into ~/.cache/spectre/svs/<bank>/bank (never in git; see README.md
-for where each comes from). The line and chorus use the same notes, tempo and lyrics as examples/vocals/tts/build.py
-(b3/b1 line: B_MELODY at 100 bpm; c1: session 009's hookD voxD at 136 bpm, pre1 + chorus1). Phoneme timing comes from
+for where each comes from). The line is B_MELODY at 100 bpm; the chorus is c1 (chorus.py: session 009's hookD voxD at
+136 bpm, pre1 + chorus1). Phoneme timing comes from
 each bank's duration model with the vowel groups aligned to the note onsets (OpenUtau's rule); nothing is hand-placed.
 """
 import copy
@@ -34,7 +34,7 @@ CACHE = os.path.expanduser(os.environ.get("SPECTRE_SVS_DIR", "~/.cache/spectre/s
 TMP = "/tmp/spectre_svs"
 BANKS = {"hanami": "Root", "leona": "acoustic_Core", "tiger": "tiger_fresh"}
 LINE = "here you are round and round"
-B_MELODY = "F#4:4 A4:4 B4:8 A4:4 F#4:2 A4:10"  # examples/vocals/tts/build.py, 100 bpm
+B_MELODY = "F#4:4 A4:4 B4:8 A4:4 F#4:2 A4:10"  # 100 bpm
 CHORUS = ("here you are round and round hold on tight round we go "
           "here you are round and round and you stay on the ride")
 
@@ -73,7 +73,7 @@ def mp3(y, name, kbps=128, normalize=True):
     os.makedirs(TMP, exist_ok=True)
     y = np.asarray(y, dtype=np.float64)
     if normalize:
-        y = y / max(np.abs(y).max(), 1e-9) * 0.89  # -1 dBFS peak, as tts/build.py
+        y = y / max(np.abs(y).max(), 1e-9) * 0.89  # -1 dBFS peak
     wav = os.path.join(TMP, name + ".wav")
     sf.write(wav, y.T if y.ndim == 2 else y, SR)
     dst = os.path.join(HERE, name + ".mp3")
@@ -84,7 +84,7 @@ def mp3(y, name, kbps=128, normalize=True):
 
 # ------------------------------------------------------------------------------------------------ timing metrics
 def timing(y, phones, score_ms, words, bpm, label=""):
-    """Per syllable, against the score: the same quantities as tools/joincheck.py --timing. `phones` are the
+    """Per syllable, against the score. `phones` are the
     SVS's own phoneme boundaries (start, end ms) with the note each belongs to; 'on' = before the vowel group."""
     from scipy import signal as sg
     fp = 5.0
@@ -216,7 +216,7 @@ def choir(_name=None):
 
 # ------------------------------------------------------------------------------------------------ the chorus
 def chorus_score():
-    """The chorus as joincheck measures it (session 009 hookD voxD, 136 bpm, starting at 0.3 s)."""
+    """The chorus notes (session 009 hookD voxD, 136 bpm, starting at 0.3 s)."""
     pj = json.load(open(os.path.join(REPO, "sessions", "009-carousel", "project.json")))
     spec, bpm = pj["patterns"]["hookD"]["voxD"], pj["bpm"]
     q = 60000.0 / bpm / 4
@@ -245,7 +245,7 @@ def chorus_timing(name):
 
 def svs_singer(name, legato_ms=LEGATO_MS):
     """A drop-in for singer.sing (same signature) that sings the notes with the DiffSinger bank instead, so the
-    chorus goes through exactly the same track fx, sends, mix and master as c1-natural. The double is a second
+    chorus goes through the track fx, sends, mix and master of the c1 chorus (chorus.py). The double is a second
     DiffSinger take (the pitch model samples a new curve each run), moved by a few ms and 7 cents, panned opposite,
     with singer.py's own double law and level normalisation."""
     import singer as _singer
@@ -275,26 +275,11 @@ def svs_singer(name, legato_ms=LEGATO_MS):
 
 
 def chorus(name):
-    """c1-natural with the DiffSinger voice in place of the `tts` singer: same project, backing, vocal chain, level,
-    sends and release master (rock)."""
-    import importlib.util
-    spec = importlib.util.spec_from_file_location("ttsbuild", os.path.join(REPO, "examples", "vocals", "tts", "build.py"))
-    ttsbuild = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(ttsbuild)
+    """The c1 chorus (chorus.py) sung by the trial driver (dsinger.py) with this bank: same project, backing, vocal
+    chain, level, sends and release master (rock)."""
+    import chorus as C
     wait_turn()
-    ttsbuild.TMP = TMP
-    d = ttsbuild._session_copy()
-    pj = json.load(open(os.path.join(d, "project.json")))
-    tr = copy.deepcopy(ttsbuild.SING_TRACK)
-    tr["inst"].update(ttsbuild.VARIANTS["c1-natural"])
-    pj["tracks"]["sing"] = tr
-    pj["patterns"]["hookSing"] = {"bars": 8, "sing": {"notes": pj["patterns"]["hookD"]["voxD"],
-                                                      "lyrics": ttsbuild.HOOK_LYRICS}}
-    sec = copy.deepcopy(next(s for s in pj["arrangement"] if s["name"] == "chorus1"))
-    pre = next(s for s in pj["arrangement"] if s["name"] == "pre1")
-    sec["play"] = [x for x in sec["play"] if x != "hook"] + ["hookSing"]
-    pj["arrangement"] = [copy.deepcopy(pre), sec, {"name": "tail", "bars": 2, "play": []}]
-    json.dump(pj, open(os.path.join(d, "project.json"), "w"), indent=1)
+    d = C.write_chorus(os.path.join(TMP, "carousel"), copy.deepcopy(C.SING_TRACK))
     import singer as _singer
     _singer.sing = svs_singer(name)  # studio's mono_voice calls singer.sing at render time
     os.environ["BEAT_DIR"] = d
@@ -314,7 +299,7 @@ def chorus(name):
     keep = os.path.join(TMP, f"{name}-chorus")
     shutil.rmtree(keep, ignore_errors=True)
     shutil.copytree(d, keep)
-    mp3(y.T, f"{name}-chorus", kbps=88, normalize=False)  # as c1-natural.mp3
+    mp3(y.T, f"{name}-chorus", kbps=88, normalize=False)
 
 
 if __name__ == "__main__":

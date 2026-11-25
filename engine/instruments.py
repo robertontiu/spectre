@@ -1563,8 +1563,9 @@ ROUND_ROBIN = ROUND_ROBIN | {"handclap"}
 
 
 # ---------------------------------------------------------------- singer (a voice that sings words)
-# Additive block: lives in engine/singer.py (eSpeak NG + WORLD; imported only when a project uses it, so projects
-# without a singer don't need either). It draws from its own random generators, so it changes nothing elsewhere.
+# Additive block: lives in engine/singer.py (`singer` dispatches to engine/svs.py; imported only when a project uses
+# it, so projects without a voice don't need its models). It draws from its own random generators, so it changes
+# nothing elsewhere.
 _mono_voice_vox = mono_voice
 
 
