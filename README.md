@@ -75,7 +75,30 @@ A track takes 30 to 90 minutes of agent time. The agent installs what it needs (
 - [`docs/LESSONS.md`](docs/LESSONS.md): what each track taught, and what carries across genres
 - [`AGENTS.md`](AGENTS.md): the technical handbook (the sound engine, the hand, the ears, the mastering stage, how a session is run)
 - [`docs/ORCHESTRATION.md`](docs/ORCHESTRATION.md): how sessions are started, kept alive and delivered
-- [`web/`](web): the website (Next.js); [`site/`](site): its prototype
+- [`site/`](site): the website (Next.js), deployed at spectre.robertontiu.com
+
+## Voices and third-party models
+
+Every instrument is synthesized by the engine's own code. Sung words are the one exception: they come from local neural models, used as instruments inside the arrangement, never as a lead singer. Their licences and credit lines:
+
+| Model | What it does here | Licence | Where it lives |
+|---|---|---|---|
+| [DiffSinger](https://github.com/openvpi/DiffSinger) (OpenVPI), run with [ONNX Runtime](https://onnxruntime.ai) through a port of [OpenUtau](https://github.com/stakira/OpenUtau)'s DiffSinger code (`engine/svs.py`) | The main singing voice (`singer` `"source": "svs"`): notes and lyrics in, sung audio out, with timing learned from real singers | DiffSinger Apache 2.0; OpenUtau MIT; ONNX Runtime MIT | code in the repo |
+| **Hoshino Hanami ~AI❤dol~ v1.0** by [Lotte V](https://lottev.moe) | Voicebank: warm female pop soprano (English, Spanish and other languages); modes `hanami`, `hanami-soft`, `hanami-power`, `hanami-dark`, `hanami-es`, `hanami-es-soft` | Team L❤VE Voicebank License and Terms of Use: any creative use, commercial included, with credit; the files may not be redistributed or sold; no political, hateful or illegal use; religious works allowed if not proselytizing. Dictionaries MIT | downloaded from the author on first use into `~/.cache/spectre/svs/`, never committed |
+| **LEONA -Ubasti- v0.0.1b** by [Lotte V](https://lottev.moe) | Voicebank: brighter female voice (English); `leona`, `leona-soft`, `leona-power` | CC BY 4.0 plus the same Terms of Use | same cache, never committed |
+| **Potluck Vocoder (lite) v100** by [tigermeat](https://github.com/mrtigermeat/potluck-vocoder) | Turns every DiffSinger voice's spectrum into audio (both banks' own vocoders are non-commercial, so they are not used) | Commercial use allowed with DiffSinger models; credit with a link to its licence; its output may not be used to train generative models | same cache, never committed |
+| [Kokoro v1.0](https://huggingface.co/hexgrad/Kokoro-82M) (voice `af_heart`) | The older sung-words path (`"source": "tts"`): a speaking voice whose words the engine re-sings on the melody with the WORLD vocoder; kept for male voices and for tracks the voicebanks' terms rule out | Apache 2.0 | `models/tts/kokoro/` (split into parts, joined and checked on first use) |
+| [WORLD](https://github.com/mmorise/World) via [pyworld](https://github.com/JeremyCCHsu/Python-Wrapper-for-World-Vocoder) | Analysis and resynthesis of spoken words for the `tts` path | modified BSD (WORLD), MIT (pyworld) | installed with pip |
+| [eSpeak NG](https://github.com/espeak-ng/espeak-ng) | The first, rule-based word source of the singer (no recordings, no neural model) | GPL v3, run as a separate program, not bundled | installed with apt |
+| [Whisper](https://github.com/openai/whisper) via [faster-whisper](https://github.com/SYSTRAN/faster-whisper) | Only a measuring tool: how many sung words a listener would understand in the finished mix. It never produces sound | MIT | installed with pip, model cached locally |
+
+**Credit lines.** A published track that uses a voicebank carries its credit line in its session README and on the site, from `engine/voices.json`:
+- *Vocals: Hoshino Hanami (DiffSinger voicebank by Lotte V, lottev.moe), Potluck Vocoder by tigermeat*
+- *Vocals: LEONA (DiffSinger voicebank by Lotte V, lottev.moe, CC BY 4.0), Potluck Vocoder by tigermeat*
+
+**If you reuse or remix a Spectre track with these vocals,** the voicebank's terms travel with the voice: keep the credit line, and don't use those vocals for political, hateful or illegal content. The full voice catalogue with tags, ranges and licences is in [`docs/voice/VOICES.md`](docs/voice/VOICES.md); the research behind how the voices are timed and mixed is in [`docs/voice/`](docs/voice).
+
+Reference recordings and datasets used only for analysis (the singing dataset GTSinger, CC BY-NC-SA 4.0; instrument samples from the University of Iowa MIS, VSCO-2-CE, VCSL and others) were measured locally and are not part of this repository or of any track.
 
 ## Credits
 
@@ -86,5 +109,7 @@ An experiment by [Robert Ontiu](https://github.com/robertontiu), built with Clau
 The code is [MIT](LICENSE) © 2026 Robert Ontiu.
 
 **Spectre's tracks in this repository** (the audio, journals, project files and images in `sessions/`, `assets/` and `site/`) are licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): free to use, share and adapt, including commercially, as long as you credit this repository, for example *"Spectre, [github.com/robertontiu/spectre](https://github.com/robertontiu/spectre)"*.
+
+**The models above keep their own licences** (see "Voices and third-party models"); the MIT and CC BY licences cover Spectre's own code and tracks, not the voicebanks or model files.
 
 **Tracks you make with it are yours.** If you run this project to make your own tracks, you hold the rights to them and are responsible for them and how they're used.
