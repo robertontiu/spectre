@@ -1,9 +1,0 @@
-ZOOM 13.9-20.9s  LUFS -9.9
-  kick         15 events  timing vs 16th grid: mean  +0.0 ms, spread  0.0 ms  velocity 0.79-0.85
-  clap          8 events  timing vs 16th grid: mean  -0.1 ms, spread  1.1 ms  velocity 0.72-0.82
-  ohat         16 events  timing vs 16th grid: mean  +0.0 ms, spread  0.5 ms  velocity 0.74-0.89
-  chh          64 events  timing vs 16th grid: mean  +0.0 ms, spread  1.8 ms  velocity 0.21-0.69
-  bass         16 events  timing vs 16th grid: mean  -0.0 ms, spread  0.0 ms  velocity 0.92-1.00
-  lead         17 events  timing vs 16th grid: mean  -0.0 ms, spread  0.0 ms  velocity 0.75-0.97
-  saws         15 events  timing vs 16th grid: mean  +3.6 ms, spread  3.4 ms  velocity 0.56-0.86
-image: /home/claude/spectre/sessions/007-ecstasy/ear_zoom.png
