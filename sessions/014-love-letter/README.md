@@ -34,6 +34,11 @@
 ## Departures from Spectre's habits
 It starts mid-sentence, like a letter you open; the loudest moment is the middle; the last chorus is the smallest, with no silence before it; it ends on the signature and the tonic.
 
+## Remix (2026-11-25)
+**v031 replaces v028 as the published version.** A remaster with a light remix, no compositional change: tempo, swing, seed, patterns, arrangement and the words are frozen, and every track's events are identical to v028. The voice and its reverb are untouched. The target is the dark strand of the Latin pop references (`latinpop_dark`, 66 tracks of boleros and nylon-guitar songs) instead of the borrowed rock curve; the low end the old curve had moved to 165-280 Hz was handed back to the bass (+6 dB at 62 Hz, its 165 Hz boost from +5 to +2 dB) and the segunda guitars came down 2-3 dB at 180-195 Hz. Nothing carved, brightened, bussed or compressed. `studio.py master v031 --genre latinpop --target latinpop_dark`: -11.0 LUFS, -1.06 dBTP, PLR 10.0, LRA 7.0 LU, no warnings (EQ at its limit only at 31.5-40 Hz, where nothing plays). Against the target (50-80 Hz / 100-250 / 315-400 / 2-5 kHz / 8-12.5 kHz): previously -3.4 / +3.0 / +1.2 / +2.3 / -2.5 dB, now +1.0 / +0.9 / +0.8 / 0.0 / -2.2. Every section within 0.7 LU of the previous master; words 22/22, as before. Open: the voice's inhale before verse 2 (54.6 s) measures 7.1 dB over the darker curve at 6-12 kHz on the phone check (the breath is unchanged; the curve allows less top), and 16 kHz stays about 10 dB under the curve (a dry nylon band has nothing there). Details in the journal's remix entry.
+
+The previous release (v028) is reproduced by `project-published.json`; the table above describes it. `ear-overview.png` still shows v028's render: no overview ear was saved for the remix. `build.py` still writes v028's project: running it overwrites the remix. `remix.py` is the recipe: applied to `project-published.json` it gives `project.json` exactly (it reads `project.json`, which is now the remix, so point it at `project-published.json` before running it again).
+
 ## Files
 - `lo-que-no-supe-decir-mastered.mp3`: the track
 - `journal.md`: the producer's numbered moves

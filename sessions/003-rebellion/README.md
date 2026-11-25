@@ -21,6 +21,11 @@
 - **Hook 3 (73-88):** slams in with an impact; a third, higher crowd section joins, a gritty ney leads, darbuka runs hot in 16ths
 - **Outro (89-96):** feet, darbuka and the oud call go on while the crowd keeps answering, filtered and fading down the road
 
+## Remix (2026-11-25)
+**v029 replaces v026 as the published version.** A remix with no compositional change: tempo, swing, seed, patterns and arrangement are frozen, and every track's events are identical to v026. The kick's notch at its own 62 Hz went from -4 to -2 dB, the 808 gained 2 dB after its drive, and a notch at the kick's 62 Hz on the 808, keyed by the kick, lets them take turns (the 808 masked 44% in hook 3, 51% before). The oud, ney and crowd sections are untouched. The target is the hip hop 2015-21 era curve (`hiphop_2015`, 347 catalogue tracks): `studio.py master v029 --genre hiphop`: -10.5 LUFS, -1.0 dBTP, PLR 9.5, no EQ at its limit, top end within 1.0 dB of the curve, no warnings; mean gap to the catalogue 0.94 dB (the previous master 1.65). Every section within 1.0 LU of the previous master (the march, with no kick or 808, -1.0). Details in journal entry 29.
+
+The previous release (v026) is reproduced by `project-published.json`; the table above describes it. `ear-overview.png` still shows v026's render: no overview ear was saved for the remix.
+
 ## Files
 - `throw-it-back-mastered.mp3`: the track
 - `journal.md`: Spectre's 27 numbered moves

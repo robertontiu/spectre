@@ -32,6 +32,11 @@
 - **Outro (8), love:** every motif passes together on the verse chords
 - **Coda (4):** one hit on A, then the figure alone, breaking off mid-turn
 
+## Remix (2026-11-25)
+**v039 replaces v034 as the published version.** A remix with no compositional change: tempo, swing, seed, patterns, arrangement and the words are frozen, and every track's events are identical to v034. The five voice tracks and the reverb and delay that carry them are untouched (the approved chorus mix). The carving made for the old curve was relaxed: the kick's cut at 56 Hz halved; the bass's definition moved to 900 Hz and its 240 Hz boost handed back to the guitars; the rhythm guitars' low shelves at 350 Hz down 2-2.5 dB; the organ got its own slot (200 Hz-5 kHz) at its published level; the darkening on hats, ride, bell, crash, snare, tambourine and the clean figure was eased. No buses or compression: dynamics are this genre's main tool. The target is the pop rock 2015-21 era curve (`rock_2015`): `studio.py master v039 --genre rock`: -8.6 LUFS, -1.03 dBTP, PLR 7.6, LRA 10.3 LU, no warnings (EQ at its limit only at 31.5-40 Hz). Against the target (50-80 Hz / 100-250 / 315-400 / 2-5 kHz / 8-12.5 kHz): previously -4.3 / +1.8 / +1.7 / +0.1 / -3.4 dB, now +0.1 / -0.2 / +0.3 / -0.1 / -1.1. Every section within 0.8 LU of the previous master except the coda's measured -3.0 LU (a loudness-gate effect of one hit followed by a quiet figure, not an audible change). Words (Whisper medium.en on the master): 70/96, previously 72/96, within its noise. A miss: the guitars, bass and kick are still 48-65% masked in the choruses, by the voice. Details in journal entry 30.
+
+The previous release (v034) is reproduced by `project-published.json`; the table above describes it. `ear-overview.png` still shows v034's render: no overview ear was saved for the remix. `build.py` still writes v034's project: running it overwrites the remix. `remix.py` is the recipe: applied to `project-published.json` it gives `project.json` exactly (it reads `project.json`, which is now the remix, so point it at `project-published.json` before running it again).
+
 ## Files
 - `here-you-are-mastered.mp3`: the track
 - `journal.md`: the producer's numbered moves

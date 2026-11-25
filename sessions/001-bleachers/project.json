@@ -8,7 +8,7 @@
    "inst": {
     "type": "kick",
     "tune": 50,
-    "decay": 0.45,
+    "decay": 0.28,
     "punch": 1.8,
     "click": 0.6,
     "drive": 0.3
@@ -37,6 +37,11 @@
      "hz": 3500,
      "gain_db": 3,
      "q": 0.7
+    },
+    {
+     "type": "highshelf",
+     "hz": 7000,
+     "gain_db": -4
     }
    ]
   },
@@ -57,7 +62,6 @@
     "decay": 0.035,
     "tone": 8500
    },
-   "gain_db": -5,
    "pan": 0.25,
    "humanize_ms": 4,
    "dyn": [
@@ -65,7 +69,30 @@
     0.5,
     0.8,
     0.5
-   ]
+   ],
+   "layers": [
+    {
+     "name": "noise",
+     "inst": {
+      "type": "hat",
+      "decay": 0.035,
+      "tone": 8500
+     },
+     "gain_db": -5,
+     "eq": "none"
+    },
+    {
+     "name": "metal",
+     "inst": {
+      "type": "metalhat",
+      "decay": 0.04
+     },
+     "role": "hats",
+     "gain_db": 0
+    }
+   ],
+   "role": "hats",
+   "gain_db": 2
   },
   "808": {
    "inst": {
@@ -76,7 +103,6 @@
     "tone": 0.45,
     "glide_ms": 70
    },
-   "gain_db": 1,
    "sidechain": {
     "source": "kick",
     "depth": 0.7,
@@ -92,9 +118,64 @@
      "hz": 120,
      "gain_db": 2,
      "q": 0.8
+    },
+    {
+     "type": "eq",
+     "hz": 72,
+     "gain_db": 3,
+     "q": 1.0
+    },
+    {
+     "type": "dyneq",
+     "hz": 50,
+     "q": 1.5,
+     "depth_db": -8,
+     "key": "kick",
+     "release_ms": 90
     }
    ],
-   "legato": 0.8
+   "legato": 0.8,
+   "layers": [
+    {
+     "name": "body",
+     "inst": {
+      "type": "808",
+      "decay": 0.7,
+      "drive": 0.8,
+      "punch": 0.6,
+      "tone": 0.45,
+      "glide_ms": 70
+     },
+     "gain_db": 1,
+     "eq": "none"
+    },
+    {
+     "name": "harm",
+     "inst": {
+      "type": "sub",
+      "shape": "triangle",
+      "harmonics": 1.0,
+      "drive": 0.6,
+      "glide_ms": 70
+     },
+     "octave": 1,
+     "role": "808",
+     "eq": {
+      "hp": 110,
+      "cut_db": 0,
+      "own_db": 0
+     },
+     "fx": [
+      {
+       "type": "lpf",
+       "hz": 1500,
+       "slope": 12
+      }
+     ],
+     "gain_db": -2
+    }
+   ],
+   "role": "808"
   },
   "stab": {
    "inst": {
@@ -111,30 +192,62 @@
      2
     ]
    },
-   "gain_db": 2,
    "width": 0.7,
    "legato": 0.7,
-   "fx": [
+   "send_reverb": 0.1,
+   "layers": [
     {
-     "type": "hpf",
-     "hz": 150
+     "name": "organ",
+     "inst": {
+      "type": "organ",
+      "drawbars": [
+       8,
+       8,
+       6,
+       0,
+       0,
+       4,
+       0,
+       0,
+       2
+      ]
+     },
+     "gain_db": 2,
+     "eq": "none",
+     "fx": [
+      {
+       "type": "hpf",
+       "hz": 150
+      },
+      {
+       "type": "drive",
+       "db": 6
+      },
+      {
+       "type": "lpf",
+       "hz": 5000
+      },
+      {
+       "type": "chorus",
+       "rate": 0.6,
+       "depth": 0.2,
+       "mix": 0.25
+      }
+     ]
     },
     {
-     "type": "drive",
-     "db": 6
-    },
-    {
-     "type": "lpf",
-     "hz": 5000
-    },
-    {
-     "type": "chorus",
-     "rate": 0.6,
-     "depth": 0.2,
-     "mix": 0.25
+     "name": "air",
+     "inst": {
+      "type": "air",
+      "octave": 1,
+      "attack": 0.005,
+      "release": 0.15
+     },
+     "role": "air",
+     "gain_db": 9
     }
    ],
-   "send_reverb": 0.1
+   "role": "support"
   },
   "lead": {
    "inst": {
@@ -913,5 +1026,6 @@
   "sat": 0.22,
   "tape": 0.1,
   "glue": true
- }
+ },
+ "genre": "hiphop"
 }

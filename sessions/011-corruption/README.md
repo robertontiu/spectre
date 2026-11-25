@@ -30,6 +30,11 @@
 ## Departures from Spectre's habits
 The hooks decay instead of growing; a verse comes before the first hook; no wind-down outro (the beat stops dead and the clean phrase ends unresolved). The first boom-bap track after five half-time trap tracks, with no crowd joining and no call-and-response.
 
+## Remix (2026-11-25)
+**v026 replaces v022 as the published version.** A remix with no compositional change: tempo, swing, seed, patterns and arrangement are frozen, and every track's events are identical to v022; the anthem tracks, the intro edit and every quote are untouched. The kicks and the 808 were pulled apart: both kicks' tails went from 0.35 to 0.22 s; the 808 became a stack (its own sound plus an octave layer 12 dB under it), with notches at the kicks' 62 Hz keyed by each kick, ducking by `kickX` too (the old sidechain listened to `kick` only), and +3 dB at 40 Hz for the low hook notes. In hook 3 the 808 is 31% masked, 59% before. The hat became a stack with a tonal `metalhat`, and the clap came up 3 dB, so the top has two sources. The target is the hip hop 2015-21 era curve (`hiphop_2015`, 347 catalogue tracks): `studio.py master v026 --genre hiphop`: -10.7 LUFS, -1.03 dBTP, PLR 9.6, no EQ at its limit, top end within 0.9 dB of the curve, no warnings; mean gap to the catalogue 0.93 dB (the previous master 1.53). Every section within 0.2 LU of the previous master except the end (+0.8 LU, the clean piano alone); the hooks' decay and the bridge's valley are intact. The intro has the same notes and timing but is not bit-identical (the new layers shift the shared random stream; -0.1 LU, accepted). Details in journal entry 29.
+
+The previous release (v022) is reproduced by `project-published.json`; the table above describes it. `ear-overview.png` still shows v022's render: no overview ear was saved for the remix.
+
 ## Files
 - `din-somnul-cel-de-moarte-mastered.mp3`: the track
 - `journal.md`: the producer's numbered moves

@@ -1,0 +1,917 @@
+{
+ "title": "Bleachers",
+ "bpm": 90,
+ "swing": 0.53,
+ "seed": 7,
+ "tracks": {
+  "kick": {
+   "inst": {
+    "type": "kick",
+    "tune": 50,
+    "decay": 0.45,
+    "punch": 1.8,
+    "click": 0.6,
+    "drive": 0.3
+   },
+   "gain_db": 2,
+   "push_ms": -6,
+   "humanize_ms": 3,
+   "vel_jitter": 0.05
+  },
+  "snare": {
+   "inst": {
+    "type": "snare",
+    "tone": 190,
+    "decay": 0.18,
+    "snap": 1.0,
+    "body": 0.8,
+    "drive": 0.4
+   },
+   "gain_db": 0,
+   "push_ms": 0,
+   "humanize_ms": 3,
+   "send_reverb": 0.12,
+   "fx": [
+    {
+     "type": "eq",
+     "hz": 3500,
+     "gain_db": 3,
+     "q": 0.7
+    }
+   ]
+  },
+  "clap": {
+   "inst": {
+    "type": "handclap",
+    "clappers": 5,
+    "spread_ms": 9
+   },
+   "gain_db": -4.6,
+   "width": 0.9,
+   "push_ms": -4,
+   "send_reverb": 0.18
+  },
+  "hat": {
+   "inst": {
+    "type": "hat",
+    "decay": 0.035,
+    "tone": 8500
+   },
+   "gain_db": -5,
+   "pan": 0.25,
+   "humanize_ms": 4,
+   "dyn": [
+    1.0,
+    0.5,
+    0.8,
+    0.5
+   ]
+  },
+  "808": {
+   "inst": {
+    "type": "808",
+    "decay": 0.7,
+    "drive": 0.8,
+    "punch": 0.6,
+    "tone": 0.45,
+    "glide_ms": 70
+   },
+   "gain_db": 1,
+   "sidechain": {
+    "source": "kick",
+    "depth": 0.7,
+    "release_ms": 110
+   },
+   "fx": [
+    {
+     "type": "sat",
+     "amount": 0.35
+    },
+    {
+     "type": "eq",
+     "hz": 120,
+     "gain_db": 2,
+     "q": 0.8
+    }
+   ],
+   "legato": 0.8
+  },
+  "stab": {
+   "inst": {
+    "type": "organ",
+    "drawbars": [
+     8,
+     8,
+     6,
+     0,
+     0,
+     4,
+     0,
+     0,
+     2
+    ]
+   },
+   "gain_db": 2,
+   "width": 0.7,
+   "legato": 0.7,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 150
+    },
+    {
+     "type": "drive",
+     "db": 6
+    },
+    {
+     "type": "lpf",
+     "hz": 5000
+    },
+    {
+     "type": "chorus",
+     "rate": 0.6,
+     "depth": 0.2,
+     "mix": 0.25
+    }
+   ],
+   "send_reverb": 0.1
+  },
+  "lead": {
+   "inst": {
+    "type": "lead",
+    "cutoff": 2200,
+    "square": 0.15,
+    "vibrato": 0.2,
+    "glide_ms": 60
+   },
+   "gain_db": 3,
+   "pan": -0.35,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 200
+    },
+    {
+     "type": "drive",
+     "db": 5
+    },
+    {
+     "type": "eq",
+     "hz": 900,
+     "gain_db": 2.5,
+     "q": 0.9
+    },
+    {
+     "type": "chorus",
+     "rate": 0.8,
+     "depth": 0.15,
+     "mix": 0.3
+    }
+   ],
+   "send_delay": 0.15,
+   "send_reverb": 0.12
+  },
+  "vinyl": {
+   "inst": {
+    "type": "vinyl",
+    "density": 0.4
+   },
+   "gain_db": -8
+  },
+  "ohat": {
+   "inst": {
+    "type": "openhat",
+    "decay": 0.3
+   },
+   "gain_db": -7,
+   "pan": -0.3,
+   "send_reverb": 0.1
+  },
+  "lead2": {
+   "inst": {
+    "type": "lead",
+    "cutoff": 1500,
+    "square": 0.1,
+    "vibrato": 0.1,
+    "glide_ms": 60,
+    "transpose": -12
+   },
+   "gain_db": 0,
+   "pan": 0.35,
+   "push_ms": 8,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 180
+    },
+    {
+     "type": "drive",
+     "db": 4
+    }
+   ],
+   "send_reverb": 0.15,
+   "width": 0.3
+  },
+  "choir": {
+   "inst": {
+    "type": "choir",
+    "vowel": "oh",
+    "attack": 0.08,
+    "release": 0.4
+   },
+   "gain_db": 3,
+   "width": 0.7,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 200
+    }
+   ],
+   "send_reverb": 0.3
+  },
+  "strings": {
+   "inst": {
+    "type": "strings",
+    "attack": 0.4,
+    "release": 0.8,
+    "cutoff": 2500,
+    "vibrato": 0.1,
+    "detune": 12
+   },
+   "gain_db": 6,
+   "width": 0.8,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 90
+    }
+   ],
+   "send_reverb": 0.3
+  },
+  "crash": {
+   "inst": {
+    "type": "crash",
+    "decay": 1.5
+   },
+   "gain_db": -6,
+   "pan": 0.2,
+   "send_reverb": 0.2
+  },
+  "keys": {
+   "inst": {
+    "type": "piano",
+    "felt": 0.2,
+    "release": 0.3
+   },
+   "gain_db": 3,
+   "pan": 0.2,
+   "width": 0.5,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 180
+    },
+    {
+     "type": "sat",
+     "amount": 0.2
+    }
+   ],
+   "send_reverb": 0.15,
+   "send_delay": 0.12
+  },
+  "lead3": {
+   "inst": {
+    "type": "lead",
+    "cutoff": 2200,
+    "square": 0.15,
+    "vibrato": 0.2,
+    "glide_ms": 60,
+    "transpose": 12
+   },
+   "gain_db": -2,
+   "pan": 0.35,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 200
+    },
+    {
+     "type": "drive",
+     "db": 5
+    },
+    {
+     "type": "eq",
+     "hz": 900,
+     "gain_db": 2.5,
+     "q": 0.9
+    },
+    {
+     "type": "chorus",
+     "rate": 0.8,
+     "depth": 0.15,
+     "mix": 0.3
+    }
+   ],
+   "send_delay": 0.15,
+   "send_reverb": 0.25,
+   "push_ms": 5
+  },
+  "gang": {
+   "inst": {
+    "type": "choir",
+    "vowel": "ah",
+    "attack": 0.01,
+    "release": 0.15
+   },
+   "gain_db": 5,
+   "width": 0.8,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 180
+    },
+    {
+     "type": "drive",
+     "db": 5
+    },
+    {
+     "type": "eq",
+     "hz": 1500,
+     "gain_db": 3,
+     "q": 0.8
+    }
+   ],
+   "send_reverb": 0.35
+  },
+  "stomp": {
+   "inst": {
+    "type": "tom",
+    "tune": 95,
+    "decay": 0.3
+   },
+   "gain_db": -2,
+   "width": 0.5,
+   "push_ms": -3,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 70
+    },
+    {
+     "type": "drive",
+     "db": 4
+    }
+   ],
+   "send_reverb": 0.2
+  }
+ },
+ "patterns": {
+  "drumsA": {
+   "bars": 2,
+   "kick": "X.X.....X.X.....X.X.....X.X.....",
+   "snare": "....X.......X.......X.......X...",
+   "clap": "....X.......X.......X.......X...",
+   "hat": "x.x.x.x.x.x.x...x.x.x.x.x.xox.xr",
+   "ohat": "..............x.................",
+   "stomp": "X.X.....X.X.....X.X.....X.X....."
+  },
+  "bassA": {
+   "bars": 4,
+   "808": "0:F1:2! 2:F1:5 8:F1:2 10:Ab1:5~ 16:Db1:2! 18:Db1:5 24:Eb1:2 26:Eb1:5 32:F1:2! 34:F1:5 40:F1:2 42:C2:5~ 48:Gb1:2! 50:Gb1:5 56:Eb1:2 58:Eb1:3 61:F1:3~"
+  },
+  "chordsA": {
+   "bars": 4,
+   "stab": {
+    "chords": "Fm:16 Db:8 Eb:8 Fm:16 Gb:8 Eb:8",
+    "style": "stabs",
+    "rhythm": "X.X.....X.X.....",
+    "stab_len": 3,
+    "register": "C4",
+    "voicing": "close",
+    "vel": 0.85
+   }
+  },
+  "leadA": {
+   "bars": 4,
+   "lead": "4:F4:1 5:F4:1 6:Ab4:2 12:C5:2~ 14:C5:2 20:Db5:2 22:C5:2 28:Bb4:2~ 30:C5:2! 36:F4:1 37:F4:1 38:Ab4:2 44:C5:2~ 46:Eb5:2 52:F5:3! 55:Eb5:1 56:F5:2~ 60:Ab5:4!",
+   "lead2": "4:F4:1 5:F4:1 6:Ab4:2 12:C5:2~ 14:C5:2 20:Db5:2 22:C5:2 28:Bb4:2~ 30:C5:2! 36:F4:1 37:F4:1 38:Ab4:2 44:C5:2~ 46:Eb5:2 52:F5:3! 55:Eb5:1 56:F5:2~ 60:Ab5:4!"
+  },
+  "tex": {
+   "bars": 1,
+   "vinyl": "on"
+  },
+  "drumsV": {
+   "bars": 2,
+   "kick": "X.X.....X.X.....X.X.....X...x...",
+   "snare": "....X.......X.......X.......X...",
+   "hat": "x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x."
+  },
+  "drumsV2": {
+   "bars": 2,
+   "kick": "X.X.....X.X.....X.X.....X.X.....",
+   "snare": "....X.......X..o....X.......X...",
+   "clap": "....X.......X.......X.......X...",
+   "hat": "x.x.x.x.x.x.x...x.x.x.x.x.xox.xr",
+   "ohat": "..............x................."
+  },
+  "drumsB": {
+   "bars": 2,
+   "kick": "X...............X.........x.....",
+   "snare": "........X...............X.......",
+   "hat": "................x...x...x...x..."
+  },
+  "fillSn": {
+   "bars": 1,
+   "snare": "....X...x.x.QQQQ",
+   "kick": "X.X.....X.X.....",
+   "hat": "................"
+  },
+  "chordsV": {
+   "bars": 4,
+   "stab": {
+    "chords": "Fm:16 Db:8 Eb:8 Fm:16 Gb:8 Eb:8",
+    "style": "stabs",
+    "rhythm": "X.......X.......",
+    "stab_len": 3,
+    "register": "C4",
+    "voicing": "close",
+    "vel": 0.6
+   },
+   "keys": "4:C5:2 7:C5:1 12:C5:2 20:C5:2 23:C5:1 28:Db5:2 30:C5:2 36:C5:2 39:C5:1 44:C5:2 52:Db5:2 55:Db5:1 60:Eb5:2 62:F5:2"
+  },
+  "choirA": {
+   "bars": 4,
+   "choir": {
+    "chords": "Fm:16 Db:8 Eb:8 Fm:16 Gb:8 Eb:8",
+    "style": "sustain",
+    "register": "F4",
+    "voicing": "spread",
+    "vel": 0.7
+   }
+  },
+  "press": {
+   "bars": 4,
+   "strings": {
+    "chords": "Fm:16 Fm/E:16 Fm/Eb:16 Bbm/D:8 Db:8",
+    "style": "sustain",
+    "register": "F3",
+    "voicing": "spread",
+    "vel": 0.85
+   },
+   "lead": "4:F4:1 5:F4:1 6:Ab4:2 12:C5:2~ 14:C5:2 36:F4:1 37:F4:1 38:Ab4:2 44:C5:2~ 46:Eb5:2 52:F5:3! 56:F5:2~ 60:Ab5:4!",
+   "808": "0:F1:16 16:E1:16~ 32:Eb1:16~ 48:D1:8~ 56:Db1:8~"
+  },
+  "bassV": {
+   "bars": 4,
+   "808": "0:F1:2! 2:F1:5 8:F1:2 16:Db1:2! 18:Db1:5 24:Eb1:2 32:F1:2! 34:F1:5 40:F1:2 48:Gb1:2! 50:Gb1:5 56:Eb1:2 61:F1:3~"
+  },
+  "bassOut": {
+   "bars": 4,
+   "808": "0:F1:8!"
+  },
+  "introStomp": {
+   "bars": 1,
+   "kick": "X.X.....X.X.....",
+   "clap": "....X.......X..."
+  },
+  "leadTop": {
+   "bars": 4,
+   "lead3": "4:F4:1 5:F4:1 6:Ab4:2 12:C5:2~ 14:C5:2 20:Db5:2 22:C5:2 28:Bb4:2~ 30:C5:2! 36:F4:1 37:F4:1 38:Ab4:2 44:C5:2~ 46:Eb5:2 52:F5:3! 55:Eb5:1 56:F5:2~ 60:Ab5:4!"
+  },
+  "endHit": {
+   "bars": 1,
+   "kick": "X.X.............",
+   "clap": "....X...........",
+   "stab": {
+    "chords": "Fm:16",
+    "style": "stabs",
+    "rhythm": "X.X.X...........",
+    "stab_len": 2,
+    "register": "C4",
+    "voicing": "close",
+    "vel": 1.0
+   },
+   "lead": "4:F5:6!",
+   "lead2": "4:F5:6!"
+  },
+  "gangA": {
+   "bars": 4,
+   "gang": "28:F3:2! 28:F4:2! 28:C5:2! 60:F3:2! 60:Ab4:2! 60:C5:2!"
+  },
+  "fillBr": {
+   "bars": 1,
+   "snare": "....X...QQQQ....",
+   "kick": "X.X.....X.......",
+   "hat": "................",
+   "808": "0:Db1:6 6:Db1:2 8:F1:2~ 10:Ab1:2~ 12:C2:4~"
+  },
+  "hint": {
+   "bars": 4,
+   "strings": {
+    "chords": "Fm:16 Db:8 Eb:8 Fm:16 Gb:8 Eb:8",
+    "style": "sustain",
+    "register": "F3",
+    "voicing": "spread",
+    "vel": 0.6
+   }
+  }
+ },
+ "arrangement": [
+  {
+   "name": "intro1",
+   "bars": 4,
+   "play": [
+    "chordsA",
+    "tex"
+   ],
+   "auto": {
+    "stab": {
+     "lpf": [
+      450,
+      1200
+     ]
+    }
+   }
+  },
+  {
+   "name": "intro2",
+   "bars": 4,
+   "play": [
+    "chordsA",
+    "introStomp",
+    "tex"
+   ],
+   "auto": {
+    "stab": {
+     "lpf": [
+      1200,
+      3500
+     ]
+    },
+    "kick": {
+     "lpf": [
+      300,
+      300
+     ],
+     "gain_db": [
+      -8,
+      -3
+     ]
+    },
+    "clap": {
+     "gain_db": [
+      -8,
+      -2
+     ]
+    }
+   },
+   "exit": {
+    "riser": 4,
+    "cut": {
+     "tracks": "all",
+     "beats": 1
+    }
+   }
+  },
+  {
+   "name": "hook1",
+   "bars": 8,
+   "play": [
+    "drumsA",
+    "bassA",
+    "chordsA",
+    "leadA",
+    "tex",
+    "gangA"
+   ],
+   "enter": {
+    "impact": 0.9,
+    "crash": 0.7
+   }
+  },
+  {
+   "name": "verse1a",
+   "bars": 8,
+   "play": [
+    "drumsV",
+    "bassV",
+    "chordsV",
+    "tex"
+   ],
+   "auto": {
+    "stab": {
+     "lpf": [
+      1400,
+      1400
+     ],
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "808": {
+     "gain_db": [
+      -2,
+      -2
+     ]
+    },
+    "kick": {
+     "gain_db": [
+      -1.5,
+      -1.5
+     ]
+    },
+    "snare": {
+     "gain_db": [
+      -1.5,
+      -1.5
+     ]
+    }
+   }
+  },
+  {
+   "name": "verse1b",
+   "bars": 8,
+   "play": [
+    "drumsV2",
+    "bassV",
+    "chordsV",
+    "tex"
+   ],
+   "fill": {
+    "pattern": "fillSn"
+   },
+   "auto": {
+    "stab": {
+     "lpf": [
+      1400,
+      1400
+     ],
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "808": {
+     "gain_db": [
+      -2,
+      -2
+     ]
+    }
+   }
+  },
+  {
+   "name": "hook2a",
+   "bars": 4,
+   "play": [
+    "drumsA",
+    "bassA",
+    "chordsA",
+    "leadA",
+    "choirA",
+    "tex",
+    "gangA"
+   ],
+   "enter": {
+    "impact": 0.9,
+    "crash": 0.7
+   },
+   "exit": {
+    "cut": {
+     "tracks": [
+      "kick",
+      "808",
+      "snare",
+      "clap",
+      "hat",
+      "ohat",
+      "stab",
+      "choir"
+     ],
+     "beats": 2
+    }
+   }
+  },
+  {
+   "name": "hook2b",
+   "bars": 4,
+   "play": [
+    "drumsA",
+    "bassA",
+    "chordsA",
+    "leadA",
+    "choirA",
+    "tex",
+    "gangA"
+   ],
+   "enter": {
+    "impact": 0.8
+   }
+  },
+  {
+   "name": "verse2",
+   "bars": 8,
+   "play": [
+    "drumsV2",
+    "bassV",
+    "chordsV",
+    "tex",
+    "hint"
+   ],
+   "exit": {
+    "cut": {
+     "tracks": [
+      "kick",
+      "808"
+     ],
+     "beats": 2
+    }
+   },
+   "auto": {
+    "stab": {
+     "lpf": [
+      1400,
+      1400
+     ],
+     "gain_db": [
+      -3,
+      -3
+     ]
+    },
+    "808": {
+     "gain_db": [
+      -2,
+      -2
+     ]
+    },
+    "strings": {
+     "gain_db": [
+      -14,
+      -5
+     ],
+     "lpf": [
+      600,
+      2000
+     ]
+    },
+    "kick": {
+     "gain_db": [
+      -1.5,
+      -1.5
+     ]
+    },
+    "snare": {
+     "gain_db": [
+      -1.5,
+      -1.5
+     ]
+    }
+   }
+  },
+  {
+   "name": "bridge",
+   "bars": 8,
+   "play": [
+    "drumsB",
+    "press",
+    "tex"
+   ],
+   "enter": {
+    "downlifter": 4
+   },
+   "fill": {
+    "pattern": "fillBr"
+   },
+   "exit": {
+    "riser": 8,
+    "cut": {
+     "tracks": "all",
+     "beats": 1
+    }
+   }
+  },
+  {
+   "name": "hook3a",
+   "bars": 4,
+   "play": [
+    "drumsA",
+    "bassA",
+    "chordsA",
+    "leadA",
+    "leadTop",
+    "choirA",
+    "tex",
+    "gangA"
+   ],
+   "enter": {
+    "impact": 1.0,
+    "crash": 0.9
+   },
+   "exit": {
+    "cut": {
+     "tracks": [
+      "kick",
+      "808",
+      "snare",
+      "clap",
+      "hat",
+      "ohat",
+      "stab",
+      "choir"
+     ],
+     "beats": 2
+    }
+   }
+  },
+  {
+   "name": "hook3b",
+   "bars": 4,
+   "play": [
+    "drumsA",
+    "bassA",
+    "chordsA",
+    "leadA",
+    "leadTop",
+    "choirA",
+    "tex",
+    "gangA"
+   ],
+   "enter": {
+    "impact": 0.8
+   },
+   "exit": {
+    "cut": {
+     "tracks": [
+      "808",
+      "hat",
+      "ohat",
+      "snare",
+      "stomp",
+      "kick",
+      "choir"
+     ],
+     "beats": 2
+    },
+    "reverse": 2
+   }
+  },
+  {
+   "name": "outro1",
+   "bars": 4,
+   "play": [
+    "introStomp",
+    "chordsA",
+    "leadA",
+    "gangA",
+    "tex"
+   ],
+   "auto": {
+    "stab": {
+     "lpf": [
+      5000,
+      2500
+     ]
+    }
+   },
+   "enter": {
+    "impact": 0.7
+   }
+  },
+  {
+   "name": "outro2",
+   "bars": 4,
+   "play": [
+    "introStomp",
+    "leadA",
+    "gangA",
+    "tex"
+   ],
+   "fill": {
+    "pattern": "endHit"
+   },
+   "exit": {
+    "silence": 2
+   }
+  }
+ ],
+ "mix": {
+  "reverb": {
+   "size": 0.5,
+   "damping": 0.6,
+   "return_db": -6,
+   "lpf": 6000
+  },
+  "delay": {
+   "beats": 0.75,
+   "feedback": 0.3,
+   "return_db": -9,
+   "lpf": 3500
+  }
+ },
+ "master": {
+  "lufs": -9.5,
+  "sat": 0.22,
+  "tape": 0.1,
+  "glue": true
+ }
+}

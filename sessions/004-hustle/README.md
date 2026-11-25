@@ -27,6 +27,11 @@
 - **outro1 (4):** the band winds down
 - **outro2 (4):** the intro again: a lone fiddle and the clock closing behind the filter
 
+## Remix (2026-11-25)
+**v032 replaces v027 as the published version.** A remix with no compositional change: tempo, swing, seed, patterns and arrangement are frozen, and every track's events are identical to v027. The 808 gained 2 dB after its drive and a notch at the kick's 60 Hz that cuts only while the kick plays (`dyneq` -6 dB, keyed by the kick); its -7 dB notch at its own 41 Hz stays. A cut on the nai at 350 Hz was tried and dropped: it cost the wall, the nai's own section, more than it gained. The target is the hip hop 2015-21 era curve (`hiphop_2015`, 347 catalogue tracks): `studio.py master v032 --genre hiphop`: -10.5 LUFS, -1.04 dBTP, PLR 9.5, top end within 1.0 dB of the curve, no warnings (EQ at its limit at 31.5 and 50 Hz); mean gap to the catalogue 0.96 dB (the previous master 1.71). Every section within 0.5 LU of the previous master except push (-1.1 LU: no kick or 808 there, a louder 808 around it). Details in journal entries 32-33.
+
+The previous release (v027) is reproduced by `project-published.json`; the table above describes it. `ear-overview.png` still shows v027's render: no overview ear was saved for the remix. `build.py` still writes v027's project: running it overwrites the remix.
+
 ## Files
 - `tura-mastered.mp3`: the track
 - `journal.md`: the producer's 30 numbered moves

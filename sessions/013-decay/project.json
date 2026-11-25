@@ -5,48 +5,78 @@
  "seed": 13,
  "tracks": {
   "kick": {
-   "inst": {
-    "type": "clubkick",
-    "tune": 56,
-    "tail": 0.05,
-    "hold": 0.022,
-    "punch": 1.4,
-    "click": 0.3,
-    "top": 0.08,
-    "drive": 0.3
-   },
+   "role": "kick",
    "humanize_ms": 0,
    "vel_jitter": 0.02,
+   "bus": "drums",
    "fx": [
     {
-     "type": "hpf",
-     "hz": 30
-    },
-    {
-     "type": "eq",
-     "hz": 56,
-     "gain_db": -7.5,
-     "q": 0.8
-    },
-    {
-     "type": "eq",
-     "hz": 66,
-     "gain_db": -11,
-     "q": 1.4
-    },
-    {
-     "type": "eq",
-     "hz": 105,
-     "gain_db": 5,
-     "q": 0.9
-    },
-    {
-     "type": "sat",
-     "amount": 0.9
+     "type": "clip",
+     "drive_db": 1.0,
+     "ceiling_db": -1.5,
+     "knee": 0.4
     },
     {
      "type": "gain",
-     "db": -0.5
+     "db": 0.5
+    }
+   ],
+   "layers": [
+    {
+     "name": "sub",
+     "inst": {
+      "type": "kicksub",
+      "note": "F#1",
+      "punch": 14,
+      "drop": 0.028,
+      "hold": 0.025,
+      "tail": 0.06,
+      "drive": 0.3
+     },
+     "role": "kick",
+     "eq": {
+      "own_db": 0,
+      "cut_db": 0
+     },
+     "gain_db": -4
+    },
+    {
+     "name": "punch",
+     "inst": {
+      "type": "kickpunch",
+      "tune": 100,
+      "sweep": 4,
+      "decay": 0.03,
+      "thump": 0.4,
+      "drive": 1.0
+     },
+     "role": "kick",
+     "eq": {
+      "hp": 62,
+      "own_db": 0
+     },
+     "gain_db": 3
+    },
+    {
+     "name": "click",
+     "inst": {
+      "type": "kickclick",
+      "tone": 2200
+     },
+     "role": "kick",
+     "eq": {
+      "hp": 1500,
+      "cut_db": 0,
+      "own_db": 0
+     },
+     "gain_db": 5,
+     "fx": [
+      {
+       "type": "lpf",
+       "hz": 6000,
+       "slope": 24
+      }
+     ]
     }
    ]
   },
@@ -65,7 +95,8 @@
      "hz": 60
     }
    ],
-   "gain_db": -6
+   "gain_db": -6,
+   "mute": true
   },
   "clap": {
    "inst": {
@@ -76,42 +107,68 @@
     "hands": "mixed"
    },
    "humanize_ms": 1,
-   "send_reverb": 0.22,
+   "send_reverb": 0,
    "gain_db": -7,
    "width": 0.4,
-   "fx": [
-    {
-     "type": "hpf",
-     "hz": 250
-    }
-   ]
+   "fx": [],
+   "role": "clap",
+   "eq": "auto",
+   "bus": "drums",
+   "sends": {
+    "hall": 0.22,
+    "room": 0.3
+   }
   },
   "ohat": {
-   "inst": {
-    "type": "openhat",
-    "decay": 0.09,
-    "tone": 8500
-   },
+   "role": "hats",
+   "bus": "drums",
    "humanize_ms": 1,
    "pan": 0.12,
-   "gain_db": 9.5,
+   "gain_db": 0,
    "fx": [
     {
-     "type": "highshelf",
-     "hz": 9000,
-     "gain_db": -6
+     "type": "gain",
+     "db": 1.0
+    }
+   ],
+   "layers": [
+    {
+     "name": "metal",
+     "inst": {
+      "type": "metalhat",
+      "open": true,
+      "decay": 0.16,
+      "lp": 11000
+     },
+     "role": "hats",
+     "gain_db": 3
     },
     {
-     "type": "lpf",
-     "hz": 12000
+     "name": "noise",
+     "inst": {
+      "type": "openhat",
+      "decay": 0.09,
+      "tone": 8500
+     },
+     "role": "hats",
+     "gain_db": 0,
+     "fx": [
+      {
+       "type": "highshelf",
+       "hz": 9000,
+       "gain_db": -6
+      },
+      {
+       "type": "lpf",
+       "hz": 10000
+      }
+     ]
     }
    ]
   },
   "chh": {
-   "inst": {
-    "type": "hat",
-    "decay": 0.028
-   },
+   "role": "hats",
+   "bus": "drums",
    "humanize_ms": 1,
    "dyn": [
     0.35,
@@ -120,16 +177,39 @@
     0.85
    ],
    "pan": -0.18,
-   "gain_db": 7,
+   "gain_db": 0,
    "fx": [
     {
-     "type": "lpf",
-     "hz": 10000
+     "type": "gain",
+     "db": 0.9
+    }
+   ],
+   "layers": [
+    {
+     "name": "metal",
+     "inst": {
+      "type": "metalhat",
+      "decay": 0.035,
+      "tone": 9000,
+      "lp": 11000
+     },
+     "role": "hats",
+     "gain_db": 8
     },
     {
-     "type": "highshelf",
-     "hz": 8000,
-     "gain_db": -4
+     "name": "noise",
+     "inst": {
+      "type": "hat",
+      "decay": 0.028
+     },
+     "role": "hats",
+     "gain_db": 2,
+     "fx": [
+      {
+       "type": "lpf",
+       "hz": 9000
+      }
+     ]
     }
    ]
   },
@@ -141,114 +221,284 @@
     "snap": 0.8
    },
    "humanize_ms": 0,
-   "send_reverb": 0.3,
+   "send_reverb": 0,
    "gain_db": -11,
    "fx": [
-    {
-     "type": "hpf",
-     "hz": 150
-    },
     {
      "type": "highshelf",
      "hz": 5000,
      "gain_db": -6
     }
-   ]
+   ],
+   "role": "snare",
+   "eq": "auto",
+   "bus": "drums",
+   "sends": {
+    "hall": 0.3,
+    "room": 0.3
+   }
   },
   "bass": {
-   "inst": {
-    "type": "trancebass",
-    "cutoff": 320,
-    "env": 2400,
-    "fdecay": 0.06,
-    "sub": 0.25,
-    "drive": 0.4,
-    "reso": 0.25
-   },
+   "role": "bass",
+   "humanize_ms": 0,
+   "vel_jitter": 0.03,
    "sidechain": {
     "source": "kick",
     "depth": 0.88,
     "release_ms": 90
    },
-   "humanize_ms": 0,
-   "vel_jitter": 0.03,
    "fx": [
     {
-     "type": "hpf",
-     "hz": 24
+     "type": "dyneq",
+     "hz": 46,
+     "q": 1.5,
+     "depth_db": -4,
+     "key": "kick",
+     "release_ms": 90
     },
     {
-     "type": "lowshelf",
-     "hz": 36,
-     "gain_db": 1.5
-    },
-    {
-     "type": "eq",
-     "hz": 42,
-     "gain_db": -7,
-     "q": 3.0
-    },
-    {
-     "type": "eq",
-     "hz": 68,
-     "gain_db": -8,
-     "q": 1.0
-    },
-    {
-     "type": "eq",
-     "hz": 140,
-     "gain_db": 3,
-     "q": 1.0
-    }
-   ],
-   "gain_db": 6
-  },
-  "lead": {
-   "inst": {
-    "type": "supersaw",
-    "voices": 7,
-    "detune": 20,
-    "mix": 0.62,
-    "spread": 0.85,
-    "attack": 0.004,
-    "release": 0.12,
-    "cutoff": 4200,
-    "reso": 0.35,
-    "env": 3000,
-    "fdecay": 0.18
-   },
-   "sidechain": {
-    "source": "kick",
-    "depth": 0.3,
-    "release_ms": 140
-   },
-   "fx": [
-    {
-     "type": "hpf",
-     "hz": 300
+     "type": "comp",
+     "threshold_db": -20,
+     "ratio": 2,
+     "attack_ms": 10,
+     "release_ms": 80
     },
     {
      "type": "sat",
-     "amount": 0.35
+     "amount": 0.15
     },
     {
-     "type": "eq",
-     "hz": 2600,
-     "gain_db": -2,
-     "q": 1.2
-    },
-    {
-     "type": "eq",
-     "hz": 7000,
-     "gain_db": 2.5,
-     "q": 0.8
+     "type": "gain",
+     "db": -0.5
     }
    ],
-   "send_reverb": 0.3,
-   "send_delay": 0.22,
+   "layers": [
+    {
+     "name": "sub",
+     "inst": {
+      "type": "sub",
+      "attack": 0.004,
+      "release": 0.03,
+      "harmonics": 0.2
+     },
+     "role": "sub",
+     "gain_db": -5.0
+    },
+    {
+     "name": "roll",
+     "inst": {
+      "type": "trancebass",
+      "sub": 0,
+      "cutoff": 700,
+      "env": 2400,
+      "fdecay": 0.06,
+      "drive": 0.35,
+      "reso": 0.2
+     },
+     "role": "bass",
+     "gain_db": 7,
+     "eq": {
+      "hp": 72,
+      "own_db": 4
+     }
+    },
+    {
+     "name": "upper",
+     "inst": {
+      "type": "polysynth",
+      "osc": [
+       {
+        "shape": "saw",
+        "voices": 3,
+        "detune": 10
+       },
+       {
+        "shape": "pulse",
+        "pw": 0.3,
+        "level": 0.5
+       }
+      ],
+      "cutoff": 1400,
+      "env": 3500,
+      "fdecay": 0.05,
+      "decay": 0.1,
+      "sustain_level": 0.25,
+      "release": 0.04
+     },
+     "role": "upper-bass",
+     "octave": 1,
+     "gain_db": 8
+    }
+   ]
+  },
+  "lead": {
+   "role": "lead",
    "humanize_ms": 0,
    "legato": 0.62,
-   "gain_db": 4
+   "sidechain": {
+    "source": "kick",
+    "depth": 0.45,
+    "release_ms": 140
+   },
+   "send_reverb": 0,
+   "send_delay": 0,
+   "sends": {
+    "hall": 0.3,
+    "echo": 0.22
+   },
+   "gain_db": 0,
+   "fx": [
+    {
+     "type": "sat",
+     "amount": 0.2
+    },
+    {
+     "type": "mseq",
+     "mid": [
+      {
+       "type": "eq",
+       "hz": 3200,
+       "gain_db": -2,
+       "q": 0.8
+      }
+     ]
+    },
+    {
+     "type": "comp",
+     "threshold_db": -18,
+     "ratio": 2,
+     "attack_ms": 15,
+     "release_ms": 150
+    },
+    {
+     "type": "chorus",
+     "rate": 0.3,
+     "depth": 0.2,
+     "mix": 0.15
+    },
+    {
+     "type": "gain",
+     "db": 3.8
+    }
+   ],
+   "layers": [
+    {
+     "name": "main",
+     "inst": {
+      "type": "supersaw",
+      "model": 2,
+      "voices": 7,
+      "detune": 20,
+      "mix": 0.62,
+      "spread": 0.85,
+      "attack": 0.004,
+      "release": 0.12,
+      "cutoff": 5460.0,
+      "reso": 0.35,
+      "env": 3000,
+      "fdecay": 0.18,
+      "drift": 0.35,
+      "vibrato": 10,
+      "vib_delay": 0.3
+     },
+     "role": "lead",
+     "gain_db": 9
+    },
+    {
+     "name": "support",
+     "inst": {
+      "type": "supersaw",
+      "model": 2,
+      "voices": 7,
+      "detune": 30,
+      "mix": 0.62,
+      "spread": 1.0,
+      "attack": 0.02,
+      "release": 0.3,
+      "cutoff": 5460.0,
+      "reso": 0.35,
+      "env": 3000,
+      "fdecay": 0.18,
+      "drift": 0.5,
+      "vibrato": 0,
+      "vib_delay": 0.3
+     },
+     "octave": -1,
+     "role": "support",
+     "gain_db": 3,
+     "width": 0.6,
+     "eq": {
+      "hp": 150,
+      "cut_db": 0
+     }
+    },
+    {
+     "name": "transient",
+     "inst": {
+      "type": "polysynth",
+      "osc": [
+       {
+        "shape": "saw",
+        "voices": 3,
+        "detune": 8
+       }
+      ],
+      "cutoff": 3000,
+      "env": 6000,
+      "fdecay": 0.04,
+      "attack": 0.001,
+      "decay": 0.07,
+      "sustain_level": 0,
+      "release": 0.05
+     },
+     "role": "lead",
+     "eq": "none",
+     "gain_db": 15,
+     "fx": [
+      {
+       "type": "hpf",
+       "hz": 1000,
+       "slope": 24
+      }
+     ]
+    },
+    {
+     "name": "air",
+     "inst": {
+      "type": "air",
+      "octave": 1,
+      "noise": 0.45,
+      "attack": 0.02,
+      "release": 0.2
+     },
+     "role": "air",
+     "gain_db": 12
+    },
+    {
+     "name": "centre",
+     "inst": {
+      "type": "polysynth",
+      "osc": [
+       {
+        "shape": "square"
+       }
+      ],
+      "cutoff": 2200,
+      "attack": 0.005,
+      "release": 0.12
+     },
+     "role": "lead",
+     "eq": "none",
+     "gain_db": 0,
+     "fx": [
+      {
+       "type": "hpf",
+       "hz": 200,
+       "slope": 12
+      }
+     ]
+    }
+   ]
   },
   "saws": {
    "inst": {
@@ -267,27 +517,42 @@
    },
    "fx": [
     {
-     "type": "hpf",
-     "hz": 260
-    },
-    {
-     "type": "eq",
-     "hz": 2500,
-     "gain_db": -2.5,
-     "q": 0.7
-    },
-    {
      "type": "gate",
      "pattern": "x.xx.x.xx.x.xx.x",
      "depth": 0.9,
      "duty": 0.6,
      "smooth_ms": 4
+    },
+    {
+     "type": "mseq",
+     "mid": [
+      {
+       "type": "eq",
+       "hz": 2500,
+       "gain_db": -2.5,
+       "q": 0.7
+      }
+     ]
+    },
+    {
+     "type": "gain",
+     "db": -0.5
     }
    ],
-   "send_reverb": 0.25,
-   "send_delay": 0.1,
+   "send_reverb": 0,
+   "send_delay": 0,
    "humanize_ms": 0,
-   "gain_db": 7
+   "gain_db": 7,
+   "role": "support",
+   "eq": {
+    "hp": 230,
+    "cut_db": -2
+   },
+   "bus": "music",
+   "sends": {
+    "hall": 0.25,
+    "echo": 0.1
+   }
   },
   "tick": {
    "inst": {
@@ -312,7 +577,9 @@
    "send_reverb": 0.3,
    "humanize_ms": 0,
    "pan": 0.2,
-   "gain_db": 10
+   "gain_db": 10,
+   "role": "pluck",
+   "eq": "none"
   },
   "chop": {
    "inst": {
@@ -502,7 +769,9 @@
    "humanize_ms": 0,
    "pan": -0.15,
    "width": 0.3,
-   "gain_db": 13
+   "gain_db": 13,
+   "role": "pluck",
+   "eq": "none"
   },
   "rz": {
    "inst": {
@@ -531,7 +800,9 @@
    "send_delay": 0.15,
    "humanize_ms": 0,
    "width": 0.5,
-   "gain_db": 6
+   "gain_db": 6,
+   "role": "arp",
+   "eq": "none"
   },
   "throw": {
    "inst": {
@@ -685,14 +956,13 @@
    "gain_db": 8
   },
   "pad": {
-   "inst": {
-    "type": "supersaw",
-    "voices": 7,
-    "detune": 16,
-    "mix": 0.6,
-    "attack": 1.0,
-    "release": 2.0,
-    "cutoff": 1500
+   "role": "pad",
+   "humanize_ms": 0,
+   "bus": "music",
+   "width": 0.6,
+   "send_reverb": 0,
+   "sends": {
+    "hall": 0.35
    },
    "sidechain": {
     "source": "kick",
@@ -701,14 +971,64 @@
    },
    "fx": [
     {
-     "type": "hpf",
-     "hz": 200
+     "type": "gain",
+     "db": -12.9
     }
    ],
-   "send_reverb": 0.35,
-   "humanize_ms": 0,
-   "gain_db": 0,
-   "width": 0.4
+   "layers": [
+    {
+     "name": "body",
+     "inst": {
+      "type": "polysynth",
+      "osc": [
+       {
+        "shape": "saw",
+        "voices": 5,
+        "detune": 14
+       },
+       {
+        "shape": "triangle",
+        "octave": -1,
+        "level": 0.25
+       }
+      ],
+      "attack": 1.0,
+      "release": 2.0,
+      "cutoff": 2000,
+      "lfo": [
+       {
+        "dest": "cutoff",
+        "rate": 0.15,
+        "depth": 0.4
+       }
+      ],
+      "drift": 0.5
+     },
+     "role": "pad",
+     "gain_db": 12,
+     "eq": {
+      "cut_db": -1.5
+     }
+    },
+    {
+     "name": "bright",
+     "inst": {
+      "type": "supersaw",
+      "model": 2,
+      "voices": 7,
+      "detune": 18,
+      "mix": 0.6,
+      "attack": 1.2,
+      "release": 2.0,
+      "cutoff": 6000,
+      "noise": 0.2
+     },
+     "role": "support",
+     "octave": 1,
+     "gain_db": 2,
+     "width": 1.0
+    }
+   ]
   }
  },
  "patterns": {
@@ -2117,11 +2437,83 @@
    "feedback": 0.35,
    "return_db": -9,
    "lpf": 4000
+  },
+  "returns": {
+   "hall": {
+    "type": "reverb",
+    "size": 0.85,
+    "damping": 0.5,
+    "predelay_ms": 25,
+    "hpf": 350,
+    "lpf": 8000,
+    "return_db": -4.5,
+    "fx": [
+     {
+      "type": "eq",
+      "hz": 450,
+      "gain_db": -3,
+      "q": 1.0
+     }
+    ],
+    "duck": {
+     "key": "lead",
+     "depth_db": 5,
+     "release_ms": 300
+    }
+   },
+   "echo": {
+    "type": "delay",
+    "beats": 0.75,
+    "feedback": 0.35,
+    "pingpong": true,
+    "offset_ms": 9,
+    "hpf": 300,
+    "lpf": 6000,
+    "return_db": -6,
+    "duck": {
+     "key": "lead",
+     "depth_db": 4,
+     "release_ms": 250
+    }
+   },
+   "room": {
+    "type": "reverb",
+    "size": 0.3,
+    "damping": 0.6,
+    "predelay_ms": 8,
+    "hpf": 300,
+    "lpf": 9000,
+    "return_db": -6
+   }
   }
  },
  "master": {
   "lufs": -10,
   "sat": 0.1,
   "glue": true
+ },
+ "genre": "trance",
+ "buses": {
+  "drums": {
+   "fx": [
+    {
+     "type": "clip",
+     "drive_db": 1.0,
+     "ceiling_db": -1.0,
+     "knee": 0.4
+    }
+   ]
+  },
+  "music": {
+   "fx": [
+    {
+     "type": "comp",
+     "threshold_db": -22,
+     "ratio": 2,
+     "attack_ms": 20,
+     "release_ms": 150
+    }
+   ]
+  }
  }
 }

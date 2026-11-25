@@ -21,6 +21,11 @@
 
 Every 4-bar hook phrase ends with an eighth of total silence and then a slam on the 1.
 
+## Remix (2026-11-25)
+**v036 replaces v033 as the published version.** A remix with no compositional change: tempo, swing, seed, patterns and arrangement are frozen, and every track's events are identical to v033. The low end was carved for the old curve and is now carved for the new one: the kick's +3 dB at 100 Hz became -3 dB at 170 Hz and its notch at its own 62 Hz went from -5 to -2 dB; the stomp -3 dB at 150 Hz; the 808 and 808long lost their -8 dB notch at 45 Hz and gained 3 and 2 dB after their drive; a notch at the kick's 62 Hz on the 808, keyed by the kick. The target is the hip hop 2015-21 era curve (`hiphop_2015`, 347 catalogue tracks): `studio.py master v036 --genre hiphop --lufs -10`: -10.2 LUFS, -1.03 dBTP, PLR 9.2, top end within 0.5 dB of the curve, no warnings (EQ at its limit only at 31.5 Hz, where nothing plays); mean gap to the catalogue 0.79 dB (the previous master 1.75). The hooks sit 0.2-0.3 LU lower against the track; the sections carried by the 808long growl rise (intro1 +1.6, intro2 +0.9, the closing slam +1.9 LU), kept on purpose: the growl was what the old curve made the mix hide. Details in journal entry 34.
+
+The previous release (v033) is reproduced by `project-published.json`; the table above describes it. `ear-overview.png` still shows v033's render: no overview ear was saved for the remix.
+
 ## Files
 - `lid-off-mastered.mp3`: the track
 - `journal.md`: Spectre's numbered moves

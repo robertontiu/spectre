@@ -30,14 +30,14 @@
     },
     {
      "type": "eq",
-     "hz": 100,
-     "gain_db": 3,
+     "hz": 170,
+     "gain_db": -3,
      "q": 1.0
     },
     {
      "type": "eq",
      "hz": 62,
-     "gain_db": -5,
+     "gain_db": -2,
      "q": 1.1
     }
    ]
@@ -146,12 +146,6 @@
    },
    "fx": [
     {
-     "type": "eq",
-     "hz": 45,
-     "gain_db": -8,
-     "q": 1.0
-    },
-    {
      "type": "drive",
      "db": 14
     },
@@ -177,15 +171,24 @@
     },
     {
      "type": "gain",
-     "db": -5
+     "db": -2
     },
     {
      "type": "eq",
      "hz": 160,
      "gain_db": -2.5,
      "q": 1.2
+    },
+    {
+     "type": "dyneq",
+     "hz": 62,
+     "q": 1.5,
+     "depth_db": -6,
+     "key": "kick",
+     "release_ms": 90
     }
-   ]
+   ],
+   "role": "808"
   },
   "saw": {
    "inst": {
@@ -305,12 +308,6 @@
    "legato": 1.0,
    "fx": [
     {
-     "type": "eq",
-     "hz": 45,
-     "gain_db": -8,
-     "q": 1.0
-    },
-    {
      "type": "drive",
      "db": 16
     },
@@ -335,7 +332,7 @@
     },
     {
      "type": "gain",
-     "db": -5
+     "db": -3
     },
     {
      "type": "eq",
@@ -397,6 +394,12 @@
     {
      "type": "hpf",
      "hz": 90
+    },
+    {
+     "type": "eq",
+     "hz": 150,
+     "gain_db": -3,
+     "q": 1.0
     },
     {
      "type": "drive",

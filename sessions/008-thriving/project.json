@@ -5,64 +5,81 @@
  "seed": 8,
  "tracks": {
   "kick": {
-   "inst": {
-    "type": "kitkick",
-    "tune": 72,
-    "decay": 0.18,
-    "beater": 0.6
-   },
+   "role": "kick",
    "humanize_ms": 5,
-   "gain_db": 2,
-   "fx": [
+   "layers": [
     {
-     "type": "hpf",
-     "hz": 40
-    },
-    {
-     "type": "eq",
-     "hz": 60,
-     "gain_db": -6,
-     "q": 1.0
-    },
-    {
-     "type": "eq",
-     "hz": 76,
-     "gain_db": -7,
-     "q": 1.5
-    },
-    {
-     "type": "eq",
-     "hz": 120,
-     "gain_db": 3,
-     "q": 1.0
-    },
-    {
-     "type": "eq",
-     "hz": 400,
-     "gain_db": -4,
-     "q": 1.0
-    },
-    {
-     "type": "eq",
-     "hz": 3000,
+     "name": "shell",
+     "inst": {
+      "type": "kitkick",
+      "tune": 72,
+      "decay": 0.18,
+      "beater": 0.6
+     },
+     "role": "kick",
+     "eq": "none",
      "gain_db": 2,
-     "q": 1.0
+     "fx": [
+      {
+       "type": "hpf",
+       "hz": 40
+      },
+      {
+       "type": "eq",
+       "hz": 76,
+       "gain_db": -6,
+       "q": 1.5
+      },
+      {
+       "type": "eq",
+       "hz": 120,
+       "gain_db": 3,
+       "q": 1.0
+      },
+      {
+       "type": "eq",
+       "hz": 400,
+       "gain_db": -4,
+       "q": 1.0
+      },
+      {
+       "type": "eq",
+       "hz": 3000,
+       "gain_db": 2,
+       "q": 1.0
+      },
+      {
+       "type": "comp",
+       "threshold_db": -12,
+       "ratio": 2,
+       "attack_ms": 12,
+       "release_ms": 80
+      },
+      {
+       "type": "sat",
+       "amount": 0.1
+      },
+      {
+       "type": "room",
+       "size": 0.3,
+       "mix": 0.15
+      }
+     ]
     },
     {
-     "type": "comp",
-     "threshold_db": -12,
-     "ratio": 2,
-     "attack_ms": 12,
-     "release_ms": 80
-    },
-    {
-     "type": "sat",
-     "amount": 0.1
-    },
-    {
-     "type": "room",
-     "size": 0.3,
-     "mix": 0.15
+     "name": "sub",
+     "inst": {
+      "type": "kicksub",
+      "note": "A1",
+      "tail": 0.09
+     },
+     "role": "kick",
+     "eq": {
+      "lp": 110,
+      "cut_db": 0,
+      "own_db": 0
+     },
+     "gain_db": -6
     }
    ]
   },
@@ -152,30 +169,57 @@
    ]
   },
   "ohat": {
-   "inst": {
-    "type": "kithat",
-    "open": 0.4
-   },
+   "role": "hats",
    "humanize_ms": 6,
    "pan": 0.3,
    "choke_by": "hat",
-   "gain_db": -7,
    "dyn": [
     1.0,
     0.6,
     0.85,
     0.6
    ],
-   "fx": [
+   "layers": [
     {
-     "type": "highshelf",
-     "hz": 7000,
-     "gain_db": -4
+     "name": "noise",
+     "inst": {
+      "type": "kithat",
+      "open": 0.4
+     },
+     "role": "hats",
+     "eq": "none",
+     "gain_db": -7,
+     "fx": [
+      {
+       "type": "highshelf",
+       "hz": 7000,
+       "gain_db": -4
+      },
+      {
+       "type": "room",
+       "size": 0.3,
+       "mix": 0.2
+      }
+     ]
     },
     {
-     "type": "room",
-     "size": 0.3,
-     "mix": 0.2
+     "name": "metal",
+     "inst": {
+      "type": "metalhat",
+      "open": true,
+      "decay": 0.3,
+      "tone": 9000
+     },
+     "role": "hats",
+     "eq": "auto",
+     "gain_db": -4,
+     "fx": [
+      {
+       "type": "room",
+       "size": 0.3,
+       "mix": 0.2
+      }
+     ]
     }
    ]
   },
@@ -196,34 +240,62 @@
    ]
   },
   "ride": {
-   "inst": {
-    "type": "kitride",
-    "decay": 3.0,
-    "bell": 0.35
-   },
+   "role": "cymbals",
    "humanize_ms": 6,
    "pan": -0.35,
-   "gain_db": -3,
    "dyn": [
     1.0,
     0.6,
     0.85,
     0.6
    ],
-   "fx": [
+   "gain_db": -3,
+   "layers": [
     {
-     "type": "highshelf",
-     "hz": 6500,
-     "gain_db": -5
+     "name": "stick",
+     "inst": {
+      "type": "kitride",
+      "decay": 3.0,
+      "bell": 0.35
+     },
+     "role": "cymbals",
+     "eq": "none",
+     "fx": [
+      {
+       "type": "highshelf",
+       "hz": 6500,
+       "gain_db": -5
+      },
+      {
+       "type": "lpf",
+       "hz": 13000
+      },
+      {
+       "type": "room",
+       "size": 0.35,
+       "mix": 0.2
+      }
+     ]
     },
     {
-     "type": "lpf",
-     "hz": 13000
-    },
-    {
-     "type": "room",
-     "size": 0.35,
-     "mix": 0.2
+     "name": "metal",
+     "inst": {
+      "type": "metalhat",
+      "open": true,
+      "decay": 0.2,
+      "tone": 7500,
+      "partials": 0.3
+     },
+     "role": "cymbals",
+     "eq": "auto",
+     "gain_db": -16,
+     "fx": [
+      {
+       "type": "room",
+       "size": 0.35,
+       "mix": 0.2
+      }
+     ]
     }
    ]
   },
@@ -239,7 +311,7 @@
     {
      "type": "highshelf",
      "hz": 8000,
-     "gain_db": -3
+     "gain_db": 0
     },
     {
      "type": "room",
@@ -281,48 +353,98 @@
    ]
   },
   "bass": {
-   "inst": {
-    "type": "ebass",
-    "pick": 0.6,
-    "drive": 0.25,
-    "tone": 3000
-   },
+   "role": "bass",
    "humanize_ms": 5,
    "legato": 0.9,
-   "gain_db": -4,
+   "layers": [
+    {
+     "name": "body",
+     "inst": {
+      "type": "ebass",
+      "pick": 0.6,
+      "drive": 0.25,
+      "tone": 3000
+     },
+     "role": "bass",
+     "eq": "none",
+     "gain_db": -4,
+     "fx": [
+      {
+       "type": "hpf",
+       "hz": 40
+      },
+      {
+       "type": "lowshelf",
+       "hz": 70,
+       "gain_db": 3
+      },
+      {
+       "type": "eq",
+       "hz": 82,
+       "gain_db": -2,
+       "q": 1.4
+      },
+      {
+       "type": "eq",
+       "hz": 130,
+       "gain_db": 3,
+       "q": 1.0
+      },
+      {
+       "type": "eq",
+       "hz": 160,
+       "gain_db": 6,
+       "q": 1.2
+      },
+      {
+       "type": "eq",
+       "hz": 240,
+       "gain_db": 3,
+       "q": 0.9
+      }
+     ]
+    },
+    {
+     "name": "grit",
+     "inst": {
+      "type": "ebass",
+      "drive": 0.8,
+      "pick": 0.9
+     },
+     "role": "bass",
+     "eq": "none",
+     "fx": [
+      {
+       "type": "hpf",
+       "hz": 300,
+       "slope": 12
+      },
+      {
+       "type": "lpf",
+       "hz": 3000,
+       "slope": 12
+      }
+     ],
+     "gain_db": -6
+    }
+   ],
    "fx": [
     {
-     "type": "hpf",
-     "hz": 40
+     "type": "dyneq",
+     "hz": 75,
+     "q": 1.4,
+     "depth_db": -5,
+     "key": "kick",
+     "release_ms": 100
     },
     {
-     "type": "lowshelf",
-     "hz": 70,
-     "gain_db": 3
+     "type": "comp",
+     "threshold_db": -20,
+     "ratio": 3
     },
     {
-     "type": "eq",
-     "hz": 82,
-     "gain_db": -3,
-     "q": 1.4
-    },
-    {
-     "type": "eq",
-     "hz": 130,
-     "gain_db": 3,
-     "q": 1.0
-    },
-    {
-     "type": "eq",
-     "hz": 160,
-     "gain_db": 6,
-     "q": 1.2
-    },
-    {
-     "type": "eq",
-     "hz": 240,
-     "gain_db": 3,
-     "q": 0.9
+     "type": "gain",
+     "db": 4
     }
    ]
   },
@@ -402,7 +524,8 @@
      "hz": 300,
      "gain_db": 2
     }
-   ]
+   ],
+   "bus": "guitars"
   },
   "chug2": {
    "inst": {
@@ -432,7 +555,8 @@
      "hz": 300,
      "gain_db": 2
     }
-   ]
+   ],
+   "bus": "guitars"
   },
   "gtrL": {
    "inst": {
@@ -465,7 +589,8 @@
      "hz": 320,
      "gain_db": 5
     }
-   ]
+   ],
+   "bus": "guitars"
   },
   "gtrR": {
    "inst": {
@@ -500,7 +625,8 @@
      "hz": 320,
      "gain_db": 4
     }
-   ]
+   ],
+   "bus": "guitars"
   },
   "organ": {
    "inst": {
@@ -1532,5 +1658,29 @@
   "lufs": -10,
   "sat": 0.1,
   "glue": true
+ },
+ "genre": "rock",
+ "buses": {
+  "guitars": {
+   "fx": [
+    {
+     "type": "comp",
+     "threshold_db": -20,
+     "ratio": 2
+    },
+    {
+     "type": "dyneq",
+     "hz": 2500,
+     "q": 1.0,
+     "depth_db": -3,
+     "key": "snare",
+     "release_ms": 120
+    },
+    {
+     "type": "gain",
+     "db": 2
+    }
+   ]
+  }
  }
 }

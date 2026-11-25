@@ -34,6 +34,11 @@
 ## Departures from Spectre's habits
 No mid-track valley (the arc only climbs), no wind-down outro (it ends at its peak), no lone filtered intro (the whole band is in the room for the slow dance).
 
+## Remix (2026-11-25)
+**v026 replaces v024 as the published version.** A remaster with a light remix, no compositional change: tempo maps, swing, seed, patterns and arrangement are frozen, and every track's events are identical to v024. The target is the genre's own curve, measured on 103 Taraf de Haïdouks recordings (`joc_taraf`), instead of the borrowed rock curve; two moves made for that curve were partly undone: the guitar's body boost at 175 Hz from +5 to +2 dB, and the tobă's notch at its 54 Hz from -5 to -2 dB. No stacks, no buses: an acoustic band. `studio.py master v026 --genre joc`: -11.0 LUFS, -1.03 dBTP, PLR 10.0, LRA 6.7 LU, top end within 1.2 dB of the curve, no warnings (EQ at its limit only at 31.5-40 Hz: a string band has no sub); mean gap to the taraf recordings 1.46 dB (the previous master 2.67). Every section within 0.35 LU of the previous master except the prelude (+0.85 LU); the climb round by round is intact. Details in journal entry 27.
+
+The previous release (v024) is reproduced by `project-published.json`; the table above describes it. `ear-overview.png` still shows v024's render: no overview ear was saved for the remix. `build.py` still writes v024's project: running it overwrites the remix.
+
 ## Files
 - `unison-mastered.mp3`: the track
 - `journal.md`: the producer's numbered moves

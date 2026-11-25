@@ -33,6 +33,11 @@
 - **Outro (8):** the lead guitar sings the verse tune an octave up, the voice answers, everyone hits Asus2
 - **Coda (4):** the clean figure alone on Asus2, unresolved
 
+## Remix (2026-11-25)
+**v037 replaces v028 as the published version.** A remix with no compositional change: tempo, swing, seed, patterns and arrangement are frozen, and every track's events are identical to v028. The carving made for the old curve came out of the low end: the kick became a stack (the `kitkick` shell plus a `kicksub` layer on A1); the bass became a clean body with a notch at 75 Hz keyed by the kick, plus a driven layer band-passed 300 Hz-3 kHz for definition, on a compressed bus (masked 51-63% in the choruses, 81-86% before). The guitars went to a bus with 2:1 and a dip at 2.5 kHz keyed by the snare, so the snare's crack and the guitars' bite take turns. The open hat and the ride gained tonal `metalhat` layers for the top octave; after the owner's listen the ride's layer was made a short shimmer on the hit (decay 0.9 to 0.2 s, 3 dB down) instead of a ring. The target is the pop rock 2015-21 era curve (`rock_2015`): `studio.py master v037 --genre rock`: -8.6 LUFS, -1.03 dBTP, PLR 7.6, LRA 11.7 LU, no warnings (EQ at its limit only at 31.5-40 Hz, under the bass's lowest note); mean gap to the catalogue 0.90 dB (the previous master 1.56). Every section within 0.65 LU of the previous master. Details in journal entries 30-31.
+
+The previous release (v028) is reproduced by `project-published.json`; the table above describes it. `ear-overview.png` still shows v028's render: no overview ear was saved for the remix. `build.py` still writes v028's project: running it overwrites the remix.
+
 ## Files
 - `anyway-mastered.mp3`: the track
 - `journal.md`: the producer's numbered moves
