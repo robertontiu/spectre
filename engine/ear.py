@@ -110,6 +110,9 @@ def listen(a, renders):
     if not os.path.exists(mp):  # e.g. vNNN.master.wav: use the render's own meta
         mp = latest.replace(".master.wav", ".meta.json").replace(".premaster.wav", ".meta.json")
     meta = json.load(open(mp))
+    if getattr(a, "clarity", False):  # stems: re-rendered from the render's project file (no audio file needed)
+        import clarity
+        return clarity.run(a, renders, latest, meta)
     y, sr = sf.read(latest, always_2d=True)
     if getattr(a, "phone", False):
         return phone_listen(a, latest, meta, y)

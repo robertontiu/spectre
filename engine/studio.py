@@ -6,6 +6,7 @@
   python3 studio.py listen --bars 17-24            zoom into a bar range (hi-res + timing roll)
   python3 studio.py listen --section hook1         zoom into a section
   python3 studio.py listen --mono / --lowpass      the 'squint' checks
+  python3 studio.py listen --clarity [--section S] --genre G   stems: layer census, masking, EQ map (engine/clarity.py)
 """
 import sys, os, json, time, glob, re, argparse
 import numpy as np
@@ -284,10 +285,38 @@ def tapestop(mix, a, b):
 
 # ------------------------------------------------------------------ render
 
+# Random streams. By default (every project made before 2026-11-25) the hand draws its humanizing from one generator
+# seeded by the project seed, and every instrument draws from the shared module generator instruments.RNG, in the
+# order tracks are scheduled and rendered: adding, removing or reordering a track shifts the random phases, timing
+# and velocities of the others. A project with "seeds": "per-track" gives every track its own streams, seeded from
+# the project seed and the track's name (the hand's and the instruments'), plus one for the transition fx bus, so a
+# track renders the same whatever else is in the project. Opt-in, so every published project renders bit for bit
+# as before.
+def per_track_seeds(P):
+    mode = P.get("seeds", "shared")
+    if mode not in ("shared", "per-track"):
+        raise ValueError(f'"seeds" must be "shared" (default) or "per-track", not {mode!r}')
+    return mode == "per-track"
+
+
+def track_rng(P, name, stream):
+    """The generator of one track's stream (0 = the hand's, 1 = the instruments'), in per-track seed mode."""
+    import zlib
+    return np.random.default_rng([int(P.get("seed", 1)) & 0xFFFFFFFF, zlib.crc32(name.encode("utf-8")), stream])
+
+
 def schedule(P, hand):
     """Expand arrangement into per-track event lists + section map."""
     tracks = P["tracks"]
     patterns = P["patterns"]
+    per_track = per_track_seeds(P)
+    shared_rng, rngs = hand.rng, {}
+
+    def use(tname):  # per-track seeds: the hand draws from this track's own stream
+        if per_track:
+            if tname not in rngs:
+                rngs[tname] = track_rng(P, tname, 0)
+            hand.rng = rngs[tname]
     bar = hand.bar_sec()
     events = {k: [] for k in tracks}
     holds = {k: [] for k in tracks}  # texture on-ranges (sec)
@@ -320,6 +349,7 @@ def schedule(P, hand):
                         raise ValueError(f"pattern '{pname}' uses unknown track '{tname}'")
                     in_fill = fill_pat is not None and tname in fill_pat and pstart_bar + pb_ > bars - fill_bars
                     tr = tracks[tname]
+                    use(tname)
                     typ = tr["inst"]["type"]
                     new = []
                     if typ in I.TEXTURES:
@@ -344,6 +374,7 @@ def schedule(P, hand):
                 if tname == "bars":
                     continue
                 tr = tracks[tname]
+                use(tname)
                 typ = tr["inst"]["type"]
                 if typ in DRUM_TYPES:
                     new = hand.drum_events(part, fill_bars, t0, tr)
@@ -355,6 +386,7 @@ def schedule(P, hand):
                 events[tname] += new
         t += bars * bar
         bar_i += bars
+    hand.rng = shared_rng
     if any(sec.get("bpm") for sec in P["arrangement"]):
         return _tempo_warp(P, hand, events, holds, sections, t)
     return events, holds, sections, t
@@ -493,10 +525,63 @@ def render_track(name, tr, evs, holds, total_n, bpm):
     return st
 
 
-def render(P, solo=None, out_prefix=None, quiet=False):
+# Tracks a window render (`render(..., window=...)`, the ears' stem analysis) still renders whole and then crops:
+# a sung phrase cut at the window's edge would be a new phrase to synthesize.
+WHOLE_TYPES = {"singer"}
+
+
+def _window(events, holds, sections, total, window, pre):
+    """Events, holds and sections of the span [t0 - pre, t1), shifted so the span starts at 0 (a window render).
+    Returns them with the new total and the offset."""
+    t0, t1 = window
+    off = max(0.0, t0 - pre)
+    t1 = min(t1, total)
+    ev = {k: [dict(e, t=e["t"] - off) for e in v if off - 1e-9 <= e["t"] < t1] for k, v in events.items()}
+    ho = {k: [(max(a, off) - off, min(b, t1) - off) for a, b in v if b > off and a < t1] for k, v in holds.items()}
+    se = [dict(S, start=S["start"] - off, end=S["end"] - off) for S in sections]
+    return ev, ho, se, t1 - off, off
+
+
+def _window_auto(st, au, a, b, n):
+    """A section's automation in a window render, where the section may start before the window (a < 0) or end after
+    it (b > n): the ramps and sweeps keep the values they have at the window's edges."""
+    a1, b1 = max(a, 0), min(b, n)
+    span = max(b - a, 1)
+
+    def at(v0, v1, p, log=False):
+        x = (p - a) / span
+        return v0 * (v1 / v0) ** x if log else v0 + (v1 - v0) * x
+    if au.get("mute"):
+        st[:, a1:b1] = 0
+    gdb = au.get("gain_db")
+    if gdb is not None:
+        g0, g1 = (gdb if isinstance(gdb, list) else [gdb, gdb])
+        st[:, a1:b1] *= db(np.linspace(at(g0, g1, a1), at(g0, g1, b), b - a1)).astype(np.float32)[:b1 - a1]
+    for key, fn, lo in (("lpf", block_lpf, 30), ("hpf", block_hpf, 10)):
+        v = au.get(key)
+        if v:
+            f0, f1 = (v if isinstance(v, list) else [v, v])
+            f0, f1 = max(f0, lo), max(f1, lo)
+            st = fn(st, a1, b1, at(f0, f1, a1, True), at(f0, f1, b1, True))
+    return st
+
+
+def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=None, pre_roll=None):
+    """Render a project. `stem_hook(name, st)` (optional) is called with every track's final stereo signal as it goes
+    into the mix, and with the returns "(reverb)", "(delay)" and "(fx)"; it must not change them. `window=(t0, t1)`
+    (seconds) renders only that span plus a pre-roll (default two bars) for the ears' stem analysis: the result
+    starts `meta["window_offset"]` seconds into the track, has no quick master, and its random draws differ from a
+    full render (the stems are the same sounds, not the same samples)."""
     t_start = time.time()
     hand = Hand(P["bpm"], P.get("swing", 0.5), P.get("seed", 1))
     events, holds, sections, total = schedule(P, hand)
+    whole, offset = None, 0.0
+    if window is not None:
+        whole = dict(events=events, holds=holds, total=total)
+        pre = 2 * 4 * 60.0 / P["bpm"] if pre_roll is None else pre_roll
+        events, holds, sections, total, offset = _window(events, holds, sections, total, window, pre)
+    per_track = per_track_seeds(P)
+    shared_rng = I.RNG
     tail = 3.0
     total_n = int((total + tail) * SR)
     tracks = P["tracks"]
@@ -516,7 +601,18 @@ def render(P, solo=None, out_prefix=None, quiet=False):
         tr = tracks[name]
         if tr.get("mute"):
             continue
-        st = render_track(name, tr, events[name], holds[name], total_n, P["bpm"])
+        if per_track:
+            I.RNG = track_rng(P, name, 1)
+        if whole is not None and tr["inst"]["type"] in WHOLE_TYPES:  # window render: render whole, then crop
+            full = render_track(name, tr, whole["events"][name], whole["holds"][name],
+                                int((whole["total"] + tail) * SR), P["bpm"])
+            a0 = int(round(offset * SR))
+            st = np.zeros((2, total_n), dtype=np.float32)
+            m_ = max(0, min(total_n, full.shape[1] - a0))
+            st[:, :m_] = full[:, a0:a0 + m_]
+            del full
+        else:
+            st = render_track(name, tr, events[name], holds[name], total_n, P["bpm"])
         # choke: another track's hits cut this track's ring (closed hat chokes the open hat)
         cb = tr.get("choke_by")
         if cb and cb in events:
@@ -551,7 +647,14 @@ def render(P, solo=None, out_prefix=None, quiet=False):
         for sec in P["arrangement"]:
             S = sec_by_name[sec["name"]]
             a, b = int(S["start"] * SR), int(S["end"] * SR)
-            au = (sec.get("auto") or {}).get(name)
+            if whole is not None:  # window render: sections outside the span do nothing; clip the rest
+                if b <= 0 or a >= total_n:
+                    continue
+                au = (sec.get("auto") or {}).get(name)
+                if au:
+                    st = _window_auto(st, au, a, b, total_n)
+                a = max(a, 0)
+            au = (sec.get("auto") or {}).get(name) if whole is None else None
             if au:
                 if au.get("mute"):
                     st[:, a:b] = 0
@@ -582,14 +685,20 @@ def render(P, solo=None, out_prefix=None, quiet=False):
             rev_bus += st * tr.get("send_reverb", 0)
         del_bus += st * tr.get("send_delay", 0)
         mix += st
+        if stem_hook is not None:
+            stem_hook(name, st)
         env = np.sqrt(np.convolve(st.mean(0) ** 2, np.ones(2205) / 2205, mode="same")[::2205])
         stems_rms[name] = env.tolist()
     # transition fx (risers, impacts, reverse cymbals) live on their own bus
     fxb = np.zeros((2, total_n), dtype=np.float32)
+    if per_track:
+        I.RNG = track_rng(P, "(fx)", 1)
     if not solo:
         for sec in P["arrangement"]:
             S = sec_by_name[sec["name"]]
             a, b = int(S["start"] * SR), int(S["end"] * SR)
+            if whole is not None and (b <= 0 or a >= total_n):
+                continue
             en = sec.get("enter") or {}
             ex = sec.get("exit") or {}
 
@@ -615,25 +724,39 @@ def render(P, solo=None, out_prefix=None, quiet=False):
                 x = I.pitch_riser(ex["rise"] * bt_e)
                 put(x, b - len(x), db(-18))
         mix += fxb * 0.9
+        if stem_hook is not None and np.any(fxb):
+            stem_hook("(fx)", fxb * 0.9)
         rev_bus += fxb * 0.4
         if np.any(rev_bus):
             wet = pb.Pedalboard([pb.HighpassFilter(250), pb.Reverb(rv.get("size", 0.75), rv.get("damping", 0.55), 1.0, 0.0, 1.0),
                                  pb.LowpassFilter(rv.get("lpf", 7000))])(rev_bus, SR)
             mix += wet * db(rv.get("return_db", -4))
+            if stem_hook is not None:
+                stem_hook("(reverb)", wet * db(rv.get("return_db", -4)))
         if np.any(del_bus):
             wet = pb.Pedalboard([pb.HighpassFilter(300), pb.Delay(dl.get("beats", 0.75) * beat, dl.get("feedback", 0.35), 1.0),
                                  pb.LowpassFilter(dl.get("lpf", 3500))])(del_bus, SR)
             mix += wet * db(dl.get("return_db", -6))
+            if stem_hook is not None:
+                stem_hook("(delay)", wet * db(dl.get("return_db", -6)))
         # section-level whole-mix moves
         for sec in P["arrangement"]:
             S = sec_by_name[sec["name"]]
             a, b = int(S["start"] * SR), int(S["end"] * SR)
+            if whole is not None and (b <= 0 or b > total_n):  # window render: only exits that end inside it
+                continue
             ex = sec.get("exit") or {}
             bt_e = S.get("beat_end", beat)
             if ex.get("tapestop"):
                 mix = tapestop(mix, b - int(ex["tapestop"] * bt_e * SR), b)
             if ex.get("silence"):
                 mix *= fade_gate(total_n, [(b - int(ex["silence"] * bt_e * SR), b)])
+    if per_track:
+        I.RNG = shared_rng
+    if whole is not None:  # window render: the premaster only (no quick master)
+        meta = dict(bpm=P["bpm"], sections=sections, duration=total, window_offset=offset, stems_rms=stems_rms,
+                    rms_hop=2205 / SR, render_sec=round(time.time() - t_start, 1), solo=solo, _premaster=mix)
+        return mix, meta
     premaster = mix.copy()
     # master
     ms = P.get("master", {})
@@ -721,16 +844,24 @@ def main():
     l.add_argument("--wav")
     l.add_argument("--phone", action="store_true",
                    help="phone-speaker check: top end vs the genre curve, noise-likeness, worst moments per section")
-    l.add_argument("--genre", help="with --phone: the genre whose target curve to compare with (default hiphop)")
+    l.add_argument("--genre", help="with --phone: the genre whose target curve to compare with (default hiphop); with "
+                   "--clarity: the genre whose EQ map and target to check against")
+    l.add_argument("--clarity", action="store_true",
+                   help="stem analysis of a section (default: the loudest; --section NAME, --section all, --bars): "
+                   "layer census, masked and own share per stem, occupancy, low-mid build-up, crest per region, "
+                   "flags against the genre's EQ map (engine/eqmaps.json); writes clarity.json")
     m = sub.add_parser("master")
     m.add_argument("version", nargs="?", help="e.g. v027 (default: latest)")
-    m.add_argument("--genre", help="genre configuration (engine/genres.json): trap, hiphop, trance, trance_radio, rock, joc, caroling, latinpop; required "
-                   "unless --target is given; sets target, lufs, tp, eq and translate")
+    m.add_argument("--genre", help="genre configuration (engine/genres.json): trap, hiphop, trance, trance_radio, rock, joc, caroling, "
+                   "latinpop, chamberscore; required unless --target is given; sets target, lufs, tp, eq and translate")
     m.add_argument("--lufs", type=float)
     m.add_argument("--tp", type=float)
     m.add_argument("--eq", type=float)
     m.add_argument("--translate", type=float)
-    m.add_argument("--target", help="tonal target curve override (beat = the trap curve), e.g. hiphop, trance, rock")
+    m.add_argument("--target", help="tonal target curve override (beat = the trap curve), e.g. trance_2015, hiphop_2015, "
+                   "rock_2015, the reference curves in engine/targets.json, or the older hiphop, trance, rock")
+    m.add_argument("--published", action="store_true",
+                   help="the genre's settings from before its era target (what its released tracks were mastered with)")
     m.add_argument("--legacy-master", action="store_true",
                    help="master version 1: reproduces the masters released before 2026-11-24 exactly")
     a = ap.parse_args()
@@ -752,6 +883,8 @@ def main():
                 flags += [f"--{k}", str(getattr(a, k))]
         if a.legacy_master:
             flags.append("--legacy-master")
+        if a.published:
+            flags.append("--published")
         subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "master.py"), pre]
                        + flags, check=True)
         out = pre.replace(".premaster.wav", ".master.wav")

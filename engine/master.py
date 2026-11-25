@@ -78,7 +78,39 @@ TARGETS = {
 }
 
 GENRES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "genres.json")
-SETTINGS = ("target", "lufs", "tp", "eq", "translate", "mono_below")
+SETTINGS = ("target", "lufs", "tp", "eq", "translate", "mono_below", "max_low_boost_db")
+
+# Era targets (2026-11-25): measured curves with their provenance, written by tools/refcurve.py into
+# engine/targets.json (`refcurve.py add`). They are added next to the curves above, never in place of one: a name
+# that already exists here keeps its built-in curve (forward only), so every earlier master still reproduces.
+TARGETS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "targets.json")
+PROVENANCE = {
+    "beat": dict(method="hand-tuned", source="by ear for sessions 001-006 (2026)", era=None, n=None),
+    "trap": dict(method="hand-tuned", source="alias of beat", era=None, n=None),
+    "hiphop": dict(method="published average spectrum", source="Pestana et al. 2013, Fig. 5 hip-hop: UK/US #1 singles",
+                   era="about 1990-2010", n=None),
+    "trance": dict(method="published average spectrum", source="Pestana et al. 2013, Fig. 5 electronic: UK/US #1 "
+                   "singles tagged electronic (dance-pop, house-pop), not trance", era="1950-2010", n=None),
+    "rock": dict(method="published average spectrum", source="Pestana et al. 2013, Fig. 5: mean of pop and rock "
+                 "UK/US #1 singles", era="1950-2010, leaning on the 1960s-1980s", n=None),
+    "trance_handtuned": dict(method="hand-tuned", source="the earlier trance curve, kept for comparison", era=None, n=None),
+    "rock_handtuned": dict(method="hand-tuned", source="the earlier rock curve, kept for comparison", era=None, n=None),
+}
+
+
+def _load_era_targets():
+    if not os.path.exists(TARGETS_PATH):
+        return
+    with open(TARGETS_PATH) as fh:
+        era = {k: v for k, v in json.load(fh).items() if not k.startswith("_")}
+    for name, e in era.items():
+        if name in TARGETS:
+            continue  # built-in curves are never replaced
+        TARGETS[name] = {float(f): float(v) for f, v in e["curve"].items()}
+        PROVENANCE[name] = {k: e.get(k) for k in ("method", "source", "era", "n", "date")}
+
+
+_load_era_targets()
 
 
 def load_genres():
@@ -97,8 +129,10 @@ def genre_for_target(target, genres):
     return None
 
 
-def resolve_settings(genre=None, target=None, **overrides):
-    """Settings for one master: the genre's config, then explicit overrides (None = not given)."""
+def resolve_settings(genre=None, target=None, published=False, **overrides):
+    """Settings for one master: the genre's config, then explicit overrides (None = not given). `published` takes
+    the genre's settings as they were before its era target (`master_published` in genres.json): what the tracks
+    already released in that genre were mastered with."""
     genres = load_genres()
     if genre is None and target is None:
         raise SystemExit("master: no genre given. Use --genre " + "|".join(genres) +
@@ -110,6 +144,11 @@ def resolve_settings(genre=None, target=None, **overrides):
     if genre not in genres:
         raise SystemExit(f"master: unknown genre {genre!r}; choose one of " + ", ".join(genres))
     s = dict(genres[genre]["master"])
+    if published:
+        pub = genres[genre].get("master_published")
+        if pub is None:
+            raise SystemExit(f"master: genre {genre!r} has no `master_published` block: its settings never changed")
+        s = {k: v for k, v in pub.items() if k in SETTINGS}
     if target is not None:
         s["target"] = target
     for k, v in overrides.items():
@@ -305,12 +344,14 @@ def eq_filter(x, gains_db):
 V2_MAX_CUT = np.where(THIRD >= 12500, -12.0, -8.0)
 
 
-def _v2_limits(total):
+def _v2_limits(total, max_low_boost=None):
     total = np.clip(total, V2_MAX_CUT, 4.0)  # never more than -8 (-12 at 12.5-16 kHz) / +4 dB in total per band
+    if max_low_boost is not None:  # optional (genres.json `max_low_boost_db`): cap boosts below 200 Hz
+        total = np.where(THIRD < 200, np.minimum(total, max_low_boost), total)
     return np.where(THIRD >= 5000, np.minimum(total, 2.0), total)
 
 
-def _master_v2(x, rep, meter, tgt, lufs, tp, translate, eq_strength):
+def _master_v2(x, rep, meter, tgt, lufs, tp, translate, eq_strength, max_low_boost=None):
     hf = THIRD >= 2000
     total = np.zeros(len(THIRD))
     xe = x
@@ -324,7 +365,7 @@ def _master_v2(x, rep, meter, tgt, lufs, tp, translate, eq_strength):
         sm = np.convolve(np.pad(corr, 1, mode="edge"), [0.25, 0.5, 0.25], mode="valid")
         mids = (THIRD >= 100) & (THIRD < 2000)
         corr[mids] = sm[mids]
-        new = _v2_limits(total + corr)
+        new = _v2_limits(total + corr, max_low_boost)
         if np.abs(new - total).max() < 0.5:
             break
         total = new
@@ -340,7 +381,7 @@ def _master_v2(x, rep, meter, tgt, lufs, tp, translate, eq_strength):
         if np.abs(res).max() <= 1.25 or run == 3:
             break
         step = -np.sign(res) * np.maximum(np.abs(res) - 1.0, 0.0)
-        new = _v2_limits(total + np.clip(step, -4.0, 4.0))
+        new = _v2_limits(total + np.clip(step, -4.0, 4.0), max_low_boost)
         if np.abs(new - total).max() < 0.1:
             break
         total = new
@@ -545,13 +586,17 @@ def _dynamics(x, rep, meter, lufs, tp, translate):
 
 
 def master(x, lufs=-11.0, tp=-1.0, mono_below=120.0, eq_strength=0.7, translate=0.5, report=None, target="beat",
-           genre=None, version=MASTER_VERSION, phone=True):
+           genre=None, version=MASTER_VERSION, phone=True, max_low_boost=None):
     """version 1 reproduces the masters released before 2026-11-24 sample for sample; version 2 is the default."""
     rep = report if report is not None else {}
     rep["master_version"] = version
     rep["genre"] = genre
     rep["target"] = target
     rep["settings"] = dict(target=target, lufs=lufs, tp=tp, eq=eq_strength, translate=translate, mono_below=mono_below)
+    if max_low_boost is not None:
+        rep["settings"]["max_low_boost_db"] = max_low_boost
+    if target in PROVENANCE:
+        rep["target_provenance"] = PROVENANCE[target]
     meter = pyln.Meter(SR)
     rep["in"] = dict(lufs=round(meter.integrated_loudness(x.T), 1), true_peak=round(true_peak_db(x), 1))
     mid0 = x.mean(0)
@@ -587,7 +632,7 @@ def master(x, lufs=-11.0, tp=-1.0, mono_below=120.0, eq_strength=0.7, translate=
         rep["eq_db"] = {f"{int(f) if f >= 100 else f}": round(float(g), 1) for f, g in zip(THIRD, total) if abs(g) >= 0.5}
         y, pre = _dynamics(x, rep, meter, lufs, tp, translate)
     else:
-        y, pre = _master_v2(x, rep, meter, tgt, lufs, tp, translate, eq_strength)
+        y, pre = _master_v2(x, rep, meter, tgt, lufs, tp, translate, eq_strength, max_low_boost)
 
     # 8. QC
     st = short_term_lufs(y, meter)
@@ -658,7 +703,11 @@ def main():
     ap.add_argument("--genre", help="genre configuration from engine/genres.json (sets every setting below): "
                     + ", ".join(load_genres()))
     ap.add_argument("--target", choices=sorted(TARGETS),
-                    help="tonal target curve (default: the genre's); beat is the trap curve")
+                    help="tonal target curve (default: the genre's); beat is the trap curve; era targets (measured, "
+                    "with provenance) are listed in engine/targets.json and docs/MASTERING.md")
+    ap.add_argument("--published", action="store_true",
+                    help="the genre's settings from before its era target (genres.json `master_published`): what its "
+                    "already released tracks were mastered with")
     ap.add_argument("--lufs", type=float, help="integrated loudness target (default: the genre's)")
     ap.add_argument("--tp", type=float, help="true-peak ceiling dBTP (default: the genre's)")
     ap.add_argument("--mono-below", type=float)
@@ -670,15 +719,29 @@ def main():
     ap.add_argument("--out")
     a = ap.parse_args()
     version = 1 if a.legacy_master else a.master_version
-    genre, s = resolve_settings(a.genre, a.target, lufs=a.lufs, tp=a.tp, eq=a.eq, translate=a.translate,
+    genre, s = resolve_settings(a.genre, a.target, a.published, lufs=a.lufs, tp=a.tp, eq=a.eq, translate=a.translate,
                                 mono_below=a.mono_below)
     print(f"genre {genre}: target {s['target']}, lufs {s['lufs']}, tp {s['tp']}, eq {s['eq']}, "
-          f"translate {s['translate']}, mono below {s['mono_below']} Hz, master version {version}")
+          f"translate {s['translate']}, mono below {s['mono_below']} Hz, master version {version}"
+          + (f", low boosts capped at {s['max_low_boost_db']:+g} dB" if s.get("max_low_boost_db") is not None else ""))
+    pv = PROVENANCE.get(s["target"])
+    if pv:
+        print(f"target {s['target']}: {pv.get('method')}; {pv.get('source')}"
+              + (f"; era {pv['era']}" if pv.get("era") else "") + (f"; n {pv['n']}" if pv.get("n") else ""))
+    pub = load_genres()[genre].get("master_published")
+    if pub and not a.published:
+        print(f"NOTE: genre {genre}'s default master changed on {pub.get('until')} (target {pub['target']} -> "
+              f"{load_genres()[genre]['master']['target']}). Tracks released before that were mastered with "
+              f"{pub['target']}; reproduce or compare with --published. Re-mastering a released track is the owner's "
+              "call, track by track.")
     x, sr = sf.read(a.premaster, always_2d=True)
     assert sr == SR
     x = x.T.astype(np.float64)
     rep = {"_src": x}
-    y, rep = master(x, s["lufs"], s["tp"], s["mono_below"], s["eq"], s["translate"], rep, s["target"], genre, version)
+    y, rep = master(x, s["lufs"], s["tp"], s["mono_below"], s["eq"], s["translate"], rep, s["target"], genre, version,
+                    max_low_boost=s.get("max_low_boost_db"))
+    if a.published:
+        rep["settings_from"] = "master_published"
     rep.pop("_src", None)
     out = a.out or a.premaster.replace(".premaster.wav", ".master.wav")
     sf.write(out, y.T, SR, subtype="PCM_24")

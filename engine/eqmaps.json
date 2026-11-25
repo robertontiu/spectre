@@ -1,0 +1,152 @@
+{
+  "_about": "Per-genre EQ maps for `studio.py listen --clarity` (engine/clarity.py): for each role, the high-pass point (`hp`: [lo, hi] Hz, the range the map gives), optional low-pass (`lp`), regions to cut or control (`cut`) and regions the role owns (`own`), all in Hz, with the source of each map in `source` (the genre doc's 'Layering and EQ carving' section, where every row has its own citation). Ranges are starting points ('there are no specific frequencies that will always work', Mike Senior, Sound On Sound 2008). `core` lists the roles a peak section is expected to fill (alternatives joined by |); `tolerance_db` is how far a stem's level per 1/3 octave in a cut region may exceed its level in its own region before it is flagged (hand-tuned: 6 dB where the genre carves, 9 dB in acoustic genres, where orchestration and balance come first and EQ moves are light); `inherit` borrows the map of another genre for roles this one does not list. Roles: sub, 808, kick, bass, upper-bass, lead, support, air, pluck, arp, pad, keys, organ, strings, low-strings, choir, vocal, guitar, acoustic, bells, brass, snare, clap, hats, cymbals, perc, texture, fx, return.",
+  "_aliases": {"trance_radio": "trance", "trap": "hiphop"},
+  "trance": {
+    "source": "docs/TRANCE.md 'Modern trance production', B: the professional trance producer's EQ map [P], checked against iZotope, Attack Magazine, Sound On Sound, NI, Cold Rush",
+    "tolerance_db": 6,
+    "core": ["kick", "sub", "bass|upper-bass", "lead", "pad|support|strings|choir", "clap|snare", "hats", "air"],
+    "roles": {
+      "kick": {"hp": [20, 30], "cut": [[200, 500]], "own": [[45, 80], [2000, 5000]]},
+      "sub": {"hp": [20, 30], "lp": [80, 120], "own": [[40, 90]]},
+      "bass": {"hp": [90, 150], "cut": [[200, 350]], "own": [[150, 250], [700, 2000]]},
+      "upper-bass": {"hp": [180, 250], "cut": [[300, 500]], "own": [[800, 3000]]},
+      "lead": {"hp": [120, 200], "cut": [[250, 400]], "own": [[1000, 4000]]},
+      "support": {"hp": [200, 350], "cut": [[300, 600]], "own": [[2000, 6000]]},
+      "air": {"hp": [500, 1000], "cut": [[3000, 5000]], "own": [[8000, 14000]]},
+      "pluck": {"hp": [150, 300], "cut": [[250, 500]], "own": [[2000, 5000]]},
+      "arp": {"hp": [200, 400], "cut": [[300, 600]], "own": [[2000, 8000]]},
+      "pad": {"hp": [150, 300], "cut": [[200, 500]], "own": [[1000, 3000], [8000, 12000]]},
+      "keys": {"hp": [100, 200], "cut": [[200, 400]], "own": [[2000, 5000]]},
+      "strings": {"hp": [150, 250], "cut": [[300, 600]], "own": [[2000, 4000]]},
+      "choir": {"hp": [150, 250], "cut": [[300, 600]], "own": [[2000, 4000]]},
+      "vocal": {"hp": [80, 120], "cut": [[200, 400], [5000, 9000]], "own": [[2000, 5000], [10000, 15000]]},
+      "clap": {"hp": [120, 200], "cut": [[400, 800]], "own": [[2000, 8000]]},
+      "snare": {"hp": [120, 200], "cut": [[400, 800]], "own": [[2000, 8000]]},
+      "hats": {"hp": [500, 2000], "cut": [[5000, 8000]], "own": [[8000, 14000]]},
+      "cymbals": {"hp": [500, 2000], "cut": [[5000, 8000]], "own": [[8000, 14000]]},
+      "fx": {"hp": [150, 400]},
+      "return": {"hp": [200, 500], "lp": [6000, 12000], "cut": [[300, 600]]}
+    }
+  },
+  "hiphop": {
+    "source": "docs/HIPHOP.md 'Layering and EQ carving': iZotope EQ cheat sheet and 'How to mix 808s', Sound On Sound, [P] where shared",
+    "tolerance_db": 6,
+    "core": ["kick", "808|sub|bass", "snare|clap", "hats", "keys|lead|pluck|pad|strings|choir"],
+    "roles": {
+      "kick": {"hp": [25, 30], "cut": [[200, 500]], "own": [[50, 80], [100, 200], [1000, 5000]]},
+      "808": {"hp": [20, 25], "cut": [[200, 400]], "own": [[30, 60]]},
+      "sub": {"hp": [20, 25], "cut": [[200, 400]], "own": [[30, 60]]},
+      "bass": {"hp": [20, 25], "cut": [[200, 400]], "own": [[30, 60]]},
+      "snare": {"hp": [80, 120], "cut": [[300, 700], [900, 1500]], "own": [[150, 250], [2000, 3500], [8000, 16000]]},
+      "clap": {"hp": [120, 250], "cut": [[400, 800]], "own": [[1000, 8000]]},
+      "hats": {"hp": [500, 2000], "cut": [[3000, 7000]], "own": [[8000, 12000]]},
+      "cymbals": {"hp": [500, 2000], "cut": [[3000, 7000]], "own": [[8000, 12000]]},
+      "keys": {"hp": [100, 200], "cut": [[200, 500]], "own": [[2000, 5000]]},
+      "pad": {"hp": [150, 250], "cut": [[200, 500]], "own": [[1000, 3000], [8000, 16000]]},
+      "strings": {"hp": [150, 250], "cut": [[200, 500]], "own": [[1000, 3000], [8000, 16000]]},
+      "choir": {"hp": [150, 250], "cut": [[200, 500]], "own": [[1000, 3000], [8000, 16000]]},
+      "lead": {"hp": [200, 300], "cut": [[300, 600]], "own": [[1000, 4000]]},
+      "pluck": {"hp": [100, 150], "cut": [[200, 400]], "own": [[1500, 2500], [8000, 12000]]},
+      "vocal": {"hp": [80, 120], "cut": [[200, 400], [5000, 8000]], "own": [[2000, 5000], [10000, 16000]]},
+      "texture": {"hp": [300, 500], "lp": [4000, 6000]},
+      "return": {"hp": [200, 500], "lp": [6000, 12000], "cut": [[300, 600]]}
+    }
+  },
+  "rock": {
+    "source": "docs/POP_ROCK.md 'Layering and EQ carving': iZotope EQ cheat sheet, Houghton (Sound On Sound 2022), [P] where shared",
+    "tolerance_db": 6,
+    "core": ["kick", "snare", "bass", "guitar|acoustic", "hats|cymbals", "vocal|lead"],
+    "roles": {
+      "kick": {"hp": [30, 40], "cut": [[200, 500]], "own": [[60, 80], [100, 200], [1000, 5000]]},
+      "snare": {"hp": [80, 80], "cut": [[300, 700], [900, 1500]], "own": [[150, 250], [2000, 3500], [8000, 16000]]},
+      "perc": {"hp": [50, 60], "cut": [[250, 600]], "own": [[60, 120], [800, 1500]]},
+      "hats": {"hp": [300, 500], "cut": [[3000, 7000]], "own": [[8000, 12000]]},
+      "cymbals": {"hp": [150, 150], "cut": [[3500, 4500]], "own": [[8000, 12000]]},
+      "bass": {"hp": [30, 40], "cut": [[300, 500]], "own": [[40, 120], [800, 1000]]},
+      "guitar": {"hp": [100, 100], "cut": [[200, 300], [3000, 6000]], "own": [[300, 1500]]},
+      "acoustic": {"hp": [70, 100], "cut": [[200, 400]], "own": [[1500, 2500], [8000, 12000]]},
+      "lead": {"hp": [100, 100], "cut": [[200, 300], [3000, 6000]], "own": [[300, 1500]]},
+      "keys": {"hp": [60, 200], "cut": [[200, 500]], "own": [[2000, 5000]]},
+      "organ": {"hp": [150, 250], "cut": [[200, 500]], "own": [[1000, 3000]]},
+      "pad": {"hp": [150, 250], "cut": [[200, 500]], "own": [[1000, 3000]]},
+      "bells": {"hp": [300, 500], "cut": [[3000, 5000]]},
+      "vocal": {"hp": [80, 120], "cut": [[200, 400], [500, 1200], [5000, 8000]], "own": [[2000, 5000], [10000, 16000]]},
+      "return": {"hp": [200, 500], "lp": [6000, 12000], "cut": [[300, 600]]}
+    }
+  },
+  "joc": {
+    "source": "docs/JOC_TIGANESC.md 'Layering and EQ carving': general acoustic-instrument guidance (iZotope, Beat Kitchen, Thinkspace) applied to the band [H]; light moves",
+    "tolerance_db": 9,
+    "core": ["lead", "acoustic|guitar", "bass", "kick|perc"],
+    "roles": {
+      "lead": {"hp": [180, 200], "cut": [[200, 500]], "own": [[2000, 4000], [10000, 16000]]},
+      "acoustic": {"hp": [100, 120], "cut": [[200, 400]], "own": [[1500, 2500]]},
+      "guitar": {"hp": [100, 120], "cut": [[200, 400]], "own": [[1500, 2500]]},
+      "bass": {"hp": [30, 40], "cut": [[300, 500]], "own": [[40, 120], [800, 1000]]},
+      "kick": {"hp": [30, 40], "cut": [[200, 500]], "own": [[60, 80], [100, 200]]},
+      "cymbals": {"hp": [150, 500], "cut": [[3500, 4500]], "own": [[8000, 12000]]},
+      "hats": {"hp": [150, 500], "cut": [[3500, 4500]], "own": [[8000, 12000]]},
+      "snare": {"hp": [80, 120], "cut": [[300, 700]], "own": [[150, 250], [2000, 3500]]},
+      "perc": {"hp": [80, 120], "cut": [[300, 700]], "own": [[150, 250], [2000, 3500]]},
+      "pluck": {"hp": [100, 150], "cut": [[200, 400]], "own": [[2000, 5000], [8000, 12000]]},
+      "pad": {"hp": [100, 150], "cut": [[300, 600]], "own": [[1000, 3000]]},
+      "clap": {"hp": [200, 300], "cut": [[400, 800]], "own": [[1000, 8000]]},
+      "return": {"hp": [200, 500], "lp": [6000, 12000], "cut": [[300, 600]]}
+    }
+  },
+  "caroling": {
+    "source": "docs/CAROLING.md 'Layering and EQ carving': iZotope EQ cheat sheet, Rossing (bells), Thinkspace (acoustic ensembles), [P] where it applies; gentle, broad moves",
+    "tolerance_db": 9,
+    "core": ["choir|vocal", "bells|organ|brass|keys"],
+    "roles": {
+      "choir": {"hp": [100, 250], "cut": [[200, 400], [500, 1200], [5000, 8000]], "own": [[2000, 5000]]},
+      "vocal": {"hp": [100, 250], "cut": [[200, 400], [500, 1200], [5000, 8000]], "own": [[2000, 5000]]},
+      "bells": {"hp": [300, 500], "cut": [[3000, 5000]]},
+      "brass": {"hp": [150, 150], "cut": [[500, 800]]},
+      "organ": {"hp": [100, 150], "cut": [[200, 500]], "own": [[1000, 3000]]},
+      "sub": {"hp": [30, 40], "cut": [[200, 400]], "own": [[60, 200]]},
+      "bass": {"hp": [30, 40], "cut": [[200, 400]], "own": [[60, 200]]},
+      "low-strings": {"hp": [30, 40], "cut": [[200, 400]], "own": [[60, 200]]},
+      "strings": {"hp": [30, 40], "cut": [[200, 400]], "own": [[60, 200]]},
+      "keys": {"hp": [60, 60], "cut": [[200, 500]], "own": [[60, 200]]},
+      "hats": {"hp": [1000, 2000], "cut": [[5000, 8000]], "own": [[8000, 12000]]},
+      "return": {"hp": [200, 500], "lp": [6000, 12000], "cut": [[300, 600]]}
+    }
+  },
+  "latinpop": {
+    "source": "docs/LATIN_POP.md 'Layering and EQ carving': iZotope EQ cheat sheet (guitars, bass), Sound On Sound 2006 (Latin percussion), Houghton 2022, [P] where it applies; the dembow kit from the hip hop map",
+    "tolerance_db": 9,
+    "inherit": "hiphop",
+    "core": ["lead|acoustic|keys|vocal", "guitar|acoustic", "bass", "perc|hats"],
+    "roles": {
+      "lead": {"hp": [100, 150], "cut": [[200, 400]], "own": [[1500, 5000], [8000, 12000]]},
+      "acoustic": {"hp": [70, 100], "cut": [[200, 400]], "own": [[100, 200], [8000, 12000]]},
+      "guitar": {"hp": [70, 100], "cut": [[200, 400]], "own": [[100, 200], [8000, 12000]]},
+      "bass": {"hp": [30, 40], "cut": [[300, 500]], "own": [[40, 120], [800, 1000]]},
+      "perc": {"hp": [80, 100], "cut": [[180, 230]], "own": [[300, 400]]},
+      "hats": {"hp": [500, 2000], "cut": [[5000, 7000]], "own": [[8000, 12000]]},
+      "keys": {"hp": [60, 100], "cut": [[200, 500]], "own": [[60, 200]]},
+      "strings": {"hp": [150, 250], "cut": [[300, 600]], "own": [[2000, 4000]]},
+      "pad": {"hp": [150, 250], "cut": [[300, 600]], "own": [[2000, 4000]]},
+      "vocal": {"hp": [80, 120], "cut": [[200, 400], [5000, 8000]], "own": [[2000, 5000]]},
+      "return": {"hp": [200, 500], "lp": [6000, 12000], "cut": [[300, 600]]}
+    }
+  },
+  "chamberscore": {
+    "source": "docs/CHAMBER_SCORE.md 'Layering and EQ carving': iZotope EQ cheat sheet, Beat Kitchen and Thinkspace (orchestral mixing), [P] where it applies; the lightest map: broad 1-2 dB moves, orchestration first",
+    "tolerance_db": 9,
+    "core": ["keys|lead|bells", "strings|low-strings|acoustic"],
+    "roles": {
+      "keys": {"hp": [20, 60], "cut": [[200, 500]], "own": [[60, 200]]},
+      "strings": {"hp": [200, 200], "cut": [[1000, 4000]], "own": [[10000, 16000]]},
+      "low-strings": {"hp": [40, 100], "cut": [[200, 500]]},
+      "bells": {"hp": [250, 500], "cut": [[3000, 5000]]},
+      "acoustic": {"hp": [70, 100], "cut": [[200, 400]], "own": [[1500, 2500]]},
+      "guitar": {"hp": [70, 100], "cut": [[200, 400]], "own": [[1500, 2500]]},
+      "pluck": {"hp": [70, 100], "cut": [[200, 400]], "own": [[1500, 2500]]},
+      "lead": {"hp": [200, 300], "cut": [[500, 1200]], "own": [[2000, 4000]]},
+      "vocal": {"hp": [200, 300], "cut": [[500, 1200]], "own": [[2000, 4000]]},
+      "return": {"hp": [200, 300], "lp": [6000, 10000], "cut": [[300, 600]]}
+    }
+  }
+}

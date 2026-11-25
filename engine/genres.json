@@ -1,5 +1,5 @@
 {
-  "_about": "Genre configurations for Spectre. One entry per genre; `studio.py master --genre <name>` takes the target curve and the mastering settings from `master` (explicit flags override). Every value names its source in the genre doc (`doc`) or below; `hand_tuned` lists values that have no published source yet. There is no default genre.",
+  "_about": "Genre configurations for Spectre. One entry per genre; `studio.py master --genre <name>` takes the target curve and the mastering settings from `master` (explicit flags override). Every value names its source in the genre doc (`doc`) or below; `hand_tuned` lists values that have no published source yet. There is no default genre. Since 2026-11-25 each genre (except `trap`, the preserved first-release configuration) has an era-appropriate target from engine/targets.json, with its provenance (`target_source`, `target_era`, `target_tracks`, `target_method`, `target_date`); `master_published` keeps the settings the genre's released tracks were mastered with (`master --published`).",
   "trap": {
     "name": "Trap / beats (808-driven: trap, boom-bap, drill, rage, folk-fusion trap)",
     "doc": "docs/CRAFT.md",
@@ -31,15 +31,31 @@
   "hiphop": {
     "name": "Hip-hop / trap with a measured tonal target (researched alternative to `trap`)",
     "doc": "docs/HIPHOP.md",
-    "status": "same as `trap` except the tonal target, which is the measured hip-hop spectrum; the configuration for beat sessions (sessions 001-006 remastered with it, master version 2, 2026-11-24)",
+    "status": "same as `trap` except the tonal target, which is the measured hip-hop spectrum; the configuration for beat sessions (sessions 001-006 remastered with it, master version 2, 2026-11-24); since 2026-11-25 the tonal target is `hiphop_2015` (measured, provenance below; the published masters used `hiphop`: `--published`)",
     "master": {
-      "target": "hiphop",
+      "target": "hiphop_2015",
       "lufs": -10.5,
       "tp": -1.0,
       "eq": 0.7,
       "translate": 0.5,
       "mono_below": 120.0
     },
+    "master_published": {
+      "target": "hiphop",
+      "lufs": -10.5,
+      "tp": -1.0,
+      "eq": 0.7,
+      "translate": 0.5,
+      "mono_below": 120.0,
+      "until": "2026-11-25",
+      "note": "the settings this genre's tracks were released with before its era target; `master --published` reproduces them. Re-mastering a released track with the new target happens later, track by track, with the owner's approval"
+    },
+    "target_source": "MusicBrainz tag hip hop, first release 2015-2021, up to 100 per year; AcousticBrainz low-level Bark bands (CC0)",
+    "target_era": "2015-2021",
+    "target_tracks": 347,
+    "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets')",
+    "target_date": "2026-11-25",
+    "target_change": "2026-11-25: hiphop -> hiphop_2015: hip hop of 2015-2021 from the open catalogue; against the old `hiphop` curve (curves aligned at 500 Hz-2 kHz) it asks for +6 to +12 dB at 31.5-63 Hz, -2 to -5 dB at 100-250 Hz and +1 to +3 dB from 6.3 kHz up; it is within about 1.5 dB of the hand-tuned `beat` curve below 6 kHz",
     "length": "2:30-3:30",
     "form": "intro 4, verse 16, hook 8, verse 16, hook 8, (bridge 8), outro 4; about 60-72 bars (felt bars at half-time tempos)",
     "tempo": "two pockets: boom-bap / hardcore 85-100 bpm, swung 16ths; trap-leaning 130-150 bpm written, felt in half time (~70)",
@@ -61,15 +77,31 @@
   "trance": {
     "name": "Trance (uplifting, progressive, euphoric), extended mix",
     "doc": "docs/TRANCE.md",
-    "status": "researched 2026-11",
+    "status": "researched 2026-11; since 2026-11-25 the tonal target is `trance_2015` (measured, provenance below; the published masters used `trance`: `--published`)",
     "master": {
-      "target": "trance",
+      "target": "trance_2015",
       "lufs": -9.0,
       "tp": -1.0,
       "eq": 0.7,
       "translate": 0.4,
       "mono_below": 120.0
     },
+    "master_published": {
+      "target": "trance",
+      "lufs": -9.0,
+      "tp": -1.0,
+      "eq": 0.7,
+      "translate": 0.4,
+      "mono_below": 120.0,
+      "until": "2026-11-25",
+      "note": "the settings this genre's tracks were released with before its era target; `master --published` reproduces them. Re-mastering a released track with the new target happens later, track by track, with the owner's approval"
+    },
+    "target_source": "MusicBrainz tag trance, first release 2015-2021, up to 300 per year; AcousticBrainz low-level Bark bands (CC0)",
+    "target_era": "2015-2021",
+    "target_tracks": 558,
+    "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets')",
+    "target_date": "2026-11-25",
+    "target_change": "2026-11-25: trance -> trance_2015: trance of 2015-2021 from the open catalogue; against the old `trance` curve (number-one singles tagged electronic, not trance; aligned at 500 Hz-2 kHz) it asks for +8 to +12 dB at 31.5-63 Hz, -2 to -5 dB at 100-315 Hz and +2 to +7 dB at 8-16 kHz",
     "length": "6:00-8:00 (extended mix); a radio edit (`trance_radio`, measured median 3:33) only on request",
     "form": "DJ intro 16-32 bars, theme 16-32, build 8-16, first drop 16-32, breakdown 16-64 (typically 32), build 8-16, main drop 32-64, DJ outro 16-32",
     "tempo": "136-140 bpm, typically 138 (progressive 128-134)",
@@ -86,15 +118,31 @@
   "trance_radio": {
     "name": "Trance, radio edit (the short cut of a trance single: no DJ intro or outro, one breakdown, two drops)",
     "doc": "docs/TRANCE.md (section Radio edit)",
-    "status": "researched 2026-11-24 for session 013; everything not listed here is as `trance` (tempo, meter, groove, sound); the master is the `trance` master unchanged (measured: radio edits are as loud as their long versions)",
+    "status": "researched 2026-11-24 for session 013; everything not listed here is as `trance` (tempo, meter, groove, sound); the master is the `trance` master unchanged (measured: radio edits are as loud as their long versions); since 2026-11-25 the tonal target is `trance_2015` (measured, provenance below; the published masters used `trance`: `--published`)",
     "master": {
-      "target": "trance",
+      "target": "trance_2015",
       "lufs": -9.0,
       "tp": -1.0,
       "eq": 0.7,
       "translate": 0.4,
       "mono_below": 120.0
     },
+    "master_published": {
+      "target": "trance",
+      "lufs": -9.0,
+      "tp": -1.0,
+      "eq": 0.7,
+      "translate": 0.4,
+      "mono_below": 120.0,
+      "until": "2026-11-25",
+      "note": "the settings this genre's tracks were released with before its era target; `master --published` reproduces them. Re-mastering a released track with the new target happens later, track by track, with the owner's approval"
+    },
+    "target_source": "MusicBrainz tag trance, first release 2015-2021, up to 300 per year; AcousticBrainz low-level Bark bands (CC0)",
+    "target_era": "2015-2021",
+    "target_tracks": 558,
+    "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets')",
+    "target_date": "2026-11-25",
+    "target_change": "2026-11-25: trance -> trance_2015: as `trance`",
     "length": "3:00-4:00, aim 3:15-3:50 (measured median 3:33, middle half 3:15-3:49, 1,072 trance radio edits); at 138 bpm about 112-132 bars",
     "form": "intro 8 bars (the track identifiable within 5-15 s, no DJ drums), theme 8-16, build 8, first drop 16 (landing at about 0:40-1:05), breakdown 16 (24 at most), build 8, main drop 32, outro 4-16 (a hard end or a short tail, no DJ outro); two drops around one breakdown; about 120 bars = 3:29 at 138 bpm",
     "tempo": "136-140 bpm, typically 138 (progressive 128-134)",
@@ -117,15 +165,31 @@
   "rock": {
     "name": "Pop rock (band song form)",
     "doc": "docs/POP_ROCK.md",
-    "status": "researched 2026-11",
+    "status": "researched 2026-11; since 2026-11-25 the tonal target is `rock_2015` (measured, provenance below; the published masters used `rock`: `--published`)",
     "master": {
-      "target": "rock",
+      "target": "rock_2015",
       "lufs": -8.5,
       "tp": -1.0,
       "eq": 0.7,
       "translate": 0.3,
       "mono_below": 120.0
     },
+    "master_published": {
+      "target": "rock",
+      "lufs": -8.5,
+      "tp": -1.0,
+      "eq": 0.7,
+      "translate": 0.3,
+      "mono_below": 120.0,
+      "until": "2026-11-25",
+      "note": "the settings this genre's tracks were released with before its era target; `master --published` reproduces them. Re-mastering a released track with the new target happens later, track by track, with the owner's approval"
+    },
+    "target_source": "MusicBrainz tag pop rock, first release 2015-2021, up to 100 per year; AcousticBrainz low-level Bark bands (CC0)",
+    "target_era": "2015-2021",
+    "target_tracks": 408,
+    "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets')",
+    "target_date": "2026-11-25",
+    "target_change": "2026-11-25: rock -> rock_2015: pop rock of 2015-2021 from the open catalogue; against the old `rock` curve (aligned at 500 Hz-2 kHz) it asks for +6 to +7.5 dB at 31.5-63 Hz, -1 to -3.5 dB at 100-400 Hz and +1.5 to +3.5 dB at 6.3-16 kHz",
     "length": "3:00-4:00 (typically about 3:15-3:30)",
     "form": "intro (about 4-8 bars), verse, pre-chorus, chorus, verse, pre-chorus, chorus, bridge, final chorus (often doubled), outro; sections of 8 bars (4 and 16 common); first chorus by about 0:45-0:60",
     "tempo": "115-130 bpm typical (partly sourced; ballad builders start slower)",
@@ -143,15 +207,31 @@
   "joc": {
     "name": "Joc țigănesc: Romanian lăutar wedding dance music (solo violin, guitar, bass, percussion)",
     "doc": "docs/JOC_TIGANESC.md",
-    "status": "researched 2026-11-24; the tonal target reuses the measured `rock` curve until the folk curve of Pestana et al. 2013 (Fig. 5) can be extracted",
+    "status": "researched 2026-11-24; the tonal target reuses the measured `rock` curve until the folk curve of Pestana et al. 2013 (Fig. 5) can be extracted; since 2026-11-25 the tonal target is `joc_taraf` (measured, provenance below; the published masters used `rock`: `--published`)",
     "master": {
+      "target": "joc_taraf",
+      "lufs": -11.0,
+      "tp": -1.0,
+      "eq": 0.4,
+      "translate": 0.3,
+      "mono_below": 120.0
+    },
+    "master_published": {
       "target": "rock",
       "lufs": -11.0,
       "tp": -1.0,
       "eq": 0.7,
       "translate": 0.3,
-      "mono_below": 120.0
+      "mono_below": 120.0,
+      "until": "2026-11-25",
+      "note": "the settings this genre's tracks were released with before its era target; `master --published` reproduces them. Re-mastering a released track with the new target happens later, track by track, with the owner's approval"
     },
+    "target_source": "MusicBrainz artist Taraf de Haïdouks, up to 300 recordings; AcousticBrainz low-level Bark bands (CC0)",
+    "target_era": "1993-2015",
+    "target_tracks": 103,
+    "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets')",
+    "target_date": "2026-11-25",
+    "target_change": "2026-11-25: rock -> joc_taraf: the measured string taraf instead of the borrowed `rock` curve (aligned at 500 Hz-2 kHz): +2 to +4 dB at 40-80 Hz, -4 to -5 dB at 125-250 Hz and -3 to -7 dB from 4 kHz up; eq lowered to 0.4 because one band's records stand for the genre",
     "length": "3:00-5:00, typically 3:30-4:30",
     "form": "rounds of a dance tune: strains of 8 or 16 bars of 2/4, each repeated with variation, faster each round; an optional slow (rar) opening, then the fast (repede) dance, an accelerating last round and a stop; primas preludes and interludes",
     "tempo": "dance tempo quarter = 110-140 in 2/4; a slow rar or listening section can sit far lower (the reference score's practice ladder runs 50, 70, 90, 110); tempo rises round by round and accelerates at the end (section bpm ramps)",
@@ -159,11 +239,10 @@
     "change_rate": "something changes every strain (8-16 bars of 2/4 = 4-8 pattern bars); the tempo steps up each round",
     "role": "the violin leads throughout (melody, preludes, interludes, improvisation); guitar and bass hold the afterbeat (tiitura); percussion carries the dancers; a voice is optional (shouts to the dancers)",
     "hand_tuned": [
-      "target curve: `rock` reused (not measured on folk or lautar records)",
       "lufs -11: a choice inside the sourced folk range of -14 to -10",
       "translate 0.3",
-      "eq 0.7",
-      "change_rate (derived from the dance form; the exact rate is craft)"
+      "change_rate (derived from the dance form; the exact rate is craft)",
+      "eq 0.4: the era assessment's recommendation for a loose reference curve (docs/JOC_TIGANESC.md)"
     ],
     "sources": [
       "length: seven Taraf de Haidouks recordings on AcousticBrainz, 2:51-7:14, median 5:21 (docs/JOC_TIGANESC.md, Sources)",
@@ -176,15 +255,32 @@
   "caroling": {
     "name": "American Christmas caroling: a carolers' choir (upper voices), handbells, brass, organ, strings; acoustic, no drum kit",
     "doc": "docs/CAROLING.md",
-    "status": "researched 2026-11-24 for session 012; the tonal target reuses the measured `rock` curve (no choral or folk curve is measured yet), loudness from the Billboard Holiday 100 measurements (iZotope 2025) and a catalogue estimate of choral and a cappella Christmas albums (AcousticBrainz)",
+    "status": "researched 2026-11-24 for session 012; the tonal target reuses the measured `rock` curve (no choral or folk curve is measured yet), loudness from the Billboard Holiday 100 measurements (iZotope 2025) and a catalogue estimate of choral and a cappella Christmas albums (AcousticBrainz); since 2026-11-25 the tonal target is `caroling_ref` (measured, provenance below; the published masters used `rock`: `--published`)",
     "master": {
+      "target": "caroling_ref",
+      "lufs": -14.0,
+      "tp": -1.0,
+      "eq": 0.3,
+      "translate": 0.2,
+      "mono_below": 120.0,
+      "max_low_boost_db": 0.0
+    },
+    "master_published": {
       "target": "rock",
       "lufs": -14.0,
       "tp": -1.0,
       "eq": 0.5,
       "translate": 0.2,
-      "mono_below": 120.0
+      "mono_below": 120.0,
+      "until": "2026-11-25",
+      "note": "the settings this genre's tracks were released with before its era target; `master --published` reproduces them. Re-mastering a released track with the new target happens later, track by track, with the owner's approval"
     },
+    "target_source": "5 MusicBrainz releases; AcousticBrainz low-level Bark bands (CC0)",
+    "target_era": "1986-2014",
+    "target_tracks": 67,
+    "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets')",
+    "target_date": "2026-11-25",
+    "target_change": "2026-11-25: rock -> caroling_ref: the five reference albums instead of the borrowed `rock` curve (aligned at 500 Hz-2 kHz): -8 to -11 dB at 100-200 Hz, +2.5 dB at 500-630 Hz and -4 to -12 dB from 2 kHz up; eq 0.3 and no low-end boosts (max_low_boost_db 0), as the era assessment recommends, because the albums differ by 15-18 dB at the low end",
     "length": "2:00-3:30, typically 2:20-3:15 (one carol, a few verses; medleys and concert anthems run longer)",
     "form": "strophic: verses of 4 or 8 phrases (each 2 or 4 bars) with a refrain or chorus; 2-4 verses; variation by texture between verses (unison, harmony, a descant, a key lift, a bells or brass interlude), an intro of the last phrase or a bell peal, a held or ritardando ending",
     "tempo": "felt pulse about 50-60 per dotted quarter in 6/8 carols, quarter = 84-112 in duple and triple carols; slow carols lower; rubato and a final ritardando",
@@ -192,11 +288,11 @@
     "change_rate": "by verse and phrase: something changes every verse (4-8 carol bars), dynamics and texture inside a verse follow the words",
     "role": "the carolers carry the tune as a choir texture (voices as instruments: wordless or short refrain fragments, a call at the door); bells, brass and organ answer and fill; no lead vocal carrying verses",
     "hand_tuned": [
-      "target curve: `rock` reused (the steepest measured top; not measured on choral or acoustic Christmas records)",
       "lufs -14: a choice between the Holiday 100 average (-12.9) and choral albums (about -19 to -23, estimated)",
-      "eq 0.5: lighter than other genres because the curve is not measured on this music",
       "translate 0.2: little bass-harmonic enhancement (no bass instrument leads)",
-      "change_rate (craft, from the strophic form)"
+      "change_rate (craft, from the strophic form)",
+      "eq 0.3: the era assessment's recommendation for a loose reference curve (docs/CAROLING.md)",
+      "max_low_boost_db 0: no low-end boosts (clean-up and a ceiling only), the era assessment's recommendation"
     ],
     "sources": [
       "length: MusicBrainz track lengths of five Christmas choral and a cappella albums (Ray Conniff Singers, Here We Come A-Caroling, 1965: median 2:25; Pentatonix 2014: 3:05; Straight No Chaser 2008: 3:13; Chanticleer 2010: 2:39; King's College 1986: 3:10), docs/CAROLING.md",
@@ -208,15 +304,31 @@
   "latinpop": {
     "name": "Latin pop, intimate strands: bachata, bolero / romantic ballad, Latin pop ballad, Latin acoustic pop, soft reggaeton-pop (romantic dembow)",
     "doc": "docs/LATIN_POP.md",
-    "status": "researched 2026-11-24 for session 014; tempo, length and loudness measured on a catalogue of 25 albums (MusicBrainz lengths, AcousticBrainz tempo and ReplayGain) plus Mixgraph's reggaeton data; the tonal target reuses the measured `rock` curve (the mean of Pestana et al.'s pop and rock: the closest measured curve; no Latin curve is measured)",
+    "status": "researched 2026-11-24 for session 014; tempo, length and loudness measured on a catalogue of 25 albums (MusicBrainz lengths, AcousticBrainz tempo and ReplayGain) plus Mixgraph's reggaeton data; the tonal target reuses the measured `rock` curve (the mean of Pestana et al.'s pop and rock: the closest measured curve; no Latin curve is measured); since 2026-11-25 the tonal target is `latinpop_ref` (measured, provenance below; the published masters used `rock`: `--published`)",
     "master": {
-      "target": "rock",
+      "target": "latinpop_ref",
       "lufs": -11.0,
       "tp": -1.0,
       "eq": 0.6,
       "translate": 0.3,
       "mono_below": 120.0
     },
+    "master_published": {
+      "target": "rock",
+      "lufs": -11.0,
+      "tp": -1.0,
+      "eq": 0.6,
+      "translate": 0.3,
+      "mono_below": 120.0,
+      "until": "2026-11-25",
+      "note": "the settings this genre's tracks were released with before its era target; `master --published` reproduces them. Re-mastering a released track with the new target happens later, track by track, with the owner's approval"
+    },
+    "target_source": "25 MusicBrainz releases; AcousticBrainz low-level Bark bands (CC0)",
+    "target_era": "1990-2025",
+    "target_tracks": 301,
+    "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets')",
+    "target_date": "2026-11-25",
+    "target_change": "2026-11-25: rock -> latinpop_ref: the 24 reference albums instead of the borrowed `rock` curve (aligned at 500 Hz-2 kHz): +6 to +8 dB at 31.5-63 Hz, -2.5 to -4.5 dB at 125-250 Hz and +2 to +6 dB from 6.3 kHz up; the strands differ by up to 10 dB on top: `--target latinpop_dark` (bolero, acoustic) or `latinpop_bright` (bachata)",
     "length": "3:00-4:00, typically 3:15-3:50 (catalogue median 3:41 for releases since 2010, middle half 3:12-3:59; by strand: reggaeton-pop 3:21, bolero 3:35, bachata 3:59)",
     "form": "song form in 8-bar sections: intro 4-8 (often the lead guitar or piano alone), verse, chorus, verse, chorus, a bridge or instrumental break, final chorus, outro; bachata maps it to its rhythm sections: derecho in the verses, majao in the choruses, mambo in the bridge or interlude (the most energetic part, where the singer stops and the guitars and bongos solo)",
     "tempo": "by strand (catalogue medians, middle half): bachata 128 (122-133); bolero 82 (77-92; 60-90 typical); Latin pop ballad and acoustic pop about 75-80 (66-105, tempo octave ambiguous); reggaeton-pop 96 (91-114), reggaeton 95 (90-98, Mixgraph, 317 tracks)",
@@ -224,7 +336,6 @@
     "change_rate": "by section (8 bars); in bachata the percussion changes with the section (derecho to majao at the chorus, mambo in the break); arrangements grow by adding the second guitar, bass, percussion, strings",
     "role": "the instrumental carries the melody a singer would sing: requinto or nylon guitar, piano or a voice used as an instrument (a refrain fragment, a call); the accompaniment leaves the middle for it",
     "hand_tuned": [
-      "target curve: `rock` reused (pop+rock #1s 1950-2010; not measured on Latin records)",
       "lufs -11: a choice inside the measured range (bolero about -13, bachata since 2010 -9.7, ballads -10.2, reggaeton-pop -10.6, chart average -8.3); intimate strands sit at the quieter end",
       "eq 0.6: lighter than pop/rock because the curve is borrowed and acoustic arrangements have less 100-400 Hz body",
       "translate 0.3 (a bass guitar or bass line is present in most strands)",
@@ -242,15 +353,31 @@
   "chamberscore": {
     "name": "Cinematic chamber score, whimsical and nostalgic (the childhood-montage idiom of animation and indie-film scores: piano, small strings with pizzicato, glockenspiel, celesta, vibraphone, woodwinds, acoustic guitar, ukulele, whistling, one orchestral swell), blended with neo-classical piano",
     "doc": "docs/CHAMBER_SCORE.md",
-    "status": "researched 2026-11-24 for session 015; length, tempo estimates, keys and loudness measured on a catalogue of 30 albums (16 film and animation scores, 9 neo-classical, 5 indie-folk / chamber; MusicBrainz lengths, AcousticBrainz tempo, key and ReplayGain); form, meter and tempo of reference cues from analyses (Married Life: Hooktheory and an AAU thesis); the tonal target reuses the measured `rock` curve with a light EQ (no orchestral or acoustic curve is measured)",
+    "status": "researched 2026-11-24 for session 015; length, tempo estimates, keys and loudness measured on a catalogue of 30 albums (16 film and animation scores, 9 neo-classical, 5 indie-folk / chamber; MusicBrainz lengths, AcousticBrainz tempo, key and ReplayGain); form, meter and tempo of reference cues from analyses (Married Life: Hooktheory and an AAU thesis); the tonal target reuses the measured `rock` curve with a light EQ (no orchestral or acoustic curve is measured); since 2026-11-25 the tonal target is `chamberscore_ref` (measured, provenance below; the published masters used `rock`: `--published`)",
     "master": {
-      "target": "rock",
+      "target": "chamberscore_ref",
       "lufs": -15.0,
       "tp": -1.0,
       "eq": 0.4,
       "translate": 0.2,
       "mono_below": 80.0
     },
+    "master_published": {
+      "target": "rock",
+      "lufs": -15.0,
+      "tp": -1.0,
+      "eq": 0.4,
+      "translate": 0.2,
+      "mono_below": 80.0,
+      "until": "2026-11-25",
+      "note": "the settings this genre's tracks were released with before its era target; `master --published` reproduces them. Re-mastering a released track with the new target happens later, track by track, with the owner's approval"
+    },
+    "target_source": "30 MusicBrainz releases; AcousticBrainz low-level Bark bands (CC0)",
+    "target_era": "1981-2025",
+    "target_tracks": 544,
+    "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets')",
+    "target_date": "2026-11-25",
+    "target_change": "2026-11-25: rock -> chamberscore_ref: the 30 reference albums instead of the borrowed `rock` curve (aligned at 500 Hz-2 kHz): -2 to -5 dB at 80-200 Hz, +2 dB at 400-500 Hz and -3 to -11 dB from 2.5 kHz up",
     "length": "3:00-4:30, aim 3:15-4:10 (a standalone track built like a montage cue: Married Life 4:11; score cues of 2:00 and longer median 2:52, middle half 2:18-3:32; standalone neo-classical and indie-folk tracks median 4:17 and 3:42)",
     "form": "theme and variations on one motif: 16-bar periods (A, A', B; Married Life is two AABA cycles with an intro, a break and a closing period), the theme passed between instruments and recoloured; joy and sorrow from the SAME theme by tempo, density and dynamics (a ritardando and a thinning to piano alone), not by switching to minor; one orchestral swell; the return of the theme changed; a slow piano close (Married Life falls from about 175 to 75 bpm); a late whole-tone lift is a habit of the idiom to question",
     "tempo": "two pockets: a waltz felt in one, quarter about 150-180 (dotted half 50-60: Married Life 172-175, Merry-Go-Round of Life chorus 161); piano-led cues in 4/4 or 2/4 about 72-104 (Spirited Away 77, Path of the Wind 90, Comptine 100, River Flows in You 72); the slow close about 70-80; rubato and ritardandi at phrase ends",
@@ -258,7 +385,6 @@
     "change_rate": "by phrase and period: something changes every 8-16 bars (the theme moves to another instrument, a layer joins or leaves); the big changes are tempo, density and dynamics",
     "role": "a piano or a whimsical lead (glockenspiel, celesta, whistle, violin, clarinet-like reed) carries the theme; the accompaniment (waltz bass and chords, pizzicato, guitar or ukulele strums) leaves the middle for it; a voice, if any, is an instrument (a wordless line, a hum, a children's-choir colour)",
     "hand_tuned": [
-      "target curve: `rock` reused (pop+rock #1s 1950-2010; not measured on scores, piano or chamber music; the steepest measured top)",
       "lufs -15: a choice between the score albums since 2005 (median -14.9) and neo-classical since 2005 (-16.7), inside Sage Audio's film range at its quiet edge",
       "eq 0.4: lighter than caroling (0.5) because the curve is borrowed and a chamber ensemble has little 100-400 Hz body to match it",
       "translate 0.2: little bass-harmonic enhancement (no bass instrument leads)",
