@@ -1,0 +1,554 @@
+{
+ "case": "half-of-me",
+ "title": "Half of Me (013), main drop",
+ "session": "013-decay",
+ "section": "mainA",
+ "seconds": [
+  123.43,
+  137.14
+ ],
+ "genre": "trance",
+ "target": "trance_2015",
+ "groups": {
+  "kick": [
+   "kick",
+   "ksub"
+  ],
+  "bass": [
+   "bass"
+  ],
+  "lead": [
+   "lead"
+  ]
+ },
+ "A": {
+  "vs_target": {
+   "kick_sub_50_80": -5.2,
+   "buildup_100_250": 2.8,
+   "lowmid_315_400": 3.5,
+   "presence_2k_5k": 0.8,
+   "air_8k_12k": -4.3
+  },
+  "occupancy": {
+   "sub": 1.15,
+   "bass": 1.03,
+   "lowmid": 1.13,
+   "mid": 1.53,
+   "presence": 1.27,
+   "air": 1.39
+  },
+  "within_10db": {
+   "sub": 3,
+   "bass": 2,
+   "lowmid": 3,
+   "mid": 5,
+   "presence": 2,
+   "air": 4
+  },
+  "crest_db": {
+   "sub": 12.3,
+   "bass": 10.5,
+   "lowmid": 10.8,
+   "mid": 8.3,
+   "presence": 6.6,
+   "air": 8.2
+  },
+  "stems": {
+   "lead": {
+    "role": "lead",
+    "level_db": -2.6,
+    "masked": 0.01,
+    "own": 0.94
+   },
+   "kick": {
+    "role": "kick",
+    "level_db": -9.4,
+    "masked": 0.08,
+    "own": 0.85
+   },
+   "bass": {
+    "role": "bass",
+    "level_db": -10.7,
+    "masked": 0.17,
+    "own": 0.69
+   },
+   "ksub": {
+    "role": "sub",
+    "level_db": -59.9,
+    "masked": 0.35,
+    "own": 0.5
+   }
+  },
+  "flags": [
+   "saws (support*): +9.0 dB heavier in the region the map cuts than in the region it owns, against the genre curve's balance (map tolerance 6 dB)",
+   "bass (bass*): 22% of its energy under the map's high-pass point (90 Hz)",
+   "(fx) (fx): 92% of its energy under the map's high-pass point (150 Hz)",
+   "(delay) (return) is 98% masked, mostly by lead: in practice not in the mix",
+   "role empty in a peak section: air"
+  ]
+ },
+ "B": {
+  "vs_target": {
+   "kick_sub_50_80": 0.1,
+   "buildup_100_250": 0.4,
+   "lowmid_315_400": 1.6,
+   "presence_2k_5k": -0.4,
+   "air_8k_12k": 1.0
+  },
+  "occupancy": {
+   "sub": 1.25,
+   "bass": 1.09,
+   "lowmid": 1.19,
+   "mid": 1.58,
+   "presence": 1.43,
+   "air": 1.34
+  },
+  "within_10db": {
+   "sub": 2,
+   "bass": 2,
+   "lowmid": 3,
+   "mid": 4,
+   "presence": 3,
+   "air": 1
+  },
+  "crest_db": {
+   "sub": 8.6,
+   "bass": 10.0,
+   "lowmid": 7.0,
+   "mid": 6.6,
+   "presence": 7.3,
+   "air": 5.6
+  },
+  "stems": {
+   "lead": {
+    "role": "lead",
+    "level_db": -2.2,
+    "masked": 0.01,
+    "own": 0.94
+   },
+   "bass": {
+    "role": "bass",
+    "level_db": -10.3,
+    "masked": 0.2,
+    "own": 0.67
+   },
+   "kick": {
+    "role": "kick",
+    "level_db": -13.8,
+    "masked": 0.13,
+    "own": 0.67
+   }
+  },
+  "flags": [
+   "saws (support*): +8.9 dB heavier in the region the map cuts than in the region it owns, against the genre curve's balance (map tolerance 6 dB)",
+   "(fx) (fx): 92% of its energy under the map's high-pass point (150 Hz)",
+   "(delay) (return) is 100% masked, mostly by lead: in practice not in the mix"
+  ],
+  "stacks": {
+   "kick": {
+    "sub": {
+     "role": "kick",
+     "share": 0.856,
+     "regions": {
+      "sub": 1.0,
+      "bass": 0.6,
+      "lowmid": 0.19,
+      "mid": 0.14,
+      "presence": 0.0,
+      "air": 0.0
+     },
+     "level_db": 0.0
+    },
+    "punch": {
+     "role": "kick",
+     "share": 0.135,
+     "regions": {
+      "sub": 0.0,
+      "bass": 0.4,
+      "lowmid": 0.81,
+      "mid": 0.85,
+      "presence": 0.0,
+      "air": 0.0
+     },
+     "level_db": -8.0
+    },
+    "click": {
+     "role": "kick",
+     "share": 0.009,
+     "regions": {
+      "sub": 0.0,
+      "bass": 0.0,
+      "lowmid": 0.0,
+      "mid": 0.01,
+      "presence": 1.0,
+      "air": 1.0
+     },
+     "level_db": -19.8
+    }
+   },
+   "bass": {
+    "sub": {
+     "role": "sub",
+     "share": 0.339,
+     "regions": {
+      "sub": 0.9,
+      "bass": 0.37,
+      "lowmid": 0.01,
+      "mid": 0.0,
+      "presence": 0.0,
+      "air": 0.0
+     },
+     "level_db": -2.6
+    },
+    "roll": {
+     "role": "bass",
+     "share": 0.62,
+     "regions": {
+      "sub": 0.1,
+      "bass": 0.62,
+      "lowmid": 0.92,
+      "mid": 0.88,
+      "presence": 0.85,
+      "air": 0.91
+     },
+     "level_db": 0.0
+    },
+    "upper": {
+     "role": "upper-bass",
+     "share": 0.041,
+     "regions": {
+      "sub": 0.0,
+      "bass": 0.01,
+      "lowmid": 0.07,
+      "mid": 0.12,
+      "presence": 0.15,
+      "air": 0.09
+     },
+     "level_db": -11.8
+    }
+   },
+   "lead": {
+    "main": {
+     "role": "lead",
+     "share": 0.737,
+     "regions": {
+      "sub": 0.94,
+      "bass": 0.9,
+      "lowmid": 0.82,
+      "mid": 0.81,
+      "presence": 0.73,
+      "air": 0.46
+     },
+     "level_db": 0.0
+    },
+    "support": {
+     "role": "support",
+     "share": 0.171,
+     "regions": {
+      "sub": 0.0,
+      "bass": 0.0,
+      "lowmid": 0.0,
+      "mid": 0.11,
+      "presence": 0.27,
+      "air": 0.2
+     },
+     "level_db": -6.3
+    },
+    "air": {
+     "role": "air",
+     "share": 0.047,
+     "regions": {
+      "sub": 0.0,
+      "bass": 0.0,
+      "lowmid": 0.0,
+      "mid": 0.0,
+      "presence": 0.0,
+      "air": 0.33
+     },
+     "level_db": -12.0
+    },
+    "centre": {
+     "role": "lead",
+     "share": 0.046,
+     "regions": {
+      "sub": 0.06,
+      "bass": 0.1,
+      "lowmid": 0.18,
+      "mid": 0.08,
+      "presence": 0.0,
+      "air": 0.0
+     },
+     "level_db": -12.1
+    }
+   }
+  }
+ },
+ "B_tracks": {
+  "kick": {
+   "role": "kick",
+   "humanize_ms": 0,
+   "vel_jitter": 0.02,
+   "fx": [
+    {
+     "type": "clip",
+     "drive_db": 2,
+     "ceiling_db": -1.5,
+     "knee": 0.4
+    },
+    {
+     "type": "gain",
+     "db": 1.06
+    }
+   ],
+   "layers": [
+    {
+     "name": "sub",
+     "inst": {
+      "type": "kicksub",
+      "note": "F#1",
+      "punch": 14,
+      "hold": 0.03,
+      "tail": 0.09,
+      "drive": 0.3
+     },
+     "role": "kick",
+     "eq": {
+      "own_db": 0,
+      "cut_db": 0
+     },
+     "gain_db": -4
+    },
+    {
+     "name": "punch",
+     "inst": {
+      "type": "kickpunch",
+      "tune": 115,
+      "decay": 0.05
+     },
+     "role": "kick",
+     "eq": {
+      "hp": 80,
+      "own_db": 0
+     },
+     "gain_db": 1
+    },
+    {
+     "name": "click",
+     "inst": {
+      "type": "kickclick",
+      "tone": 3200
+     },
+     "role": "kick",
+     "eq": {
+      "hp": 1500,
+      "cut_db": 0,
+      "own_db": 0
+     }
+    }
+   ]
+  },
+  "bass": {
+   "role": "bass",
+   "humanize_ms": 0,
+   "vel_jitter": 0.03,
+   "sidechain": {
+    "source": "kick",
+    "depth": 0.88,
+    "release_ms": 90
+   },
+   "fx": [
+    {
+     "type": "comp",
+     "threshold_db": -20,
+     "ratio": 2,
+     "attack_ms": 10,
+     "release_ms": 80
+    },
+    {
+     "type": "sat",
+     "amount": 0.15
+    },
+    {
+     "type": "gain",
+     "db": 3.58
+    }
+   ],
+   "layers": [
+    {
+     "name": "sub",
+     "inst": {
+      "type": "sub",
+      "attack": 0.004,
+      "release": 0.04,
+      "harmonics": 0.2
+     },
+     "role": "sub",
+     "gain_db": -5
+    },
+    {
+     "name": "roll",
+     "inst": {
+      "type": "trancebass",
+      "sub": 0,
+      "cutoff": 700,
+      "env": 2600,
+      "fdecay": 0.06,
+      "drive": 0.35,
+      "reso": 0.2
+     },
+     "role": "bass",
+     "gain_db": 3,
+     "eq": {
+      "hp": 90,
+      "own_db": 3
+     }
+    },
+    {
+     "name": "upper",
+     "inst": {
+      "type": "polysynth",
+      "osc": [
+       {
+        "shape": "saw",
+        "voices": 3,
+        "detune": 10
+       },
+       {
+        "shape": "pulse",
+        "pw": 0.3,
+        "level": 0.5
+       }
+      ],
+      "cutoff": 1400,
+      "env": 3500,
+      "fdecay": 0.05,
+      "decay": 0.1,
+      "sustain_level": 0.25,
+      "release": 0.04
+     },
+     "role": "upper-bass",
+     "octave": 1,
+     "gain_db": 8
+    }
+   ]
+  },
+  "lead": {
+   "role": "lead",
+   "humanize_ms": 0,
+   "legato": 0.62,
+   "sidechain": {
+    "source": "kick",
+    "depth": 0.3,
+    "release_ms": 140
+   },
+   "fx": [
+    {
+     "type": "ott",
+     "depth": 0.3
+    },
+    {
+     "type": "comp",
+     "threshold_db": -18,
+     "ratio": 2,
+     "attack_ms": 15,
+     "release_ms": 150
+    },
+    {
+     "type": "chorus",
+     "rate": 0.3,
+     "depth": 0.2,
+     "mix": 0.15
+    },
+    {
+     "type": "gain",
+     "db": 10.42
+    }
+   ],
+   "layers": [
+    {
+     "name": "main",
+     "inst": {
+      "type": "supersaw",
+      "model": 2,
+      "voices": 7,
+      "detune": 20,
+      "mix": 0.62,
+      "spread": 0.85,
+      "attack": 0.004,
+      "release": 0.12,
+      "cutoff": 5460.0,
+      "env": 3000,
+      "fdecay": 0.18,
+      "reso": 0.35,
+      "drift": 0.35,
+      "vibrato": 10,
+      "vib_delay": 0.3
+     },
+     "role": "lead"
+    },
+    {
+     "name": "support",
+     "inst": {
+      "type": "supersaw",
+      "model": 2,
+      "voices": 7,
+      "detune": 30,
+      "mix": 0.62,
+      "spread": 1.0,
+      "attack": 0.03,
+      "release": 0.55,
+      "cutoff": 5460.0,
+      "env": 3000,
+      "fdecay": 0.18,
+      "reso": 0.35,
+      "drift": 0.5,
+      "vibrato": 0,
+      "vib_delay": 0.3
+     },
+     "octave": 1,
+     "role": "support",
+     "gain_db": -7,
+     "width": 0.5
+    },
+    {
+     "name": "air",
+     "inst": {
+      "type": "air",
+      "octave": 1,
+      "noise": 0.45,
+      "attack": 0.02,
+      "release": 0.4
+     },
+     "role": "air",
+     "gain_db": 6
+    },
+    {
+     "name": "centre",
+     "inst": {
+      "type": "polysynth",
+      "osc": [
+       {
+        "shape": "square"
+       }
+      ],
+      "cutoff": 2200,
+      "attack": 0.005,
+      "release": 0.2
+     },
+     "role": "lead",
+     "eq": "none",
+     "gain_db": -10,
+     "fx": [
+      {
+       "type": "hpf",
+       "hz": 200,
+       "slope": 12
+      }
+     ]
+    }
+   ],
+   "send_reverb": 0.3,
+   "send_delay": 0.22
+  }
+ }
+}
