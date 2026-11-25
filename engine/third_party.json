@@ -823,191 +823,222 @@
     {
      "path": "refs/chamber/glockenspiel/vsco-2-ce/glock_medium_C5.wav",
      "size": 1271310,
-     "sha256": "635f898e0bcb6975b96b18efd9c896f6f1b97ff12174a339ada4814e49675660"
+     "sha256": "635f898e0bcb6975b96b18efd9c896f6f1b97ff12174a339ada4814e49675660",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Percussion/Glock/glock_medium_C5.wav"
     },
     {
      "path": "refs/chamber/glockenspiel/vsco-2-ce/glock_medium_C6.wav",
      "size": 1271310,
-     "sha256": "e942cbf502cf6731df2925945fe3234c876cb63f047d91007b6929887f9e4904"
+     "sha256": "e942cbf502cf6731df2925945fe3234c876cb63f047d91007b6929887f9e4904",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Percussion/Glock/glock_medium_C6.wav"
     },
     {
      "path": "refs/chamber/glockenspiel/vsco-2-ce/glock_medium_C7.wav",
      "size": 492418,
-     "sha256": "b2ecbe0e60c983bbfaa49a1f45f8a11559f7dba27b8c8a032eb2cb7366a36910"
+     "sha256": "b2ecbe0e60c983bbfaa49a1f45f8a11559f7dba27b8c8a032eb2cb7366a36910",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Percussion/Glock/glock_medium_C7.wav"
     },
     {
      "path": "refs/chamber/glockenspiel/vsco-2-ce/glock_medium_G4.wav",
      "size": 1271310,
-     "sha256": "6c4649b13e24fa01e4634edad8fe8edf18aef33facc5d49fe53097b376bac4da"
+     "sha256": "6c4649b13e24fa01e4634edad8fe8edf18aef33facc5d49fe53097b376bac4da",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Percussion/Glock/glock_medium_G4.wav"
     },
     {
      "path": "refs/chamber/glockenspiel/vsco-2-ce/glock_medium_G5.wav",
      "size": 1226714,
-     "sha256": "7045c0ef7260e2f1ad11a64406cf7575ed898d1207a91104d33d78caefac63e4"
+     "sha256": "7045c0ef7260e2f1ad11a64406cf7575ed898d1207a91104d33d78caefac63e4",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Percussion/Glock/glock_medium_G5.wav"
     },
     {
      "path": "refs/chamber/glockenspiel/vsco-2-ce/glock_medium_G6.wav",
      "size": 843122,
-     "sha256": "a2ba94e59119cd5272c1161fc8b8fbfb94c7b44de45a9a6cc5973b1c332103af"
+     "sha256": "a2ba94e59119cd5272c1161fc8b8fbfb94c7b44de45a9a6cc5973b1c332103af",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Percussion/Glock/glock_medium_G6.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/ViolaEns_pizz_C4_v1_rr1.wav",
      "size": 230726,
-     "sha256": "ae794a92443243816ff91a9a2ed0f9010ea3a6ffcbf011c6c6cb91b8c8597d1b"
+     "sha256": "ae794a92443243816ff91a9a2ed0f9010ea3a6ffcbf011c6c6cb91b8c8597d1b",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Viola%20Section/pizz/ViolaEns_pizz_C4_v1_rr1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/ViolaEns_pizz_D5_v1_rr1.wav",
      "size": 105980,
-     "sha256": "5b129fe18cc33a3fa9a1999d3a7461975179356c3d3345fa66ebb3815e3ea4dc"
+     "sha256": "5b129fe18cc33a3fa9a1999d3a7461975179356c3d3345fa66ebb3815e3ea4dc",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Viola%20Section/pizz/ViolaEns_pizz_D5_v1_rr1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/ViolaEns_pizz_G4_v1_rr1.wav",
      "size": 123878,
-     "sha256": "0968449c4f94eb59d39d72ef1d80935dc9c9e2e8089f678abb5b693f6d14ec98"
+     "sha256": "0968449c4f94eb59d39d72ef1d80935dc9c9e2e8089f678abb5b693f6d14ec98",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Viola%20Section/pizz/ViolaEns_pizz_G4_v1_rr1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/ViolaEns_susvib_C4_v1_1.wav",
      "size": 2289656,
-     "sha256": "144ec7666be1b3b4da50937db4b1fc3675ca34bc2e871264707d83b8a0d526e6"
+     "sha256": "144ec7666be1b3b4da50937db4b1fc3675ca34bc2e871264707d83b8a0d526e6",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Viola%20Section/susvib/ViolaEns_susvib_C4_v1_1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/ViolaEns_susvib_C4_v2_1.wav",
      "size": 2954936,
-     "sha256": "81e1ef9109a1434974092c0165ffee44918b2553fd4afeeee42b91b8007ad263"
+     "sha256": "81e1ef9109a1434974092c0165ffee44918b2553fd4afeeee42b91b8007ad263",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Viola%20Section/susvib/ViolaEns_susvib_C4_v2_1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/ViolaEns_susvib_D5_v1_1.wav",
      "size": 2087798,
-     "sha256": "801bcea9c53c2521900cbbbe70ff2fe4f66a1c182f26744f608144905ec5f880"
+     "sha256": "801bcea9c53c2521900cbbbe70ff2fe4f66a1c182f26744f608144905ec5f880",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Viola%20Section/susvib/ViolaEns_susvib_D5_v1_1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/ViolaEns_susvib_D5_v2_1.wav",
      "size": 2638244,
-     "sha256": "d3c5d05da8f90533aa7587649f18f4e68147aa7abc7a5559d8741089bea32239"
+     "sha256": "d3c5d05da8f90533aa7587649f18f4e68147aa7abc7a5559d8741089bea32239",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Viola%20Section/susvib/ViolaEns_susvib_D5_v2_1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/ViolaEns_susvib_G4_v1_1.wav",
      "size": 2542586,
-     "sha256": "624a70ef842744cb7847a07fba3115ace5689746a107da91f237bf2534d42b03"
+     "sha256": "624a70ef842744cb7847a07fba3115ace5689746a107da91f237bf2534d42b03",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Viola%20Section/susvib/ViolaEns_susvib_G4_v1_1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/ViolaEns_susvib_G4_v2_1.wav",
      "size": 3103628,
-     "sha256": "b09b8338945b814b9ce6dd8980a49323d10e55f89f1c4dcf6d58b04cd672d99c"
+     "sha256": "b09b8338945b814b9ce6dd8980a49323d10e55f89f1c4dcf6d58b04cd672d99c",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Viola%20Section/susvib/ViolaEns_susvib_G4_v2_1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/VlnEns_Pizz_C4_v1_rr1.wav",
      "size": 105914,
-     "sha256": "7002bd5b93f26bb773ff77e349fbb3b5aa059404889706ddda9673da7488886c"
+     "sha256": "7002bd5b93f26bb773ff77e349fbb3b5aa059404889706ddda9673da7488886c",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Violin%20Section/Pizz/VlnEns_Pizz_C4_v1_rr1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/VlnEns_Pizz_D5_v1_rr1.wav",
      "size": 122870,
-     "sha256": "47e1b6e331e8fd51f820f3676ecbd046b194a240334009d891fe183b32613ab7"
+     "sha256": "47e1b6e331e8fd51f820f3676ecbd046b194a240334009d891fe183b32613ab7",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Violin%20Section/Pizz/VlnEns_Pizz_D5_v1_rr1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/VlnEns_Pizz_G4_v1_rr1.wav",
      "size": 148766,
-     "sha256": "5e3c5dad3385efc081975f7fc76b7574699d836fe01a714afffa2ef1054f8ef8"
+     "sha256": "5e3c5dad3385efc081975f7fc76b7574699d836fe01a714afffa2ef1054f8ef8",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Violin%20Section/Pizz/VlnEns_Pizz_G4_v1_rr1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/VlnEns_susVib_C4_v1.wav",
      "size": 2063320,
-     "sha256": "c07edd5b2119fa1da2207aba996961b50dd616f69bbcf2300ab271bc6c16239f"
+     "sha256": "c07edd5b2119fa1da2207aba996961b50dd616f69bbcf2300ab271bc6c16239f",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Violin%20Section/susVib/VlnEns_susVib_C4_v1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/VlnEns_susVib_C4_v2.wav",
      "size": 2017512,
-     "sha256": "5857387b40c412f756ef281c1171247664432a4e5078c98142d595d15cd92ef9"
+     "sha256": "5857387b40c412f756ef281c1171247664432a4e5078c98142d595d15cd92ef9",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Violin%20Section/susVib/VlnEns_susVib_C4_v2.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/VlnEns_susVib_D5_v1.wav",
      "size": 2116352,
-     "sha256": "f8d870457826c94270b9c3ead8e8ec02cb7e6c4a3481cded055641b7fab7df62"
+     "sha256": "f8d870457826c94270b9c3ead8e8ec02cb7e6c4a3481cded055641b7fab7df62",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Violin%20Section/susVib/VlnEns_susVib_D5_v1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/VlnEns_susVib_D5_v2.wav",
      "size": 1976276,
-     "sha256": "0c2ca9de723bed0a0968e32126b934f778cd678b367a29e7fde91004daf84daf"
+     "sha256": "0c2ca9de723bed0a0968e32126b934f778cd678b367a29e7fde91004daf84daf",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Violin%20Section/susVib/VlnEns_susVib_D5_v2.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/VlnEns_susVib_G4_v1.wav",
      "size": 2330236,
-     "sha256": "ed2a89cf254432d2af073699fa43ebfa16cfbc5552c7fc964a184fc434eaaa39"
+     "sha256": "ed2a89cf254432d2af073699fa43ebfa16cfbc5552c7fc964a184fc434eaaa39",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Violin%20Section/susVib/VlnEns_susVib_G4_v1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/VlnEns_susVib_G4_v2.wav",
      "size": 2150136,
-     "sha256": "a1d6d5a0397541692e2f88a0cd9820eabe90407784ee631aa3bfa74772637a65"
+     "sha256": "a1d6d5a0397541692e2f88a0cd9820eabe90407784ee631aa3bfa74772637a65",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Violin%20Section/susVib/VlnEns_susVib_G4_v2.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/pizzT_C3_v1_RR1.wav",
      "size": 704396,
-     "sha256": "63353870ad00cebe9882b96abcceae12480d37b78b62ded6228fb638871e8a81"
+     "sha256": "63353870ad00cebe9882b96abcceae12480d37b78b62ded6228fb638871e8a81",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Cello%20Section/pizzT/pizzT_C3_v1_RR1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/pizzT_G3_v1_RR1.wav",
      "size": 746396,
-     "sha256": "e97f815fbeea50ad5dab06ac6f6f435e7df8981556a38a9a69194900ff2c2b5b"
+     "sha256": "e97f815fbeea50ad5dab06ac6f6f435e7df8981556a38a9a69194900ff2c2b5b",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Cello%20Section/pizzT/pizzT_G3_v1_RR1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/susvib_C3_v1_1.wav",
      "size": 2444174,
-     "sha256": "a614ee7ca821b44660236e47b89620cf914ec6ad27a99bc0d9764f47dbe512e1"
+     "sha256": "a614ee7ca821b44660236e47b89620cf914ec6ad27a99bc0d9764f47dbe512e1",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Cello%20Section/susvib/susvib_C3_v1_1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/susvib_C3_v3_1.wav",
      "size": 3019394,
-     "sha256": "51e884d54eea3bf4ba7ee35289a09f15ddb6a52cd849248d01bf18477ccbd07b"
+     "sha256": "51e884d54eea3bf4ba7ee35289a09f15ddb6a52cd849248d01bf18477ccbd07b",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Cello%20Section/susvib/susvib_C3_v3_1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/susvib_G3_v1_1.wav",
      "size": 2431598,
-     "sha256": "8d658346b8d2054fd534b3222b5d7a23196d22a83a68c3a04ffb76b21853a3db"
+     "sha256": "8d658346b8d2054fd534b3222b5d7a23196d22a83a68c3a04ffb76b21853a3db",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Cello%20Section/susvib/susvib_G3_v1_1.wav"
     },
     {
      "path": "refs/chamber/section/vsco-2-ce/susvib_G3_v3_1.wav",
      "size": 3335768,
-     "sha256": "17df597c259a849870aa25e9fbfa6093371851f83ba7b9deb9cb9e1ec11463a7"
+     "sha256": "17df597c259a849870aa25e9fbfa6093371851f83ba7b9deb9cb9e1ec11463a7",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Cello%20Section/susvib/susvib_G3_v3_1.wav"
     },
     {
      "path": "refs/chamber/solovln/vsco-2-ce/LLVln_ArcoVib_A4_f.wav",
      "size": 2488526,
-     "sha256": "19e5374658351508a9e2c929e871a43caff41e62d5e3363ead6f88428a9ab863"
+     "sha256": "19e5374658351508a9e2c929e871a43caff41e62d5e3363ead6f88428a9ab863",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_A4_f.wav"
     },
     {
      "path": "refs/chamber/solovln/vsco-2-ce/LLVln_ArcoVib_A4_p.wav",
      "size": 2612122,
-     "sha256": "0d05607b46b78690893006d5aa7923ac304c7fb497df1e96536dc88ac5ac487f"
+     "sha256": "0d05607b46b78690893006d5aa7923ac304c7fb497df1e96536dc88ac5ac487f",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_A4_p.wav"
     },
     {
      "path": "refs/chamber/solovln/vsco-2-ce/LLVln_ArcoVib_C5_f.wav",
      "size": 2497990,
-     "sha256": "af72f852ef2892233699851dacf5f8d97d446822d8eb4ce9e0ec27d5a721b118"
+     "sha256": "af72f852ef2892233699851dacf5f8d97d446822d8eb4ce9e0ec27d5a721b118",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_C5_f.wav"
     },
     {
      "path": "refs/chamber/solovln/vsco-2-ce/LLVln_ArcoVib_C5_p.wav",
      "size": 2498790,
-     "sha256": "77a2133b5f97e1ec0edb759c0c552fc3efa7caf4ce1e0a4aa22625cf4c9da130"
+     "sha256": "77a2133b5f97e1ec0edb759c0c552fc3efa7caf4ce1e0a4aa22625cf4c9da130",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_C5_p.wav"
     },
     {
      "path": "refs/chamber/solovln/vsco-2-ce/LLVln_ArcoVib_G4_f.wav",
      "size": 2366050,
-     "sha256": "14e3ea3d5172722d4d2686bae5da3d603800a7a474fa295d98275a9410913822"
+     "sha256": "14e3ea3d5172722d4d2686bae5da3d603800a7a474fa295d98275a9410913822",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_G4_f.wav"
     },
     {
      "path": "refs/chamber/solovln/vsco-2-ce/LLVln_ArcoVib_G4_p.wav",
      "size": 2594066,
-     "sha256": "ad1ba8442a6b40919093c9c831a8171c7030f7e651fbe075ab87764665deef88"
+     "sha256": "ad1ba8442a6b40919093c9c831a8171c7030f7e651fbe075ab87764665deef88",
+     "url": "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/440300901dfe9275fd84e0b7763af1f8443ae62e/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_G4_p.wav"
     }
    ],
    "size": 63224268,
-   "manual": [
-    "Download the VSCO-2-CE repository (https://github.com/sgossner/VSCO-2-CE, 'Code' > 'Download ZIP', or git clone).",
-    "Find each file of this entry by its file name (glockenspiel 'glock_medium_*', string sections 'VlnEns_*', 'ViolaEns_*', 'susvib_*', 'pizzT_*', solo violin 'LLVln_ArcoVib_*') and copy it to the path given under ~/.cache/spectre.",
-    "python3 tools/engine_assets.py status refs-chamber-vsco2ce   (checks size and sha256)"
-   ],
-   "search_hint": "Versilian Studios Chamber Orchestra 2 Community Edition (VSCO-2-CE), CC0, by sgossner on GitHub. No direct per-file links are recorded (the repo is blocked in the sandbox where this manifest was written); the files are WAVs with the names listed. If you can list the repo, add each file's raw URL (https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/<path>) here.",
+   "search_hint": "github.com/sgossner/VSCO-2-CE (Versilian Studios, CC0). Each file's url is pinned to commit 440300901dfe; if a link breaks, git clone --filter=blob:none --no-checkout the repo, find the file by name (git ls-tree -r --name-only HEAD), and use https://raw.githubusercontent.com/sgossner/VSCO-2-CE/<commit>/<url-quoted path>; check size and sha256.",
    "mirror": "refs.tar"
   },
   {
@@ -1026,51 +1057,54 @@
     {
      "path": "refs/chamber/glockenspiel/vcsl/glock_loud_C5_01.wav",
      "size": 1323482,
-     "sha256": "b28baea01b6028e061e5cc978fca70f9062af6a59d155b0fe55e54ec89f42c07"
+     "sha256": "b28baea01b6028e061e5cc978fca70f9062af6a59d155b0fe55e54ec89f42c07",
+     "url": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Idiophones/Struck%20Idiophones/Glockenspiel/glock_loud_C5_01.wav"
     },
     {
      "path": "refs/chamber/glockenspiel/vcsl/glock_loud_C6_01.wav",
      "size": 1323482,
-     "sha256": "7ca228de549d54770f90bb125e23edcd1dc06cec2b9e1f452661720262f0ecd0"
+     "sha256": "7ca228de549d54770f90bb125e23edcd1dc06cec2b9e1f452661720262f0ecd0",
+     "url": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Idiophones/Struck%20Idiophones/Glockenspiel/glock_loud_C6_01.wav"
     },
     {
      "path": "refs/chamber/glockenspiel/vcsl/glock_loud_C7_01.wav",
      "size": 464710,
-     "sha256": "d9410b4cd52c1b5eb458098d9f8e7685d6dc12d512ee32db378f19d04f2b1f4b"
+     "sha256": "d9410b4cd52c1b5eb458098d9f8e7685d6dc12d512ee32db378f19d04f2b1f4b",
+     "url": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Idiophones/Struck%20Idiophones/Glockenspiel/glock_loud_C7_01.wav"
     },
     {
      "path": "refs/chamber/glockenspiel/vcsl/glock_loud_G4_01.wav",
      "size": 1323482,
-     "sha256": "be0bf94731720c0094276fea5646e75ff3a8a646b3c828258e9aaab6a8ef6c49"
+     "sha256": "be0bf94731720c0094276fea5646e75ff3a8a646b3c828258e9aaab6a8ef6c49",
+     "url": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Idiophones/Struck%20Idiophones/Glockenspiel/glock_loud_G4_01.wav"
     },
     {
      "path": "refs/chamber/glockenspiel/vcsl/glock_medium_C5_01.wav",
      "size": 1271310,
-     "sha256": "635f898e0bcb6975b96b18efd9c896f6f1b97ff12174a339ada4814e49675660"
+     "sha256": "635f898e0bcb6975b96b18efd9c896f6f1b97ff12174a339ada4814e49675660",
+     "url": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Idiophones/Struck%20Idiophones/Glockenspiel/glock_medium_C5_01.wav"
     },
     {
      "path": "refs/chamber/glockenspiel/vcsl/glock_medium_C6_01.wav",
      "size": 1271310,
-     "sha256": "e942cbf502cf6731df2925945fe3234c876cb63f047d91007b6929887f9e4904"
+     "sha256": "e942cbf502cf6731df2925945fe3234c876cb63f047d91007b6929887f9e4904",
+     "url": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Idiophones/Struck%20Idiophones/Glockenspiel/glock_medium_C6_01.wav"
     },
     {
      "path": "refs/chamber/glockenspiel/vcsl/glock_medium_C7_01.wav",
      "size": 492418,
-     "sha256": "b2ecbe0e60c983bbfaa49a1f45f8a11559f7dba27b8c8a032eb2cb7366a36910"
+     "sha256": "b2ecbe0e60c983bbfaa49a1f45f8a11559f7dba27b8c8a032eb2cb7366a36910",
+     "url": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Idiophones/Struck%20Idiophones/Glockenspiel/glock_medium_C7_01.wav"
     },
     {
      "path": "refs/chamber/glockenspiel/vcsl/glock_medium_G4_01.wav",
      "size": 1271310,
-     "sha256": "6c4649b13e24fa01e4634edad8fe8edf18aef33facc5d49fe53097b376bac4da"
+     "sha256": "6c4649b13e24fa01e4634edad8fe8edf18aef33facc5d49fe53097b376bac4da",
+     "url": "https://raw.githubusercontent.com/sgossner/VCSL/c1ea7bcc3c7309650ab0da9d15c9cd1fbc4a4c7e/Idiophones/Struck%20Idiophones/Glockenspiel/glock_medium_G4_01.wav"
     }
    ],
    "size": 8741504,
-   "manual": [
-    "Download the VCSL repository (https://github.com/sgossner/VCSL).",
-    "Copy the glockenspiel samples named in this entry ('glock_loud_*_01.wav', 'glock_medium_*_01.wav') to the paths given.",
-    "python3 tools/engine_assets.py status refs-chamber-vcsl"
-   ],
-   "search_hint": "Versilian Community Sample Library (VCSL), CC0, sgossner on GitHub, glockenspiel folder. Add the raw URLs here once you can list the repo.",
+   "search_hint": "github.com/sgossner/VCSL (Versilian Studios, CC0). Each file's url is pinned to commit c1ea7bcc3c73; if a link breaks, git clone --filter=blob:none --no-checkout the repo, find the file by name (git ls-tree -r --name-only HEAD), and use https://raw.githubusercontent.com/sgossner/VCSL/<commit>/<url-quoted path>; check size and sha256.",
    "mirror": "refs.tar"
   },
   {
