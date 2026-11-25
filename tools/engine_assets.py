@@ -1,33 +1,39 @@
 #!/usr/bin/env python3
-"""Engine files that cannot live in the repo: the singing voicebanks, the vocoder and the
-reference audio. Each user installs them from their official sources, accepting each
-licence themselves; nothing here redistributes them.
+"""Third-party resources of the engine and its measurement tools, from engine/third_party.json.
 
-    python3 tools/engine_assets.py status               # what is installed, and from where to get the rest
-    python3 tools/engine_assets.py install              # download what has a direct official link
-    python3 tools/engine_assets.py import <file.zip>    # install a voicebank zip you downloaded yourself
+Nothing third-party is in the repo or bundled anywhere: every user downloads each resource from
+its official source and accepts its licence. The manifest lists each one: what needs it, required
+or optional, licence, official page, direct link (or manual steps), size, sha256, where it goes,
+and a search hint for when the link fails.
 
-Voicebanks (engine/voices.json has the licences and credits):
-- Hoshino Hanami v1.0 (Lotte V): every hanami* voice. Download it yourself from the MediaFire
-  link in the v1.0 release post on https://lottev.moe/ (there is no direct link a script
-  can use), then `import` the zip. Terms: any creative use, credit Lotte V, do not
-  redistribute the files.
-- LEONA beta (Lotte V, CC BY 4.0 plus the same terms): the GitHub release in
-  LEONA_RELEASE; `install` fetches it when LEONA_URL resolves, otherwise download it from
-  the release page and `import` it.
-- Potluck vocoder v100 (tigermeat): `install` fetches dsvocoder.zip from its GitHub release.
+    python3 tools/engine_assets.py status [ids]           # installed or missing, and where to get the rest
+    python3 tools/engine_assets.py status --verify [ids]  # also check every file's sha256 (slow on big files)
+    python3 tools/engine_assets.py install [ids]          # download what has a direct link, verify, unpack
+                                                          # (no ids: every entry except those marked "auto": false)
+    python3 tools/engine_assets.py install --required     # only the required entries
+    python3 tools/engine_assets.py import <file.zip>      # install a zip you downloaded yourself
+    python3 tools/engine_assets.py pull                   # optional mirror: fetch what is still missing
+    python3 tools/engine_assets.py push [--dry-run]       # optional mirror: upload the official files
 
-Whisper (faster-whisper small and small.en) downloads from Hugging Face on first use.
+`status` exits 1 while a required resource is missing. When a link fails: search for the official
+source (the entry's search_hint), check that the licence and the files match (size, sha256, the
+folder layout), install it (`import` for a zip), and update the entry's link in the manifest.
 
-Owner-only private mirror (never part of a distributed package): `push` uploads the official
-zips exactly as downloaded, plus the reference audio and the Whisper models, to
-SPECTRE_ENGINE_BUCKET (default spectre-engine) with the SPECTRE_S3_* credentials, and `pull`
-restores them, so the owner's own new environments skip the manual downloads. It is a private copy for the owner's sessions only; a plugin or any other user
-must use `install` / `import` instead.
+The optional private mirror (`push` / `pull`) is a fail-safe after the official sources. It is
+configured only through environment variables: SPECTRE_MIRROR_BUCKET plus SPECTRE_S3_ENDPOINT,
+SPECTRE_S3_REGION, SPECTRE_S3_ACCESS_KEY_ID and SPECTRE_S3_SECRET_ACCESS_KEY. Without them it is
+skipped. It holds the official files exactly as downloaded (object names in the manifest's
+"mirror" section) and is never part of a distributed package.
+
+Locations: $SPECTRE_CACHE (default ~/.cache/spectre) and, for the Whisper models, $HF_HOME
+(default ~/.cache/spectre/svs/hf, which the Whisper scripts set themselves).
+Standard library only (boto3 for the mirror).
 """
 import argparse
 import hashlib
+import json
 import os
+import re
 import shutil
 import sys
 import tarfile
@@ -35,106 +41,32 @@ import tempfile
 import urllib.request
 import zipfile
 
-CACHE = os.path.expanduser(os.environ.get("SPECTRE_CACHE", "~/.cache/spectre"))
-SVS = os.path.join(CACHE, "svs")
-
-LEONA_RELEASE = "https://github.com/lottev1991/LotteV-Voicebank-Update-Repo/releases/tag/v0.0.1b-leona"
-LEONA_URL = os.environ.get("SPECTRE_LEONA_URL", "")  # the release's zip asset, once confirmed
-POTLUCK_URL = "https://github.com/mrtigermeat/potluck-vocoder/releases/download/v100/dsvocoder.zip"
-
-# name -> (folder under CACHE, top folder name in the official zip, where to get it)
-VOICEBANKS = {
-    "hanami": ("svs/hanami/bank", "Hoshino Hanami", "manual: MediaFire link in the v1.0 post on https://lottev.moe/"),
-    "leona": ("svs/leona/bank", "LEONA", LEONA_RELEASE),
-    "potluck": ("svs/potluck/dsvocoder", "dsvocoder", POTLUCK_URL),
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MANIFEST = os.path.join(REPO, "engine", "third_party.json")
+ROOTS = {
+    "cache": os.path.expanduser(os.environ.get("SPECTRE_CACHE", "~/.cache/spectre")),
+    "hf": os.path.expanduser(os.environ.get("HF_HOME", "~/.cache/spectre/svs/hf")),
 }
-# private mirror only: key in the bucket -> (local source, how it unpacks)
-#   zip: the official download as is, restored with unpack_zip (the same path as `import`)
-#   tar: a folder under CACHE (or HF_CACHE), restored in place
-HF_CACHE = os.path.expanduser(os.environ.get("HF_HOME", "~/.cache/huggingface"))
-MIRROR = {
-    "hanami-v1.0.zip": ("zip", os.path.join(SVS, "dl/hanami-v1.0.zip"), "hanami"),
-    "leona-beta.zip": ("zip", os.path.join(SVS, "dl/leona-beta.zip"), "leona"),
-    "dsvocoder.zip": ("zip", os.path.join(SVS, "potluck/dsvocoder.zip"), "potluck"),
-    "refs.tar": ("tar", CACHE, "refs"),  # reference audio for measurement; targets.json holds the measured curves
-    "whisper.tar": ("tar", HF_CACHE, "hub"),  # faster-whisper small and small.en (also on Hugging Face)
-}
+UA = "spectre-setup/1.0 (python urllib)"
 
 
-def installed(rel):
-    d = os.path.join(CACHE, rel)
-    return os.path.isdir(d) and bool(os.listdir(d))
+def load():
+    return json.load(open(MANIFEST, encoding="utf-8"))
 
 
-def unpack_zip(path, name=None):
-    """Unpack an official zip into its folder: the zip's single top folder becomes the bank folder."""
-    with zipfile.ZipFile(path) as z:
-        tops = {n.split("/", 1)[0] for n in z.namelist() if n.strip("/")}
-        if len(tops) != 1:
-            sys.exit(f"{path}: expected one top folder, found {sorted(tops)[:5]}")
-        top = tops.pop()
-        if name is None:
-            name = next((k for k, (_, prefix, _) in VOICEBANKS.items() if top.startswith(prefix)), None)
-            if name is None:
-                sys.exit(f"{path}: top folder {top!r} is not a known voicebank ({', '.join(VOICEBANKS)})")
-        rel = VOICEBANKS[name][0]
-        dst = os.path.join(CACHE, rel)
-        if installed(rel):
-            print(f"have  {name} ({rel}); remove it first to replace it")
-            return
-        os.makedirs(os.path.dirname(dst), exist_ok=True)
-        with tempfile.TemporaryDirectory(dir=os.path.dirname(dst)) as tmp:
-            for m in z.infolist():
-                target = os.path.realpath(os.path.join(tmp, m.filename))
-                if not target.startswith(os.path.realpath(tmp) + os.sep):
-                    sys.exit(f"{path}: unsafe path {m.filename!r}")
-            z.extractall(tmp)
-            shutil.move(os.path.join(tmp, top), dst)
-    print(f"ok    {name} -> {rel}")
+def pick(m, ids):
+    res = m["resources"]
+    if not ids:
+        return res
+    known = {r["id"]: r for r in res}
+    bad = [i for i in ids if i not in known]
+    if bad:
+        sys.exit(f"unknown id(s): {', '.join(bad)} (known: {', '.join(known)})")
+    return [known[i] for i in ids]
 
 
-def download(url, dst):
-    print(f"get   {url}")
-    with urllib.request.urlopen(url) as r, open(dst, "wb") as f:
-        shutil.copyfileobj(r, f, 1 << 20)
-
-
-def status():
-    for name, (rel, _, src) in VOICEBANKS.items():
-        print(f"{'ok     ' if installed(rel) else 'MISSING'} {name:8} {rel:24} {src}")
-    print(f"{'ok     ' if installed('refs') else 'missing'} refs     {'refs':24} reference audio (only for new measurements)")
-
-
-def install():
-    for name, (rel, _, src) in VOICEBANKS.items():
-        if installed(rel):
-            print(f"have  {name}")
-            continue
-        url = POTLUCK_URL if name == "potluck" else LEONA_URL if name == "leona" else ""
-        if not url:
-            print(f"todo  {name}: download it from {src}, then: python3 tools/engine_assets.py import <zip>")
-            continue
-        with tempfile.TemporaryDirectory() as tmp:
-            z = os.path.join(tmp, f"{name}.zip")
-            download(url, z)
-            unpack_zip(z, name)
-
-
-# ---- owner-only private mirror ---------------------------------------------------------
-
-
-def mirror_client():
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    from upload_track import client, env
-
-    cfg = {
-        "endpoint": env("SPECTRE_S3_ENDPOINT").rstrip("/"),
-        "region": env("SPECTRE_S3_REGION"),
-        "bucket": env("SPECTRE_ENGINE_BUCKET", "spectre-engine"),
-        "key_id": env("SPECTRE_S3_ACCESS_KEY_ID"),
-        "secret": env("SPECTRE_S3_SECRET_ACCESS_KEY"),
-    }
-    return client(cfg), cfg
+def where(r, rel=None):
+    return os.path.join(ROOTS[r["root"]], rel if rel is not None else r["path"])
 
 
 def sha256(path):
@@ -143,6 +75,241 @@ def sha256(path):
         for b in iter(lambda: f.read(1 << 20), b""):
             h.update(b)
     return h.hexdigest()
+
+
+def hf_snapshot(r):
+    return os.path.join(where(r), "snapshots", r["revision"])
+
+
+def file_ok(path, spec, verify):
+    if not os.path.isfile(path) or os.path.getsize(path) != spec["size"]:
+        return False
+    return not verify or sha256(path) == spec["sha256"]
+
+
+def state(r, verify=False):
+    """'ok', 'missing', 'partial' or 'on demand'."""
+    k = r["kind"]
+    if k in ("tool", "api"):
+        return "on demand"
+    if k == "zip":
+        d = where(r)
+        return "ok" if os.path.isdir(d) and os.listdir(d) else "missing"
+    if k == "hf_model":
+        snaps = os.path.join(where(r), "snapshots")
+        names = [f["name"] for f in r["files"]]
+        for s in sorted(os.listdir(snaps)) if os.path.isdir(snaps) else []:
+            if all(os.path.isfile(os.path.join(snaps, s, n)) for n in names):
+                if not verify or s != r["revision"]:
+                    return "ok"
+                return "ok" if all(file_ok(os.path.join(snaps, s, f["name"]), f, True) for f in r["files"]) else "partial"
+        return "missing"
+    have = [file_ok(where(r, f["path"]), f, verify) for f in r["files"]]
+    return "ok" if all(have) else "partial" if any(have) else "missing"
+
+
+def source(r):
+    if r["kind"] == "tool":
+        return f"fetched on demand by `{r['command']}`"
+    if r["kind"] == "api":
+        return "queried from the APIs on demand: " + ", ".join(r["endpoints"])
+    if r["kind"] == "hf_model":
+        return f"Hugging Face {r['repo']}@{r['revision'][:7]}"
+    if r.get("url"):
+        return r["url"]
+    if r["kind"] == "files" and all(f.get("url") for f in r["files"]):
+        return f"{len(r['files'])} direct links ({r['page']})"
+    return f"manual: {r['page']}"
+
+
+def status(ids, verify):
+    m = load()
+    print(f"cache {ROOTS['cache']}   hf {ROOTS['hf']}")
+    ff = shutil.which("ffmpeg")
+    print(f"{'ok     ' if ff else 'MISSING'} {'ffmpeg':22} required  {ff or 'apt-get install -y ffmpeg (or brew install ffmpeg)'}")
+    py = sys.version_info >= (3, 11)
+    print(f"{'ok     ' if py else 'MISSING'} {'python 3.11+':22} required  {sys.version.split()[0]}")
+    missing = [] if ff and py else ["system"]
+    for r in pick(m, ids):
+        s = state(r, verify)
+        req = "required" if r["required"] else "optional"
+        flag = {"ok": "ok     ", "on demand": "demand "}.get(s, "MISSING" if r["required"] else "missing")
+        print(f"{flag} {r['id']:22} {req:9} {r['path'] if s == 'ok' else source(r)}")
+        if s in ("missing", "partial") and r["required"]:
+            missing.append(r["id"])
+    if missing:
+        print(f"\nrequired and missing: {', '.join(missing)}. Run `python3 tools/engine_assets.py install`; if a link "
+              "fails, find the official source (search_hint in engine/third_party.json), verify it, install it and "
+              "update the manifest; the optional mirror (`pull`) is the last resort.")
+        return 1
+    return 0
+
+
+# ---- downloads -----------------------------------------------------------------------
+
+
+def fetch(url, dst, size=None, digest=None):
+    """Download url to dst (via a .part file), then check size and sha256; raises on mismatch."""
+    print(f"get   {url}")
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    tmp = dst + ".part"
+    with urllib.request.urlopen(req, timeout=120) as r, open(tmp, "wb") as f:
+        shutil.copyfileobj(r, f, 1 << 20)
+    got = os.path.getsize(tmp)
+    if size is not None and got != size:
+        os.remove(tmp)
+        raise IOError(f"size {got} != {size} expected")
+    if digest and sha256(tmp) != digest:
+        os.remove(tmp)
+        raise IOError("sha256 differs from the manifest")
+    os.replace(tmp, dst)
+
+
+def mediafire(page):
+    """The direct link behind a MediaFire file page (it changes; the page is the stable link)."""
+    req = urllib.request.Request(page, headers={"User-Agent": UA})
+    html = urllib.request.urlopen(req, timeout=60).read().decode("utf-8", "replace")
+    hits = re.findall(r'https://download\d*\.mediafire\.com/[^"\'\s<>]+', html)
+    if not hits:
+        raise IOError("no download link on the MediaFire page")
+    return hits[0]
+
+
+def unpack_zip(path, r):
+    """The zip's top folder whose name starts with unpack.top becomes the entry's folder; loose files
+    at the zip's root (shortcuts) are skipped."""
+    dst = where(r, r["unpack"]["to"])
+    if os.path.isdir(dst) and os.listdir(dst):
+        print(f"have  {r['id']} ({dst}); remove it first to replace it")
+        return
+    with zipfile.ZipFile(path) as z:
+        tops = sorted({n.split("/", 1)[0] for n in z.namelist() if "/" in n.strip("/")})
+        hit = [t for t in tops if t.startswith(r["unpack"]["top"])]
+        if len(hit) != 1:
+            raise IOError(f"{path}: expected one top folder starting with {r['unpack']['top']!r}, found {tops[:5]}")
+        top = hit[0]
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=os.path.dirname(dst)) as tmp:
+            real = os.path.realpath(tmp)
+            members = [n for n in z.namelist() if n.startswith(top + "/")]
+            for n in members:
+                if not os.path.realpath(os.path.join(tmp, n)).startswith(real + os.sep):
+                    raise IOError(f"{path}: unsafe path {n!r}")
+            z.extractall(tmp, members)
+            shutil.move(os.path.join(tmp, top), dst)
+    print(f"ok    {r['id']} -> {dst}")
+
+
+def install_zip(r):
+    url = mediafire(r["url"]) if r.get("resolve") == "mediafire" else r["url"]
+    with tempfile.TemporaryDirectory(dir=ROOTS["cache"]) as tmp:
+        z = os.path.join(tmp, r["file"])
+        fetch(url, z, r.get("size"), r.get("sha256"))
+        unpack_zip(z, r)
+
+
+def install_files(r):
+    todo = [f for f in r["files"] if not file_ok(where(r, f["path"]), f, False)]
+    if any(not f.get("url") for f in todo):
+        raise LookupError("manual")
+    for f in todo:
+        dst = where(r, f["path"])
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        for k, url in enumerate([f["url"]] + f.get("urls", [])):
+            try:
+                fetch(url, dst, f["size"], f["sha256"])
+                break
+            except Exception as e:
+                if k == len(f.get("urls", [])):
+                    raise
+                print(f"      {e}; trying the next link")
+    print(f"ok    {r['id']} ({len(r['files'])} files in {where(r)})")
+
+
+def install_hf(r):
+    """Hugging Face cache layout (snapshots/<revision>/<file> plus refs/main), so faster-whisper finds the model."""
+    snap = hf_snapshot(r)
+    os.makedirs(snap, exist_ok=True)
+    for f in r["files"]:
+        dst = os.path.join(snap, f["name"])
+        if not file_ok(dst, f, False):
+            fetch(f"https://huggingface.co/{r['repo']}/resolve/{r['revision']}/{f['name']}", dst, f["size"], f["sha256"])
+    os.makedirs(os.path.join(where(r), "refs"), exist_ok=True)
+    with open(os.path.join(where(r), "refs", "main"), "w") as fh:
+        fh.write(r["revision"])
+    print(f"ok    {r['id']} -> {snap}")
+
+
+def explain(r, why):
+    print(f"todo  {r['id']}: {why}")
+    for i, step in enumerate(r.get("manual", []), 1):
+        print(f"        {i}. {step}")
+    print(f"        if the link fails: {r['search_hint']}")
+
+
+def install(ids, required_only):
+    m = load()
+    os.makedirs(ROOTS["cache"], exist_ok=True)
+    failed = []
+    for r in pick(m, ids):
+        if required_only and not r["required"]:
+            continue
+        if not ids and r.get("auto") is False:
+            print(f"skip  {r['id']} (only on request: engine_assets.py install {r['id']})")
+            continue
+        if state(r) in ("ok", "on demand"):
+            print(f"{'have ' if r['kind'] not in ('tool', 'api') else 'skip '} {r['id']}"
+                  + (f" ({r['note']})" if r["kind"] in ("tool", "api") else ""))
+            continue
+        try:
+            {"zip": install_zip, "files": install_files, "hf_model": install_hf}[r["kind"]](r)
+        except LookupError:
+            explain(r, "no direct link; install it by hand")
+            failed.append(r["id"])
+        except Exception as e:
+            explain(r, f"download failed ({e})")
+            failed.append(r["id"])
+    if failed:
+        print(f"\nnot installed: {', '.join(failed)}")
+    return 0
+
+
+def import_zip(path):
+    m = load()
+    if not zipfile.is_zipfile(path):
+        sys.exit(f"{path}: not a zip file")
+    with zipfile.ZipFile(path) as z:
+        tops = {n.split("/", 1)[0] for n in z.namelist() if "/" in n.strip("/")}
+    hits = [r for r in m["resources"] if r["kind"] == "zip" and any(t.startswith(r["unpack"]["top"]) for t in tops)]
+    if len(hits) != 1:
+        sys.exit(f"{path}: not a known zip (top folders {sorted(tops)[:5]}; known: "
+                 + ", ".join(r["id"] for r in m["resources"] if r["kind"] == "zip") + ")")
+    r = hits[0]
+    if r.get("sha256") and sha256(path) != r["sha256"]:
+        print(f"note  {path} differs from the version in the manifest ({r['file']}, {r['size']} bytes): if it is a newer "
+              "official release with the same licence, record its link, size and sha256 in engine/third_party.json")
+    unpack_zip(path, r)
+
+
+# ---- optional private mirror (environment variables only) -----------------------------
+
+MIRROR_VARS = ("SPECTRE_MIRROR_BUCKET", "SPECTRE_S3_ENDPOINT", "SPECTRE_S3_REGION",
+               "SPECTRE_S3_ACCESS_KEY_ID", "SPECTRE_S3_SECRET_ACCESS_KEY")
+
+
+def mirror_client():
+    missing = [v for v in MIRROR_VARS if not os.environ.get(v, "").strip()]
+    if missing:
+        return None, missing
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from upload_track import client
+
+    cfg = {"endpoint": os.environ["SPECTRE_S3_ENDPOINT"].strip().rstrip("/"),
+           "region": os.environ["SPECTRE_S3_REGION"].strip(),
+           "bucket": os.environ["SPECTRE_MIRROR_BUCKET"].strip(),
+           "key_id": os.environ["SPECTRE_S3_ACCESS_KEY_ID"].strip(),
+           "secret": os.environ["SPECTRE_S3_SECRET_ACCESS_KEY"].strip()}
+    return (client(cfg), cfg), []
 
 
 def head(s3, cfg, key):
@@ -154,26 +321,33 @@ def head(s3, cfg, key):
         raise
 
 
-def mirror_installed(kind, base, what):
-    return installed(VOICEBANKS[what][0]) if kind == "zip" else os.path.isdir(os.path.join(base, what)) and bool(os.listdir(os.path.join(base, what)))
+def mirror_objects(m):
+    res = {r["id"]: r for r in m["resources"]}
+    return [(key, o, [res[i] for i in o["ids"]]) for key, o in m["mirror"]["objects"].items()]
 
 
 def push(dry_run):
-    s3, cfg = mirror_client()
-    for key, (kind, base, what) in MIRROR.items():
+    m = load()
+    conn, missing = mirror_client()
+    if not conn:
+        print(f"push: no mirror configured ({', '.join(missing)} not set)")
+        return 2
+    s3, cfg = conn
+    for key, o, rs in mirror_objects(m):
         with tempfile.TemporaryDirectory() as tmp:
-            if kind == "zip":
-                src = base
+            if o["type"] == "zip":
+                src = os.path.join(ROOTS["cache"], o["local"])
                 if not os.path.isfile(src):
-                    print(f"skip  {key}: {src} not here")
+                    print(f"skip  {key}: {src} not here (keep the official zip there to mirror it)")
                     continue
             else:
-                if not mirror_installed(kind, base, what):
-                    print(f"skip  {key}: {os.path.join(base, what)} not here")
+                folder = os.path.join(ROOTS[o["root"]], o["folder"])
+                if not os.path.isdir(folder) or not os.listdir(folder):
+                    print(f"skip  {key}: {folder} not here")
                     continue
                 src = os.path.join(tmp, key)
                 with tarfile.open(src, "w") as t:
-                    t.add(os.path.join(base, what), arcname=what)
+                    t.add(folder, arcname=o["folder"])
             digest, size = sha256(src), os.path.getsize(src)
             h = head(s3, cfg, key)
             if h and h.get("Metadata", {}).get("sha256") == digest:
@@ -185,53 +359,71 @@ def push(dry_run):
                 h = head(s3, cfg, key)
                 if not h or h["ContentLength"] != size:
                     sys.exit(f"upload of {key} did not verify")
+    return 0
 
 
-def pull():
-    s3, cfg = mirror_client()
-    for key, (kind, base, what) in MIRROR.items():
-        if mirror_installed(kind, base, what):
-            print(f"have  {what}")
+def pull(ids):
+    m = load()
+    conn, missing = mirror_client()
+    if not conn:
+        print(f"pull: no mirror configured ({', '.join(missing)} not set): skipped")
+        return 0
+    s3, cfg = conn
+    want = set(ids) if ids else None
+    for key, o, rs in mirror_objects(m):
+        need = [r for r in rs if state(r) in ("missing", "partial") and (want is None or r["id"] in want)]
+        if not need:
             continue
-        h = head(s3, cfg, key)
+        try:
+            h = head(s3, cfg, key)
+        except Exception as e:  # unreachable or refused: the mirror is only a fail-safe
+            print(f"mirror: {key}: {e}")
+            continue
         if not h:
             print(f"not in the mirror: {key}")
             continue
-        os.makedirs(base if kind == "tar" else CACHE, exist_ok=True)
-        with tempfile.TemporaryDirectory(dir=CACHE if kind == "zip" else base) as tmp:
+        base = ROOTS["cache"] if o["type"] == "zip" else ROOTS[o["root"]]
+        os.makedirs(base, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=base) as tmp:
             f = os.path.join(tmp, key)
-            print(f"get   {key} ({h['ContentLength'] / 1e6:.0f} MB)")
+            print(f"get   {key} ({h['ContentLength'] / 1e6:.0f} MB) for {', '.join(r['id'] for r in need)}")
             s3.download_file(cfg["bucket"], key, f)
-            want = h.get("Metadata", {}).get("sha256")
-            if want and sha256(f) != want:
+            got = sha256(f)
+            if h.get("Metadata", {}).get("sha256") not in (None, got):
                 sys.exit(f"{key}: checksum mismatch")
-            if kind == "zip":
-                unpack_zip(f, what)
+            if o["type"] == "zip":
+                r = rs[0]
+                if r.get("sha256") and got != r["sha256"]:
+                    print(f"note  {key} is not the version in the manifest")
+                unpack_zip(f, r)
             else:
-                with tarfile.open(f) as t:
+                with tarfile.open(f) as t:  # existing files are overwritten with the mirror's copy
                     t.extractall(base, filter="data")
-        print(f"ok    {what}")
+                print(f"ok    {key} -> {os.path.join(base, o['folder'])}")
+    return 0
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("action", choices=["status", "install", "import", "push", "pull"])
-    ap.add_argument("file", nargs="?", help="import: the voicebank zip")
+    ap.add_argument("args", nargs="*", help="ids from engine/third_party.json (import: the zip file)")
+    ap.add_argument("--required", action="store_true", help="install: only the required entries")
+    ap.add_argument("--verify", action="store_true", help="status: check sha256 of every file")
     ap.add_argument("--dry-run", action="store_true", help="push: say what would be uploaded")
     a = ap.parse_args()
     if a.action == "status":
-        status()
-    elif a.action == "install":
-        install()
-    elif a.action == "import":
-        if not a.file:
-            ap.error("import needs the zip file")
-        unpack_zip(a.file)
-    elif a.action == "push":
-        push(a.dry_run)
-    else:
-        pull()
+        return status(a.args, a.verify)
+    if a.action == "install":
+        return install(a.args, a.required)
+    if a.action == "import":
+        if len(a.args) != 1:
+            ap.error("import needs one zip file")
+        import_zip(a.args[0])
+        return 0
+    if a.action == "push":
+        return push(a.dry_run)
+    return pull(a.args)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

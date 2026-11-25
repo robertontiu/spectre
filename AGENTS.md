@@ -2,6 +2,12 @@
 
 Read this file fully before touching anything. It is the single source of truth for how this project works and how to continue it. If you are the **orchestrator** (the agent the owner talks to, who starts and monitors producer sessions and maintains the website), also read [docs/ORCHESTRATION.md](docs/ORCHESTRATION.md): it holds the owner's standing rules, the delivery procedure and the website setup.
 
+## Engine setup: third-party resources (owner's rule, 2026-11-25)
+
+Before any work on a track, the orchestrating agent makes sure everything the engine and its measurements need is installed: run `tools/setup.sh` (pip requirements, then `tools/engine_assets.py install` from the official sources, then the optional private mirror if its environment variables are set, then `status`; it exits non-zero while a required resource is missing). Every third-party resource (voicebanks, vocoder, Whisper models, reference recordings and datasets) is listed in **`engine/third_party.json`**: what needs it, required or optional, licence, official page, direct link or manual steps, size, sha256, install location and a `search_hint`. Nothing third-party is ever bundled or committed (several licences forbid redistribution).
+
+**If a link fails:** search the internet for the official source first (the entry's `search_hint`), check that the licence and the files match (size, sha256, folder layout), install it (`engine_assets.py import <zip>` for a zip), and update the link in the manifest. The optional private mirror (`engine_assets.py pull`, configured only through environment variables) is a fail-safe after that, never the first choice.
+
 ## 1. What this project is
 
 **This is an experiment**, not a product. The question it explores: can an AI make music the way a human does, driven by a feeling and shaped by listening, rather than by generating audio from a prompt? Treat everything here (results, engine, prompts) as research in progress, and report outcomes honestly, including misses.
@@ -44,6 +50,8 @@ engine/
                   the male voices (`sing_up`): Hanami sung an octave up and moved down inside the synthesizer
   lang_es.py      Spanish letters to DiffSinger phonemes for svs voices with `"lang": "es"` (Hanami; docs/voice/languages/es.md)
   voices.json     the svs voice catalogue: ids, banks, licences and credit lines, tags (docs/voice/VOICES.md)
+  third_party.json  every third-party resource (voicebanks, vocoder, Whisper models, reference recordings): licence,
+                  official link or manual steps, size, sha256, install location, search hint (tools/engine_assets.py)
   hand.py         the hand: step/note/chord notation parser, swing, humanization, voicing, rolls, arps
   studio.py       project loader, arrangement scheduler, track rendering, fx, sends, sidechain, section
                   automation and transitions, quick master, CLI (render / listen / master)
@@ -74,6 +82,8 @@ prompts/
 site/             the website (Next.js; Vercel, spectre.robertontiu.com); data/tracks.json is the canonical track list
                   (the showcase: one line per published track, with its fixed uuid)
 tools/
+  setup.sh        engine setup for a new environment: requirements, third-party resources, status (fails if one is missing)
+  engine_assets.py  status / install / import of engine/third_party.json; push / pull of an optional private mirror
   upload_track.py publishes a track: its uuid in tracks.json, its session files to the S3 bucket under that uuid,
                   verified; --check compares the bucket with tracks.json, --fetch restores a session folder (section 8)
   pestana_ltas.py derives the measured mastering curves from Pestana et al. (2013), Fig. 5 (see docs/MASTERING.md)
@@ -113,7 +123,9 @@ Python 3.11+ (developed on 3.13) and ffmpeg on PATH.
 pip install -r requirements.txt
 ```
 
-Sung words (`singer`) use DiffSinger voicebanks, neural models trained on singers (approved by the owner; everything else in Spectre stays synthesized). Their files are not in the repo (the voicebank terms forbid redistributing them): banks go in `~/.cache/spectre/svs/<bank>/bank/` and the Potluck vocoder in `~/.cache/spectre/svs/potluck/` (download links in docs/voice/VOICES.md; `SPECTRE_SVS_DIR` moves them). Rendered phrases are cached in `~/.cache/spectre/svs/phrases/`: safe to delete, they regenerate bit for bit. Only projects with a `singer` track need any of this.
+Then install the third-party resources: `tools/setup.sh` (or `python3 tools/engine_assets.py install`; see "Engine setup: third-party resources" above and `engine/third_party.json`).
+
+Sung words (`singer`) use DiffSinger voicebanks, neural models trained on singers (approved by the owner; everything else in Spectre stays synthesized). Their files are not in the repo (the voicebank terms forbid redistributing them): banks go in `~/.cache/spectre/svs/<bank>/bank/` and the Potluck vocoder in `~/.cache/spectre/svs/potluck/` (links and licences in engine/third_party.json; `SPECTRE_SVS_DIR` moves them). The Whisper models for word checks go in the Hugging Face cache at `~/.cache/spectre/svs/hf` (the scripts set `HF_HOME` to it). Rendered phrases are cached in `~/.cache/spectre/svs/phrases/`: safe to delete, they regenerate bit for bit. Only projects with a `singer` track need any of this.
 
 Smoke test (about 20 s to render, 25 s to listen):
 
@@ -133,7 +145,7 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 4. Long sessions can be interrupted (for example when the operator's own turn is interrupted). Check on them periodically; to resume, start a fresh producer agent with the same prompt plus "read journal.md and the helper scripts, listen to the latest render, continue numbering". Forward-only versioning makes this seamless.
 5. **After every genre switch, record lessons in the repo** (owner's standing rule): add the session entry to `docs/LESSONS.md` and update its "Across genres" section with what transferred and what didn't. If the new genre needed research, save it as a `docs/<GENRE>.md` brief (see `docs/ROMANIAN.md`, `docs/UKRAINIAN.md`). Commit these with the session.
 6. Sessions can run in parallel (one folder each). Engine changes made while another session is rendering must be additive and written atomically (write a temp file, then rename), so a running render never imports a half-written module.
-7. **Publish** the session with `python3 tools/upload_track.py <id>` (section 8) once its line is in `site/data/tracks.json`: the session's files go to the S3 bucket, not into git (renders never leave the workspace; they are reproducible from `project.json`, because rendering is seeded and deterministic). Commit `site/data/tracks.json` (it now carries the track's uuid) and the cross-track files (docs, engine, lessons).
+7. **Publish** the session with `python3 tools/upload_track.py <id>` (section 8) once its line is in `site/data/tracks.json`: the session's files go to the S3 bucket, not into git (without a bucket: the tool uploads nothing, lists the files and you send them to the user in the chat; section 8) (renders never leave the workspace; they are reproducible from `project.json`, because rendering is seeded and deterministic). Commit `site/data/tracks.json` (it now carries the track's uuid) and the cross-track files (docs, engine, lessons).
 
 ## 5. Engine conventions
 
@@ -162,7 +174,7 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 
 ## 8. Track files in S3
 
-Every published track's files live in the owner's S3 bucket (OVHcloud Object Storage), not in the repo. `site/data/tracks.json` is the showcase list: each track has a fixed `uuid` (v4, made once when it is first published, never changed), and that uuid is the key prefix of all its files. The names are the same for every track and defined once, in `tools/upload_track.py` (`RENDITION`, `NAMED`, `TOOLS`; the site's audio route reads `TRACK_OBJECTS` in `site/src/lib/s3.ts`):
+Every published track's files live in an S3-compatible bucket configured through environment variables, not in the repo. `site/data/tracks.json` is the showcase list: each track has a fixed `uuid` (v4, made once when it is first published, never changed), and that uuid is the key prefix of all its files. The names are the same for every track and defined once, in `tools/upload_track.py` (`RENDITION`, `NAMED`, `TOOLS`; the site's audio route reads `TRACK_OBJECTS` in `site/src/lib/s3.ts`):
 
 | Object | From the session folder |
 |---|---|
@@ -195,11 +207,13 @@ Committing `tracks.json` and pushing stay in the normal delivery step (ORCHESTRA
 
 | Variable | Workspace (upload) | Vercel (site) |
 |---|---|---|
-| `SPECTRE_S3_ENDPOINT` | e.g. `https://s3.gra.io.cloud.ovh.net` | same |
-| `SPECTRE_S3_REGION` | e.g. `gra` | same |
-| `SPECTRE_S3_BUCKET` | the bucket | same |
+| `SPECTRE_S3_ENDPOINT` | e.g. `https://s3.<region>.example.com` | same |
+| `SPECTRE_S3_REGION` | e.g. `<region>` | same |
+| `SPECTRE_S3_BUCKET` | e.g. `<your-bucket>` | same |
 | `SPECTRE_S3_ACCESS_KEY_ID` / `SPECTRE_S3_SECRET_ACCESS_KEY` | a **read-write** key | a **read-only** key |
 | `SPECTRE_SIGNED_URL_TTL` | | optional, default 3600 s |
 | `SPECTRE_S3_CORS_ORIGINS` | optional, replaces the default CORS origins for `--cors` | |
 
-`--cors` sets the bucket's CORS rules for the player (needed once; the key must be allowed to set bucket CORS). Requires `boto3` (in requirements.txt).
+`--cors` sets the bucket's CORS rules for the player (needed once; the key must be allowed to set bucket CORS). Requires `boto3` (in requirements.txt). The S3 settings and keys come from the environment only; ask the owner for them.
+
+**Without a bucket** (none of the `SPECTRE_S3_*` variables set: a fork, a fresh clone, or a workspace without the keys), the workflow still works. `python3 tools/upload_track.py <id>` uploads nothing and does not fail: it runs every local check (uuid in `tracks.json`, the publish set, the required files, the MP3), then prints "No S3 bucket configured: nothing uploaded. Deliver these files to the user in the chat:" with the mastered MP3 and the other publishable files and their paths, and exits 0. The publish step then means sending those files to the user in the chat (SendUserFile or the platform's equivalent), and the session folders stay local (they are the only copy: don't delete them). `--all`, `--check`, `--cors` and `--fetch` say that they need the bucket and are skipped (exit 0). A partial set of the variables is refused (set all five, or none). The site plays the local masters without a bucket (site/README.md, "Audio").

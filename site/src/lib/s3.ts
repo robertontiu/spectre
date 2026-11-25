@@ -1,8 +1,8 @@
 import { createHash, createHmac } from "node:crypto";
 
 /**
- * Presigned GET URLs for the track bucket (any S3-compatible store; OVHcloud Object
- * Storage in production), signed with AWS Signature Version 4 in the query string.
+ * Presigned GET URLs for the track bucket (any S3-compatible store, configured through
+ * environment variables), signed with AWS Signature Version 4 in the query string.
  *
  * Hand-written on purpose: the route only ever signs one kind of request (a GET of one
  * object, path-style, host the only signed header, unsigned payload), which is about 40
@@ -14,7 +14,7 @@ import { createHash, createHmac } from "node:crypto";
  */
 
 export type S3Config = {
-  /** e.g. https://s3.gra.io.cloud.ovh.net (path-style URLs: <endpoint>/<bucket>/<key>). */
+  /** e.g. https://s3.<region>.example.com (path-style URLs: <endpoint>/<bucket>/<key>). */
   endpoint: URL;
   region: string;
   bucket: string;

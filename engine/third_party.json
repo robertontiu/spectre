@@ -1,0 +1,1183 @@
+{
+ "about": "Every third-party resource Spectre's engine, producer and measurement tools use. Nothing here is in the repo or bundled anywhere: each user downloads from the official source and accepts each licence. tools/engine_assets.py reads this file (status / install / import); tools/setup.sh runs it. If a link fails, search for the official source (search_hint), verify licence, size and sha256, install it, and update the entry. sizes are bytes; sha256 of the file as downloaded.",
+ "roots": {
+  "cache": "$SPECTRE_CACHE, default ~/.cache/spectre (engine/svs.py reads $SPECTRE_SVS_DIR, default <cache>/svs)",
+  "hf": "$HF_HOME, default ~/.cache/spectre/svs/hf (the Hugging Face cache the Whisper scripts set with os.environ.setdefault)"
+ },
+ "system": [
+  {
+   "id": "python",
+   "need": "Python 3.11+ (developed on 3.13)",
+   "required": true
+  },
+  {
+   "id": "ffmpeg",
+   "need": "ffmpeg on PATH (mp3 export, Whisper scripts' decoding)",
+   "required": true,
+   "install": "apt-get install -y ffmpeg (or brew install ffmpeg)"
+  },
+  {
+   "id": "pip",
+   "need": "pip install -r requirements.txt",
+   "required": true
+  }
+ ],
+ "mirror": {
+  "about": "An optional private mirror, configured through environment variables (SPECTRE_MIRROR_BUCKET plus SPECTRE_S3_ENDPOINT, SPECTRE_S3_REGION, SPECTRE_S3_ACCESS_KEY_ID, SPECTRE_S3_SECRET_ACCESS_KEY). Only a fail-safe after the official sources; skipped when the variables are not set. Objects hold the official files exactly as downloaded.",
+  "objects": {
+   "hanami-v1.0.zip": {
+    "type": "zip",
+    "ids": [
+     "hanami"
+    ],
+    "local": "svs/dl/hanami-v1.0.zip"
+   },
+   "leona-beta.zip": {
+    "type": "zip",
+    "ids": [
+     "leona"
+    ],
+    "local": "svs/dl/leona-beta.zip"
+   },
+   "dsvocoder.zip": {
+    "type": "zip",
+    "ids": [
+     "potluck"
+    ],
+    "local": "svs/potluck/dsvocoder.zip"
+   },
+   "refs.tar": {
+    "type": "tar",
+    "root": "cache",
+    "folder": "refs",
+    "ids": [
+     "refs-chamber-iowa",
+     "refs-chamber-celesta",
+     "refs-chamber-vsco2ce",
+     "refs-chamber-vcsl",
+     "refs-carols",
+     "refs-anthem",
+     "refs-gtsinger",
+     "refs-catalogue"
+    ]
+   },
+   "whisper.tar": {
+    "type": "tar",
+    "root": "hf",
+    "folder": "hub",
+    "ids": [
+     "whisper-small",
+     "whisper-small.en",
+     "whisper-medium",
+     "whisper-medium.en"
+    ]
+   }
+  }
+ },
+ "resources": [
+  {
+   "id": "hanami",
+   "kind": "zip",
+   "required": true,
+   "for": "engine/svs.py: every hanami* voice of `singer` (svs source; engine/voices.json); the default voice",
+   "licence": {
+    "name": "Team L❤VE Voicebank License + Lotte V's Terms of Use",
+    "terms": "any creative use, commercial included, without asking; credit Lotte V; do NOT redistribute or sell the files; don't claim the voice; no political, hateful or illegal use; derivatives only through the synthesizer's settings",
+    "text": "https://github.com/lottev1991/LotteV-Voicebank-Update-Repo (ToU_EN.md)"
+   },
+   "page": "https://lottev.moe/hoshino-hanami-ai%e2%9d%a4dol-for-diffsinger-v1-0-is-out/",
+   "url": "https://www.mediafire.com/file/ks3hpb5zldabo3s/Hoshino_Hanami_%257EAIdol%257E_for_DiffSinger_v1.0.zip/file",
+   "resolve": "mediafire",
+   "file": "Hoshino Hanami ~AIdol~ for DiffSinger v1.0.zip",
+   "size": 549903782,
+   "sha256": "91d9302cb220ba2c790a01973b0cc6ab1d84df3581582a1a4b1fb9acc4f65277",
+   "root": "cache",
+   "path": "svs/hanami/bank",
+   "unpack": {
+    "top": "Hoshino Hanami",
+    "to": "svs/hanami/bank",
+    "note": "the zip's folder 'Hoshino Hanami ~AIdol~ for DiffSinger v1.0' becomes svs/hanami/bank (it holds dsconfig.yaml); the IME *.url shortcuts at the zip's root are skipped"
+   },
+   "manual": [
+    "Open https://lottev.moe/hoshino-hanami-ai%e2%9d%a4dol-for-diffsinger-v1-0-is-out/ (Lotte V's v1.0 release post; read the terms there).",
+    "Follow its 'download the voicebank' link to MediaFire and press Download (about 550 MB).",
+    "python3 tools/engine_assets.py import '<the downloaded zip>'"
+   ],
+   "search_hint": "Search lottev.moe for 'Hoshino Hanami AI❤dol for DiffSinger v1.0' (the release post, category DiffSinger). The right file is a ~550 MB zip named like 'Hoshino Hanami ~AIdol~ for DiffSinger v1.0.zip' whose folder holds dsconfig.yaml, dsmain/, dspitch/, dsdur/, dsvocoder/ and readme.txt; Lotte V's own site or GitHub only, never a re-upload. A newer official version (v1.x) is acceptable only if its licence still allows commercial use; record the new link, size and sha256 here.",
+   "mirror": "hanami-v1.0.zip"
+  },
+  {
+   "id": "leona",
+   "kind": "zip",
+   "required": true,
+   "for": "engine/svs.py: the leona* voices of `singer` (engine/voices.json)",
+   "licence": {
+    "name": "CC BY 4.0 (voicebank) + Lotte V's Terms of Use",
+    "terms": "credit Lotte V; do NOT redistribute or sell the files; no political, hateful or illegal use; its own vocoder is CC BY-NC-SA and unused (the engine uses Potluck)",
+    "text": "https://github.com/lottev1991/LotteV-Voicebank-Update-Repo (ToU_EN.md)"
+   },
+   "page": "https://github.com/lottev1991/LotteV-Voicebank-Update-Repo/releases/tag/v0.0.1b-leona",
+   "url": "https://github.com/lottev1991/LotteV-Voicebank-Update-Repo/releases/download/v0.0.1b-leona/LEONA.-Ubasti-.AI.for.DiffSinger.BETA.zip",
+   "file": "LEONA.-Ubasti-.AI.for.DiffSinger.BETA.zip",
+   "size": 535539404,
+   "sha256": "29cf0dd46164c7e71785af1cccad5bef2dea3d4a8003fe751f342aa652ff6446",
+   "root": "cache",
+   "path": "svs/leona/bank",
+   "unpack": {
+    "top": "LEONA",
+    "to": "svs/leona/bank",
+    "note": "the zip's folder 'LEONA -Ubasti- AI for DiffSinger [BETA]' becomes svs/leona/bank"
+   },
+   "search_hint": "GitHub release v0.0.1b-leona of lottev1991/LotteV-Voicebank-Update-Repo (linked from lottev.moe, post 'I've released Hanami and LEONA's beta DiffSinger models'). The asset is a ~536 MB zip with one folder 'LEONA -Ubasti- AI for DiffSinger [BETA]' holding dsconfig.yaml and __license/LICENSE_voicebank.txt (CC BY 4.0). If the release pages are blocked, try https://github.com/<owner>/<repo>/releases/download/<tag>/<asset> with the asset name, or the expanded_assets page.",
+   "mirror": "leona-beta.zip"
+  },
+  {
+   "id": "potluck",
+   "kind": "zip",
+   "required": true,
+   "for": "engine/svs.py: the vocoder of every svs voice (potluck/dsvocoder/potluck_pc-nsf_lite.onnx)",
+   "licence": {
+    "name": "Potluck Vocoder licence (adapted from CC BY 4.0)",
+    "terms": "free to use, share and adapt; commercial use only with DiffSinger models; credit with a link to the licence; outputs and weights may not be used to train other generative models",
+    "text": "https://github.com/mrtigermeat/potluck-vocoder"
+   },
+   "page": "https://github.com/mrtigermeat/potluck-vocoder/releases/tag/v100",
+   "url": "https://github.com/mrtigermeat/potluck-vocoder/releases/download/v100/dsvocoder.zip",
+   "file": "dsvocoder.zip",
+   "size": 52705814,
+   "sha256": "0bf6c58ba572225db8dbe773075fae21159435c9c6253c0ad01d8a76ced5e912",
+   "root": "cache",
+   "path": "svs/potluck/dsvocoder",
+   "unpack": {
+    "top": "dsvocoder",
+    "to": "svs/potluck/dsvocoder"
+   },
+   "search_hint": "Release v100 of mrtigermeat/potluck-vocoder on GitHub (Potluck Vocoder lite, PC-NSF-HiFiGAN). The asset dsvocoder.zip (~53 MB) has one folder dsvocoder/ with potluck_pc-nsf_lite.onnx, vocoder.yaml and LICENSE.",
+   "mirror": "dsvocoder.zip"
+  },
+  {
+   "id": "tiger",
+   "kind": "zip",
+   "required": false,
+   "auto": false,
+   "for": "examples/vocals/svs/build.py only: a male DiffSinger voice to compare against; NEVER in a track (non-commercial)",
+   "licence": {
+    "name": "CC BY-NC-ND 4.0 + Commons Clause",
+    "terms": "non-commercial only; no redistribution or derivatives; not allowed in Spectre's tracks",
+    "text": "https://github.com/spicytigermeat/tiger_diffsinger"
+   },
+   "page": "https://github.com/spicytigermeat/tiger_diffsinger/releases/tag/v102",
+   "url": "https://github.com/spicytigermeat/tiger_diffsinger/releases/download/v102/TIGER_DS_v102_PACK.zip",
+   "file": "TIGER_DS_v102_PACK.zip",
+   "size": 565986049,
+   "sha256": "925ca2ad44287757d26628608b2744381e75748042d0e6fae356ee8cdae19f4e",
+   "root": "cache",
+   "path": "svs/tiger/bank",
+   "unpack": {
+    "top": "TIGER_DS_v102_PACK",
+    "to": "svs/tiger/bank"
+   },
+   "search_hint": "Release v102 of spicytigermeat/tiger_diffsinger; asset TIGER_DS_v102_PACK.zip (~566 MB). Only needed to rebuild the old comparison auditions."
+  },
+  {
+   "id": "whisper-small",
+   "kind": "hf_model",
+   "required": true,
+   "for": "Whisper word checks of sung lines in languages other than English (Spanish forced): examples/vocals/svs/spanish.py, romanian.py, sessions' words scripts; loaded by faster-whisper (requirements.txt)",
+   "licence": {
+    "name": "MIT",
+    "terms": "OpenAI Whisper weights converted to CTranslate2 by Systran; MIT, no restrictions beyond the notice"
+   },
+   "page": "https://huggingface.co/Systran/faster-whisper-small",
+   "repo": "Systran/faster-whisper-small",
+   "revision": "536b0662742c02347bc0e980a01041f333bce120",
+   "files": [
+    {
+     "name": "config.json",
+     "size": 2370,
+     "sha256": "b55496ac7940a7ae47d2c01eab40edfd8701feec1229d9cce3b40014383fb828"
+    },
+    {
+     "name": "model.bin",
+     "size": 483546902,
+     "sha256": "3e305921506d8872816023e4c273e75d2419fb89b24da97b4fe7bce14170d671"
+    },
+    {
+     "name": "tokenizer.json",
+     "size": 2203239,
+     "sha256": "fb7b63191e9bb045082c79fd742a3106a12c99513ab30df4a0d47fa6cb6fd0ab"
+    },
+    {
+     "name": "vocabulary.txt",
+     "size": 459861,
+     "sha256": "34ce3fe1c5041027b3f8d42912270993f986dbc4bb34cf27f951e34a1e453913"
+    }
+   ],
+   "size": 486212372,
+   "root": "hf",
+   "path": "hub/models--Systran--faster-whisper-small",
+   "unpack": {
+    "note": "written in the Hugging Face cache layout: hub/models--Systran--faster-whisper-<m>/snapshots/<revision>/<file> plus refs/main, so faster-whisper finds it offline and online"
+   },
+   "search_hint": "Hugging Face model Systran/faster-whisper-small (CTranslate2 conversion; files config.json, model.bin, tokenizer.json, vocabulary.txt). If the revision is gone, take the current main revision, check model.bin's size and the LFS sha256 on the model page, and update revision, sizes and sha256 here.",
+   "mirror": "whisper.tar"
+  },
+  {
+   "id": "whisper-small.en",
+   "kind": "hf_model",
+   "required": true,
+   "for": "Whisper word checks of English sung lines (docs/voice/MIXING.md 'Words'; examples/vocals/svs/male.py, blend.py; session words scripts); loaded by faster-whisper (requirements.txt)",
+   "licence": {
+    "name": "MIT",
+    "terms": "OpenAI Whisper weights converted to CTranslate2 by Systran; MIT, no restrictions beyond the notice"
+   },
+   "page": "https://huggingface.co/Systran/faster-whisper-small.en",
+   "repo": "Systran/faster-whisper-small.en",
+   "revision": "d1d751a5f8271d482d14ca55d9e2deeebbae577f",
+   "files": [
+    {
+     "name": "config.json",
+     "size": 2657,
+     "sha256": "666a9605530ac1f61fa8177f3702b4dacec9966749e42610839fcc32661d5fae"
+    },
+    {
+     "name": "model.bin",
+     "size": 483545366,
+     "sha256": "62b2a45b05ee59acb4a5341b33ee35e041395d378d418a18acfe4c9e768ee37a"
+    },
+    {
+     "name": "tokenizer.json",
+     "size": 2128466,
+     "sha256": "929c5252409436dce1b38a75d1abbcb5e132d170d8e324e4e04ed915fa2d22df"
+    },
+    {
+     "name": "vocabulary.txt",
+     "size": 422309,
+     "sha256": "ff77588746d3a2595d32ab5b69ffd7b95ce2441ac57533cb66fc3eb575a115cf"
+    }
+   ],
+   "size": 486098798,
+   "root": "hf",
+   "path": "hub/models--Systran--faster-whisper-small.en",
+   "unpack": {
+    "note": "written in the Hugging Face cache layout: hub/models--Systran--faster-whisper-<m>/snapshots/<revision>/<file> plus refs/main, so faster-whisper finds it offline and online"
+   },
+   "search_hint": "Hugging Face model Systran/faster-whisper-small.en (CTranslate2 conversion; files config.json, model.bin, tokenizer.json, vocabulary.txt). If the revision is gone, take the current main revision, check model.bin's size and the LFS sha256 on the model page, and update revision, sizes and sha256 here.",
+   "mirror": "whisper.tar"
+  },
+  {
+   "id": "whisper-medium",
+   "kind": "hf_model",
+   "required": false,
+   "for": "Whisper medium for A/B word decisions in non-English lines (remix pass; small swings 20-30 points, docs/HANDOFF.md); loaded by faster-whisper (requirements.txt)",
+   "licence": {
+    "name": "MIT",
+    "terms": "OpenAI Whisper weights converted to CTranslate2 by Systran; MIT, no restrictions beyond the notice"
+   },
+   "page": "https://huggingface.co/Systran/faster-whisper-medium",
+   "repo": "Systran/faster-whisper-medium",
+   "revision": "08e178d48790749d25932bbc082711ddcfdfbc4f",
+   "files": [
+    {
+     "name": "config.json",
+     "size": 2257,
+     "sha256": "3622a2ddc41ec0e0fd4e68c13c6830f03b90c38d89aaad184de02c8c642cf807"
+    },
+    {
+     "name": "model.bin",
+     "size": 1527906378,
+     "sha256": "9b45e1009dcc4ab601eff815b61d80e60ce3fd8c74c1a14f4a282258286b51ae"
+    },
+    {
+     "name": "tokenizer.json",
+     "size": 2203239,
+     "sha256": "fb7b63191e9bb045082c79fd742a3106a12c99513ab30df4a0d47fa6cb6fd0ab"
+    },
+    {
+     "name": "vocabulary.txt",
+     "size": 459861,
+     "sha256": "34ce3fe1c5041027b3f8d42912270993f986dbc4bb34cf27f951e34a1e453913"
+    }
+   ],
+   "size": 1530571735,
+   "root": "hf",
+   "path": "hub/models--Systran--faster-whisper-medium",
+   "unpack": {
+    "note": "written in the Hugging Face cache layout: hub/models--Systran--faster-whisper-<m>/snapshots/<revision>/<file> plus refs/main, so faster-whisper finds it offline and online"
+   },
+   "search_hint": "Hugging Face model Systran/faster-whisper-medium (CTranslate2 conversion; files config.json, model.bin, tokenizer.json, vocabulary.txt). If the revision is gone, take the current main revision, check model.bin's size and the LFS sha256 on the model page, and update revision, sizes and sha256 here.",
+   "mirror": "whisper.tar"
+  },
+  {
+   "id": "whisper-medium.en",
+   "kind": "hf_model",
+   "required": false,
+   "for": "Whisper medium.en for A/B word decisions on English lines (remix pass; sessions/012-reunion/words.py default); loaded by faster-whisper (requirements.txt)",
+   "licence": {
+    "name": "MIT",
+    "terms": "OpenAI Whisper weights converted to CTranslate2 by Systran; MIT, no restrictions beyond the notice"
+   },
+   "page": "https://huggingface.co/Systran/faster-whisper-medium.en",
+   "repo": "Systran/faster-whisper-medium.en",
+   "revision": "a29b04bd15381511a9af671baec01072039215e3",
+   "files": [
+    {
+     "name": "config.json",
+     "size": 2643,
+     "sha256": "4a1848ebabe7938d9797c15a2e8e4ce1d36e6fd4a43d096ae5955257c67c7962"
+    },
+    {
+     "name": "model.bin",
+     "size": 1527904330,
+     "sha256": "11b220779aea4c6f3ce9d2549c8a95ea869ed84066864b999531ef53e594fe5b"
+    },
+    {
+     "name": "tokenizer.json",
+     "size": 2128466,
+     "sha256": "929c5252409436dce1b38a75d1abbcb5e132d170d8e324e4e04ed915fa2d22df"
+    },
+    {
+     "name": "vocabulary.txt",
+     "size": 422309,
+     "sha256": "ff77588746d3a2595d32ab5b69ffd7b95ce2441ac57533cb66fc3eb575a115cf"
+    }
+   ],
+   "size": 1530457748,
+   "root": "hf",
+   "path": "hub/models--Systran--faster-whisper-medium.en",
+   "unpack": {
+    "note": "written in the Hugging Face cache layout: hub/models--Systran--faster-whisper-<m>/snapshots/<revision>/<file> plus refs/main, so faster-whisper finds it offline and online"
+   },
+   "search_hint": "Hugging Face model Systran/faster-whisper-medium.en (CTranslate2 conversion; files config.json, model.bin, tokenizer.json, vocabulary.txt). If the revision is gone, take the current main revision, check model.bin's size and the LFS sha256 on the model page, and update revision, sizes and sha256 here.",
+   "mirror": "whisper.tar"
+  },
+  {
+   "id": "refs-chamber-iowa",
+   "kind": "files",
+   "required": false,
+   "for": "examples/chamberscore/build.py spectrograms: reference recordings for cello, viola, violin, vibraphone and glockenspiel (engine/chamber.py calibration); analysed only, never in a track",
+   "licence": {
+    "name": "University of Iowa Electronic Music Studios, Musical Instrument Samples",
+    "terms": "'may be downloaded and used for any projects, without restrictions'"
+   },
+   "page": "https://theremin.music.uiowa.edu/MIS.html",
+   "root": "cache",
+   "path": "refs/chamber",
+   "files": [
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulA.A4.stereo.aif",
+     "size": 1226752,
+     "sha256": "21886a202c1afc15a74ba9d709eeca2a41b14275bef2ab58af6ff7caa28d6775",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulA.A4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulA.D5.stereo.aif",
+     "size": 1120696,
+     "sha256": "13637d59edd3d8ec540831a649dcaf9738aac9c3bceb3db76e8bdd7a2329e6eb",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulA.D5.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulA.E4.stereo.aif",
+     "size": 1023112,
+     "sha256": "ad4e588d4968a1ceeb6fad60b92366af2e4b82778a973d9a0d4b28afadeadbd5",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulA.E4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulA.G4.stereo.aif",
+     "size": 1464340,
+     "sha256": "fa530d8f3fdce705ddc0c9081795fa285f34dafae168ba274ee295352b861946",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulA.G4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulC.B2.stereo.aif",
+     "size": 1443124,
+     "sha256": "f92e5970c2025e413432d3fc78e16c7cc112ecaab86b918a91c5234cec4e979d",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulC.B2.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulC.C2.stereo.aif",
+     "size": 1960720,
+     "sha256": "56798a31bfb79a784baba213e9cffd9ad1565b8bc7f3ce08b557a82f432d6725",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulC.C2.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulC.C3.stereo.aif",
+     "size": 1256452,
+     "sha256": "79266bb15537cd587fac0b6207f4c462f8f3eb6c4ac3bf412f0c05d19afea141",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulC.C3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulC.F2.stereo.aif",
+     "size": 1112206,
+     "sha256": "70f05267ffa160ccfe5289d2e864ddd95e9835da536f8cea210bd6edbe6c7990",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulC.F2.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulC.G2.stereo.aif",
+     "size": 1256452,
+     "sha256": "b8cbe58286b6f61f6763cdc91fb36df979f8525b81c4dd35bb639a856546d9be",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulC.G2.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulC.G3.stereo.aif",
+     "size": 1358278,
+     "sha256": "bbc244dd339f3122e1adbb63ada1c0d649df26b15796263660d51866e7888ec0",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulC.G3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulD.A3.stereo.aif",
+     "size": 1163116,
+     "sha256": "89dd98ff6474c82a71bd201454b3a95c66c5944151a8fb793954572f2d75a39f",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulD.A3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulD.C4.stereo.aif",
+     "size": 1133416,
+     "sha256": "ecb33e07411f4406c2baf21506561458857dbecee9cf62e5faee040c4594b5bf",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulD.C4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulD.F4.stereo.aif",
+     "size": 866134,
+     "sha256": "35933ca077e193c491850833a617fcf29eb38b439bd09c3558cb2f08730e7385",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulD.F4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulG.B3.stereo.aif",
+     "size": 1239478,
+     "sha256": "a7bd9b4f152ab35d74838e7b18717cd9b140df7d5fa555cb929b0408eba91ef8",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulG.B3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulG.D3.stereo.aif",
+     "size": 1264942,
+     "sha256": "526ead6bbbfb0312f4005692c2a625d3646d5acd42588cf80f1d1202cff87127",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulG.D3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.arco.ff.sulG.F3.stereo.aif",
+     "size": 1027354,
+     "sha256": "8e80fea549cfe305140c682968136dc3f94cb9565c2ce7d59f1481eb03f096d1",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.arco.ff.sulG.F3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.pizz.ff.sulA.E4.stereo.aif",
+     "size": 598858,
+     "sha256": "d86e6af3f0160f3d94812e28a1420c4fe139db42ad1a354e2e99fa18c439a30d",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.pizz.ff.sulA.E4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.pizz.ff.sulC.C2.stereo.aif",
+     "size": 963718,
+     "sha256": "5424133b9a1ca4143cb84c833c00bd236498934eb94ed4e204b9f6f69738c51e",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.pizz.ff.sulC.C2.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.pizz.ff.sulC.G2.stereo.aif",
+     "size": 745228,
+     "sha256": "1de51fe680b9f20b10daee61dd3d6e8fccf466b46156c41a4d58617670bbadd7",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.pizz.ff.sulC.G2.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.pizz.ff.sulD.A3.stereo.aif",
+     "size": 581884,
+     "sha256": "522e0c503494c74c3fa6044049b90676f2636ae3295a57ad879b16c7198c2e5f",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.pizz.ff.sulD.A3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/cello/iowa/Cello.pizz.ff.sulG.D3.stereo.aif",
+     "size": 755830,
+     "sha256": "c19353e60128e0cb95f3cfdeb46cdc9c79b41c1c372bfa6b6604532c2f7325dc",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Cello/Cello.pizz.ff.sulG.D3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/iowa/bells.brass.ff.C6.stereo.aif",
+     "size": 2503768,
+     "sha256": "1aaee98d0b2464dc6858d788e9e57312b61d75dcf17bf51a590bfdda2e21c9a7",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Percussion/Bells/bells.brass.ff.C6.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/iowa/bells.brass.ff.C7.stereo.aif",
+     "size": 2329828,
+     "sha256": "0b301b9b3633a5ef65731a82677b070d0287e47037eccafbc1ae9e2d1615dad3",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Percussion/Bells/bells.brass.ff.C7.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/iowa/bells.brass.ff.D7.stereo.aif",
+     "size": 1854658,
+     "sha256": "8fb32575f994671cf2fd2272cb5fbf38e540953418e55ab8bc77f4921320abe7",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Percussion/Bells/bells.brass.ff.D7.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/iowa/bells.brass.ff.G5.stereo.aif",
+     "size": 2200426,
+     "sha256": "54d56b23c6de35e17fa3a328e225231931ad9e5d8485809dd3bd819d471b0a42",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Percussion/Bells/bells.brass.ff.G5.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/iowa/bells.brass.ff.G6.stereo.aif",
+     "size": 3449860,
+     "sha256": "e832c683841e62f5e3d82900066c2de483d2df117c1ac9916999a17c5a453f4d",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Percussion/Bells/bells.brass.ff.G6.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/iowa/bells.plastic.ff.C6.stereo.aif",
+     "size": 2334064,
+     "sha256": "054bad776d8894bda6363256f34b2f6474a0b2643f988d70a1c27a3f0a67a75f",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Percussion/Bells/bells.plastic.ff.C6.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/iowa/bells.plastic.ff.C7.stereo.aif",
+     "size": 3106216,
+     "sha256": "52ab1a74604ad9c6e1c9eb8f6853881a90f1ba2c4f183277c61d508693791435",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Percussion/Bells/bells.plastic.ff.C7.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/iowa/bells.plastic.ff.D7.stereo.aif",
+     "size": 1914052,
+     "sha256": "9c861ba2d7d91ebbdf7186f74e505af7e765da38825b6a37f17561503ce5324c",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Percussion/Bells/bells.plastic.ff.D7.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/iowa/bells.plastic.ff.G5.stereo.aif",
+     "size": 2083756,
+     "sha256": "805e0c4ed8fac2a87c2c5f931ab3673cfff450be1e01b22f53a91149c349b5b9",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Percussion/Bells/bells.plastic.ff.G5.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/iowa/bells.plastic.ff.G6.stereo.aif",
+     "size": 3055306,
+     "sha256": "d9f7e3e3f13345a57f61fe3a915e9fd3017781d9258c0590b77378bd66d10b26",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Percussion/Bells/bells.plastic.ff.G6.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/vibraphone/iowa/Vibraphone.sustain.ff.C4.stereo.aif",
+     "size": 3735970,
+     "sha256": "2641d6e1f0b427fb438148e2418a9f63a6a3372b28d75b01b8df78cb482e34be",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Percussion/Vibraphone/Vibraphone.sustain.ff.C4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/vibraphone/iowa/Vibraphone.sustain.ff.C5.stereo.aif",
+     "size": 3061672,
+     "sha256": "2732b8c4d54d9213080b35ec29b0603a773376702424348244932ee56dc79bde",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Percussion/Vibraphone/Vibraphone.sustain.ff.C5.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/vibraphone/iowa/Vibraphone.sustain.ff.G4.stereo.aif",
+     "size": 4161556,
+     "sha256": "c71f50237c74e427f246da837b4f4a2357fcfdc25af9d7c44a6efb6fb632e31d",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Percussion/Vibraphone/Vibraphone.sustain.ff.G4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/vibraphone/iowa/Vibraphone.sustain.ff.G5.stereo.aif",
+     "size": 2062012,
+     "sha256": "1d7504a907ccf36dc42d0f9b75d7283fd9fb65ae50261c59c7c1b4200b581b66",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Percussion/Vibraphone/Vibraphone.sustain.ff.G5.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.arco.ff.sulA.B5.stereo.aif",
+     "size": 662494,
+     "sha256": "7a6ccd8d6b625f803251626de5941b75611478f7c8645a39be04b90cd50f34d6",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.arco.ff.sulA.B5.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.arco.ff.sulA.C6.stereo.aif",
+     "size": 679468,
+     "sha256": "7e668dd45208d7a054988f8fc100ba1a59c16da487cea07973bbfe4bc0ee0f7b",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.arco.ff.sulA.C6.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.arco.ff.sulA.E5.stereo.aif",
+     "size": 976444,
+     "sha256": "9fe9c48ed64a0ca2bd21e53a04241cea2cb948326793cb64b87eb91f087c7ac5",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.arco.ff.sulA.E5.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.arco.ff.sulA.G5.stereo.aif",
+     "size": 938260,
+     "sha256": "a99f87fbf8620ae110551961b45f2bf7ea43b551f76124f9d32c92cdb9058c6b",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.arco.ff.sulA.G5.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.arco.ff.sulC.B3.stereo.aif",
+     "size": 1016752,
+     "sha256": "13fb6fdb3c2fcaa146c01d72d83f6d012e1b13edd08d507570ab96bf054da409",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.arco.ff.sulC.B3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.arco.ff.sulC.C3.stereo.aif",
+     "size": 1182208,
+     "sha256": "c3c3cf1433dba22757b4490a9c89c78629c81c8ef57f7f8cfe665654cc6695da",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.arco.ff.sulC.C3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.arco.ff.sulC.E3.stereo.aif",
+     "size": 970078,
+     "sha256": "700846a8db306ccf18508bb863790e38038ec3baf216ccbb4205b4e528ed9a2a",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.arco.ff.sulC.E3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.arco.ff.sulC.G3.stereo.aif",
+     "size": 1052812,
+     "sha256": "e8ef46ec520b99a08b2879a4b077e0659abdaaa8bb6c61b9200f7b93ee24a05b",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.arco.ff.sulC.G3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.arco.ff.sulD.A4.stereo.aif",
+     "size": 849166,
+     "sha256": "0c9493ec78159a655ea313e5eceec3f8ab7879c488c6881dd3d20cb155b184e2",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.arco.ff.sulD.A4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.arco.ff.sulD.C5.stereo.aif",
+     "size": 1290394,
+     "sha256": "c183cf849687423cd33bbe89ea0578c19069e26a99437caf1620760c0ed4bb42",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.arco.ff.sulD.C5.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.arco.ff.sulD.F5.stereo.aif",
+     "size": 819466,
+     "sha256": "83e134bfe07fe37262fc6c2666bc4265070a5e564203df77651f4ec016196170",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.arco.ff.sulD.F5.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.arco.ff.sulG.B3.stereo.aif",
+     "size": 1146148,
+     "sha256": "e84292496bccc43537c52e20f45c67c2db2b62795b6acf64c37028d114be7725",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.arco.ff.sulG.B3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.arco.ff.sulG.D4.stereo.aif",
+     "size": 1074028,
+     "sha256": "5ab932a92935a0f9154c5de689884e55e030913fc66eccda631937463ab7b63a",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.arco.ff.sulG.D4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.arco.ff.sulG.F4.stereo.aif",
+     "size": 883102,
+     "sha256": "0d5088e3afcc38df275317dd2310d51157a8269afbad1c677f81408290439c0e",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.arco.ff.sulG.F4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.pizz.ff.sulA.E5.stereo.aif",
+     "size": 594616,
+     "sha256": "226e8901f4189e9ba6c8fc9ba8eda6f9955715b64095516d30da868699830f59",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.pizz.ff.sulA.E5.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.pizz.ff.sulC.C3.stereo.aif",
+     "size": 1404946,
+     "sha256": "33dbe02e98ef0dbb7dc3fd3fadd990b9ae347194abbe6964318ae5e5082e787f",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.pizz.ff.sulC.C3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.pizz.ff.sulC.G3.stereo.aif",
+     "size": 480064,
+     "sha256": "7845b4168eec7ca5f7c8ef729468f816aab5af2c771c46c634f89c9bc98b3c1e",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.pizz.ff.sulC.G3.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.pizz.ff.sulD.A4.stereo.aif",
+     "size": 361270,
+     "sha256": "f4ecdeefa42d6b86416689b878c3b4fa94f5047fd38adebe9ed53bcded599cc8",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.pizz.ff.sulD.A4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/viola/iowa/Viola.pizz.ff.sulG.D4.stereo.aif",
+     "size": 342184,
+     "sha256": "ecade76989c21c3ad27722b7c8a5b1263fdacd5cce05a778ad454a23f68d3f11",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Viola/Viola.pizz.ff.sulG.D4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/violin/iowa/Violin.arco.ff.sulA.A4.stereo.aif",
+     "size": 832198,
+     "sha256": "d6da87eedece3fd1d170fef8096c57fa37d0512bf17bcc0cad456e7fbbe8eea1",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Violin/Violin.arco.ff.sulA.A4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/violin/iowa/Violin.arco.ff.sulD.D4.stereo.aif",
+     "size": 1241668,
+     "sha256": "3e9a41463a595615581acbce18eeac0762971815ba71b919157395726dfba898",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Violin/Violin.arco.ff.sulD.D4.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/violin/iowa/Violin.arco.ff.sulE.E5.stereo.aif",
+     "size": 634924,
+     "sha256": "8ab79362114dce87d756aeee428fc46a8f2358b7ce27927420f601a2b9341456",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Violin/Violin.arco.ff.sulE.E5.stereo.aif"
+    },
+    {
+     "path": "refs/chamber/violin/iowa/Violin.arco.ff.sulG.G3.stereo.aif",
+     "size": 1131298,
+     "sha256": "57e40d4b85e9d9b57956a991e8a99eb769a6a1bbf160780819464e30e044186f",
+     "url": "https://theremin.music.uiowa.edu/sound%20files/MIS%20Pitches%20-%202014/Strings/Violin/Violin.arco.ff.sulG.G3.stereo.aif"
+    }
+   ],
+   "size": 81979222,
+   "search_hint": "University of Iowa MIS, the per-pitch 2012 sets ('MIS Pitches - 2014' folders, linked from MIS-Pitches-2012/MIS<Instrument>2012.html): file names like Cello.arco.ff.sulC.G2.stereo.aif. Each file goes to the path given.",
+   "mirror": "refs.tar"
+  },
+  {
+   "id": "refs-chamber-celesta",
+   "kind": "files",
+   "required": false,
+   "for": "examples/chamberscore/build.py: celesta reference (engine/chamber.py `celesta`); analysed only",
+   "licence": {
+    "name": "CC BY 4.0",
+    "terms": "credit pjcohen (Freesound); the HQ previews of pack 23108"
+   },
+   "page": "https://freesound.org/people/pjcohen/packs/23108/",
+   "root": "cache",
+   "path": "refs/chamber/celesta/pjcohen",
+   "files": [
+    {
+     "path": "refs/chamber/celesta/pjcohen/Celesta_A#2.mp3",
+     "size": 132295,
+     "sha256": "4cc2be847fd197bfabda67ee127b22ef089002227285b29d8f56b7e89e4c980d",
+     "url": "https://cdn.freesound.org/previews/410/410678_394391-hq.mp3"
+    },
+    {
+     "path": "refs/chamber/celesta/pjcohen/Celesta_A#3.mp3",
+     "size": 142774,
+     "sha256": "1f429d419073518cddfb3b930728b20afc50f06c0c4ff7c5fe090046a91b6ee3",
+     "url": "https://cdn.freesound.org/previews/410/410677_394391-hq.mp3"
+    },
+    {
+     "path": "refs/chamber/celesta/pjcohen/Celesta_A#4.mp3",
+     "size": 116212,
+     "sha256": "9b3860d5e10e6fde505fac25bc3e96fa322736e0e818f2b716bf8e57fdeec3ff",
+     "url": "https://cdn.freesound.org/previews/410/410676_394391-hq.mp3"
+    },
+    {
+     "path": "refs/chamber/celesta/pjcohen/Celesta_C#4.mp3",
+     "size": 120756,
+     "sha256": "621abdb5761b57e1c510b3f213c2f8ad6f6d311f379e40d028ff6fe83e20a44b",
+     "url": "https://cdn.freesound.org/previews/413/413761_394391-hq.mp3"
+    },
+    {
+     "path": "refs/chamber/celesta/pjcohen/Celesta_F#4.mp3",
+     "size": 111364,
+     "sha256": "13550178afa7a701a92be31460d0e044b3d31fc2a8ffe32bd4ae0112b539b665",
+     "url": "https://cdn.freesound.org/previews/410/410673_394391-hq.mp3"
+    },
+    {
+     "path": "refs/chamber/celesta/pjcohen/Celesta_F#5.mp3",
+     "size": 129734,
+     "sha256": "c793aa5518ab8a246d6c605e8796bfeff69e84ce1f0475fc89db5f7534085815",
+     "url": "https://cdn.freesound.org/previews/410/410672_394391-hq.mp3"
+    },
+    {
+     "path": "refs/chamber/celesta/pjcohen/Celesta_F#6.mp3",
+     "size": 132493,
+     "sha256": "88b7648ef5a97d6a0394195dc02de36a48fceff7e0bf67a1b46f00bca3be103e",
+     "url": "https://cdn.freesound.org/previews/410/410671_394391-hq.mp3"
+    },
+    {
+     "path": "refs/chamber/celesta/pjcohen/Celesta_F3.mp3",
+     "size": 122621,
+     "sha256": "d3c09211e479438fd8c9b67523bd1fe728b79808c70b3519386131ff672675b9",
+     "url": "https://cdn.freesound.org/previews/410/410670_394391-hq.mp3"
+    },
+    {
+     "path": "refs/chamber/celesta/pjcohen/Celesta_F4.mp3",
+     "size": 101553,
+     "sha256": "7fb9493846c7dba75d5133ca388cffa5b2d076ed0342ec7baecab5c97d7fcb37",
+     "url": "https://cdn.freesound.org/previews/410/410669_394391-hq.mp3"
+    },
+    {
+     "path": "refs/chamber/celesta/pjcohen/Celesta_F5.mp3",
+     "size": 238606,
+     "sha256": "2402e166db93f1de464a749bd1013af1067157a3515f0c110956b9fe077c6f76",
+     "url": "https://cdn.freesound.org/previews/410/410668_394391-hq.mp3"
+    },
+    {
+     "path": "refs/chamber/celesta/pjcohen/Celesta_G#3.mp3",
+     "size": 205350,
+     "sha256": "3590747a892cb71414bdefb5154aa87ab873e93fb1be86380ccc85df5d0397a6",
+     "url": "https://cdn.freesound.org/previews/410/410675_394391-hq.mp3"
+    },
+    {
+     "path": "refs/chamber/celesta/pjcohen/Celesta_G#4.mp3",
+     "size": 193346,
+     "sha256": "c0e247f66d7d51f25a01eb2a70a414d6d98a96b55cf07a79435fab27787d3d44",
+     "url": "https://cdn.freesound.org/previews/410/410674_394391-hq.mp3"
+    }
+   ],
+   "size": 1747104,
+   "search_hint": "Freesound pack 23108 'Celesta' by pjcohen: each sound's HQ preview (cdn.freesound.org/previews/<first 3 digits>/<id>_394391-hq.mp3), saved as the sound's name with .mp3.",
+   "mirror": "refs.tar"
+  },
+  {
+   "id": "refs-chamber-vsco2ce",
+   "kind": "files",
+   "required": false,
+   "for": "examples/chamberscore/build.py: glockenspiel, string-section and solo-violin references; analysed only",
+   "licence": {
+    "name": "CC0 1.0",
+    "terms": "public domain dedication"
+   },
+   "page": "https://github.com/sgossner/VSCO-2-CE",
+   "root": "cache",
+   "path": "refs/chamber",
+   "files": [
+    {
+     "path": "refs/chamber/glockenspiel/vsco-2-ce/glock_medium_C5.wav",
+     "size": 1271310,
+     "sha256": "635f898e0bcb6975b96b18efd9c896f6f1b97ff12174a339ada4814e49675660"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/vsco-2-ce/glock_medium_C6.wav",
+     "size": 1271310,
+     "sha256": "e942cbf502cf6731df2925945fe3234c876cb63f047d91007b6929887f9e4904"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/vsco-2-ce/glock_medium_C7.wav",
+     "size": 492418,
+     "sha256": "b2ecbe0e60c983bbfaa49a1f45f8a11559f7dba27b8c8a032eb2cb7366a36910"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/vsco-2-ce/glock_medium_G4.wav",
+     "size": 1271310,
+     "sha256": "6c4649b13e24fa01e4634edad8fe8edf18aef33facc5d49fe53097b376bac4da"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/vsco-2-ce/glock_medium_G5.wav",
+     "size": 1226714,
+     "sha256": "7045c0ef7260e2f1ad11a64406cf7575ed898d1207a91104d33d78caefac63e4"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/vsco-2-ce/glock_medium_G6.wav",
+     "size": 843122,
+     "sha256": "a2ba94e59119cd5272c1161fc8b8fbfb94c7b44de45a9a6cc5973b1c332103af"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/ViolaEns_pizz_C4_v1_rr1.wav",
+     "size": 230726,
+     "sha256": "ae794a92443243816ff91a9a2ed0f9010ea3a6ffcbf011c6c6cb91b8c8597d1b"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/ViolaEns_pizz_D5_v1_rr1.wav",
+     "size": 105980,
+     "sha256": "5b129fe18cc33a3fa9a1999d3a7461975179356c3d3345fa66ebb3815e3ea4dc"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/ViolaEns_pizz_G4_v1_rr1.wav",
+     "size": 123878,
+     "sha256": "0968449c4f94eb59d39d72ef1d80935dc9c9e2e8089f678abb5b693f6d14ec98"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/ViolaEns_susvib_C4_v1_1.wav",
+     "size": 2289656,
+     "sha256": "144ec7666be1b3b4da50937db4b1fc3675ca34bc2e871264707d83b8a0d526e6"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/ViolaEns_susvib_C4_v2_1.wav",
+     "size": 2954936,
+     "sha256": "81e1ef9109a1434974092c0165ffee44918b2553fd4afeeee42b91b8007ad263"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/ViolaEns_susvib_D5_v1_1.wav",
+     "size": 2087798,
+     "sha256": "801bcea9c53c2521900cbbbe70ff2fe4f66a1c182f26744f608144905ec5f880"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/ViolaEns_susvib_D5_v2_1.wav",
+     "size": 2638244,
+     "sha256": "d3c5d05da8f90533aa7587649f18f4e68147aa7abc7a5559d8741089bea32239"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/ViolaEns_susvib_G4_v1_1.wav",
+     "size": 2542586,
+     "sha256": "624a70ef842744cb7847a07fba3115ace5689746a107da91f237bf2534d42b03"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/ViolaEns_susvib_G4_v2_1.wav",
+     "size": 3103628,
+     "sha256": "b09b8338945b814b9ce6dd8980a49323d10e55f89f1c4dcf6d58b04cd672d99c"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/VlnEns_Pizz_C4_v1_rr1.wav",
+     "size": 105914,
+     "sha256": "7002bd5b93f26bb773ff77e349fbb3b5aa059404889706ddda9673da7488886c"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/VlnEns_Pizz_D5_v1_rr1.wav",
+     "size": 122870,
+     "sha256": "47e1b6e331e8fd51f820f3676ecbd046b194a240334009d891fe183b32613ab7"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/VlnEns_Pizz_G4_v1_rr1.wav",
+     "size": 148766,
+     "sha256": "5e3c5dad3385efc081975f7fc76b7574699d836fe01a714afffa2ef1054f8ef8"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/VlnEns_susVib_C4_v1.wav",
+     "size": 2063320,
+     "sha256": "c07edd5b2119fa1da2207aba996961b50dd616f69bbcf2300ab271bc6c16239f"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/VlnEns_susVib_C4_v2.wav",
+     "size": 2017512,
+     "sha256": "5857387b40c412f756ef281c1171247664432a4e5078c98142d595d15cd92ef9"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/VlnEns_susVib_D5_v1.wav",
+     "size": 2116352,
+     "sha256": "f8d870457826c94270b9c3ead8e8ec02cb7e6c4a3481cded055641b7fab7df62"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/VlnEns_susVib_D5_v2.wav",
+     "size": 1976276,
+     "sha256": "0c2ca9de723bed0a0968e32126b934f778cd678b367a29e7fde91004daf84daf"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/VlnEns_susVib_G4_v1.wav",
+     "size": 2330236,
+     "sha256": "ed2a89cf254432d2af073699fa43ebfa16cfbc5552c7fc964a184fc434eaaa39"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/VlnEns_susVib_G4_v2.wav",
+     "size": 2150136,
+     "sha256": "a1d6d5a0397541692e2f88a0cd9820eabe90407784ee631aa3bfa74772637a65"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/pizzT_C3_v1_RR1.wav",
+     "size": 704396,
+     "sha256": "63353870ad00cebe9882b96abcceae12480d37b78b62ded6228fb638871e8a81"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/pizzT_G3_v1_RR1.wav",
+     "size": 746396,
+     "sha256": "e97f815fbeea50ad5dab06ac6f6f435e7df8981556a38a9a69194900ff2c2b5b"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/susvib_C3_v1_1.wav",
+     "size": 2444174,
+     "sha256": "a614ee7ca821b44660236e47b89620cf914ec6ad27a99bc0d9764f47dbe512e1"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/susvib_C3_v3_1.wav",
+     "size": 3019394,
+     "sha256": "51e884d54eea3bf4ba7ee35289a09f15ddb6a52cd849248d01bf18477ccbd07b"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/susvib_G3_v1_1.wav",
+     "size": 2431598,
+     "sha256": "8d658346b8d2054fd534b3222b5d7a23196d22a83a68c3a04ffb76b21853a3db"
+    },
+    {
+     "path": "refs/chamber/section/vsco-2-ce/susvib_G3_v3_1.wav",
+     "size": 3335768,
+     "sha256": "17df597c259a849870aa25e9fbfa6093371851f83ba7b9deb9cb9e1ec11463a7"
+    },
+    {
+     "path": "refs/chamber/solovln/vsco-2-ce/LLVln_ArcoVib_A4_f.wav",
+     "size": 2488526,
+     "sha256": "19e5374658351508a9e2c929e871a43caff41e62d5e3363ead6f88428a9ab863"
+    },
+    {
+     "path": "refs/chamber/solovln/vsco-2-ce/LLVln_ArcoVib_A4_p.wav",
+     "size": 2612122,
+     "sha256": "0d05607b46b78690893006d5aa7923ac304c7fb497df1e96536dc88ac5ac487f"
+    },
+    {
+     "path": "refs/chamber/solovln/vsco-2-ce/LLVln_ArcoVib_C5_f.wav",
+     "size": 2497990,
+     "sha256": "af72f852ef2892233699851dacf5f8d97d446822d8eb4ce9e0ec27d5a721b118"
+    },
+    {
+     "path": "refs/chamber/solovln/vsco-2-ce/LLVln_ArcoVib_C5_p.wav",
+     "size": 2498790,
+     "sha256": "77a2133b5f97e1ec0edb759c0c552fc3efa7caf4ce1e0a4aa22625cf4c9da130"
+    },
+    {
+     "path": "refs/chamber/solovln/vsco-2-ce/LLVln_ArcoVib_G4_f.wav",
+     "size": 2366050,
+     "sha256": "14e3ea3d5172722d4d2686bae5da3d603800a7a474fa295d98275a9410913822"
+    },
+    {
+     "path": "refs/chamber/solovln/vsco-2-ce/LLVln_ArcoVib_G4_p.wav",
+     "size": 2594066,
+     "sha256": "ad1ba8442a6b40919093c9c831a8171c7030f7e651fbe075ab87764665deef88"
+    }
+   ],
+   "size": 63224268,
+   "manual": [
+    "Download the VSCO-2-CE repository (https://github.com/sgossner/VSCO-2-CE, 'Code' > 'Download ZIP', or git clone).",
+    "Find each file of this entry by its file name (glockenspiel 'glock_medium_*', string sections 'VlnEns_*', 'ViolaEns_*', 'susvib_*', 'pizzT_*', solo violin 'LLVln_ArcoVib_*') and copy it to the path given under ~/.cache/spectre.",
+    "python3 tools/engine_assets.py status refs-chamber-vsco2ce   (checks size and sha256)"
+   ],
+   "search_hint": "Versilian Studios Chamber Orchestra 2 Community Edition (VSCO-2-CE), CC0, by sgossner on GitHub. No direct per-file links are recorded (the repo is blocked in the sandbox where this manifest was written); the files are WAVs with the names listed. If you can list the repo, add each file's raw URL (https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/<path>) here.",
+   "mirror": "refs.tar"
+  },
+  {
+   "id": "refs-chamber-vcsl",
+   "kind": "files",
+   "required": false,
+   "for": "examples/chamberscore/build.py: glockenspiel reference; analysed only",
+   "licence": {
+    "name": "CC0 1.0",
+    "terms": "public domain dedication"
+   },
+   "page": "https://github.com/sgossner/VCSL",
+   "root": "cache",
+   "path": "refs/chamber/glockenspiel/vcsl",
+   "files": [
+    {
+     "path": "refs/chamber/glockenspiel/vcsl/glock_loud_C5_01.wav",
+     "size": 1323482,
+     "sha256": "b28baea01b6028e061e5cc978fca70f9062af6a59d155b0fe55e54ec89f42c07"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/vcsl/glock_loud_C6_01.wav",
+     "size": 1323482,
+     "sha256": "7ca228de549d54770f90bb125e23edcd1dc06cec2b9e1f452661720262f0ecd0"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/vcsl/glock_loud_C7_01.wav",
+     "size": 464710,
+     "sha256": "d9410b4cd52c1b5eb458098d9f8e7685d6dc12d512ee32db378f19d04f2b1f4b"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/vcsl/glock_loud_G4_01.wav",
+     "size": 1323482,
+     "sha256": "be0bf94731720c0094276fea5646e75ff3a8a646b3c828258e9aaab6a8ef6c49"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/vcsl/glock_medium_C5_01.wav",
+     "size": 1271310,
+     "sha256": "635f898e0bcb6975b96b18efd9c896f6f1b97ff12174a339ada4814e49675660"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/vcsl/glock_medium_C6_01.wav",
+     "size": 1271310,
+     "sha256": "e942cbf502cf6731df2925945fe3234c876cb63f047d91007b6929887f9e4904"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/vcsl/glock_medium_C7_01.wav",
+     "size": 492418,
+     "sha256": "b2ecbe0e60c983bbfaa49a1f45f8a11559f7dba27b8c8a032eb2cb7366a36910"
+    },
+    {
+     "path": "refs/chamber/glockenspiel/vcsl/glock_medium_G4_01.wav",
+     "size": 1271310,
+     "sha256": "6c4649b13e24fa01e4634edad8fe8edf18aef33facc5d49fe53097b376bac4da"
+    }
+   ],
+   "size": 8741504,
+   "manual": [
+    "Download the VCSL repository (https://github.com/sgossner/VCSL).",
+    "Copy the glockenspiel samples named in this entry ('glock_loud_*_01.wav', 'glock_medium_*_01.wav') to the paths given.",
+    "python3 tools/engine_assets.py status refs-chamber-vcsl"
+   ],
+   "search_hint": "Versilian Community Sample Library (VCSL), CC0, sgossner on GitHub, glockenspiel folder. Add the raw URLs here once you can list the repo.",
+   "mirror": "refs.tar"
+  },
+  {
+   "id": "refs-carols",
+   "kind": "files",
+   "required": false,
+   "for": "examples/caroling/check/check_midi.py: verifies the quoted carol melodies in docs/CAROLING.md",
+   "licence": {
+    "name": "Public domain (Mutopia Project)",
+    "terms": "none"
+   },
+   "page": "https://www.mutopiaproject.org/",
+   "root": "cache",
+   "path": "refs/carols",
+   "files": [
+    {
+     "path": "refs/carols/carol.mid",
+     "size": 2296,
+     "sha256": "0e1f08dd5e6840949cfa700c026643d6d748402d1b83336a9a723e94db1e8104",
+     "url": "https://www.mutopiaproject.org/ftp/WillisRS/carol/carol.mid"
+    },
+    {
+     "path": "refs/carols/first_noel.mid",
+     "size": 2418,
+     "sha256": "5529d7e725981d92b5649b820c431e77a08fb71f0db94249d994e67a28546dea",
+     "url": "https://www.mutopiaproject.org/ftp/Traditional/first_noel/first_noel.mid"
+    }
+   ],
+   "search_hint": "Mutopia Project pieces 'Carol (hymntune)' (WillisRS/carol) and 'The First Noel (hymntune)' (Traditional/first_noel); the .mid files.",
+   "mirror": "refs.tar",
+   "size": 4714
+  },
+  {
+   "id": "refs-anthem",
+   "kind": "files",
+   "required": false,
+   "for": "examples/anthem/check/: the independent checks of the anthem melody in docs/ROMANIAN.md 'Verified melody' (session 011)",
+   "licence": {
+    "name": "mixed, see each file",
+    "terms": "ro.mid: OpenTTD 'National Anthems of the World' vol. 5, says CC BY 4.0, provenance unclear, never commit it; navy_band.ogg: U.S. Navy Band, public domain (U.S. federal work); Drapelul.pdf: Law 75/1994 with its annexes, an official text excluded from copyright (Romanian Law 8/1996 art. 9)"
+   },
+   "page": "docs/ROMANIAN.md 'Sources'",
+   "root": "cache",
+   "path": "refs/anthem",
+   "files": [
+    {
+     "path": "refs/anthem/midi_openttd/ro.mid",
+     "size": 7029,
+     "sha256": "add693f58479d3f592d7fc830317c182ba2c0728f19cd771c7bc903934e7da47",
+     "url": "https://raw.githubusercontent.com/Maicarons/openttd-national-anthem-5/main/ro.mid"
+    },
+    {
+     "path": "refs/anthem/rec_navy/navy_band.ogg",
+     "size": 1947942,
+     "sha256": "84f91878bd9570492313c010c8ca67d1e821cb8c4624176822e4b6d1850f9ae8",
+     "url": "https://upload.wikimedia.org/wikipedia/commons/7/77/Desteapta-te%2C_romane%21.ogg",
+     "urls": [
+      "https://ftpmirror.your.org/pub/wikimedia/images/wikipedia/commons/7/77/Desteapta-te%2C_romane%21.ogg"
+     ]
+    },
+    {
+     "path": "refs/anthem/law/Drapelul.pdf",
+     "size": 250323,
+     "sha256": "4243bfea8cd1a88e84df7cb028a7cfa8806ff74057c04a4a0f6098e45c5f58a5",
+     "url": "https://arhiva.mosnita.ro/wp-content/uploads/2021/07/Drapelul.pdf"
+    }
+   ],
+   "search_hint": "ro.mid: GitHub Maicarons/openttd-national-anthem-5 (MD5 5e85ba28b2f988d904e43fc2f3467810). navy_band.ogg: Wikimedia Commons 'File:Desteapta-te, romane!.ogg' (1,947,942 bytes; upload.wikimedia.org rate-limits scripts, so its mirror ftpmirror.your.org is listed second). Drapelul.pdf: Law 75/1994 with annexes as published by a Romanian authority. The cantorion score is already in the repo (examples/anthem/).",
+   "mirror": "refs.tar",
+   "size": 2205294
+  },
+  {
+   "id": "refs-gtsinger",
+   "kind": "tool",
+   "required": false,
+   "for": "tools/humanref.py: how human singers time English syllables (docs/voice/GENERAL.md 'Timing')",
+   "licence": {
+    "name": "CC BY-NC-SA 4.0",
+    "terms": "measured only; nothing copied into the repo or a track; the per-syllable table humanref writes stays in the cache (it is an adaptation)"
+   },
+   "page": "https://huggingface.co/datasets/GTSinger/GTSinger",
+   "root": "cache",
+   "path": "refs/gtsinger",
+   "command": "python3 tools/humanref.py",
+   "note": "No download beforehand: humanref.py lists the dataset through the Hugging Face API and fetches the English Control_Group and Paired_Speech_Group annotation files (JSON, about 30 MB) it samples, on demand, into the cache.",
+   "search_hint": "Hugging Face dataset GTSinger/GTSinger (Zhang et al., NeurIPS 2024); folder English/<singer>/<technique>/.../Control_Group and Paired_Speech_Group.",
+   "mirror": "refs.tar"
+  },
+  {
+   "id": "refs-catalogue",
+   "kind": "api",
+   "required": false,
+   "for": "tools/refcurve.py and tools/catalogue_stats.py: era targets and the genre docs' catalogue numbers",
+   "licence": {
+    "name": "MusicBrainz data CC0 (core data); AcousticBrainz CC0",
+    "terms": "MusicBrainz asks for a meaningful User-Agent and at most 1 request per second"
+   },
+   "page": "https://musicbrainz.org/doc/MusicBrainz_API ; https://acousticbrainz.org/",
+   "endpoints": [
+    "https://musicbrainz.org/ws/2/",
+    "https://acousticbrainz.org/api/v1/low-level"
+   ],
+   "root": "cache",
+   "path": "refs/catalogue",
+   "note": "No download: the tools query the APIs and cache the answers in refs/catalogue (AcousticBrainz is frozen since 2022 but still serves its data).",
+   "search_hint": "If AcousticBrainz goes offline, its full data dumps are listed on https://acousticbrainz.org/download (CC0).",
+   "mirror": "refs.tar"
+  }
+ ]
+}

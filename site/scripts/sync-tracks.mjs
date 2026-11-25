@@ -8,11 +8,11 @@
  * so this only runs where local files are needed:
  *  - `npm run dev:local` (offline development) and static exports (`npm run export`,
  *    `export:preview`), which have no audio route: always;
- *  - `npm run build` (prebuild, the transition): only while no bucket is configured
- *    (any SPECTRE_S3_* variable missing), so the deployed site keeps playing the old
- *    local files until the owner sets the bucket up; with the bucket configured it copies
- *    nothing and the deployment carries no audio. Remove the prebuild step when the
- *    session folders leave the repo (docs/ORCHESTRATION.md, queue 11).
+ *  - `npm run build` (prebuild): only while no bucket is configured (any SPECTRE_S3_*
+ *    variable missing), so a site without a bucket (a fork, a fresh clone, local work)
+ *    plays the local masters; with the bucket configured it copies nothing and the
+ *    deployment carries no audio. A track whose session folder is not here is skipped
+ *    with a warning (it has no audio in that build); the build never fails for it.
  *
  *   node scripts/sync-tracks.mjs            copy unless the bucket is configured
  *   node scripts/sync-tracks.mjs --force    copy regardless
@@ -72,7 +72,7 @@ for (const t of tracks) {
     );
   }
   if (!masters.length) {
-    console.error(`sync-tracks: missing master for ${t.id} ${t.title} (upload_track.py --fetch ${t.id})`);
+    console.warn(`sync-tracks: no local master for ${t.id} ${t.title} (upload_track.py --fetch ${t.id})`);
     missing++;
     continue;
   }
@@ -81,5 +81,5 @@ for (const t of tracks) {
   await copyFile(masters[0], dest);
   console.log(`sync-tracks: ${t.id} ${t.title}: ${path.relative(web, masters[0])} -> public/tracks/${t.file}`);
 }
-if (missing) process.exit(1);
-console.log(`sync-tracks: ${tracks.length} tracks copied to public/tracks/ (local audio)`);
+if (missing) console.warn(`sync-tracks: ${missing} of ${tracks.length} tracks have no local master (no audio for them in this build)`);
+console.log(`sync-tracks: ${tracks.length - missing} tracks in public/tracks/ (local audio)`);

@@ -135,6 +135,7 @@ Two measurements, both from renders the session already makes. They are proxies:
 
 **Words.** Cut the bars of each sung line (half a second before to half a second after), transcribe with faster-whisper `small.en` (`small` forced to the language for Spanish), and count the line's words found in order:
 ```python
+import os; os.environ.setdefault("HF_HOME", os.path.expanduser("~/.cache/spectre/svs/hf"))  # where tools/setup.sh installs the models
 from faster_whisper import WhisperModel
 m = WhisperModel("small.en", device="cpu", compute_type="int8", cpu_threads=2)
 segs, _ = m.transcribe(x16k_mono, language="en", beam_size=5, condition_on_previous_text=False)

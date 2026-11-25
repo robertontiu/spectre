@@ -1,9 +1,15 @@
-"""Publish a Spectre track: its session files go to the S3 bucket under the track's uuid.
+"""Publish a Spectre track: its session files go to an S3-compatible bucket under the track's uuid.
 
 Work happens locally in sessions/<id>-<name>/; publishing a track (or a new version of
-it) is the one step that sends everything new to the owner's S3 bucket (OVHcloud
-Object Storage). The repo keeps only cross-track files; site/data/tracks.json is the
+it) is the one step that sends everything new to the bucket configured in the
+environment. The repo keeps only cross-track files; site/data/tracks.json is the
 showcase list and carries each track's uuid.
+
+Without a bucket (none of the SPECTRE_S3_* variables set: a fork or a fresh clone),
+publishing uploads nothing and does not fail: it still runs every local check (uuid,
+the publish set, the required files, the MP3), then lists the files to send to the user
+in the chat instead, and exits 0. --all, --cors, --check and --fetch need the bucket;
+without one they say so and are skipped (exit 0).
 
     python3 tools/upload_track.py 016        # publish: uuid if new, upload what changed, verify
 
@@ -38,9 +44,9 @@ the folder exactly.
 
 Configuration comes only from environment variables (never commit their values):
 
-    SPECTRE_S3_ENDPOINT           e.g. https://s3.gra.io.cloud.ovh.net
-    SPECTRE_S3_REGION             e.g. gra
-    SPECTRE_S3_BUCKET
+    SPECTRE_S3_ENDPOINT           e.g. https://s3.<region>.example.com
+    SPECTRE_S3_REGION             e.g. <region>
+    SPECTRE_S3_BUCKET             e.g. <your-bucket>
     SPECTRE_S3_ACCESS_KEY_ID      the workspace's read-write key (the site gets a read-only one)
     SPECTRE_S3_SECRET_ACCESS_KEY
     SPECTRE_S3_CORS_ORIGINS       optional, comma-separated, replaces the default CORS origins
@@ -121,6 +127,32 @@ def env(name, default=None, required=True):
     if required and not value:
         raise Refused(f"{name} is not set (see AGENTS.md, 'Track files in S3')")
     return value
+
+
+S3_VARS = ("SPECTRE_S3_ENDPOINT", "SPECTRE_S3_REGION", "SPECTRE_S3_BUCKET",
+           "SPECTRE_S3_ACCESS_KEY_ID", "SPECTRE_S3_SECRET_ACCESS_KEY")
+
+
+def bucket_configured():
+    """False when none of the S3 variables is set (no bucket: local delivery); refuses a partial set."""
+    have = [v for v in S3_VARS if os.environ.get(v, "").strip()]
+    if not have:
+        return False
+    missing = [v for v in S3_VARS if v not in have]
+    if missing:
+        raise Refused(f"the bucket is partly configured: {', '.join(missing)} not set (set all five, or none)")
+    return True
+
+
+def deliver_locally(t):
+    """No bucket: the files that would be published, to send to the user in the chat."""
+    folder, files = publishable(t)
+    order = [RENDITION] + sorted(n for n in files if n != RENDITION)
+    print(f"  {t['id']} {t['title']} (uuid {t.get('uuid', 'assigned on a real run')}): {os.path.relpath(folder, ROOT)}/")
+    for n in order:
+        path, rel = files[n]
+        note = "  (the master)" if n == RENDITION else ""
+        print(f"    {os.path.abspath(path)}{note}")
 
 
 def config():
@@ -490,6 +522,22 @@ def main():
         ap.error("name tracks to publish, or use --all, --cors, --check or --fetch")
     try:
         tracks = load_tracks()
+        if not bucket_configured():
+            for flag, on in (("--all", a.all), ("--cors", a.cors), ("--check", a.check), ("--fetch", bool(a.fetch))):
+                if on:
+                    print(f"upload_track: {flag} needs an S3 bucket (the SPECTRE_S3_* variables, AGENTS.md section 8); "
+                          "none is configured: skipped")
+            chosen = [find_track(tracks, n) for n in a.tracks]
+            for t in chosen:
+                publishable(t)  # every local check, before tracks.json is touched
+            if not chosen:
+                return 0
+            if not a.dry_run:
+                assign_uuids(tracks, chosen)
+            print("No S3 bucket configured: nothing uploaded. Deliver these files to the user in the chat:")
+            for t in chosen:
+                deliver_locally(t)
+            return 0
         chosen = tracks if a.all else [find_track(tracks, n) for n in a.tracks]
         fetching = [find_track(tracks, n) for n in a.fetch]
         for t in chosen:

@@ -18,12 +18,12 @@ their own path. Scratch (master logs, the trap comparison master, clarity text) 
 
 ## Status (2026-11-25)
 
-Finished and used on 004 and 005: `waitfree.sh` (python-only match plus the free-memory check), `stage2.sh`,
+Finished and used on 004, 005 and 006: `waitfree.sh` (python-only match plus the free-memory check), `stage2.sh`,
 `evcmp.py`, `barkcmp.py` (reads the median through `refcurve.catalogue_median`), `deliver.py`.
-`stage1.sh` ran once (005) and worked. Not finished: `remixlib.py` is the previous agent's helper copied as it was
+`stage1.sh` ran on 005 and 006 and worked. Not finished: `remixlib.py` is the previous agent's helper copied as it was
 (no tests, `as_stack` only handles plain tracks); the scripts assume the `hiphop` genre and the `hiphop_2015` target
 (pass other flags yourself for other genres); nothing reruns a master the OOM killer stopped (check the log for
-SIGKILL and rerun `studio.py master vNNN` alone). Session 006 has not been remixed with them.
+SIGKILL and rerun `studio.py master vNNN` alone). Used on 004, 005 and 006.
 
 Typical run (pass the published master's own flags, from its `master-report.json` settings, wherever they differ
 from the genre's defaults):

@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
-# Prepare a fresh environment for Spectre (Claude Code cloud environment setup script, or by hand).
-# Hanami has no direct download link: download it from https://lottev.moe/ and run
-# `python3 tools/engine_assets.py import <zip>` (or, for the owner, the private mirror via SPECTRE_S3_*). See docs/HANDOFF.md, "New environment".
+# Engine setup: everything the engine, the producer and the measurement tools need, before any work on a track.
+# Every third-party resource is listed in engine/third_party.json (official link or manual steps, licence,
+# size, sha256, install location, search hint) and installed from its official source; nothing is bundled.
+#   1. system tools and the pip requirements
+#   2. tools/engine_assets.py install       (official sources)
+#   3. tools/engine_assets.py pull          (an optional private mirror, only if its environment variables are
+#                                            set: SPECTRE_MIRROR_BUCKET and SPECTRE_S3_*; fills in what is still missing)
+#   4. tools/engine_assets.py status        (exits non-zero while a required resource is missing)
 # In a Claude Code cloud environment the variables are only set once the session runs (not in the
 # environment's setup script), so run this at the start of the session; it skips what is already there.
+# If a required resource is still missing at the end: search for its official source (search_hint in the
+# manifest), verify licence, size and sha256, install it (`engine_assets.py import <zip>` for a zip) and
+# update the manifest's link (AGENTS.md, "Engine setup: third-party resources").
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -13,10 +21,16 @@ fi
 
 pip install -q --break-system-packages -r requirements.txt
 
-# Voicebanks from their official sources (each user accepts their licences); the owner's private
-# mirror fills in what has no direct link (Hanami) when its credentials are set.
 python3 tools/engine_assets.py install
-if [ -n "${SPECTRE_S3_ACCESS_KEY_ID:-}" ]; then
-  python3 tools/engine_assets.py pull || echo "setup: private mirror not reachable"
+
+if [ -n "${SPECTRE_MIRROR_BUCKET:-}" ] && [ -n "${SPECTRE_S3_ACCESS_KEY_ID:-}" ]; then
+  python3 tools/engine_assets.py pull || echo "setup: the mirror did not answer"
 fi
-python3 tools/engine_assets.py status
+
+if ! python3 tools/engine_assets.py status; then
+  echo
+  echo "setup: FAILED: a required third-party resource is still missing (see above)." >&2
+  echo "setup: find its official source (search_hint in engine/third_party.json), verify it, install it, update the manifest." >&2
+  exit 1
+fi
+echo "setup: ok, every required resource is installed"

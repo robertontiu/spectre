@@ -26,15 +26,15 @@ npm run dev          # http://localhost:3000
 
 ## Audio
 
-The masters are not part of the site or its deployments. They live in the owner's S3 bucket (OVHcloud Object Storage), with each track's other session files, under the track's `uuid` from `data/tracks.json`: `<uuid>/rendition.mp3` is the master (layout in [AGENTS.md](../AGENTS.md), "Track files in S3").
+The masters are not part of the site or its deployments. With a bucket configured, they live in an S3-compatible bucket set up through environment variables (below), with each track's other session files, under the track's `uuid` from `data/tracks.json`: `<uuid>/rendition.mp3` is the master (layout in [AGENTS.md](../AGENTS.md), "Track files in S3").
 
 - The player loads `/api/track/<slug>` ([`src/app/api/track/[slug]/route.server.ts`](src/app/api/track/[slug]/route.server.ts)). The route finds the slug in `data/tracks.json` (404 otherwise) and answers with a 302 to a presigned GET of `<uuid>/rendition.mp3`, signed with a **read-only** key ([`src/lib/s3.ts`](src/lib/s3.ts)). No audio passes through the function, which only signs (Node runtime, a few ms per call, well inside Vercel Hobby's limits). The redirect carries `Cache-Control: private, max-age=300`.
 - **Signed URLs** are valid for at least `SPECTRE_SIGNED_URL_TTL` seconds (default 3600) after they are handed out. The `<audio>` element keeps using the URL it got for every later range request (seeking, re-buffering after a pause), so the URL has to outlive a listening session of a track: the longest track runs 7:28, and an hour covers it several times over, pauses included, while a shared URL dies within the hour. URLs are signed per 10-minute window (the same URL for everyone inside a window, valid for window + TTL), so the browser's HTTP cache can reuse the bytes across plays. If a URL still expires (a very long pause), the player re-resolves the source before resuming or seeking once it is 25 minutes old, and reloads after an error or an 8-second stall, carrying on from the same spot (`player-store.ts`).
-- **Signing:** a hand-written SigV4 query presigner (about 40 lines of `node:crypto`) instead of `@aws-sdk/client-s3` + `@aws-sdk/s3-request-presigner`: the route signs one kind of request only, and the SDK would add several MB of dependencies and a heavier function bundle and cold start. Its output is byte-identical to botocore's presigner (tested with OVH-style and local endpoints, special characters in keys, a trailing slash in the endpoint).
+- **Signing:** a hand-written SigV4 query presigner (about 40 lines of `node:crypto`) instead of `@aws-sdk/client-s3` + `@aws-sdk/s3-request-presigner`: the route signs one kind of request only, and the SDK would add several MB of dependencies and a heavier function bundle and cold start. Its output is byte-identical to botocore's presigner (tested with hosted S3-compatible and local endpoints, special characters in keys, a trailing slash in the endpoint).
 - **Cross-origin audio:** the visualizer wires the `<audio>` element into an AudioContext through a MediaElementSource; for audio from another origin that graph outputs silence unless the element has `crossOrigin="anonymous"` (set in `player-context.tsx`) **and** the bucket answers with CORS headers. The bucket's CORS rules are set with `python3 ../tools/upload_track.py --cors`: GET and HEAD from `https://spectre.robertontiu.com`, `https://spectre-*.vercel.app` (preview deployments) and `http://localhost:3000`, exposing `Accept-Ranges`, `Content-Range` and `Content-Length`.
 - **Hotlinking** is deterred where it is cheap and cannot break playback: the route refuses (403) a request whose `Origin` is another site, or that another site's page makes for media or a fetch (`Sec-Fetch-Site: cross-site` with any `Sec-Fetch-Dest` but `document`). Same-origin requests, address-bar navigations, link clicks and clients without these headers (crawlers reading `og:audio`, curl) pass: a missing `Referer` or `Origin` is normal for `<audio>`. This keeps other pages from embedding the player's audio; it cannot stop anyone from downloading a track, and a signed URL works for anyone who has it until it expires.
 - `og:audio` on each track page is `https://spectre.robertontiu.com/api/track/<slug>`.
-- **Without a bucket** (any of the five `SPECTRE_S3_*` variables below missing), the route redirects to `/tracks/<file>` in `public/tracks/`, and `npm run build`'s prebuild copies the masters there from `../sessions/`. That is how the site runs until the owner configures the bucket on Vercel: **switching is setting the variables and redeploying**; the prebuild then copies nothing and deployments carry no audio. Once the session folders leave the repo (docs/ORCHESTRATION.md, queue 11), the prebuild step goes too.
+- **Without a bucket** (any of the five `SPECTRE_S3_*` variables below missing), the route redirects to `/tracks/<file>` in `public/tracks/`, and `npm run build`'s prebuild copies the masters there from `../sessions/`. That is how the site runs for anyone without a bucket (a fork, a fresh clone, local work): the session folders are the local source of the audio. A track whose session folder is not in the checkout is skipped with a warning and has no audio in that build; the build itself never fails for it (`npm run build` without any `SPECTRE_S3_*` variable: checked 2026-11-25). **Switching to a bucket is setting the variables and redeploying**; the prebuild then copies nothing and deployments carry no audio.
 - Static exports (`export`, `export:preview`) have no server, so they leave the route out (`pageExtensions` in `next.config.ts` drops `*.server.ts`) and play their bundled copies under `tracks/`.
 
 ### Environment variables
@@ -43,9 +43,9 @@ Set them in Vercel (Project → Settings → Environment Variables, Production a
 
 | Variable                       | Value                                                                                       |
 | ------------------------------ | ------------------------------------------------------------------------------------------- |
-| `SPECTRE_S3_ENDPOINT`          | the bucket's S3 endpoint, e.g. `https://s3.gra.io.cloud.ovh.net` (path-style URLs are used) |
-| `SPECTRE_S3_REGION`            | e.g. `gra`                                                                                  |
-| `SPECTRE_S3_BUCKET`            | the bucket's name                                                                           |
+| `SPECTRE_S3_ENDPOINT`          | the bucket's S3 endpoint, e.g. `https://s3.<region>.example.com` (path-style URLs are used)  |
+| `SPECTRE_S3_REGION`            | e.g. `<region>`                                                                             |
+| `SPECTRE_S3_BUCKET`            | the bucket's name, e.g. `<your-bucket>`                                                     |
 | `SPECTRE_S3_ACCESS_KEY_ID`     | the site's **read-only** key (the workspace's upload key is a different, read-write one)    |
 | `SPECTRE_S3_SECRET_ACCESS_KEY` | its secret                                                                                  |
 | `SPECTRE_SIGNED_URL_TTL`       | optional: seconds a signed URL lives at least, default `3600` (minimum 60)                  |
@@ -62,14 +62,14 @@ Set them in Vercel (Project → Settings → Environment Variables, Production a
 
    `id` selects the session folder; `file` is the track's slug plus `.mp3` (the slug is its URL, `/track/016-title-slug`, and `file` its name in `public/tracks/` when played locally); `duration` comes from `ffprobe`, `genre` is the short label shown beside the tempo, and `colors` are 2-3 colours that fit the track (the page mutes them).
 
-3. **Publish:** `python3 ../tools/upload_track.py 016` (with the workspace's write key in the environment) gives the track its `uuid` in `data/tracks.json` and uploads its session files to the bucket. Then check `npm run build` and commit `data/tracks.json`; the site picks the track up on its next deploy.
+3. **Publish:** `python3 ../tools/upload_track.py 016` (with the workspace's write key in the environment) gives the track its `uuid` in `data/tracks.json` and uploads its session files to the bucket. Without a bucket it uploads nothing, runs the same local checks and lists the files to send to the user instead (exit 0); the session folder stays local and the site plays its master from it. Then check `npm run build` and commit `data/tracks.json`; the site picks the track up on its next deploy.
 
 ## Deploy on Vercel
 
 Create a Vercel project from the GitHub repo with:
 
 - **Root Directory:** `site`
-- **Include files outside the root directory in the Build Step:** enabled (it is by default). Only needed while no bucket is configured: the prebuild then reads the masters from `../sessions/`.
+- **Include files outside the root directory in the Build Step:** enabled (it is by default). Only needed without a bucket: the prebuild then reads the masters from `../sessions/`.
 - Framework preset Next.js, default build command (`npm run build`) and output. No `vercel.json`.
 - **Environment variables:** the five `SPECTRE_S3_*` variables above with the read-only key, for Production and Preview (and `SPECTRE_SIGNED_URL_TTL` if the default doesn't suit). Without them the site serves the local copies (see "Audio").
 - Domain: add `spectre.robertontiu.com` and point a `CNAME` for `spectre` at `cname.vercel-dns.com`. Absolute URLs in the metadata, sitemap, share links and OG cards use `https://spectre.robertontiu.com` (`src/lib/site.ts`).
