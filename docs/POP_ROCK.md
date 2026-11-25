@@ -171,6 +171,13 @@ General moves [S]: a 70 Hz, 12 dB/octave high-pass on most sources except kick a
 
 **Where Spectre stands** [M] (stems of session 009's last chorus, rendered in memory, 2026-11-25; 15 sounding stems): the voice is the loudest stem in every region from 150 Hz to 18 kHz; both guitars, the bass and the kick are 44-66% masked; the organ is 98% masked, in effect absent; five sources sit within 10 dB at 150-400 Hz (voice, both guitars, snare, bass). The voice is carved well; what is under it has no slots of its own. Nothing but the voice, the snare and the cymbals reaches above 6 kHz.
 
+**How to build it in Spectre** (engine since 2026-11-25; docs/MANUAL.md "Production"). Set `"genre": "rock"`.
+- *Rhythm guitars*: two `eguitar` tracks (different voicings, drive, `dark`, `pickup`) panned -0.85 / +0.85 on a `guitars` bus (`comp` 2:1 taking 2-3 dB, `{"type": "eq", "hz": 2500, "gain_db": -2.5, "q": 0.7}` under the voice). Where both play the same voicing, one track with two layers works too: `{"layers": [{"name": "L", "inst": {"type": "eguitar", "drive": 0.7, "dark": 0.4}, "pan": -0.85, "role": "guitar"}, {"name": "R", "inst": {"type": "eguitar", "drive": 0.55, "dark": 0.55, "pickup": 0.2}, "pan": 0.85, "offset_ms": 12, "role": "guitar"}]}` (each layer runs its own amp; the offset stands in for a second take).
+- *Kick*: `kitkick` plus a `kicksub` layer tuned to the key (role `kick`, `"eq": {"lp": 110}`, 6-8 dB down) for the 60-80 Hz weight the `rock_2015` target asks for (+4 dB at 80 Hz) without boosting the shell's boxiness.
+- *Bass guitar, clean and driven blended*: `{"role": "bass", "layers": [{"name": "clean", "inst": {"type": "ebass", "drive": 0.1}, "role": "bass", "fx": [{"type": "lpf", "hz": 700, "slope": 12}]}, {"name": "grit", "inst": {"type": "ebass", "drive": 0.8, "pick": 0.9}, "role": "bass", "eq": "none", "fx": [{"type": "hpf", "hz": 300, "slope": 12}], "gain_db": -6}], "fx": [{"type": "comp", "threshold_db": -20, "ratio": 3}]}`: the low end from the clean layer, the 800 Hz-1 kHz definition from the driven one.
+- *Kit*: kit pieces on a `kit` bus (`comp` 2:1, a little `sat`, `clip` 1 dB), one shared `room` return instead of a `room` fx on every piece.
+- *Voice*: `singer` with its `double`; a `plate` or `hall` return ducked by the voice (`"duck": {"key": "<voice>", "depth_db": 4}`).
+
 ## Era assessment of the master target (2026-11-25)
 **What the current curve is.** `rock`: the mean of Pestana et al.'s (2013) "pop" and "rock" genre averages: number-one singles 1950-2010, leaning on 1960s-1980s records, magnitude-averaged (docs/MASTERING.md). The earlier `rock_handtuned` curve is kept for comparison.
 

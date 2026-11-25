@@ -166,6 +166,11 @@ The cross-genre method is in [PRODUCTION.md](PRODUCTION.md). Labels: **[M]** mea
 
 **Where Spectre stands** [M] (session 012's project): eleven `singer` tracks as the choir, three organ tracks (door, manuals, pedal), strings as cello, piano, three bell tracks: the richest stack of any Spectre track, built from voices. Its known weak point is the low end against the borrowed curve (next section), not layering. No stem analysis was run on 012 for this brief.
 
+**How to build it in Spectre** (engine since 2026-11-25; docs/MANUAL.md "Production"). Set `"genre": "caroling"`: light presets (-1.5 dB cuts, no boosts).
+- *A section as a stack*: one choir part as several `singer` layers on the same notes, each its own voice, `seed` and a few ms apart: `{"layers": [{"name": "a", "inst": {"type": "singer", "voice": "hanami", "seed": 1, "svs_vibrato": 0.4}, "role": "choir"}, {"name": "b", "inst": {"type": "singer", "voice": "hanami-soft", "seed": 2, "svs_vibrato": 0.4}, "role": "choir", "offset_ms": 14, "pan": -0.4, "gain_db": -2}, {"name": "c", "inst": {"type": "singer", "voice": "leona-soft", "seed": 3, "svs_vibrato": 0.4}, "role": "choir", "offset_ms": -9, "pan": 0.4, "gain_db": -3}], "fx": [{"type": "comp", "threshold_db": -24, "ratio": 2}]}` (each layer sings its own take: render time grows with the layers).
+- *Bells over the choir*: a `bell` (`"clean": true`) or `glockenspiel` layer an octave up on the tune's stack, `vel` 0.5-0.7: the choir's transient and air.
+- *Spaces*: one church `hall` return (`mix.returns`, `predelay_ms` 20-30, `hpf` 250, `lpf` 7000); organ pedal and cello on a `low` bus.
+
 ## Era assessment of the master target (2026-11-25)
 **What the current target is.** `caroling` reuses the `rock` curve (Pestana et al. 2013, pop and rock number-one singles 1950-2010) at `eq` 0.5 and -14 LUFS; this brief already notes that "a choir-and-bells arrangement without low instruments will show low-end boosts at the EQ limit, which is the borrowed curve, not a mix fault".
 

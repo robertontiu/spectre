@@ -50,7 +50,11 @@ engine/
   ear.py          the ears: arrangement lanes, mel spectrogram, band energy, loudness, per-section stats,
                   warnings; zoom view with onset grid and timing roll
   clarity.py      ears for stems (`listen --clarity`): a section re-rendered in memory, layer census, masked and own
-                  share per stem, occupancy, low-mid build-up, crest, flags against the genre's EQ map
+                  share per stem, occupancy, low-mid build-up, crest, flags against the genre's EQ map, stack view
+  mixbus.py       production (opt-in): stacks (`layers`), role EQ presets from eqmaps.json, group buses, named returns
+                  (several reverbs/delays, filtered, ducked), fx ott / dyneq / clip / mseq, correlated humanizing
+  synth.py        production sounds: `supersaw` model 2 (Szabo), `polysynth` (LFOs, envelopes, drift), `sub`, kick
+                  layers (`kicksub`, `kickpunch`, `kickclick`), `metalhat` (tonal hats), `air`
   eqmaps.json     the genre EQ maps as data (per role: high-pass, cut and owned regions; core roles), from the genre docs
   master.py       the release mastering stage (see docs/MASTERING.md)
   genres.json     genre configurations (target curve, loudness and mastering settings, length, form, tempo, sources);
@@ -83,6 +87,8 @@ examples/
                   from, the check scripts (transcription in docs/ROMANIAN.md, "Verified melody")
   chamberscore/   chamber-score instruments A/B (old stand-ins vs celesta, glockenspiel, vibraphone, cello, viola,
                   strings_section) and spectrograms against reference recordings (build.py)
+  production/     the production upgrade A/B: First Light and Half of Me excerpts as published vs rebuilt with stacks
+                  (mp3, clarity numbers, spectrograms; build.py)
   joc/            lăutar band A/B (old fiddle vs violin, the violin's articulations, acguitar, toba, a tempo ramp; build.py)
   vocals/         svs/: the singer's voices (auditions in voices/, voices.py; male.py for the male ones), the DiffSinger trial (dsinger.py, build.py),
                   the mix study (blend.py), choir and vibrato tests (vibrato.py), Spanish and Romanian checks; the

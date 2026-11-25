@@ -202,6 +202,12 @@ Timbales and congas are kept nearer the centre or spread to avoid clashing with 
 
 **Where Spectre stands** [M] (session 014's project): nine `acguitar` tracks (requinto variants and segunda variants: articulations, not simultaneous layers), one bass, three `darbuka` tracks standing in for the bongó, a shaker for the maracas, one voice. No instrument reaches the top octave: the master measures 5.5-6 dB under the reference albums' median from 5.3 to 12 kHz and 10 dB under at 12-15.5 kHz, which is as dark as the bolero and acoustic albums and far darker than bachata (next section). If a brief wants the bachata brightness, the missing layer is the top of the percussion (a real güira or maracas sound) and string noise on the guitars.
 
+**How to build it in Spectre** (engine since 2026-11-25; docs/MANUAL.md "Production"). Set `"genre": "latinpop"`: light presets (-1.5 dB cuts, no boosts) for the guitars, the hip hop map for a dembow kit.
+- *Guitars*: requinto and segunda on a `guitars` bus with one short `room` return (`mix.returns`, size 0.3, `predelay_ms` 10); the requinto's built-in double is its `chorus` fx, not a layer.
+- *Percussion*: bongó and güira or maracas on a `perc` bus (light `comp`), the güira with `"humanize": {"ms": 3, "beta": 1.0}` (a player's drift, not jitter).
+- *Soft reggaetón-pop*: the dembow kit and an 808 stack as in docs/HIPHOP.md "How to build it in Spectre".
+- *Voice*: `singer` with `double`; its own `hall` return ducked by the voice.
+
 ## Era assessment of the master target (2026-11-25)
 **What the current target is.** `latinpop` reuses the `rock` curve (Pestana et al. 2013, pop and rock number-one singles 1950-2010) at `eq` 0.6 and -11 LUFS; docs/MANUAL.md already warns that a nylon-guitar-and-bass band "shows a hole at 100-160 Hz against it".
 

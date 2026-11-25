@@ -176,6 +176,11 @@ The cross-genre method is in [PRODUCTION.md](PRODUCTION.md). Labels: **[M]** mea
 
 **Where Spectre stands** [M] (session 010's project): violin, guitar, bass, tobă (four strokes), snare, snaps and claps, one track each; the layering is in the writing (double stops, the two motifs fusing). No stem analysis was run on 010 for this brief; run the clarity analysis proposed in PRODUCTION.md before any remix.
 
+**How to build it in Spectre** (engine since 2026-11-25; docs/MANUAL.md "Production"). Set `"genre": "joc"`: the role presets are light (-1.5 dB cuts, no boosts). Stacks are for doublings, not for building sounds:
+- *Climax doubling*: the violin line doubled at the octave by a cimbalom shadow, as layers of one stack: `{"layers": [{"name": "violin", "inst": {"type": "violin"}, "role": "lead"}, {"name": "shadow", "inst": {"type": "cimbalom", "hard": 0.5}, "role": "pluck", "octave": -1, "vel": 0.6, "offset_ms": 12, "gain_db": -6}]}`; use it only where the tune climbs (section `auto` on the stack mutes or fades it elsewhere).
+- *The band as one*: violin, guitar, bass and tobă on a `band` bus with a gentle `comp` (2:1, 1-2 dB of reduction) and one short `room` return sent from every instrument (no hall).
+- *No* `ott`, no `clip`, no air layer: the acoustic band is balanced by playing and orchestration (PRODUCTION.md, "Where not to carve").
+
 ## Era assessment of the master target (2026-11-25)
 **What the current target is.** `joc` reuses the `rock` curve (Pestana et al. 2013, pop and rock number-one singles 1950-2010) at `eq` 0.7 and -11 LUFS: a stand-in, never measured on lăutar music.
 

@@ -133,6 +133,12 @@ The cross-genre method is in [PRODUCTION.md](PRODUCTION.md). Labels: **[M]** mea
 
 **Where Spectre stands** [M] (stems of session 015's tutti, rendered in memory, 2026-11-25; 10 sounding stems): seven sources within 10 dB of each other at 150-400 Hz (cello, piano, solo cello, violas, the reverb return, celesta, celli), the densest low-mid of the five tracks analysed, with the celli and the solo cello about half masked; six sources at 2-6 kHz; **only the glockenspiel above 6 kHz**. The fix is orchestration, not EQ: thin the 150-400 Hz doublings (one sustained source there at a time), move one of them up an octave, and let a string line or the room carry some of the air.
 
+**How to build it in Spectre** (engine since 2026-11-25; docs/MANUAL.md "Production"). Set `"genre": "chamberscore"`: the lightest presets (-1.5 dB cuts, no boosts). Stacks are orchestral doublings:
+- *Theme doubled*: `{"layers": [{"name": "piano", "inst": {"type": "piano"}, "role": "keys", "eq": "none"}, {"name": "glock", "inst": {"type": "glockenspiel", "hardness": 0.4}, "role": "bells", "octave": 2, "vel": 0.6, "gain_db": -4}]}`: the glockenspiel gives the attack and the top, the piano the body.
+- *Strings on one bus*: violins, violas and celli (`strings_section`) with `"bus": "strings"` and a broad cut on the bus, not per part: `"buses": {"strings": {"fx": [{"type": "eq", "hz": 320, "gain_db": -1.5, "q": 0.7}]}}` (Beat Kitchen).
+- *Two depths*: the piano near (a short `room` return or none), the strings behind it in a `hall` return (`predelay_ms` 20, `hpf` 220, `lpf` 8000).
+- *No* `ott`, `clip`, stacks of synths or air layers: orchestration and balance do the job.
+
 ## Era assessment of the master target (2026-11-25)
 **What the current target is.** `chamberscore` reuses the `rock` curve (Pestana et al. 2013, pop and rock number-one singles 1950-2010) at `eq` 0.4 and -15 LUFS ("The mastering decision" above: "replace with a curve measured on scores or neo-classical records when one exists").
 
