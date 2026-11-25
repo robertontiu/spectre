@@ -8,7 +8,7 @@ their own path. Scratch (master logs, the trap comparison master, clarity text) 
 
 | File | What it does |
 |---|---|
-| `waitfree.sh` | Waits until no other lane renders or masters. Matches real python processes running `studio.py` or `master.py` by process name, so other lanes' waiting shell wrappers never count (two waiting lanes cannot block each other). Also waits for at least `$MIN_FREE_MB` (3000) MB available memory. Polls every second. |
+| `waitfree.sh [render\|master\|whisper]` | Waits for a slot sized to the machine (AGENTS.md rule 7): `render` while fewer than `MAX_RENDERS` renders run (2 on 14 GB or more, else 1) and no master; `master` when nothing else heavy runs; `whisper` when no other Whisper and no master runs. Memory: 7000 MB free before a render or master, 5000 before Whisper (`RENDER_MB`, `MASTER_MB`, `WHISPER_MB` override). No argument: the old rule, nothing heavy running. Matches real python processes by name, so waiting shell wrappers never count. Polls every second. |
 | `stage1.sh <session> <pub vNNN> [master flags]` | Remaster step: re-renders the published project unchanged as a new version, checks events, masters with `--genre trap` (to scratch) and `--genre hiphop` (to `renders/`), reads both masters and the published one in Bark bands, then runs `listen --clarity --genre hiphop` on the loudest section. |
 | `stage2.sh <session> <pub vNNN> <section> [master flags]` | One remix move: renders the edited `project.json`, checks events, runs clarity on one section and masters with `--genre hiphop` (`NOMASTER=1` skips the master). |
 | `evcmp.py <pub meta> <new meta>` | Every original track's events (time, velocity, pitch) must be identical in the new render; lists added tracks; exit code 1 on any difference. |
