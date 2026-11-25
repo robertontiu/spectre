@@ -132,7 +132,7 @@ The principles for every genre, the choir research and the check procedure are i
 | piano | `piano` (felt), `ep` | usable | soft additive piano: a grand's attack and body are thin |
 | strings | `strings` | weak (session 012: low strings read as a synth pad) | no real string section |
 | dembow kit | `kick`, `snare`, `rim`, `handclap`, `hat`, `shaker`, `808` | good (beat sessions) | timbal rolls missing |
-| voice | `singer` svs `hanami-es`, `hanami-es-soft` | Spanish 96% by Whisper; the accent unjudged by ear | female only; no Spanish male voice |
+| voice | `singer` svs `hanami-es`, `hanami-es-soft` | Spanish 96% by Whisper; the accent unjudged by ear | no trained male singer: the male voice `hanami-male-es` is dark and soft (docs/voice/VOICES.md "Male voices") |
 | also missing | | | accordion (vallenato, merengue típico), tambora (merengue, merengue-bachata), cuatro and charango (acoustic pop colours), brass (bolero orchestras) |
 
 None of these were built for session 014 (Robert's instruction: list the gaps, don't build them). The producer works with the approximations and should judge the güira and bongó soloed: they are the weakest links.

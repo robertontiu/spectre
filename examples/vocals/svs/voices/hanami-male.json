@@ -1,0 +1,356 @@
+{
+ "ref-hanami": {
+  "tilt_db": -8.6,
+  "breathiness": 0.06,
+  "F1": 617,
+  "F2": 987,
+  "vibrato_cents": 32.0,
+  "attack_ms": 130.0,
+  "pitch_cents": [
+   3,
+   -1,
+   1,
+   8,
+   -4,
+   0
+  ],
+  "pitch_mean_abs_cents": 2.8,
+  "whisper": "Here you are, round and round.",
+  "whisper_words": 1.0,
+  "above_12k_db": -41.4,
+  "flutter_db": 0.34,
+  "jitter_cents": 2.25,
+  "what": "Hanami's own render of the line, an octave up"
+ },
+ "hanami-male": {
+  "tilt_db": -20.5,
+  "breathiness": 0.14,
+  "F1": 540,
+  "F2": 1218,
+  "vibrato_cents": 33.0,
+  "attack_ms": 110.0,
+  "pitch_cents": [
+   6,
+   -1,
+   0,
+   6,
+   -7,
+   1
+  ],
+  "pitch_mean_abs_cents": 3.5,
+  "whisper": "Here you are, round and round",
+  "whisper_words": 1.0,
+  "above_12k_db": -48.2,
+  "flutter_db": 0.24,
+  "jitter_cents": 1.99,
+  "timing": {
+   "note_lag_ms": [
+    -8,
+    16,
+    10,
+    1,
+    -5,
+    -35
+   ],
+   "lag_mean_ms": -3.5,
+   "lag_sd_ms": 16.3,
+   "envelope_lag_ms": 0.0
+  },
+  "render_s": 12,
+  "what": "the catalogue line, F#3-B3, dry"
+ },
+ "ref-hanami-es": {
+  "tilt_db": -12.0,
+  "breathiness": 0.06,
+  "vibrato_cents": 61.0,
+  "attack_ms": 20.0,
+  "pitch_cents": [
+   6,
+   -7,
+   -6,
+   -5,
+   -6,
+   8,
+   -3,
+   -9,
+   -18,
+   -15
+  ],
+  "pitch_mean_abs_cents": 8.3,
+  "whisper": "Quiero quedarme aquí contigo",
+  "whisper_words": 1.0,
+  "whisper_detected": "es 0.97",
+  "above_12k_db": -42.7,
+  "flutter_db": 1.42,
+  "jitter_cents": 2.79,
+  "what": "Hanami's own render of the line, an octave up"
+ },
+ "hanami-male-es": {
+  "tilt_db": -18.4,
+  "breathiness": 0.17,
+  "vibrato_cents": 33.0,
+  "attack_ms": 20.0,
+  "pitch_cents": [
+   6,
+   -9,
+   -8,
+   -4,
+   -5,
+   8,
+   -2,
+   -12,
+   -18,
+   -19
+  ],
+  "pitch_mean_abs_cents": 9.1,
+  "whisper": "Quiero quedarme aquí contigo",
+  "whisper_words": 1.0,
+  "whisper_detected": "es 0.93",
+  "above_12k_db": -46.0,
+  "flutter_db": 1.13,
+  "jitter_cents": 2.98,
+  "timing": {
+   "note_lag_ms": [
+    -3,
+    -13,
+    -2,
+    2,
+    -14,
+    -21,
+    10,
+    0,
+    -3,
+    1
+   ],
+   "lag_mean_ms": -4.3,
+   "lag_sd_ms": 8.6,
+   "envelope_lag_ms": 0.0
+  },
+  "render_s": 17,
+  "what": "the Spanish line, E3-B3, dry"
+ },
+ "takes-hanami-male": {
+  "takes": [
+   {
+    "seed": 1,
+    "whisper": "Here you are, round and round",
+    "words": 1.0,
+    "pitch_mean_abs_cents": 3.5
+   },
+   {
+    "seed": 2,
+    "whisper": "Here you are, round and round",
+    "words": 1.0,
+    "pitch_mean_abs_cents": 3.2
+   },
+   {
+    "seed": 3,
+    "whisper": "Here you are, round and round",
+    "words": 1.0,
+    "pitch_mean_abs_cents": 3.5
+   },
+   {
+    "seed": 4,
+    "whisper": "Hear you around and round",
+    "words": 0.5,
+    "pitch_mean_abs_cents": 3.8
+   },
+   {
+    "seed": 5,
+    "whisper": "Hear you around and round",
+    "words": 0.5,
+    "pitch_mean_abs_cents": 4.5
+   },
+   {
+    "seed": 6,
+    "whisper": "Here you are, round and round.",
+    "words": 1.0,
+    "pitch_mean_abs_cents": 2.7
+   },
+   {
+    "seed": 7,
+    "whisper": "Here you are, round and round",
+    "words": 1.0,
+    "pitch_mean_abs_cents": 5.5
+   },
+   {
+    "seed": 8,
+    "whisper": "Here you are, round and round",
+    "words": 1.0,
+    "pitch_mean_abs_cents": 4.8
+   }
+  ],
+  "all_words": 6,
+  "of": 8,
+  "what": "hanami-male: the catalogue line over seeds 1-8, dry"
+ },
+ "takes-hanami": {
+  "takes": [
+   {
+    "seed": 1,
+    "whisper": "Here you are, round and round.",
+    "words": 1.0,
+    "pitch_mean_abs_cents": 2.8
+   },
+   {
+    "seed": 2,
+    "whisper": "Here you are, round and round",
+    "words": 1.0,
+    "pitch_mean_abs_cents": 4.0
+   },
+   {
+    "seed": 3,
+    "whisper": "Here you are, round and round",
+    "words": 1.0,
+    "pitch_mean_abs_cents": 3.0
+   },
+   {
+    "seed": 4,
+    "whisper": "Here you are round and round",
+    "words": 1.0,
+    "pitch_mean_abs_cents": 3.2
+   },
+   {
+    "seed": 5,
+    "whisper": "Here you are round and round",
+    "words": 1.0,
+    "pitch_mean_abs_cents": 3.7
+   },
+   {
+    "seed": 6,
+    "whisper": "Here you are, round and round",
+    "words": 1.0,
+    "pitch_mean_abs_cents": 3.2
+   },
+   {
+    "seed": 7,
+    "whisper": "Here you are, round and round",
+    "words": 1.0,
+    "pitch_mean_abs_cents": 3.5
+   },
+   {
+    "seed": 8,
+    "whisper": "Here you are, round and round.",
+    "words": 1.0,
+    "pitch_mean_abs_cents": 4.0
+   }
+  ],
+  "all_words": 8,
+  "of": 8,
+  "what": "hanami: the catalogue line over seeds 1-8, dry"
+ },
+ "gender0.0": {
+  "whisper": "Here you are, round and round",
+  "whisper_words": 1.0,
+  "tilt_db": -23.5,
+  "breathiness": 0.15,
+  "flutter_db": 0.23,
+  "jitter_cents": 2.02
+ },
+ "gender-0.2": {
+  "whisper": "Here you are, round and round",
+  "whisper_words": 1.0,
+  "tilt_db": -20.5,
+  "breathiness": 0.14,
+  "flutter_db": 0.24,
+  "jitter_cents": 1.99
+ },
+ "gender-0.3": {
+  "whisper": "Here you are round and round",
+  "whisper_words": 1.0,
+  "tilt_db": -17.7,
+  "breathiness": 0.13,
+  "flutter_db": 0.27,
+  "jitter_cents": 1.98
+ },
+ "gender-0.4": {
+  "whisper": "Here you are, round and round.",
+  "whisper_words": 1.0,
+  "tilt_db": -12.5,
+  "breathiness": 0.09,
+  "flutter_db": 0.31,
+  "jitter_cents": 1.95
+ },
+ "hanami-male-mix": {
+  "vocal_vs_band_lu": -1.0,
+  "vocal_gain_db": 13.7,
+  "whisper_mix": "Here you are, round and round",
+  "whisper_mix_words": 1.0,
+  "whisper_stem": "Here you are, round and round",
+  "whisper_stem_words": 1.0,
+  "what": "the line in a small band (ep, bass, drums) through the standing vocal chain, quick master"
+ },
+ "ref-hanami-mix": {
+  "vocal_vs_band_lu": -1.0,
+  "vocal_gain_db": 12.9,
+  "whisper_mix": "Here you are, round and round",
+  "whisper_mix_words": 1.0,
+  "whisper_stem": "Here you are round and round",
+  "whisper_stem_words": 1.0,
+  "what": "Hanami an octave above in the same band and chain"
+ },
+ "hanami-male-es-mix": {
+  "vocal_vs_band_lu": -1.0,
+  "vocal_gain_db": 14.6,
+  "whisper_mix": "Quiero quedarme aquí contigo",
+  "whisper_mix_words": 1.0,
+  "whisper_stem": "Quiero quedarme aquí contigo",
+  "whisper_stem_words": 1.0,
+  "what": "the line in a small band (ep, bass, drums) through the standing vocal chain, quick master"
+ },
+ "ref-hanami-es-mix": {
+  "vocal_vs_band_lu": -1.0,
+  "vocal_gain_db": 13.9,
+  "whisper_mix": "Quiero quedarme aquí contigo",
+  "whisper_mix_words": 1.0,
+  "whisper_stem": "Quiero quedarme aquí contigo",
+  "whisper_stem_words": 1.0,
+  "what": "Hanami an octave above in the same band and chain"
+ },
+ "range-low": {
+  "tilt_db": -24.1,
+  "breathiness": 0.28,
+  "F1": 758,
+  "F2": 1363,
+  "vibrato_cents": 37.0,
+  "attack_ms": 130.0,
+  "pitch_cents": [
+   6,
+   3,
+   1,
+   8,
+   -6,
+   0
+  ],
+  "pitch_mean_abs_cents": 4.0,
+  "whisper": "Here you are round and round",
+  "whisper_words": 1.0,
+  "above_12k_db": -48.5,
+  "flutter_db": 0.29,
+  "jitter_cents": 2.42,
+  "what": "the line at -19 semitones: the low end"
+ },
+ "range-high": {
+  "tilt_db": -14.2,
+  "breathiness": 0.09,
+  "F1": 648,
+  "F2": 704,
+  "vibrato_cents": 42.0,
+  "attack_ms": 90.0,
+  "pitch_cents": [
+   2,
+   -1,
+   0,
+   6,
+   -7,
+   -1
+  ],
+  "pitch_mean_abs_cents": 2.8,
+  "whisper": "Here you are, round and round",
+  "whisper_words": 1.0,
+  "above_12k_db": -50.4,
+  "flutter_db": 0.16,
+  "jitter_cents": 1.93,
+  "what": "the line at -7 semitones: the high end"
+ }
+}

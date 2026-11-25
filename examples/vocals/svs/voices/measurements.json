@@ -133,59 +133,5 @@
   "vibrato_cents": 25.0,
   "attack_ms": 90.0,
   "what": "LEONA soft with gender -0.5 (formants down)"
- },
- "male-light": {
-  "tilt_db": -13.9,
-  "breathiness": 0.11,
-  "F1": 714,
-  "F2": 1215,
-  "vibrato_cents": 22.0,
-  "attack_ms": 300.0,
-  "what": "the catalogue line at -12 semitones (F#3-B3), dry"
- },
- "ctl-male-light-low": {
-  "tilt_db": -19.7,
-  "breathiness": 0.14,
-  "F1": 641,
-  "F2": 1105,
-  "vibrato_cents": 29.0,
-  "attack_ms": 260.0,
-  "what": "the line at -19 semitones: the low end of the range"
- },
- "ctl-male-light-high": {
-  "tilt_db": -11.8,
-  "breathiness": 0.11,
-  "F1": 680,
-  "F2": 1311,
-  "vibrato_cents": 20.0,
-  "attack_ms": 250.0,
-  "what": "the line at -7 semitones: the high end of the range"
- },
- "male-deep": {
-  "tilt_db": -13.5,
-  "breathiness": 0.08,
-  "F1": 577,
-  "F2": 952,
-  "vibrato_cents": 18.0,
-  "attack_ms": 70.0,
-  "what": "the catalogue line at -12 semitones (F#3-B3), dry"
- },
- "ctl-male-deep-low": {
-  "tilt_db": -15.8,
-  "breathiness": 0.11,
-  "F1": 519,
-  "F2": 893,
-  "vibrato_cents": 36.0,
-  "attack_ms": 360.0,
-  "what": "the line at -19 semitones: the low end of the range"
- },
- "ctl-male-deep-high": {
-  "tilt_db": -13.8,
-  "breathiness": 0.09,
-  "F1": 655,
-  "F2": 1021,
-  "vibrato_cents": 35.0,
-  "attack_ms": 160.0,
-  "what": "the line at -7 semitones: the high end of the range"
  }
 }

@@ -11,11 +11,10 @@ end in SP; without it a final consonant can hang for half a second), an optional
 diffusion noise fed from a seeded generator instead of onnxruntime's own, so every phrase renders bit for bit the same
 regardless of what was rendered before (the models are patched once: their RandomNormalLike node becomes an input).
 
-Banks with `"engine": "soulx"` in voices.json are not DiffSinger banks: engine/svs_soulx.py renders their phrases
-(SoulX-Singer, a zero-shot model that continues a prompt recording: the male voices). Voices with a `"convert"` entry
-are a DiffSinger phrase sung in the bank's own register and then made male (engine/svs_convert.py: an in-synth octave
-and a formant filter, or a voice conversion model). Everything around the phrase (phrase splitting, cache, fades,
-doubles, levelling) is the same code below.
+A voice with `"sing_up"` in voices.json (the male voices, `hanami-male` and `hanami-male-es`) has its duration and pitch
+models sing that many semitones above the written notes, inside the bank's trained register; the pitch curve is moved
+back down inside the synthesizer (Bank.render `f0_shift`) before the acoustic model and the vocoder, and the voice's
+`gender` lowers the formants: a derivative voice made with the synthesizer's own settings, as Lotte V's terms allow.
 
 Voices are listed in engine/voices.json (id, bank, vocal mode, licence, credit, tags); docs/voice/VOICES.md describes
 them. Model files never go in the repo: banks live in ~/.cache/spectre/svs/<bank>/bank/ (SPECTRE_SVS_DIR moves it),
@@ -312,7 +311,7 @@ class Bank:
         between notes are kept). 1.0 = as the model sings it (bit-identical).
         f0_shift: semitones added to the pitch curve after the pitch model, before the acoustic model and the
         vocoder: the duration and pitch models work at the written register (where the bank was trained), the sound is
-        made lower or higher (the `hanami-male` voices: engine/svs_convert.py). 0 = off (bit-identical)."""
+        made lower or higher (the `hanami-male` voices: a voice's `sing_up`). 0 = off (bit-identical)."""
         fm = self.frame_ms
         rng = np.random.default_rng(seed)
         first_note = {}
@@ -499,17 +498,11 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
     mix = v.get("mix")
     gender = float(p.get("gender", v.get("gender", 0.0)))
     velocity = float(p.get("velocity", v.get("velocity", 1.0)))
-    soulx = info.get("engine") == "soulx"  # a zero-shot model with a prompt voice instead of a DiffSinger bank
-    steps = int(p.get("svs_steps", info.get("steps", 16) if soulx else 20))
-    tune = float(p.get("svs_tune", v.get("tune", info.get("tune", 1.0)))) if soulx else 0.0
+    steps = int(p.get("svs_steps", 20))
     vib = float(p.get("svs_vibrato", 1.0))
-    # a voice made by converting this bank's phrase (the male voices from Hanami: engine/svs_convert.py); `svs_convert`
-    # on the instrument overrides the voice's own entry (the study in examples/vocals/svs/svc.py uses that)
-    conv = p.get("svs_convert") or v.get("convert")
-    if conv:
-        import svs_convert
-        c_sing, c_f0 = svs_convert.source_render_args(conv)
-        c_steps = p.get("svc_steps")
+    # the bank sings `up` semitones above the written notes and the pitch curve is moved back down inside the
+    # synthesizer (the male voices: hanami-male; module docstring)
+    up = int(v.get("sing_up", 0))
     groups = _groups(p, notes)
     lang = str(p.get("lang") or v.get("lang") or "en")
     if lang != "en" and lang not in info.get("languages", ["en"]):
@@ -540,19 +533,11 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
                    words, [(round(a, 1), round(d, 1), m, k) for a, d, m, k in ns], pseed,
                    *(() if lang == "en" else ("lang", lang, LANG_VERSION)),
                    *(() if vib == 1.0 else ("vib", vib)),
-                   *(() if not soulx else ("soulx", v.get("prompt"), __import__("svs_soulx").VERSION, tune)),
-                   *(() if not conv else ("convert", conv, svs_convert.VERSION, c_steps)))
+                   *(() if not up else ("sing_up", up)))
         path = os.path.join(PHRASES, key[:2], key + ".npz")
         if os.path.exists(path):
             z = np.load(path)
             wav, t0 = z["wav"], float(z["t0"])
-        elif soulx:
-            import svs_soulx
-            if "svs_convert" in sys.modules:  # the conversion model and the singing model don't fit together
-                sys.modules["svs_convert"].drop()
-            wav, t0 = svs_soulx.render(v, info, words, ns, pseed, steps=steps, tune=tune)
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            _atomic_save(path, lambda t: np.savez(open(t, "wb"), wav=wav, t0=t0))
         else:
             if bank is None:
                 bank = Bank.get(bank_name, banks)
@@ -571,11 +556,10 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
                 if kk not in done:
                     done[kk] = bank.syllables(word, n, lang, prev)
                 phs.append(done[kk][si])
-            if conv:  # the source sings `c_sing` semitones up (its trained register), then the conversion
-                wav, t0, _ = bank.render(phs, [(a, d, m + c_sing, k) for a, d, m, k in ns], mode, pseed, steps=steps,
+            if up:  # sung `up` semitones higher (the bank's trained register), moved back down in the synthesizer
+                wav, t0, _ = bank.render(phs, [(a, d, m + up, k) for a, d, m, k in ns], mode, pseed, steps=steps,
                                          gender=gender, velocity=velocity, breath=br, detune_cents=detune_cents,
-                                         mix=mix, vibrato=vib, f0_shift=c_f0)
-                wav = svs_convert.apply(conv, wav, pseed, steps=c_steps)
+                                         mix=mix, vibrato=vib, f0_shift=-float(up))
             else:
                 wav, t0, _ = bank.render(phs, ns, mode, pseed, steps=steps, gender=gender, velocity=velocity,
                                          breath=br, detune_cents=detune_cents, mix=mix, vibrato=vib)

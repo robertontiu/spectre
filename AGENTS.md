@@ -40,14 +40,8 @@ engine/
   singer.py       voices: `singer` (sings words; parses the lyrics and hands the line to svs.py, its only source) and
                   `vox2` (improved wordless voice: LF glottal source, consonant onsets for chops); see docs/MANUAL.md "Voices"
   svs.py          `singer`'s singing voice synthesizer (`"source": "svs"`, the default): DiffSinger voicebanks, ONNX, CPU;
-                  OpenUtau's code path, seeded and phrase-cached, deterministic; banks in ~/.cache/spectre/svs (never in git)
-  svs_soulx.py    svs voices of banks with `"engine": "soulx"` (the male voices): SoulX-Singer, a zero-shot singing model that
-                  continues a prompt recording (soulx_prompts.json: the prompts' sources and scores); torch, CPU; setup:
-                  `python3 engine/svs_soulx.py setup` (files in ~/.cache/spectre/svs/soulx, never in git)
-  svs_convert.py  svs voices with a `"convert"` entry: Hanami's phrase made male. `hanami-male`: sung an octave up and moved
-                  down inside the synthesizer with the bank's gender setting (no other model); `male-svc`: converted by
-                  SoulX-Singer-SVC onto a consenting target (soulx_prompts.json "svc_targets"; setup:
-                  `python3 engine/svs_convert.py setup`); docs/voice/VOICES.md "Male voices from Hanami"
+                  OpenUtau's code path, seeded and phrase-cached, deterministic; banks in ~/.cache/spectre/svs (never in git);
+                  the male voices (`sing_up`): Hanami sung an octave up and moved down inside the synthesizer
   lang_es.py      Spanish letters to DiffSinger phonemes for svs voices with `"lang": "es"` (Hanami; docs/voice/languages/es.md)
   voices.json     the svs voice catalogue: ids, banks, licences and credit lines, tags (docs/voice/VOICES.md)
   hand.py         the hand: step/note/chord notation parser, swing, humanization, voicing, rolls, arps
@@ -84,7 +78,7 @@ examples/
   chamberscore/   chamber-score instruments A/B (old stand-ins vs celesta, glockenspiel, vibraphone, cello, viola,
                   strings_section) and spectrograms against reference recordings (build.py)
   joc/            lăutar band A/B (old fiddle vs violin, the violin's articulations, acguitar, toba, a tempo ramp; build.py)
-  vocals/         svs/: the singer's voices (auditions in voices/, voices.py; male.py, svc.py for the male ones), the DiffSinger trial (dsinger.py, build.py),
+  vocals/         svs/: the singer's voices (auditions in voices/, voices.py; male.py for the male ones), the DiffSinger trial (dsinger.py, build.py),
                   the mix study (blend.py), choir and vibrato tests (vibrato.py), Spanish and Romanian checks; the
                   wordless vox and vox2 on a trance hook and session 009's hook (mp3 only)
   engine-test.json  a small project that exercises most engine features (render it to smoke-test changes)
@@ -136,7 +130,7 @@ Open `ear.png` and `renders/v001.master.png` to check that the pipeline works.
 
 1. **The ears can't hear attitude.** Structure reads well on spectrograms; timbre and emotional "bite" don't. Session 001 aimed for defiance and came across as longing. Ideas: an audio-capable model as a critic ("describe what you hear, without naming emotions"), CLAP-style embeddings as a weak signal, or a human checkpoint ear after the loop stage.
 2. **Synth timbres lean soft.** No real samples. Real drum one-shots or sample packs (the user would provide them; the sandbox network is restricted) would raise quality a lot.
-3. **Vocals are new.** `singer` sings with DiffSinger voices (approved by the owner by ear, 2026-11-24): female only, English and Spanish. Male voices `male-light` and `male-deep` (SoulX-Singer with VocalSet prompt singers, `engine/svs_soulx.py`) are wired and measured since 2026-11-25 and wait for the owner's verdict (docs/voice/VOICES.md "Male voices"); so do the male voices made from Hanami, which sing English and Spanish with her timing: `hanami-male` (inside the synthesizer, no target person) and `male-svc` (voice conversion onto a consenting target; `engine/svs_convert.py`, VOICES.md "Male voices from Hanami"); queued in docs/ORCHESTRATION.md. No Romanian voice. A generative model as a "session musician" (stems on demand) is the planned v2 for metal and pop.
+3. **Vocals are new.** `singer` sings with DiffSinger voices (approved by the owner by ear, 2026-11-24), English and Spanish. Male voices: `hanami-male` and `hanami-male-es` (Hanami sung an octave up and moved down inside the synthesizer; approved by the owner by ear, 2026-11-25; docs/voice/VOICES.md "Male voices"). No Romanian voice. A generative model as a "session musician" (stems on demand) is the planned v2 for metal and pop.
 4. **Mastering targets** are per-genre configurations (`engine/genres.json`, `--genre trap|hiphop|trance|rock`, no default). The `hiphop`, `trance` and `rock` curves are measured from published genre spectra (Pestana et al. 2013; docs/MASTERING.md) but pool 1950-2010 records; the `trap` curve (`beat`, sessions 001-006) is hand-tuned. Measuring modern reference tracks per genre would help.
 5. **Speed.** A full-length render takes 20-45 s. Per-track caching would make the loop faster.
 
