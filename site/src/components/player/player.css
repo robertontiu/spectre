@@ -564,3 +564,106 @@
     }
   }
 }
+
+/* The sticky top bar (TopBar): dark glass like the visualizer's ground, sliding down while
+   the card's top edge is scrolled away. Only transform and opacity animate; visibility
+   follows after the slide out, so the hidden bar takes no pointer. */
+@layer components {
+  .topbar {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+    background: rgba(11, 13, 18, 0.94);
+    border-bottom: 1px solid rgba(190, 230, 255, 0.12);
+    box-shadow:
+      inset 0 1px 0 rgba(215, 248, 255, 0.06),
+      0 10px 30px rgba(0, 0, 0, 0.35);
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+      opacity 0.25s ease,
+      visibility 0s linear 0.35s;
+  }
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .topbar {
+      background: rgba(11, 13, 18, 0.6);
+      -webkit-backdrop-filter: blur(20px) saturate(1.6);
+      backdrop-filter: blur(20px) saturate(1.6);
+    }
+  }
+  .topbar.on {
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    transition:
+      transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+      opacity 0.25s ease,
+      visibility 0s;
+  }
+  .topbar-logo {
+    flex: none;
+    width: 36px;
+    height: 36px;
+  }
+  .topbar-logo .badge {
+    width: 36px;
+    margin: 0;
+  }
+  /* The small badge stands still while the bar is hidden. */
+  .topbar:not(.on) .topbar-logo svg {
+    animation-play-state: paused;
+  }
+  .ib.tb {
+    width: 40px;
+    height: 40px;
+  }
+  .ib.tb svg {
+    width: 20px;
+    height: 20px;
+  }
+  .ib.tb[aria-pressed="true"]::after {
+    bottom: 3px;
+  }
+  .ib.tb .one {
+    top: 5px;
+    right: 5px;
+  }
+  .tb-play {
+    color: #0b0d12;
+    background: linear-gradient(140deg, #fff, color-mix(in srgb, var(--c2) 30%, #fff));
+  }
+  .tb-play:hover {
+    background: #fff;
+    color: #000;
+  }
+  .topbar-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    transform-origin: 0 50%;
+    background: linear-gradient(90deg, var(--c1), var(--c2));
+    opacity: 0.7;
+    transition: transform 0.25s linear;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .topbar,
+    .topbar.on {
+      transform: none;
+      transition:
+        opacity 0.2s ease,
+        visibility 0s linear 0.2s;
+    }
+    .topbar.on {
+      transition-delay: 0s;
+    }
+    .topbar-progress {
+      transition: none;
+    }
+  }
+}

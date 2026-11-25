@@ -32,6 +32,8 @@ export function PlayerCard({ children }: { children: ReactNode }) {
 
   return (
     <section ref={ref} className="player" aria-label="Spectre player" style={style}>
+      {/* The card's top edge, watched by TopBar: the bar shows while it is scrolled away. */}
+      <i data-card-top="" aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px" />
       {children}
     </section>
   );
