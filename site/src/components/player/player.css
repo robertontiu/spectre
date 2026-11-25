@@ -625,6 +625,10 @@
     width: 20px;
     height: 20px;
   }
+  /* In the top bar every control stays white; an active shuffle or repeat shows only by its dot. */
+  .ib.tb[aria-pressed="true"] {
+    color: #fff;
+  }
   .ib.tb[aria-pressed="true"]::after {
     bottom: 3px;
   }
