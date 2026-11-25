@@ -64,7 +64,7 @@ Every part of the process is modeled on how producers actually work and on resea
    - *"Make a track about the hustle, Romanian folk trap, underground."* Spectre decides the tempo and sound.
    - *"Make a high-tempo, aggressive track that carries rage."* Spectre produces exactly that feeling.
 
-A track takes 30 to 90 minutes of agent time. The agent installs what it needs (Python with numpy, scipy, pedalboard, librosa, soundfile and pyloudnorm, plus ffmpeg). You get back:
+A track takes 30 to 90 minutes of agent time. The agent installs what it needs (Python with numpy, scipy, pedalboard, librosa, soundfile and pyloudnorm, plus ffmpeg) and runs `tools/setup.sh`, which downloads the voice models from their authors. You get back:
 
 - the mastered track and its title
 - Spectre's journal of the whole session
@@ -84,10 +84,12 @@ Every instrument is synthesized by the engine's own code. Sung words are the one
 | Model | What it does here | Licence | Where it lives |
 |---|---|---|---|
 | [DiffSinger](https://github.com/openvpi/DiffSinger) (OpenVPI), run with [ONNX Runtime](https://onnxruntime.ai) through a port of [OpenUtau](https://github.com/stakira/OpenUtau)'s DiffSinger code (`engine/svs.py`) | The singing voice (`singer`): notes and lyrics in, sung audio out, with timing learned from real singers | DiffSinger Apache 2.0; OpenUtau MIT; ONNX Runtime MIT | code in the repo |
-| **Hoshino Hanami ~AI❤dol~ v1.0** by [Lotte V](https://lottev.moe) | Voicebank: warm female pop soprano (English, Spanish and other languages); modes `hanami`, `hanami-soft`, `hanami-power`, `hanami-dark`, `hanami-es`, `hanami-es-soft`, and the male voices `hanami-male`, `hanami-male-es` (Hanami sung an octave up and moved down inside the synthesizer, as her terms allow for derivative voices) | Team L❤VE Voicebank License and Terms of Use: any creative use, commercial included, with credit; the files may not be redistributed or sold; no political, hateful or illegal use; religious works allowed if not proselytizing. Dictionaries MIT | downloaded from the author on first use into `~/.cache/spectre/svs/`, never committed |
+| **Hoshino Hanami ~AI❤dol~ v1.0** by [Lotte V](https://lottev.moe) | Voicebank: warm female pop soprano (English, Spanish and other languages); modes `hanami`, `hanami-soft`, `hanami-power`, `hanami-dark`, `hanami-es`, `hanami-es-soft`, and the male voices `hanami-male`, `hanami-male-es` (Hanami sung an octave up and moved down inside the synthesizer, as her terms allow for derivative voices) | Team L❤VE Voicebank License and Terms of Use: any creative use, commercial included, with credit; the files may not be redistributed or sold; no political, hateful or illegal use; religious works allowed if not proselytizing. Dictionaries MIT | downloaded from the author by `tools/setup.sh` into `~/.cache/spectre/svs/`, never committed |
 | **LEONA -Ubasti- v0.0.1b** by [Lotte V](https://lottev.moe) | Voicebank: brighter female voice (English); `leona`, `leona-soft`, `leona-power` | CC BY 4.0 plus the same Terms of Use | same cache, never committed |
 | **Potluck Vocoder (lite) v100** by [tigermeat](https://github.com/mrtigermeat/potluck-vocoder) | Turns every DiffSinger voice's spectrum into audio (both banks' own vocoders are non-commercial, so they are not used) | Commercial use allowed with DiffSinger models; credit with a link to its licence; its output may not be used to train generative models | same cache, never committed |
-| [Whisper](https://github.com/openai/whisper) via [faster-whisper](https://github.com/SYSTRAN/faster-whisper) | Only a measuring tool: how many sung words a listener would understand in the finished mix. It never produces sound | MIT | installed with pip, model cached locally |
+| [Whisper](https://github.com/openai/whisper) via [faster-whisper](https://github.com/SYSTRAN/faster-whisper) | Only a measuring tool: how many sung words a listener would understand in the finished mix. It never produces sound | MIT | faster-whisper installed with pip; the models downloaded from Hugging Face by `tools/setup.sh`, never committed |
+
+**Not versioned; downloaded at setup.** None of these models is in the repository; several licences forbid redistributing them. `tools/setup.sh` downloads each one automatically from its official source, checks its size and sha256, and installs it outside the repo (`~/.cache/spectre/`). [`engine/third_party.json`](engine/third_party.json) lists every resource with its official link, licence, size and checksum. By running setup you download them from their authors and accept each licence yourself.
 
 **Credit lines.** A published track that uses a voicebank carries its credit line in its session README and on the site, from `engine/voices.json`:
 - *Vocals: Hoshino Hanami (DiffSinger voicebank by Lotte V, lottev.moe), Potluck Vocoder by tigermeat*
@@ -104,8 +106,6 @@ An experiment by [Robert Ontiu](https://github.com/robertontiu), built with Clau
 ## License
 
 The code is [MIT](LICENSE) © 2026 Robert Ontiu.
-
-**Spectre's tracks are not licensed for reuse.** The tracks and their session files (audio, journals, project files and images) are © 2026 Robert Ontiu; the MIT licence covers the code only.
 
 **The models above keep their own licences** (see "Voices and third-party models"); the MIT licence covers Spectre's own code, not the voicebanks or model files.
 
