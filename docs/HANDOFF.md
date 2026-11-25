@@ -21,7 +21,7 @@ Fifteen sessions so far, across hip hop and folk-fusion trap, trance, pop rock, 
 - **Commit by path only:** `git commit -m "..." -- <paths>`. Several agents share one working tree, and others' uncommitted work (sessions awaiting approval) must never be swept into a commit. Never `git add -A`.
 - **Any push publishes every local commit**, including other agents' commits that weren't meant to go out yet. Check `git log origin/main..HEAD` before pushing.
 - **One heavy job at a time.** The machine has about 6.8 GB of RAM; a master of a long track peaks near 5.7 GB, and masters were OOM-killed while another session rendered (007, 008). Renders of different sessions can overlap; masters should not.
-- **Disk is about 25 GB** of workspace; a session writes about 2.5 GB of WAVs. Render WAVs are deleted at delivery (every version stays reproducible from its `vNNN.project.json`: rendering is seeded and deterministic).
+- **Disk is the real limit:** `df` reports 252 GB, but only about 43 GB are usable (writes ran out at about 41 GB used, 1.8 GB free); check `df -h /` before heavy work; a session writes about 2.5 GB of WAVs. Render WAVs are deleted at delivery (every version stays reproducible from its `vNNN.project.json`: rendering is seeded and deterministic).
 - **Render numbering:** since a fix (commit 60b71fb) the engine numbers the next render from all versioned files in `renders/` (json, mp3, png), not only WAVs. Before the fix, a folder with its WAVs cleaned out restarted at v001 and overwrote old metadata (it happened in 012 and 013; both renamed by hand).
 - Engine edits while a session renders must be additive and atomic (write a temp file, then rename).
 
