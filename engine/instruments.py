@@ -1802,3 +1802,52 @@ MONO.update({"cello", "viola", "strings_section", "vibraphone"})
 POST["cello"] = _cello_body
 POST["viola"] = _viola_body
 TONAL.update(celesta=celesta, glockenspiel=glockenspiel, bell=_bell)
+
+
+# ---------------------------------------------------------------- production upgrade: synth voice, low and top end
+# Additive block (2026-11-25, queue item 9b, sound side; code in engine/synth.py, docs/MANUAL.md "Production").
+# `supersaw` plays exactly as before unless a track asks for `"model": 2`; the new sounds draw from the module RNG
+# at call time (so per-track seeds give each track and stack layer its own stream) and are used only when named.
+_mono_voice_chamber = mono_voice
+
+
+def mono_voice(kind, p, notes, total_n):  # noqa: F811  (extends the chain with "sub")
+    if kind == "sub":
+        import synth as _sy
+        return _sy.sub_line(p, notes, total_n)
+    return _mono_voice_chamber(kind, p, notes, total_n)
+
+
+_supersaw_original = supersaw
+
+
+def _supersaw(p, f, vel, dur):
+    if p.get("model", 1) == 2:
+        import synth as _sy
+        return _sy.supersaw2(p, f, vel, dur)
+    return _supersaw_original(p, f, vel, dur)
+
+
+def _polysynth(p, f, vel, dur):
+    import synth as _sy
+    return _sy.polysynth(p, f, vel, dur)
+
+
+def _air(p, f, vel, dur):
+    import synth as _sy
+    return _sy.air(p, f, vel, dur)
+
+
+def _kick_layer(kind):
+    def f(p, vel, ps=0.0):
+        import synth as _sy
+        return getattr(_sy, kind)(p, vel, ps)
+    f.__name__ = kind
+    return f
+
+
+MONO.add("sub")
+TONAL.update(supersaw=_supersaw, polysynth=_polysynth, air=_air)
+DRUMS.update(kicksub=_kick_layer("kicksub"), kickpunch=_kick_layer("kickpunch"), kickclick=_kick_layer("kickclick"),
+             metalhat=_kick_layer("metalhat"))
+ROUND_ROBIN = ROUND_ROBIN | {"metalhat"}
