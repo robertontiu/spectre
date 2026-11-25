@@ -40,25 +40,20 @@ Fifteen sessions so far, across hip hop and folk-fusion trap, trance, pop rock, 
 
 ### Working with sub-agents (the orchestrator's habits)
 - Delegate long work (producer sessions, research, site UI) to sub-agents; keep the orchestrator's thread free. Don't interrupt your own turn while background agents run (it can take them down).
-- **Commit by path only:** `git commit -m "..." -- <paths>`. Several agents share one working tree, and others' uncommitted work (sessions awaiting approval) must never be swept into a commit. Never `git add -A`.
-- **Any push publishes every local commit**, including other agents' commits that weren't meant to go out yet. Check `git log origin/main..HEAD` before pushing.
-- **One heavy job at a time.** The machine has about 8 GB of RAM (7.6 GB usable); a master of a long track peaks near 5.7 GB, and masters were OOM-killed while another session rendered (007, 008). Renders of different sessions can overlap; masters should not.
-- **Disk is the real limit:** `df` reports 252 GB, but only about 43 GB are usable (writes ran out at about 41 GB used, 1.8 GB free); check `df -h /` before heavy work; a session writes about 2.5 GB of WAVs. Render WAVs are deleted at delivery (every version stays reproducible from its `vNNN.project.json`: rendering is seeded and deterministic).
+- Commit by path, check `git log origin/main..HEAD` before a push, one heavy job at a time, check `df -h /`: AGENTS.md rules 3, 7 and 8. Why: a long master peaks near 5.7 GB and masters were OOM-killed while another session rendered (007, 008); `df` reports 252 GB but writes ran out at about 41 GB used. Render WAVs are deleted at delivery (every version stays reproducible from its `vNNN.project.json`: rendering is seeded and deterministic).
 - **Render numbering:** since a fix (commit 60b71fb) the engine numbers the next render from all versioned files in `renders/` (json, mp3, png), not only WAVs. Before the fix, a folder with its WAVs cleaned out restarted at v001 and overwrote old metadata (it happened in 012 and 013; both renamed by hand).
 - Engine edits while a session renders must be additive and atomic (write a temp file, then rename).
 
 ## 3. The owner's working preferences (project only)
 
-The full standing rules are in ORCHESTRATION.md; these are the ones that shape day-to-day choices:
-- **Genre settings come from research, with sources.** Every per-genre value cites a source or is marked hand-tuned; master like the industry does, per genre.
+The full standing rules are in ORCHESTRATION.md. 
+Always-on (AGENTS.md rules 1, 4, 8, 9, 10): the artist is Spectre; no personal details in the repo; clean up; research decides (sources, or marked hand-tuned; master per genre like the industry); report misses. Beyond those:
 - **Research decides voice questions; the owner is the ear tester.** His notes are symptoms to diagnose ("it sounds like reverb" is a hypothesis to measure), not instructions. Where research disagrees with a suggestion, follow the research and tell him why. A/B renders go to him for the verdict.
 - **Voices are instruments, never full songs.** Short lines, hooks, chops, calls, choir textures; no verses carried by a lead vocal.
 - **Every production is unique.** Licensed (public-domain) quotes are ingredients, never covers or re-arrangements; quote whole phrases, cut at phrase boundaries.
-- **Always clean up** after every task (scratch, test renders, downloads, render WAVs at delivery).
 - **Website:** no autoplay, no EQ (tracks play exactly as mastered); the producer model is shown per track beside the tempo; tracks are listed newest first. Other design decisions: ORCHESTRATION.md "Website design decisions".
 - **Feedback is recorded only once final.** Candidates and A/B results live in the session journal; README, LESSONS and the site change only when the owner has decided.
-- **No personal details in the repo, ever.** Anything personal the owner shares is context for shaping a brief, never content: not in PROMPT.md, journals, READMEs, LESSONS, commit messages, the website or handoff notes. Translate it into the feeling and the brief, nothing more.
-- Report misses honestly; the artist is called Spectre everywhere; record lessons after every genre switch.
+- Record lessons after every genre switch.
 
 ## 4. State of every session
 
