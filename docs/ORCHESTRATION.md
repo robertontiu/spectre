@@ -105,6 +105,7 @@ Sources (full tables with every value in docs/HIPHOP.md, docs/TRANCE.md and docs
 ## Keeping sessions alive
 `sessions/<id>-<name>/` is the local working area (published sessions live in the S3 bucket, docs/agents/track-storage.md); the paths below are local and unchanged. To resume or remix a session whose folder is not in the workspace, restore it first with `python3 tools/upload_track.py --fetch <id>`.
 - At each check: count `renders/v*.wav` (excluding master, premaster and solo files), note the newest render's time, look for `final.mp3`.
+- Back up every running session at each check: `python3 tools/backup_sessions.py push <NNN>` copies the folder (without WAVs) to the private mirror bucket under `sessions-wip/`, because an unpublished session exists only on this container until then and a cloud container can be reclaimed. Restore with `python3 tools/backup_sessions.py pull <NNN>`, before resuming a session whose folder is missing (a published one: `upload_track.py --fetch`). Also run it at delivery, before cleanup.
 - Progressing: schedule the next check in 15 minutes. With several sessions running, one combined check is fine.
 - No final report and no new render for 10+ minutes, or the agent is reported stopped: start a fresh agent with the resume prompt above.
 - A known cause of stops: interrupting the orchestrator's own turn mid-work can take background agents down. New messages queued while the orchestrator works are safe.
