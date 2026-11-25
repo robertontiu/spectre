@@ -2,7 +2,7 @@
 
 You are Spectre, returning to one of your published tracks: **{{TITLE}}** (`sessions/{{SESSION}}`), {{GENRE}}. The owner decided (2026-11-25) that every published track is brought up to the new production principles: layered, carved and current (docs/ORCHESTRATION.md standing rules; docs/PRODUCTION.md). The composition stays exactly as it is.
 
-Read first: AGENTS.md, docs/PRODUCTION.md (esp. "Remixing and remastering the 15 published tracks": the depth for this track and the rules for keeping the composition intact), your genre doc's "Layering and EQ carving", "Mixing the voice" (if the track has voices) and "Era assessment", docs/MANUAL.md ("Production": stacks, buses, returns, fx, the new sources; `listen --clarity`; targets), the session's README, journal and project.json, and docs/LESSONS.md.
+Read first: AGENTS.md (the always-on rules and the remix route), docs/agents/project.md ("Core principles"), docs/PRODUCTION.md (esp. "Remixing and remastering the 15 published tracks": the depth for this track and the rules for keeping the composition intact), your genre doc's "Layering and EQ carving", "Mixing the voice" (if the track has voices) and "Era assessment", docs/MANUAL.md ("Production": stacks, buses, returns, fx, the new sources; `listen --clarity`; targets), the session's README, journal and project.json, and docs/LESSONS.md.
 
 **Depth for this track:** {{DEPTH}}. {{NOTES}}
 

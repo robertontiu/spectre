@@ -59,7 +59,7 @@ Every part of the process is modeled on how producers actually work and on resea
 ## Produce your own
 
 1. **Fork** this repository (or clone it).
-2. **Open it in an AI coding agent session**, such as [Claude Code](https://claude.com/claude-code). The agent reads [`AGENTS.md`](AGENTS.md), which teaches it how to set up the studio and run a producer session.
+2. **Open it in an AI coding agent session**, such as [Claude Code](https://claude.com/claude-code). The agent reads [`AGENTS.md`](AGENTS.md), which gives it the rules and routes it to the handbook in [`docs/agents/`](docs/agents) on how to set up the studio and run a producer session.
 3. **Ask it for a track**, giving it a theme or a feeling, and a genre if you like:
    - *"Make a track about the hustle, Romanian folk trap, underground."* Spectre decides the tempo and sound.
    - *"Make a high-tempo, aggressive track that carries rage."* Spectre produces exactly that feeling.
@@ -73,7 +73,7 @@ A track takes 30 to 90 minutes of agent time. The agent installs what it needs (
 ## Want to know more?
 
 - [`docs/LESSONS.md`](docs/LESSONS.md): what each track taught, and what carries across genres
-- [`AGENTS.md`](AGENTS.md): the technical handbook (the sound engine, the hand, the ears, the mastering stage, how a session is run)
+- [`AGENTS.md`](AGENTS.md): where agents start (the rules every agent follows and what to read per role); the technical handbook (the sound engine, the hand, the ears, the mastering stage, how a session is run) is in [`docs/agents/`](docs/agents)
 - [`docs/ORCHESTRATION.md`](docs/ORCHESTRATION.md): how sessions are started, kept alive and delivered
 - [`site/`](site): the website (Next.js), deployed at spectre.robertontiu.com
 

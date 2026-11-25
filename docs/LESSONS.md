@@ -2,7 +2,7 @@
 
 What each session taught us. Read this before changing the producer prompt or the engine, and add an entry after every session. **After every genre switch, update the "Across genres" section too.**
 
-*Session files (journals, projects, READMEs, masters) now live in the S3 bucket under each track's `uuid` from `site/data/tracks.json`, not in `sessions/` in git; `python3 tools/upload_track.py --fetch <id>` restores a session folder (AGENTS.md section 8). The `sessions/...` paths below are kept as history.*
+*Session files (journals, projects, READMEs, masters) now live in the S3 bucket under each track's `uuid` from `site/data/tracks.json`, not in `sessions/` in git; `python3 tools/upload_track.py --fetch <id>` restores a session folder (docs/agents/track-storage.md). The `sessions/...` paths below are kept as history.*
 
 ## Across genres (updated after each switch)
 *Read these as principles (subtraction, a dramaturgy of opposing forces, time feel as meaning), not as arrangements to reuse: copying a favourite track's structure made Spectre's trap tracks sound alike. Each session names its own habits and departs from at least one (see prompts/producer.md, stage 1).*

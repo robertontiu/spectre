@@ -1,11 +1,5 @@
 # CLAUDE.md
 
-All agent instructions for this repository live in [AGENTS.md](AGENTS.md). Read it fully before making changes. If you orchestrate sessions or maintain the website, also read [docs/ORCHESTRATION.md](docs/ORCHESTRATION.md). A fresh session taking over starts with [docs/HANDOFF.md](docs/HANDOFF.md): current state of every session, open decisions waiting on the owner, and the engine and knowledge map.
+All agent instructions for this repository start at [AGENTS.md](AGENTS.md), imported below: the always-on rules every agent follows on every request, and the files to read for your role (orchestrator, producer, remix, research, site/engineering, setup). Read it in full before making changes, then follow your role's route. Keep rules in AGENTS.md and the files it routes to, not here.
 
-Quick rules:
-- `docs/MANUAL.md` is the producer agent's only interface to the engine. Keep it in sync with the code.
-- Never commit `renders/` or WAV files.
-- Smoke-test engine changes with `examples/engine-test.json` (render, listen, master) before committing.
-- The artist is called Spectre everywhere.
-- Never leave a producer session stopped: check every ~15 minutes and resume from its PROMPT.md and journal.
-- Record lessons in docs/LESSONS.md after every genre switch.
+@AGENTS.md

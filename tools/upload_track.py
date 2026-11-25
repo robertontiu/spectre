@@ -69,7 +69,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SESSIONS = os.path.join(ROOT, "sessions")
 CANONICAL = os.path.join(ROOT, "site", "data", "tracks.json")
 
-# The bucket layout, defined once (documented in AGENTS.md, "Track files in S3").
+# The bucket layout, defined once (documented in docs/agents/track-storage.md).
 RENDITION = "rendition.mp3"
 NAMED = {  # session file -> object name under <uuid>/
     "journal.md": "journal.md",
@@ -125,7 +125,7 @@ class Refused(Exception):
 def env(name, default=None, required=True):
     value = os.environ.get(name, "").strip() or default
     if required and not value:
-        raise Refused(f"{name} is not set (see AGENTS.md, 'Track files in S3')")
+        raise Refused(f"{name} is not set (see docs/agents/track-storage.md)")
     return value
 
 
@@ -525,7 +525,7 @@ def main():
         if not bucket_configured():
             for flag, on in (("--all", a.all), ("--cors", a.cors), ("--check", a.check), ("--fetch", bool(a.fetch))):
                 if on:
-                    print(f"upload_track: {flag} needs an S3 bucket (the SPECTRE_S3_* variables, AGENTS.md section 8); "
+                    print(f"upload_track: {flag} needs an S3 bucket (the SPECTRE_S3_* variables, docs/agents/track-storage.md); "
                           "none is configured: skipped")
             chosen = [find_track(tracks, n) for n in a.tracks]
             for t in chosen:

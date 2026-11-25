@@ -27,7 +27,7 @@ export type S3Config = {
 /**
  * The bucket layout, the same for every showcased track: its objects live under its
  * fixed `uuid` (tracks.json). Same names as RENDITION and JOURNAL in
- * tools/upload_track.py; documented in AGENTS.md, "Track audio in S3".
+ * tools/upload_track.py; documented in docs/agents/track-storage.md.
  */
 export const TRACK_OBJECTS = { rendition: "rendition.mp3", journal: "journal.md" } as const;
 export const renditionKey = (uuid: string) => `${uuid}/${TRACK_OBJECTS.rendition}`;

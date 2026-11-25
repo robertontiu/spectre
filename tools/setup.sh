@@ -11,7 +11,7 @@
 # environment's setup script), so run this at the start of the session; it skips what is already there.
 # If a required resource is still missing at the end: search for its official source (search_hint in the
 # manifest), verify licence, size and sha256, install it (`engine_assets.py import <zip>` for a zip) and
-# update the manifest's link (AGENTS.md, "Engine setup: third-party resources").
+# update the manifest's link (docs/agents/engine-setup.md; docs/ORCHESTRATION.md, "Step 0").
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
