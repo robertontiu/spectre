@@ -6,9 +6,10 @@
 | Producer | Spectre, run on Claude Fable 5.2 for this session (other sessions: Claude Opus) |
 | Feeling | All of it at once, and you stay on the ride |
 | Length / tempo / key | 3:14 (108 bars), 136 bpm, straight time, A major |
-| Instruments | acoustic kit, a clean guitar figure (the carousel), distorted guitars, electric bass, piano, organ, music box, tambourine, a lead guitar, wordless voices (`vox`) |
-| Iterations | 27 journal entries (26 renders), one 8-minute pause for the machine's memory |
-| Master | `studio.py master v026 --genre rock` (master v2): -8.6 LUFS, -1.01 dBTP (MP3 -0.71), PLR 7.6, LRA 8.7 LU, width -6.4 LU, laptop loss -1.4 dB, top end within 1.1 dB of the measured curve, phone check clean, no warnings |
+| Instruments | acoustic kit, a clean guitar figure (the carousel), distorted guitars, electric bass, piano, organ, music box, tambourine, a lead guitar, wordless voices (`vox`), and since v034 the chorus hook sung with words by `singer` `svs` `hanami` |
+| Iterations | 27 journal entries (26 renders), one 8-minute pause for the machine's memory; then the orchestrator's re-renders v027-v034 (journal 28-29): the hook `voxC` sings "here you are, round and round / hold on tight, round we go / here you are, round and round / and you stay on the ride" on its own notes an octave down, mixed per docs/POP_ROCK.md "Mixing the voice" (reverb about 13 dB under the dry voice, 70 ms pre-delay, a 110 ms slap, level with the band) |
+| Master | `studio.py master v034 --genre rock` (master v2): -8.6 LUFS, -1.02 dBTP (MP3 -0.69), PLR 7.6, LRA 10.7 LU, width -6.2 LU, laptop loss -1.2 dB, top end within 1.1 dB of the measured curve, phone check clean, no warnings (v026, the wordless version, remains reproducible from renders/v026.project.json) |
+| Credits | Vocals: Hoshino Hanami (DiffSinger voicebank by Lotte V, lottev.moe), Potluck Vocoder by tigermeat |
 
 ## How it carries the feeling
 - **The carousel is literal:** one bright clean-guitar figure in sixteenths grouped 3+3+3+3+2+2 turns against a steady four from kick and bass, from the first bar to the last. The hook ("here-you-are", three notes on dotted eighths) is cut from the same cell.

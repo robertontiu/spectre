@@ -62,15 +62,15 @@ Sessions 001-006 were re-rendered on 2026-11-24 with `handclap` model 2 (the old
 
 ## 5. Open decisions waiting on the owner
 
-**(a) 009 "Here You Are": sung chorus words.** Candidate v034 has the chorus hook sung with words (Hanami, svs, octave down, the "blend-d" chain with less reverb) against the published wordless v026. Publish only if approved; then copy `renders/v034.master.mp3` to `here-you-are-mastered.mp3`, add the Hanami credit line ("Vocals: Hoshino Hanami (DiffSinger voicebank by Lotte V, lottev.moe), Potluck Vocoder by tigermeat"), update the README (version, master numbers, voice), LESSONS, `tracks.json` duration, sync. Known flaw: "round and round" is misheard as "from the ground" (Whisper, choruses 2-4); it is a note-length problem, not the mix, so the fix if wanted is a lyric or note-length change. Measurements: journal entries 28-29.
+**(a) 009 "Here You Are".** Resolved 2026-11-25: v034 (sung chorus words, Hanami) approved and published.
 
-**(b) 013 "Half of Me" v032.** Bigger builds and cliffs (12.5 and 13.4 LU into the drops, from 2.9 and 11.1), the transition on the cut word, words read 31 of 36 by Whisper (v026: 4 of 36). Uncommitted pending approval (`project.json`, journal, `build.py`, the master files and two new helpers `cliffs.py`, `words.py`). The word "light" is never understood (heard as "love" or "mine"); the fix would be another word or another voice, not more mix. The README still describes v026; update it, the master numbers and LESSONS if approved.
+**(b) 013 "Half of Me".** Resolved 2026-11-25: v032 approved and published; "light" stays as it is.
 
 **(c) 014 love letter.** Resolved 2026-11-25: the owner approved it as is ("siempre tuya", title "Lo que no supe decir"); published.
 
 **(d) 015 "Again, Again".** Resolved 2026-11-25: approved and published as is. The 4 kHz master note stays a lesson (casting, not EQ).
 
-**(e) 012 carol remix v031 is live** (the quoted line went from 1 to 7-8 of 8 words by Whisper after the voice remix); the owner hasn't confirmed it by ear.
+**(e) 012 carol remix.** Resolved 2026-11-25: v031 approved.
 
 **(f) Choir vibrato and the default blend.** The vibrato A/B (`examples/vocals/svs/choir-vibrato-1.mp3` vs `choir-vibrato-0.3.mp3`, opt-in `svs_vibrato`) and the default voice blend (`examples/vocals/svs/blend-*.mp3`; blend-d recommended) await his ear. Also waiting on a listener: a `tts` `onset_beat` A/B, and a native ear on the Romanian experiment (`examples/vocals/svs/romanian-hanami-experiment.mp3`).
 

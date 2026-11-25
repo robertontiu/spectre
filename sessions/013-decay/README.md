@@ -5,10 +5,10 @@
 | Mode | Briefed. Genre: **trance, radio edit**. Subject: **radioactive decay**. Brief: tense build-ups and big drops; the emotional nerve stays on alert the whole time; vocals mandatory, used as an instrument. The producer chose what decay is in sound |
 | Producer | Spectre, run on Claude Fable 5.2 for this session |
 | Feeling | On alert: weight on the balls of the feet, a breath taken and not let out, a pulse that never gives the rest you expect |
-| Length / tempo / key | 3:29 (120 bars), 140 bpm, straight 16ths, F♯ minor with a Phrygian ♭2 (G), no major chord but the ♭2 |
-| Voices | `singer` `svs`: `hanami`, `hanami-power`, `hanami-dark`, `leona-power`, `leona-soft`. Words are Spectre's own: "half of me is light", "half of what is left holds on", and the chops "half / me / light / hold" |
-| Iterations | 26 journal entries, 26 renders; resumed once after a server restart |
-| Master | `studio.py master v026 --genre trance_radio` (master v2, measured trance curve): -9.3 LUFS, -1.03 dBTP (MP3 -0.65), PLR 8.3, LRA about 6.3 LU, width -9.8 LU, laptop loss -1.8 dB, top end within 1.2 dB, phone check clean, no warnings |
+| Length / tempo / key | 3:36 (124 bars), 140 bpm, straight 16ths, F♯ minor with a Phrygian ♭2 (G), no major chord but the ♭2 |
+| Voices | `singer` `svs`: `hanami`, `hanami-dark`, `leona-power`, `leona-soft`. Words are Spectre's own: "half of me is light", "half of what is left holds on", and the chops "half / me / light / hold" |
+| Iterations | 34 journal entries, 32 renders; resumed once after a server restart. v027-v032 revised it after the owner's listening: real builds and cliffs (the drop into drop 1 went from 2.9 to 12.5 LU, into the main drop from 11.1 to 13.4 LU), a transition on the missing last word, and the words made readable per docs/TRANCE.md "Mixing the voice" (nearly dry worded lines, wet throws only on tails; Whisper on the master 4/36 to 31/36 words; "light" is still not heard) |
+| Master | `studio.py master v032 --genre trance_radio` (master v2, measured trance curve): -9.3 LUFS, -1.03 dBTP (MP3 -0.58), PLR 8.2, LRA 7.8 LU, width -10.5 LU, laptop loss -1.8 dB, top end within 1.2 dB, phone check clean, no warnings |
 | Credits | Vocals: Hoshino Hanami and LEONA (DiffSinger voicebanks by Lotte V, lottev.moe; LEONA under CC BY 4.0), Potluck Vocoder by tigermeat |
 
 ## How it carries the feeling
@@ -16,7 +16,7 @@
 - **One unstable nucleus.** The G over the F♯ tonic (the ♭2) never resolves: the hook hangs on it, the voice holds it before the main drop, and the track ends on it.
 - **Decay everywhere in time.** The breakdown's ticks thin 16-8-4-2-1 per two bars; the tail's chops halve 4-2-1; at the end the kick's gaps double (half a bar, a bar, two bars) instead of fading.
 - **Tension by denying, not adding.** The second build's roll stops half a bar early into two bars of one dry voice holding "hold" on the wrong note until the kick cuts it off; one beat of kick goes missing at every half-life boundary; there is no silence before the main drop.
-- **The last line loses its last word.** The far voice sings "half of me is" and stops; the lead's one surviving note plays the G where "light" would be, and the track cuts on it.
+- **The last line loses its last word.** The far voice sings "half of me is" and stops; the lead's one surviving note plays the G where "light" would be and rings out.
 - **Wrong feelings kept out:** a horror score, a science-documentary bed, a cheerful festival anthem, constant loudness, a Geiger-counter gimmick, and First Light's euphoria again.
 
 ## Song form (bars, start)
@@ -29,7 +29,7 @@
 - **Build 2 (65-70, 1:50):** the roll tightens and stops half a bar early
 - **Hold (71-72, 2:00):** one dry voice holds "hold" on G, cut off by the kick
 - **Main drop (73-104, 2:03):** four half-lives of 8 bars; the lead 8, 4, 2, 1 notes, the chops 0, 4, 6, 7; dark voices from bar 89; the call returns at bars 103-104
-- **Tail (105-120, 2:58):** chops halve, the kick's gaps double, "half of me is", the lone G, a hard stop
+- **Tail (105-124, 2:58):** chops halve, the kick's gaps double, "half of me is" on a reverse swell with "is" thrown into the echo, then the lone G lands where "light" would be and rings out for four bars
 
 ## Departures from Spectre's habits (against 007, First Light)
 The hook comes first and is then taken apart (a bigger second wave would have been First Light again); the breakdown starts dense and thins and stays minor; no silence before the main drop; the rolling bass runs from bar 1; the ending cuts mid-phrase on the ♭2 instead of a closing filter; 140 bpm in F♯ Phrygian minor.

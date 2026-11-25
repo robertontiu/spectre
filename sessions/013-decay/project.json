@@ -271,6 +271,12 @@
      "hz": 260
     },
     {
+     "type": "eq",
+     "hz": 2500,
+     "gain_db": -2.5,
+     "q": 0.7
+    },
+    {
      "type": "gate",
      "pattern": "x.xx.x.xx.x.xx.x",
      "depth": 0.9,
@@ -356,13 +362,18 @@
    "inst": {
     "type": "singer",
     "source": "svs",
-    "voice": "hanami-power",
-    "svs_fade_in_ms": 20,
-    "svs_fade_out_ms": 120
+    "voice": "hanami",
+    "svs_fade_in_ms": 10,
+    "svs_fade_out_ms": 80
    },
-   "send_reverb": 0.4,
-   "reverb_predelay_ms": 60,
-   "send_delay": 0.25,
+   "send_reverb": 0.1,
+   "reverb_predelay_ms": 100,
+   "send_delay": 0.04,
+   "sidechain": {
+    "source": "kick",
+    "depth": 0.15,
+    "release_ms": 120
+   },
    "fx": [
     {
      "type": "hpf",
@@ -371,12 +382,18 @@
     {
      "type": "eq",
      "hz": 800,
-     "gain_db": -2,
+     "gain_db": -2.5,
      "q": 0.9
     },
     {
+     "type": "eq",
+     "hz": 3200,
+     "gain_db": 3,
+     "q": 0.8
+    },
+    {
      "type": "comp",
-     "threshold_db": -22,
+     "threshold_db": -24,
      "ratio": 4
     },
     {
@@ -390,6 +407,61 @@
     }
    ],
    "gain_db": 10
+  },
+  "lthrow": {
+   "inst": {
+    "type": "singer",
+    "source": "svs",
+    "voice": "hanami",
+    "svs_fade_in_ms": 150,
+    "svs_fade_out_ms": 80
+   },
+   "send_reverb": 6.0,
+   "reverb_predelay_ms": 60,
+   "send_delay": 6.0,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 250
+    },
+    {
+     "type": "lpf",
+     "hz": 5000
+    },
+    {
+     "type": "gain",
+     "db": -14
+    }
+   ],
+   "gain_db": 10
+  },
+  "fthrow": {
+   "inst": {
+    "type": "singer",
+    "source": "svs",
+    "voice": "hanami",
+    "svs_fade_in_ms": 150,
+    "svs_fade_out_ms": 120
+   },
+   "send_reverb": 6.0,
+   "reverb_predelay_ms": 60,
+   "send_delay": 6.0,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 250
+    },
+    {
+     "type": "lpf",
+     "hz": 5000
+    },
+    {
+     "type": "gain",
+     "db": -16
+    }
+   ],
+   "gain_db": 10,
+   "width": 0.3
   },
   "edge": {
    "inst": {
@@ -432,19 +504,74 @@
    "width": 0.3,
    "gain_db": 13
   },
+  "rz": {
+   "inst": {
+    "type": "supersaw",
+    "voices": 5,
+    "detune": 18,
+    "mix": 0.7,
+    "attack": 0.003,
+    "decay": 0.09,
+    "sustain_level": 0.25,
+    "release": 0.05,
+    "cutoff": 6000,
+    "reso": 0.3
+   },
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 500
+    },
+    {
+     "type": "sat",
+     "amount": 0.3
+    }
+   ],
+   "send_reverb": 0.3,
+   "send_delay": 0.15,
+   "humanize_ms": 0,
+   "width": 0.5,
+   "gain_db": 6
+  },
+  "throw": {
+   "inst": {
+    "type": "singer",
+    "source": "svs",
+    "voice": "leona-power",
+    "svs_fade_in_ms": 3,
+    "svs_fade_out_ms": 40
+   },
+   "send_reverb": 0.6,
+   "reverb_predelay_ms": 40,
+   "send_delay": 0.7,
+   "fx": [
+    {
+     "type": "hpf",
+     "hz": 250
+    },
+    {
+     "type": "comp",
+     "threshold_db": -24,
+     "ratio": 5
+    },
+    {
+     "type": "gain",
+     "db": 1
+    }
+   ],
+   "gain_db": 10
+  },
   "far": {
    "inst": {
     "type": "singer",
     "source": "svs",
     "voice": "hanami",
-    "svs_fade_in_ms": 30,
-    "svs_fade_out_ms": 200,
-    "double": 0.25,
-    "double_pan": 0.7
+    "svs_fade_in_ms": 15,
+    "svs_fade_out_ms": 120
    },
-   "send_reverb": 0.75,
-   "reverb_predelay_ms": 60,
-   "send_delay": 0.45,
+   "send_reverb": 0.3,
+   "reverb_predelay_ms": 100,
+   "send_delay": 0.1,
    "fx": [
     {
      "type": "hpf",
@@ -457,6 +584,12 @@
      "q": 0.9
     },
     {
+     "type": "eq",
+     "hz": 3200,
+     "gain_db": 3,
+     "q": 0.8
+    },
+    {
      "type": "comp",
      "threshold_db": -22,
      "ratio": 3
@@ -464,7 +597,7 @@
     {
      "type": "highshelf",
      "hz": 8000,
-     "gain_db": 2
+     "gain_db": 3
     },
     {
      "type": "gain",
@@ -481,7 +614,8 @@
     "voice": "hanami-dark",
     "svs_fade_in_ms": 300,
     "svs_fade_out_ms": 400,
-    "seed": 3
+    "seed": 3,
+    "svs_vibrato": 0.4
    },
    "sidechain": {
     "source": "kick",
@@ -495,6 +629,12 @@
     {
      "type": "hpf",
      "hz": 220
+    },
+    {
+     "type": "eq",
+     "hz": 2800,
+     "gain_db": -4,
+     "q": 0.7
     },
     {
      "type": "gain",
@@ -511,7 +651,8 @@
     "gender": -0.5,
     "svs_fade_in_ms": 300,
     "svs_fade_out_ms": 400,
-    "seed": 5
+    "seed": 5,
+    "svs_vibrato": 0.4
    },
    "sidechain": {
     "source": "kick",
@@ -529,6 +670,12 @@
     {
      "type": "lpf",
      "hz": 6000
+    },
+    {
+     "type": "eq",
+     "hz": 2800,
+     "gain_db": -4,
+     "q": 0.7
     },
     {
      "type": "gain",
@@ -631,6 +778,105 @@
    "bars": 2,
    "tick": "2:C#6:1 7:C#6:1 11:F#6:1 14:C#6:1 21:C#6:1 27:G6:1 30:C#6:1"
   },
+  "k7": {
+   "bars": 7,
+   "kick": "x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x.x.x.x.xxxxxxxx",
+   "ksub": "0:B0:1 4:B0:1 8:B0:1 12:B0:1 16:B0:1 20:B0:1 24:B0:1 28:B0:1 32:B0:1 36:B0:1 40:B0:1 44:B0:1 48:B0:1 52:B0:1 56:B0:1 60:B0:1 64:B0:1 68:B0:1 72:B0:1 76:B0:1 80:B0:1 84:B0:1 88:B0:1 92:B0:1"
+  },
+  "roll7": {
+   "bars": 7,
+   "snare": "x...x...x...x...x...x...x...x...x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxRRRRRRRRRRRRRRRR"
+  },
+  "rz7": {
+   "bars": 7,
+   "rz": "0:F#4:1 1:F#4:1 2:F#4:1 3:F#4:1 4:G4:1 5:G4:1 6:G4:1 7:G4:1 8:G4:1 9:G4:1 10:G4:1 11:G4:1 12:A4:1 13:A4:1 14:A4:1 15:A4:1 16:A4:1 17:A4:1 18:A4:1 19:A4:1 20:B4:1 21:B4:1 22:B4:1 23:B4:1 24:B4:1 25:B4:1 26:B4:1 27:B4:1 28:C#5:1 29:C#5:1 30:C#5:1 31:C#5:1 32:C#5:1 33:C#5:1 34:C#5:1 35:C#5:1 36:D5:1 37:D5:1 38:D5:1 39:D5:1 40:E5:1 41:E5:1 42:E5:1 43:E5:1 44:E5:1 45:E5:1 46:E5:1 47:E5:1 48:F#5:1 49:F#5:1 50:F#5:1 51:F#5:1 52:F#5:1 53:F#5:1 54:F#5:1 55:F#5:1 56:G5:1 57:G5:1 58:G5:1 59:G5:1 60:G5:1 61:G5:1 62:G5:1 63:G5:1 64:A5:1 65:A5:1 66:A5:1 67:A5:1 68:A5:1 69:A5:1 70:A5:1 71:A5:1 72:B5:1 73:B5:1 74:B5:1 75:B5:1 76:C#6:1 77:C#6:1 78:C#6:1 79:C#6:1 80:C#6:1 81:C#6:1 82:C#6:1 83:C#6:1 84:D6:1 85:D6:1 86:D6:1 87:D6:1 88:D6:1 89:D6:1 90:D6:1 91:D6:1 92:E6:1 93:E6:1 94:E6:1 95:E6:1 96:E6:1 97:E6:1 98:E6:1 99:E6:1 100:F#6:1 101:F#6:1 102:F#6:1 103:F#6:1 104:F#6:1 105:F#6:1 106:F#6:1 107:F#6:1 108:G6:1 109:G6:1 110:G6:1 111:G6:1"
+  },
+  "b1chop7": {
+   "bars": 7,
+   "chop": {
+    "notes": "0:G4:4 8:G4:4 16:G4:4 24:G4:4 34:A4:2 38:A4:2 42:A4:2 46:A4:2 50:A4:2 54:A4:2 58:A4:2 62:A4:2 64:B4:2 66:B4:2 68:B4:2 70:B4:2 72:B4:2 74:B4:2 76:B4:2 78:B4:2 80:C#5:2 82:C#5:2 84:C#5:2 86:C#5:2 88:C#5:2 90:C#5:2 92:C#5:2 94:C#5:2 96:D5:2 98:D5:2 100:D5:2 102:D5:2 104:D5:2 106:D5:2 108:D5:2 110:D5:2",
+    "lyrics": "hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold hold"
+   }
+  },
+  "throwG": {
+   "bars": 1,
+   "throw": {
+    "notes": "0:G4:3",
+    "lyrics": "hold"
+   }
+  },
+  "k2a": {
+   "bars": 4,
+   "kick": "x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...",
+   "ksub": "0:B0:1 4:B0:1 8:B0:1 12:B0:1 16:B0:1 20:B0:1 24:B0:1 28:B0:1 32:B0:1 36:B0:1 40:B0:1 44:B0:1 48:B0:1 52:B0:1 56:B0:1 60:B0:1"
+  },
+  "k2b": {
+   "bars": 2,
+   "kick": "x.x.x.x.x.x.x.x.xxxxxxxxxxxxxxxx",
+   "snare": "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR"
+  },
+  "rz6a": {
+   "bars": 4,
+   "rz": "0:F#4:1 1:F#4:1 2:F#4:1 3:F#4:1 4:G4:1 5:G4:1 6:G4:1 7:G4:1 8:G4:1 9:G4:1 10:G4:1 11:G4:1 12:A4:1 13:A4:1 14:A4:1 15:A4:1 16:A4:1 17:A4:1 18:A4:1 19:A4:1 20:B4:1 21:B4:1 22:B4:1 23:B4:1 24:C#5:1 25:C#5:1 26:C#5:1 27:C#5:1 28:C#5:1 29:C#5:1 30:C#5:1 31:C#5:1 32:D5:1 33:D5:1 34:D5:1 35:D5:1 36:D5:1 37:D5:1 38:D5:1 39:D5:1 40:E5:1 41:E5:1 42:E5:1 43:E5:1 44:F#5:1 45:F#5:1 46:F#5:1 47:F#5:1 48:F#5:1 49:F#5:1 50:F#5:1 51:F#5:1 52:G5:1 53:G5:1 54:G5:1 55:G5:1 56:G5:1 57:G5:1 58:G5:1 59:G5:1 60:A5:1 61:A5:1 62:A5:1 63:A5:1"
+  },
+  "rz6b": {
+   "bars": 2,
+   "rz": "0:B5:1 1:B5:1 2:B5:1 3:B5:1 4:C#6:1 5:C#6:1 6:C#6:1 7:C#6:1 8:C#6:1 9:C#6:1 10:C#6:1 11:C#6:1 12:D6:1 13:D6:1 14:D6:1 15:D6:1 16:E6:1 17:E6:1 18:E6:1 19:E6:1 20:F#6:1 21:F#6:1 22:F#6:1 23:F#6:1 24:F#6:1 25:F#6:1 26:F#6:1 27:F#6:1 28:G6:1 29:G6:1 30:G6:1 31:G6:1"
+  },
+  "roll78": {
+   "bars": 2,
+   "bass": "1:E2:1 2:E2:1 3:E2:1 5:E2:1 6:E2:1 7:E2:1 9:E2:1 10:E2:1 11:E2:1 13:E2:1 14:E2:1 15:E2:1 17:G1:1 18:G1:1 19:G1:1 21:G1:1 22:G1:1 23:G1:1 25:G1:1 26:G1:1 27:G1:1 29:G1:1 30:G1:1 31:G1:1"
+  },
+  "rollO78": {
+   "bars": 2,
+   "bass": "1:E2:1 2:E2:1 3:E2:1 5:E2:1 6:E3:1 7:E2:1 9:E2:1 10:E2:1 11:E2:1 13:E2:1 14:E3:1 15:E2:1 17:G1:1 18:G1:1 19:G1:1 21:G1:1 22:G2:1 23:G1:1 25:G1:1 26:G1:1 27:G1:1 29:G1:1 30:G2:1 31:G1:1"
+  },
+  "gated78": {
+   "bars": 2,
+   "saws": {
+    "chords": "Em:16 G:16",
+    "style": "sustain",
+    "register": "C#4",
+    "voicing": "close",
+    "vel": 0.8
+   }
+  },
+  "pads78": {
+   "bars": 2,
+   "pad": {
+    "chords": "Em:16 G:16",
+    "style": "sustain",
+    "register": "C#4",
+    "voicing": "spread",
+    "vel": 0.7
+   }
+  },
+  "choir78": {
+   "bars": 2,
+   "chD": {
+    "notes": "0:G4:30",
+    "lyrics": "ah"
+   },
+   "chS": {
+    "notes": "0:B4:30",
+    "lyrics": "ah"
+   }
+  },
+  "p1c": {
+   "bars": 2,
+   "lead": "22:G5:10"
+  },
+  "p1one": {
+   "bars": 4,
+   "lead": "22:G5:10"
+  },
+  "ringG": {
+   "bars": 4,
+   "lead": "0:G5:14 0:G4:14",
+   "pad": "0:G3:40 0:G4:40 0:D5:40",
+   "tick": "21:C#6:1 53:C#6:1",
+   "bass": "1:G1:1 2:G1:1 3:G1:1 5:G1:1 6:G1:1 7:G1:1 9:G1:1 10:G1:1 11:G1:1 13:G1:1 14:G1:1 15:G1:1 17:G1:1 18:G1:1 19:G1:1 21:G1:1 22:G1:1 23:G1:1 25:G1:1 26:G1:1 27:G1:1 29:G1:1 30:G1:1 31:G1:1 33:G1:1 34:G1:1 35:G1:1 37:G1:1 38:G1:1 39:G1:1 41:G1:1 42:G1:1 43:G1:1 45:G1:1 46:G1:1 47:G1:1 49:G1:1 50:G1:1 51:G1:1 53:G1:1 54:G1:1 55:G1:1 57:G1:1 58:G1:1 59:G1:1 61:G1:1 62:G1:1 63:G1:1"
+  },
   "four6": {
    "bars": 8,
    "kick": "x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x...x..................................."
@@ -731,32 +977,57 @@
     "lyrics": "hold hold"
    }
   },
+  "throwI": {
+   "bars": 8,
+   "fthrow": {
+    "notes": "22:G4:9 86:G4:9",
+    "lyrics": "ah ah"
+   }
+  },
+  "throwB": {
+   "bars": 16,
+   "fthrow": {
+    "notes": "54:G4:9 160:C#5:8 168:G4:16",
+    "lyrics": "ah on _"
+   }
+  },
+  "throwEnd": {
+   "bars": 4,
+   "fthrow": {
+    "notes": "60:A4:4",
+    "lyrics": "is"
+   }
+  },
   "farI": {
    "bars": 8,
    "far": {
-    "notes": "0:F#4:4 4:A4:2 6:B4:6 12:A4:4 16:G4:14 64:F#4:4 68:A4:2 70:B4:6 76:A4:4 80:G4:14",
+    "notes": "0:F#4:4 4:A4:4 8:B4:4 12:A4:4 16:G4:14 64:F#4:4 68:A4:4 72:B4:4 76:A4:4 80:G4:14",
     "lyrics": "half of me is light half of me is light"
    }
   },
   "farB": {
    "bars": 16,
    "far": {
-    "notes": "32:F#4:4 36:A4:2 38:B4:6 44:A4:4 48:G4:14 128:F#4:4 132:A4:2 134:B4:6 140:A4:4 144:G4:10 156:B4:4 160:C#5:8 168:G4:16",
+    "notes": "32:F#4:4 36:A4:4 40:B4:4 44:A4:4 48:G4:14 128:F#4:4 132:A4:4 136:B4:4 140:A4:4 144:G4:8 156:B4:4 160:C#5:8 168:G4:16",
     "lyrics": "half of me is light half of what is left holds on _"
    }
   },
   "farEnd": {
    "bars": 4,
    "far": {
-    "notes": "38:F#4:4 42:A4:2 44:B4:6 50:A4:4",
+    "notes": "48:F#4:4 52:A4:4 56:B4:4 60:A4:4",
     "lyrics": "half of me is"
    }
   },
-  "callD": {
-   "bars": 8,
+  "call2": {
+   "bars": 2,
    "line": {
-    "notes": "96:F#4:4 100:A4:2 102:B4:6 108:A4:4 112:G4:14",
+    "notes": "0:F#4:4 4:A4:4 8:B4:4 12:A4:4 16:G4:14",
     "lyrics": "half of me is light"
+   },
+   "lthrow": {
+    "notes": "22:G4:9",
+    "lyrics": "ah"
    }
   },
   "choir": {
@@ -837,6 +1108,7 @@
     "roll",
     "ticks",
     "farI",
+    "throwI",
     "c1"
    ],
    "auto": {
@@ -851,11 +1123,13 @@
      ]
     },
     "far": {
-     "lpf": [
-      1600,
-      6000
-     ],
-     "gain_db": 2
+     "gain_db": [
+      1,
+      3
+     ]
+    },
+    "fthrow": {
+     "gain_db": -3
     },
     "tick": {
      "gain_db": [
@@ -930,78 +1204,193 @@
   },
   {
    "name": "build1",
-   "bars": 8,
+   "bars": 7,
    "play": [
-    "four6",
+    "k7",
     "hats",
     "roll",
     "gated",
-    "roll8",
-    "b1chop",
-    "p8"
+    "roll7",
+    "b1chop7",
+    "p8",
+    "rz7"
    ],
    "auto": {
     "saws": {
      "hpf": [
       260,
-      1400
+      1200
      ],
      "lpf": [
-      2500,
-      5000
+      1800,
+      10000
+     ],
+     "gain_db": [
+      -8,
+      3
      ]
     },
     "bass": {
      "hpf": [
       45,
-      400
+      320
      ],
      "gain_db": [
-      0,
-      -4
+      -6,
+      -2
+     ]
+    },
+    "kick": {
+     "gain_db": [
+      -4,
+      0.5
+     ]
+    },
+    "ksub": {
+     "gain_db": [
+      -6,
+      0
      ]
     },
     "lead": {
      "hpf": [
       300,
-      2200
+      2000
      ],
      "gain_db": [
-      0,
-      -3
-     ]
-    },
-    "ohat": {
-     "gain_db": [
-      0,
-      -6
+      -4,
+      -4
      ]
     },
     "snare": {
      "gain_db": [
-      -12,
-      0
+      -6,
+      7
+     ],
+     "lpf": [
+      5000,
+      9000
      ]
     },
     "chop": {
      "hpf": [
       1200,
       250
+     ],
+     "gain_db": [
+      -4,
+      2
+     ]
+    },
+    "rz": {
+     "gain_db": [
+      -16,
+      0
+     ],
+     "lpf": [
+      1500,
+      11000
+     ]
+    },
+    "chh": {
+     "gain_db": [
+      -3,
+      3
+     ]
+    },
+    "ohat": {
+     "gain_db": [
+      -3,
+      2
      ]
     }
    },
    "exit": {
-    "riser": 6,
-    "rise": 16,
-    "cut": {
-     "tracks": "all",
-     "beats": 1
+    "riser": 16,
+    "rise": 28
+   }
+  },
+  {
+   "name": "gap1",
+   "bars": 1,
+   "play": [
+    "throwG"
+   ],
+   "enter": {
+    "downlifter": 2
+   },
+   "exit": {
+    "reverse": 1
+   },
+   "auto": {
+    "kick": {
+     "mute": true
+    },
+    "ksub": {
+     "mute": true
+    },
+    "bass": {
+     "mute": true
+    },
+    "saws": {
+     "mute": true
+    },
+    "snare": {
+     "mute": true
+    },
+    "lead": {
+     "mute": true
+    },
+    "rz": {
+     "mute": true
+    },
+    "chh": {
+     "mute": true
+    },
+    "ohat": {
+     "mute": true
+    },
+    "chop": {
+     "mute": true
     }
    }
   },
   {
    "name": "drop1a",
-   "bars": 8,
+   "bars": 6,
+   "auto": {
+    "saws": {
+     "gain_db": -1.5,
+     "lpf": 3200
+    },
+    "chh": {
+     "gain_db": -1
+    },
+    "bass": {
+     "gain_db": 0
+    },
+    "lead": {
+     "gain_db": 0
+    }
+   },
+   "play": [
+    "four",
+    "hats",
+    "claps",
+    "roll",
+    "gated",
+    "p8call",
+    "ticks"
+   ],
+   "enter": {
+    "impact": 1.0,
+    "crash": 1.0,
+    "downlifter": 4
+   }
+  },
+  {
+   "name": "drop1call",
+   "bars": 2,
    "exit": {
     "cut": {
      "tracks": [
@@ -1012,11 +1401,8 @@
    },
    "auto": {
     "saws": {
-     "gain_db": -3,
+     "gain_db": -5,
      "lpf": 2400
-    },
-    "line": {
-     "gain_db": -2.5
     },
     "chh": {
      "gain_db": -3
@@ -1026,22 +1412,20 @@
     },
     "lead": {
      "gain_db": -1
+    },
+    "line": {
+     "gain_db": -1
     }
    },
    "play": [
     "four",
     "hats",
     "claps",
-    "roll",
-    "gated",
-    "p8call",
-    "callD",
+    "roll78",
+    "gated78",
+    "call2",
     "ticks"
-   ],
-   "enter": {
-    "impact": 0.6,
-    "crash": 0.7
-   }
+   ]
   },
   {
    "name": "drop1b",
@@ -1083,6 +1467,7 @@
     "ticksBD",
     "pads",
     "farB",
+    "throwB",
     "choir"
    ],
    "enter": {
@@ -1111,18 +1496,18 @@
     },
     "chD": {
      "gain_db": [
-      -6,
-      0
+      -8,
+      -1
      ]
     },
     "chS": {
      "gain_db": [
-      -6,
-      0
+      -8,
+      -1
      ]
     },
     "far": {
-     "gain_db": 1
+     "gain_db": 3
     }
    }
   },
@@ -1130,34 +1515,85 @@
    "name": "build2a",
    "bars": 4,
    "play": [
-    "four",
+    "k2a",
     "hats",
     "roll",
     "gated",
     "roll4",
-    "p1x"
+    "p1x",
+    "rz6a"
    ],
    "auto": {
     "saws": {
      "hpf": [
       260,
-      900
+      800
      ],
      "lpf": [
-      2600,
-      4000
+      1500,
+      6000
+     ],
+     "gain_db": [
+      -6,
+      1
      ]
     },
     "bass": {
      "hpf": [
-      45,
-      160
+      250,
+      60
+     ],
+     "gain_db": [
+      -8,
+      -1
+     ]
+    },
+    "kick": {
+     "gain_db": [
+      -6,
+      0
+     ],
+     "hpf": [
+      140,
+      30
+     ]
+    },
+    "ksub": {
+     "gain_db": [
+      -20,
+      0
      ]
     },
     "snare": {
      "gain_db": [
-      -12,
-      -4
+      -8,
+      3
+     ],
+     "lpf": [
+      5000,
+      8000
+     ]
+    },
+    "rz": {
+     "gain_db": [
+      -16,
+      -5
+     ],
+     "lpf": [
+      1500,
+      6000
+     ]
+    },
+    "chh": {
+     "gain_db": [
+      -4,
+      1
+     ]
+    },
+    "ohat": {
+     "gain_db": [
+      -4,
+      0
      ]
     }
    }
@@ -1166,48 +1602,69 @@
    "name": "build2b",
    "bars": 2,
    "play": [
+    "k2b",
     "hats",
     "roll",
     "gated",
-    "roll2"
+    "rz6b"
    ],
    "auto": {
     "saws": {
      "hpf": [
-      900,
-      1800
+      800,
+      1600
+     ],
+     "lpf": [
+      6000,
+      12000
+     ],
+     "gain_db": [
+      1,
+      4
      ]
     },
     "bass": {
      "hpf": [
-      160,
-      350
+      60,
+      300
      ]
     },
     "snare": {
      "gain_db": [
-      -6,
-      -4
+      3,
+      7
      ],
      "lpf": [
-      9000,
-      6000
+      8000,
+      9500
+     ]
+    },
+    "rz": {
+     "gain_db": [
+      -5,
+      1
+     ],
+     "lpf": [
+      6000,
+      12000
+     ]
+    },
+    "chh": {
+     "gain_db": [
+      1,
+      4
+     ]
+    },
+    "ohat": {
+     "gain_db": [
+      0,
+      2
      ]
     }
    },
    "exit": {
-    "rise": 6,
-    "cut": {
-     "tracks": [
-      "snare",
-      "kick",
-      "bass",
-      "saws",
-      "ohat",
-      "chh"
-     ],
-     "beats": 2
-    }
+    "riser": 12,
+    "rise": 24
    }
   },
   {
@@ -1217,6 +1674,9 @@
     "holdG",
     "ticks1"
    ],
+   "enter": {
+    "downlifter": 2
+   },
    "auto": {
     "bass": {
      "mute": true
@@ -1230,8 +1690,20 @@
     "kick": {
      "mute": true
     },
+    "ksub": {
+     "mute": true
+    },
+    "rz": {
+     "mute": true
+    },
+    "chh": {
+     "mute": true
+    },
+    "ohat": {
+     "mute": true
+    },
     "chop": {
-     "gain_db": -9
+     "gain_db": -11
     }
    }
   },
@@ -1279,8 +1751,9 @@
     "ticks"
    ],
    "enter": {
-    "impact": 0.8,
-    "crash": 0.8
+    "impact": 1.0,
+    "crash": 1.0,
+    "downlifter": 4
    }
   },
   {
@@ -1398,31 +1871,20 @@
   },
   {
    "name": "mainD",
-   "bars": 8,
-   "exit": {
-    "reverse": 2,
-    "cut": {
-     "tracks": [
-      "kick",
-      "clap",
-      "saws"
-     ],
-     "beats": 2
-    }
-   },
+   "bars": 6,
    "auto": {
     "bass": {
      "gain_db": 1,
      "lpf": [
       2600,
-      9000
+      7000
      ]
     },
     "saws": {
      "gain_db": 4,
      "lpf": [
       7000,
-      12000
+      11000
      ]
     },
     "lead": {
@@ -1439,9 +1901,6 @@
     },
     "ohat": {
      "gain_db": 2
-    },
-    "line": {
-     "gain_db": -1.5
     },
     "pad": {
      "gain_db": -4
@@ -1461,10 +1920,73 @@
     "gated",
     "p1",
     "d7",
-    "callD",
     "ticks",
     "choir8",
     "pads8"
+   ]
+  },
+  {
+   "name": "mainDcall",
+   "bars": 2,
+   "exit": {
+    "reverse": 2,
+    "cut": {
+     "tracks": [
+      "kick",
+      "clap",
+      "saws"
+     ],
+     "beats": 2
+    }
+   },
+   "auto": {
+    "bass": {
+     "gain_db": 1,
+     "lpf": [
+      7000,
+      9000
+     ]
+    },
+    "saws": {
+     "gain_db": 1.5,
+     "lpf": [
+      11000,
+      12000
+     ]
+    },
+    "lead": {
+     "gain_db": -1
+    },
+    "chh": {
+     "gain_db": 3
+    },
+    "ohat": {
+     "gain_db": 2
+    },
+    "pad": {
+     "gain_db": -7
+    },
+    "chD": {
+     "gain_db": -5
+    },
+    "chS": {
+     "gain_db": -5
+    },
+    "line": {
+     "gain_db": 0
+    }
+   },
+   "play": [
+    "four",
+    "hats",
+    "claps",
+    "rollO78",
+    "gated78",
+    "p1c",
+    "call2",
+    "ticks",
+    "choir78",
+    "pads78"
    ]
   },
   {
@@ -1511,32 +2033,90 @@
    "play": [
     "kdecayD",
     "roll",
-    "p1x",
+    "p1one",
     "ticks1",
-    "farEnd"
+    "farEnd",
+    "throwEnd"
    ],
    "auto": {
     "far": {
-     "gain_db": 3
+     "gain_db": 5
     },
     "lead": {
      "gain_db": 2
+    },
+    "bass": {
+     "gain_db": [
+      0,
+      -6
+     ],
+     "lpf": [
+      3000,
+      500
+     ]
+    }
+   },
+   "exit": {
+    "reverse": 2
+   }
+  },
+  {
+   "name": "ring",
+   "bars": 4,
+   "play": [
+    "ringG"
+   ],
+   "auto": {
+    "lead": {
+     "gain_db": [
+      3,
+      0
+     ]
+    },
+    "pad": {
+     "gain_db": [
+      2,
+      -30
+     ],
+     "lpf": [
+      3000,
+      800
+     ]
+    },
+    "bass": {
+     "gain_db": [
+      -5,
+      -45
+     ],
+     "lpf": [
+      500,
+      150
+     ]
+    },
+    "tick": {
+     "gain_db": [
+      -3,
+      -14
+     ]
+    },
+    "far": {
+     "gain_db": 4
     }
    }
   }
  ],
  "mix": {
   "reverb": {
-   "size": 0.88,
+   "size": 0.85,
    "damping": 0.5,
    "return_db": -6,
    "lpf": 7500
   },
   "delay": {
    "beats": 0.75,
-   "feedback": 0.42,
+   "feedback": 0.35,
    "return_db": -9,
-   "lpf": 4200
+   "lpf": 4000
   }
  },
  "master": {
