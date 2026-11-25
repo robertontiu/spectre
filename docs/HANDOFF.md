@@ -66,9 +66,9 @@ Sessions 001-006 were re-rendered on 2026-11-24 with `handclap` model 2 (the old
 
 **(b) 013 "Half of Me" v032.** Bigger builds and cliffs (12.5 and 13.4 LU into the drops, from 2.9 and 11.1), the transition on the cut word, words read 31 of 36 by Whisper (v026: 4 of 36). Uncommitted pending approval (`project.json`, journal, `build.py`, the master files and two new helpers `cliffs.py`, `words.py`). The word "light" is never understood (heard as "love" or "mine"); the fix would be another word or another voice, not more mix. The README still describes v026; update it, the master numbers and LESSONS if approved.
 
-**(c) 014 love letter.** Delivered as `final.mp3` (v028: -11.0 LUFS, -1.05 dBTP, 22/22 words by Whisper), uncommitted, not published. Open: the sign-off "siempre tuya" (feminine) vs "siempre tuyo" (masculine) vs a neutral line; and the title: the producer proposed "Lo que no supe decir", which may already exist as another song (check), alternative "Siempre tuya". Delivery then needs the full checklist: README with the Hanami credit (from `voices.json`) and model Claude Fable 5.2, LESSONS entry including the genre switch and "Across genres", `tracks.json`, rename the MP3, master images and report, clean-up of scratch (`hiss.py`, `wait.sh`, `z.sh`, `ear.png` and the like if not needed to rebuild).
+**(c) 014 love letter.** Resolved 2026-11-25: the owner approved it as is ("siempre tuya", title "Lo que no supe decir"); published.
 
-**(d) 015 "Again, Again".** Delivered as `again-again-mastered.mp3` (v028: -15.0 LUFS, -1.08 dBTP, PLR 13.9), uncommitted, not published. No voice. Open master note: the EQ stands at its +4 dB limit at 4 kHz; the glockenspiel and the piano have nothing there, so the fix is casting (an instrument that owns 2-5 kHz), not EQ. Then README (model Claude Fable 5.2), LESSONS with the genre switch, `tracks.json`.
+**(d) 015 "Again, Again".** Resolved 2026-11-25: approved and published as is. The 4 kHz master note stays a lesson (casting, not EQ).
 
 **(e) 012 carol remix v031 is live** (the quoted line went from 1 to 7-8 of 8 words by Whisper after the voice remix); the owner hasn't confirmed it by ear.
 
