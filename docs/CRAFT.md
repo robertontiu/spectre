@@ -17,6 +17,7 @@ Distilled from production guides, producer interviews and music-emotion research
 - **Lo-fi** (70–90 bpm): soft and swung, rimshots instead of snares, muffled kick, vinyl and tape. Warm, private, wistful.
 - **Trap** (130–160 bpm, felt in half-time at 65–80): snare or clap on beat 3 of each bar, hats on 8ths or 16ths with rolls (1/32, 1/16 triplets, 1/64 bursts) and pitched rolls. The 808 carries the bass and often the melody. Cold, menacing, flexing, numb or euphoric depending on the melody.
 - **Drill** (140–145): sliding 808s, syncopated kicks and snares (snare on 3 plus an off-placed one), triplet hats. Tension, threat.
+- **By era, scene and strand** (the boom-bap eras, Atlanta and streaming trap, drill's Chicago, UK, Brooklyn and Bronx branches, rage, pluggnb, jerk, phonk), with measured tempos, lengths and masters: docs/HIPHOP.md "Granularity".
 - **Rolls point at something.** A hat roll accents the beat it lands on. Use rolls to throw weight forward, not as decoration.
 - **Layering.** Clap a few ms ahead of the snare = a bigger attack. Never stack two kicks that fight in the low end.
 
