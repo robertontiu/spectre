@@ -67,6 +67,11 @@ NORMS = {"default": dict(jumps=3, prep=0.3, score=5.0),
 FAMILY = {"techno": "dj", "trance": "dj", "trance_radio": "dj", "psytrance": "dj", "dubstep": "dj",
           "trap": "song", "hiphop": "song", "hiphop_golden": "song", "boombap": "song", "rock": "song",
           "latinpop": "song", "joc": "song", "caroling": "song", "chamberscore": "song", "cinematic": "song"}
+# --coherence: a track splits into two songs when under SPLIT_SHARE of the second block's melodic cells were heard in
+# the first AND its sections' best motif match in the first block is under SPLIT_LINK (hand-tuned; was 0.35 / 0.35
+# until 2026-11-26, which passed All Hands v035 at 53% / 0.37 against the owner's ear)
+SPLIT_SHARE = 0.58
+SPLIT_LINK = 0.45
 PREP_DEVICES = {"riser", "rise", "reverse", "lpf", "tapestop"}
 SIGNAL_DEVICES = {"cut", "silence"}
 LAND_DEVICES = {"impact", "crash", "downlifter"}
@@ -637,8 +642,10 @@ def run_coherence(a, renders, latest, meta, meta_path):
                 newstems.append(t)
     contrast = within - cross
     intended = ((project or {}).get("form") or {}).get("acts") == "intended"
-    if weakest:  # hand-tuned: liked tracks share 47-100% of their cells across their weakest split, All Hands 19%
-        split = bool(weakest[1] < 0.35 and link.get("motif", 0) < 0.35)
+    if weakest:  # hand-tuned, recalibrated 2026-11-26 after the owner rejected All Hands v035 (53% shared, best-match
+        # motif 0.37) as still two acts: the liked tracks share 61-97% across their weakest split (Captive 61%, A Beat
+        # Early 63%, First Light 69%, The Tide 97%); Redline 49% but best-match motif 0.53 (heard as one piece)
+        split = bool(weakest[1] < SPLIT_SHARE and link.get("motif", 0) < SPLIT_LINK)
     else:        # no melody to follow: the audio alone, a clear two-block matrix with little across
         split = bool(contrast > 0.15 and link.get("timbre", 1) < 0.35)
     flag = split and not intended

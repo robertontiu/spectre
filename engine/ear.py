@@ -110,7 +110,14 @@ def listen(a, renders):
         import seams
         mp = next((p for p in (latest.replace(".wav", ".meta.json"), latest.replace(".master.wav", ".meta.json"),
                                latest.replace(".premaster.wav", ".meta.json")) if p != latest and os.path.exists(p)), None)
-        return seams.run(a, renders, latest, mp)
+        seams.run(a, renders, latest, mp)
+        if not any(getattr(a, k, False) for k in ("tension", "events", "loops", "ring")):
+            return
+    if any(getattr(a, k, False) for k in ("tension", "events", "loops", "ring")):  # the ride (engine/tension.py)
+        import tension
+        mp = next((p for p in (latest.replace(".wav", ".meta.json"), latest.replace(".master.wav", ".meta.json"),
+                               latest.replace(".premaster.wav", ".meta.json")) if p != latest and os.path.exists(p)), None)
+        return tension.run(a, renders, latest, mp)
     mp = latest.replace(".wav", ".meta.json")
     if not os.path.exists(mp):  # e.g. vNNN.master.wav: use the render's own meta
         mp = latest.replace(".master.wav", ".meta.json").replace(".premaster.wav", ".meta.json")

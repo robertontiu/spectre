@@ -8,6 +8,7 @@
   python3 studio.py listen --mono / --lowpass      the 'squint' checks
   python3 studio.py listen --clarity [--section S] --genre G   stems: layer census, masking, EQ map (engine/clarity.py)
   python3 studio.py listen --seams / --coherence   form: section seams, the through-line (engine/seams.py)
+  python3 studio.py listen --tension --events --loops --ring   the ride: tension, events, loops, ringing (engine/tension.py)
 """
 import sys, os, json, time, glob, re, argparse
 import numpy as np
@@ -1561,7 +1562,21 @@ def main():
     l.add_argument("--coherence", action="store_true",
                    help="the through-line: section x section similarity (motifs, pitch, palette, timbre), the "
                    "motivic two-block split, a flag when the track splits into two songs (engine/seams.py)")
-    l.add_argument("--map", help="with --seams/--coherence: the section map (a vNNN.meta.json or a project.json), "
+    l.add_argument("--tension", action="store_true",
+                   help="per-bar tension curve (loudness, pitch/brightness, onsets, harmony, noise sweeps); every "
+                   "respiro and build: its rise into the drop, flags a dull one (engine/tension.py)")
+    l.add_argument("--events", action="store_true",
+                   help="what the loop did not predict: freezes, kick stops, fills, hits (highlights) and changes, "
+                   "how freezes are approached, flags an event drought (engine/tension.py)")
+    l.add_argument("--loops", action="store_true",
+                   help="runs of near-identical bars (events + audio), flags runs longer than the genre's norm "
+                   "(engine/tension.py)")
+    l.add_argument("--ring", action="store_true",
+                   help="persistent narrowband tones standing out of the mix, named by stem (a window render) and "
+                   "notes; flags a long, loud ring (engine/tension.py)")
+    l.add_argument("--no-stems", dest="no_stems", action="store_true",
+                   help="with --ring: skip the window render that names the stem")
+    l.add_argument("--map", help="with --seams/--coherence/--tension/--events/--loops/--ring: the section map (a vNNN.meta.json or a project.json), "
                    "e.g. to analyse a published MP3 given with --wav")
     m = sub.add_parser("master")
     m.add_argument("version", nargs="?", help="e.g. v027 (default: latest)")
