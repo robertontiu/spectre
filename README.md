@@ -128,7 +128,9 @@ Reference recordings and datasets used only for analysis (the singing dataset GT
 
 Contributing isn't built into the project yet. The repository is set up for one owner and the agents working on it, with no contribution guide or review process, so pull requests aren't accepted for now. That may change.
 
-If you'd like to help (with the engine, the research, a genre or a voice), get in touch. GitHub has no direct messages, so [open an issue](https://github.com/robertontiu/spectre/issues/new) saying what you have in mind.
+The owner isn't a musician and has no musical training, so the most valuable help would come from people who have it: producers, composers, sound designers, mixing and mastering engineers, or anyone with a trained ear who can say what a track gets wrong and why. Help with the engine, the research, a genre or a voice is welcome too.
+
+If you'd like to help, get in touch. GitHub has no direct messages, so [open an issue](https://github.com/robertontiu/spectre/issues/new) saying what you have in mind.
 
 ## Credits
 
