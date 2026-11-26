@@ -24,6 +24,17 @@ export const familySlug = (f: Family) => f.toLowerCase().replace(/[^a-z0-9]+/g, 
 export const familyFromSlug = (slug: string | null | undefined): Family | null =>
   FAMILIES.find((f) => familySlug(f) === slug) ?? null;
 
+/**
+ * One third-party attribution shown in the track's info dialog: a voicebank or vocoder heard in
+ * the track (its credit line from `engine/voices.json`), or a quoted public-domain melody.
+ */
+export type Credit = {
+  /** The line as shown, e.g. "Vocals: Hoshino Hanami, DiffSinger voicebank by Lotte V". */
+  text: string;
+  /** Optional link: the licence where it asks for one, otherwise the author's page (opens in a new tab). */
+  url?: string;
+};
+
 /** One finished Spectre session, as listed in `data/tracks.json` (newest first). */
 export type Track = {
   /** Session number, e.g. "005"; selects `sessions/005-*` for the master. */
@@ -54,20 +65,47 @@ export type Track = {
   feeling: string;
   /** Two or three hex colours; the page mutes them into the night. */
   colors: string[];
+  /**
+   * Third-party attributions, required for every voicebank or other third-party asset audible
+   * in the track; absent when the track has none.
+   */
+  credits?: Credit[];
 };
 
+/** The track's credits, checked: each a non-empty `text` and, if given, an http(s) `url`. */
+function checkCredits(id: string, credits: unknown): Credit[] | undefined {
+  if (credits === undefined) return undefined;
+  const fail = (why: string) => {
+    throw new Error(`data/tracks.json: track ${id} has invalid credits: ${why}`);
+  };
+  if (!Array.isArray(credits) || credits.length === 0) fail("expected a non-empty array (or no field)");
+  return (credits as unknown[]).map((c, i) => {
+    if (typeof c !== "object" || c === null) return fail(`entry ${i} is not an object`);
+    const { text, url, ...rest } = c as Record<string, unknown>;
+    if (Object.keys(rest).length) fail(`entry ${i} has unknown fields ${Object.keys(rest).join(", ")}`);
+    if (typeof text !== "string" || !text.trim()) fail(`entry ${i} needs a non-empty text`);
+    if (url !== undefined && (typeof url !== "string" || !/^https?:\/\/\S+$/.test(url))) {
+      fail(`entry ${i} has a url that is not http(s)`);
+    }
+    return url === undefined ? { text: text as string } : { text: text as string, url: url as string };
+  });
+}
+
 /**
- * JSON imports type strings as `string`, so `family` is checked here: a track whose family
- * is not in `FAMILIES` stops the build (every page imports this list while prerendering).
+ * JSON imports type strings as `string`, so `family` and `credits` are checked here: a track
+ * whose family is not in `FAMILIES`, or whose credits are malformed, stops the build (every
+ * page imports this list while prerendering).
  */
-function checkFamily(t: Omit<Track, "family"> & { family: string }): Track {
+function checkTrack(t: Omit<Track, "family" | "credits"> & { family: string; credits?: unknown }): Track {
   const family = FAMILIES.find((f) => f === t.family);
   if (!family) {
     throw new Error(
       `data/tracks.json: track ${t.id} has family ${JSON.stringify(t.family)}, not one of ${FAMILIES.join(", ")}`,
     );
   }
-  return { ...t, family };
+  const { credits: raw, ...rest } = t;
+  const credits = checkCredits(t.id, raw);
+  return credits ? { ...rest, family, credits } : { ...rest, family };
 }
 
 /**
@@ -76,7 +114,7 @@ function checkFamily(t: Omit<Track, "family"> & { family: string }): Track {
  * and a filtered view follow this order, so a filtered view is newest first.
  */
 export const tracks: readonly Track[] = data
-  .map(checkFamily)
+  .map(checkTrack)
   .sort((a, b) => FAMILIES.indexOf(a.family) - FAMILIES.indexOf(b.family) || b.id.localeCompare(a.id));
 
 /** The families that have at least one track, in `FAMILIES` order. */

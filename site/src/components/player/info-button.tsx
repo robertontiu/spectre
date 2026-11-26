@@ -8,7 +8,8 @@ import { CloseIcon, InfoIcon } from "./icons";
 /**
  * An (i) button that opens a small dialog about the current track: the same
  * feeling and style text the link previews carry, plus its genre, tempo, length
- * and the model that produced it. Native <dialog>: Esc and a tap outside close it.
+ * and the model that produced it, then the track's third-party credits (voicebanks,
+ * vocoder, quoted public-domain melodies) when it has any. Native <dialog>: Esc and a tap outside close it.
  */
 export function InfoButton({ track }: { track: Track }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -57,6 +58,24 @@ export function InfoButton({ track }: { track: Track }) {
               <dd>{track.model}</dd>
             </div>
           </dl>
+          {track.credits && (
+            <div className="track-info-credits">
+              <h4>Credits</h4>
+              <ul>
+                {track.credits.map((c) => (
+                  <li key={c.text}>
+                    {c.url ? (
+                      <a href={c.url} target="_blank" rel="noopener noreferrer">
+                        {c.text}
+                      </a>
+                    ) : (
+                      c.text
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </dialog>
     </span>
