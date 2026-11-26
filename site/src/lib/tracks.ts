@@ -1,8 +1,9 @@
 import data from "../../data/tracks.json";
 
 /**
- * The listener-facing genre families, most popular first: the order of the filter pills and
- * of the playlist's groups. Every track's `family` is one of these; add a new one only when no
+ * The listener-facing genre families: the order of the filter pills and of the playlist's
+ * groups. Since 2026-11-26 the owner's order leads (Electronic, with trance before dubstep, then
+ * Rock and Hip-Hop); the rest keep the popularity order below. Every track's `family` is one of these; add a new one only when no
  * existing family fits, placed by its share in the same source.
  *
  * Popularity is the U.S. share of on-demand audio streams in Luminate's 2025 Year-End Music
@@ -13,7 +14,14 @@ import data from "../../data/tracks.json";
  * split across their songs' genres) and our score-like instrumentals sit nearest Classical,
  * 0.8%, so it comes last.
  */
-export const FAMILIES = ["Hip-Hop", "Rock", "Latin", "Electronic", "Folklore", "Holiday", "Soundtrack"] as const;
+export const FAMILIES = ["Electronic", "Rock", "Hip-Hop", "Latin", "Folklore", "Holiday", "Soundtrack"] as const;
+
+/** Within a family, these genres come first in this order (the owner's order: trance before dubstep); other genres follow. */
+const GENRE_ORDER = ["Trance", "Dubstep"];
+const genreRank = (g: string) => {
+  const i = GENRE_ORDER.indexOf(g);
+  return i < 0 ? GENRE_ORDER.length : i;
+};
 
 export type Family = (typeof FAMILIES)[number];
 
@@ -109,13 +117,18 @@ function checkTrack(t: Omit<Track, "family" | "credits"> & { family: string; cre
 }
 
 /**
- * Every track in the playlist's order: grouped by family in `FAMILIES` order (most popular
- * first), newest first within a family (the higher session number first). The player's queue
+ * Every track in the playlist's order: grouped by family in `FAMILIES` order, then by genre in
+ * `GENRE_ORDER` within a family, newest first within a genre (the higher session number first). The player's queue
  * and a filtered view follow this order, so a filtered view is newest first.
  */
 export const tracks: readonly Track[] = data
   .map(checkTrack)
-  .sort((a, b) => FAMILIES.indexOf(a.family) - FAMILIES.indexOf(b.family) || b.id.localeCompare(a.id));
+  .sort(
+    (a, b) =>
+      FAMILIES.indexOf(a.family) - FAMILIES.indexOf(b.family) ||
+      genreRank(a.genre) - genreRank(b.genre) ||
+      b.id.localeCompare(a.id),
+  );
 
 /** The families that have at least one track, in `FAMILIES` order. */
 export const familiesInUse = (list: readonly Track[]): Family[] =>
