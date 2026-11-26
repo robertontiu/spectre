@@ -2,6 +2,8 @@
 
 <h1 align="center">Spectre</h1>
 
+<p align="center"><b><i>Engineering creativity.</i></b></p>
+
 **Can an AI make music the way a human producer does: starting from a feeling, researching the genre, and listening and deciding one move at a time?**
 
 ### → Listen at [spectre.robertontiu.com](https://spectre.robertontiu.com)
