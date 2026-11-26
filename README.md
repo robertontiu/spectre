@@ -25,6 +25,16 @@ So far: **18 published tracks** across hip hop and folk trap (Romanian, Ukrainia
 
 **This project takes no position on AI-generated music in general. It is one experiment, documented as fully as we could.**
 
+## How it differs from audio generators
+
+Text-to-music products such as Suno or Udio generate audio from a model trained on large amounts of recorded music: a style is within reach when the model has heard enough of it. Spectre works the other way round.
+
+- **No model trained on music makes the sound.** The instruments are code, and what Spectre knows about a style comes from research done for that track: sources, measurements of catalogues, and the producer's own listening loop. A style doesn't need to be well represented in anyone's training data, only researched.
+- **So it can reach obscure styles and invented fusions.** Latvian folk trap (*Līdz rītam*) has almost no recorded catalogue to learn from; Spectre built it from research on Latvian folk song and the kokle on one side and trap on the other. A fusion nobody has recorded yet is a brief like any other.
+- **Every decision is open.** The track is a project file of notes, sounds and mix moves, plus a journal of why each was chosen: it can be read, changed and rendered again exactly.
+
+The trade-offs are real: a track takes hours of agent time instead of seconds, the synthesized instruments have limits a recording doesn't (see [What it gets wrong](#what-it-gets-wrong)), and the language model behind the agents learned what it knows about music from text. Sung words are the one place a neural model trained on singing is used.
+
 ## What makes the sound
 
 - **Every instrument is synthesized by the engine's own code** (Python, in [`engine/`](engine)): drums, 808s, basses, synths, guitars, strings, brass, choirs and folk instruments from kokle to cimbalom. No samples are played back, and no neural network generates any instrument.
