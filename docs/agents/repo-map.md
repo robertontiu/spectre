@@ -33,6 +33,10 @@ engine/
   seams.py        ears for form (`listen --seams`, `listen --coherence`; analysis only): the step and the preparation
                   at every section boundary, flags for forced seams; section x section motif, pitch, palette and timbre
                   similarity, flags for a track split into two songs (docs/PRODUCTION.md 4b)
+  tension.py      ears for the ride (`listen --tension --events --loops --ring`; analysis only): a per-bar tension
+                  curve and the rise of every respiro into its drop; events the loop did not predict (freezes, kick
+                  stops, fills, hits) and their approach; runs of near-identical bars; persistent ringing tones named
+                  by stem (docs/PRODUCTION.md 4c)
   mixbus.py       production (opt-in): stacks (`layers`), role EQ presets from eqmaps.json, group buses, named returns
                   (several reverbs/delays, filtered, ducked), fx ott / dyneq / clip / mseq, correlated humanizing
   synth.py        production sounds: `supersaw` model 2 (Szabo), `polysynth` (LFOs, envelopes, drift), `sub`, kick

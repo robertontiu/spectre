@@ -478,7 +478,8 @@ def run_events(T, kick):
                           change=sum(1 for e in ev if e["cls"] == "change" and s <= e["bar"] - 1 < s + 16)))
     body = max(b_hi - b_lo + 1, 1)
     nh = sum(1 for e in ev if e["cls"] == "highlight" and b_lo <= e["bar"] - 1 <= b_hi)
-    fz = [e for e in ev if e["cls"] == "highlight" and any(k in ("freeze", "kick stop") for k in e["kinds"])]
+    fz = [e for e in ev if e["cls"] == "highlight" and any(k in ("freeze", "kick stop") for k in e["kinds"])
+          and b_lo <= e["bar"] - 1 < min(b_hi, nb - 1)]  # the track's own end is not a freeze
     res = dict(events=ev, body=f"{b_lo + 1}-{b_hi + 1}", highlights_per16=round(nh / body * 16, 2),
                longest_without_highlight=dict(bars=f"{hl[0] + 1}-{hl[1] + 1}", n=int(hl[2])),
                longest_without_event=dict(bars=f"{an[0] + 1}-{an[1] + 1}", n=int(an[2])),
