@@ -294,18 +294,28 @@ def deattack(src, amount, attack_ms=40.0):
 
 def _blur(y, ms):
     """Smooth the cloud's spectrum over time: every STFT bin's magnitude is replaced by its average over `ms` (phases
-    kept), so what is left of single grains (a level bump, a brighter moment) melts into the texture."""
+    kept), so what is left of single grains (a level bump, a brighter moment) melts into the texture. One channel at a
+    time, in place where it can (speed pass 2026-11-26: the same numbers, a third of the memory: the stereo STFT of a
+    6-minute track and its four companions were several GB)."""
     from scipy.ndimage import uniform_filter1d
     nfft, hop = 2048, 512
     n = y.shape[1]
     w = np.sqrt(np.hanning(nfft + 1)[:-1])
-    _, _, Z = signal.stft(y, fs=SR, window=w, nperseg=nfft, noverlap=nfft - hop, boundary="even", padded=True)
-    M = np.abs(Z)
     k = max(1, int(round(ms / 1000 * SR / hop)))
-    Ms = uniform_filter1d(M, k, axis=-1, mode="nearest")
-    g = np.clip(Ms / (M + 1e-9), 0.0, 4.0)
-    _, out = signal.istft(Z * g, fs=SR, window=w, nperseg=nfft, noverlap=nfft - hop, boundary=True)
-    out = out[:, :n]
+    outs = []
+    for ch in y:
+        _, _, Z = signal.stft(ch, fs=SR, window=w, nperseg=nfft, noverlap=nfft - hop, boundary="even", padded=True)
+        M = np.abs(Z)
+        g = uniform_filter1d(M, k, axis=-1, mode="nearest")
+        g /= (M + 1e-9)
+        del M
+        np.clip(g, 0.0, 4.0, out=g)
+        Z *= g
+        del g
+        _, o = signal.istft(Z, fs=SR, window=w, nperseg=nfft, noverlap=nfft - hop, boundary=True)
+        del Z
+        outs.append(o[:n])
+    out = np.stack(outs)
     if out.shape[1] < n:
         out = np.pad(out, ((0, 0), (0, n - out.shape[1])))
     return out
@@ -361,6 +371,29 @@ def _sections_heads(n, sections, scan, position_s, anchor):
     return head
 
 
+def _seek_material(head, src, scan, sections, anchor, thr_db=-40.0, look_s=0.3):
+    """A freeze that would hold silence (2026-11-26): where a section starts frozen (scan 0 at its first sample) and
+    the source is silent (under `thr_db` re its peak) over the `look_s` before the read head, as when the section
+    before ends in a rest, the head moves back to the last sounding sample for the whole section, so the freeze holds
+    the material instead of the rest. Heads that already sit in sound are left exactly as they were."""
+    if anchor != "section" or not sections:
+        return head
+    n = len(head)
+    loud = np.flatnonzero(np.abs(src) > np.abs(src).max() * 10 ** (thr_db / 20))
+    if not len(loud):
+        return head
+    starts = sorted({max(0, int(S["start"] * SR)) for S in sections if int(S["start"] * SR) < n} | {0}) + [n]
+    for a, b in zip(starts[:-1], starts[1:]):
+        if b <= a or scan[a] != 0:
+            continue
+        h = int(head[a])
+        k = np.searchsorted(loud, h) - 1          # the last sounding sample before the head
+        if k < 0 or loud[k] >= h - int(look_s * SR):
+            continue                               # nothing earlier, or the head already reads sound
+        head[a:b] -= h - loud[k]
+    return head
+
+
 def granular(x, cfg, curves=None, seed=1, owner="granular", sections=None):
     """x: (2, n) input. cfg: grain_ms (300), density (grains per second, 80), position_ms (150: how far behind the
     playhead the read head starts), scan (1.0: the read head's speed against real time; 0 = freeze, 0.25 = stretched
@@ -373,7 +406,8 @@ def granular(x, cfg, curves=None, seed=1, owner="granular", sections=None):
     a grain that starts on an attack does not replay it as a stray note), blur_ms (1000: the cloud's spectrum averaged
     over this time, phases kept; 0 for audible single grains), tone_hz (7000: a 12 dB/oct low-pass on the cloud; 0 =
     off), dissolve (s, 0 = hold: where scan is 0 the cloud falls 60 dB and darkens over this time, and stays gone until
-    the next section), seed. Slow-motion settings: spray_ms 40, grain_ms 90, density 30, smooth 0, blur_ms 0. curves: per-sample arrays for density, grain_ms, scan, position_ms, spray_ms, pitch,
+    the next section), seek (true: a section that starts frozen over silence reads the last sounding material before
+    it instead; _seek_material), seed. Slow-motion settings: spray_ms 40, grain_ms 90, density 30, smooth 0, blur_ms 0. curves: per-sample arrays for density, grain_ms, scan, position_ms, spray_ms, pitch,
     pitch_spread. Returns the cloud (2, n) float32, level-matched to its input (RMS over the active part)."""
     curves = curves or {}
     n = x.shape[1]
@@ -393,6 +427,8 @@ def granular(x, cfg, curves=None, seed=1, owner="granular", sections=None):
     pspread = np.maximum(_curve(curves.get("pitch_spread", cfg.get("pitch_spread")), n, 0.0), 0.0)
     head = _sections_heads(n, sections, scan, float(pos_ms[0]) / 1000, cfg.get("anchor", "section"))
     head = head - (pos_ms - pos_ms[0]) / 1000 * SR    # an automated position moves the head too
+    if cfg.get("seek", True):
+        head = _seek_material(head, src, scan, sections, cfg.get("anchor", "section"))
     jit = float(np.clip(cfg.get("jitter", 0.6), 0, 1))
     # grain onsets: one grain every 1/density s, each interval scaled at random by (1 +- jitter)
     t = 0.0
@@ -528,3 +564,62 @@ def suppress(x, cfg, curves=None):
     if y.shape[1] < n:
         y = np.pad(y, ((0, 0), (0, n - y.shape[1])))
     return y.astype(np.float32)
+
+
+# ------------------------------------------------------------------ hall (early reflections + a diffuse tail)
+
+# The concert-hall numbers behind the defaults (Beranek, "Concert Halls and Opera Houses", 2nd ed. 2004): the best-
+# rated halls have a mid-frequency RT60 (occupied) of 1.8-2.2 s, an initial-time-delay gap (direct sound to the first
+# reflection) near 20 ms, and a bass ratio (RT at 125-250 Hz over 500-1000 Hz) of 1.1-1.25; the early reflections
+# arrive mostly within the first 80 ms. The cinematic brief asks for more than a concert hall: a 2.5-3.5 s tail with
+# pre-delay, early reflections at 15-35 ms for choirs (docs/CINEMATIC_HYBRID.md gap 5, docs/voice/MIXING.md), so
+# `decay` defaults to 2.8 s, the middle of that range (measured: Schroeder T20 2.4 s at 125 Hz-1 kHz at decay 2.4,
+# shorter above 2 kHz as in halls).
+HALL = dict(decay=2.8, size=0.85, damping=0.35, itdg_ms=20.0, er_ms=80.0, er_level=0.7, taps=14, er_lpf=6000.0,
+            width=1.0, mod=0.25, mod_rate=0.3)
+
+
+def hall(x, cfg):
+    """A large hall for a return (`"type": "hall"`): early reflections (`taps` per side between `itdg_ms` and
+    `er_ms`, falling off with time and darkened above `er_lpf`, at `er_level`) and a diffuse tail (the shimmer's
+    8-line feedback delay network with the pitch path off: `decay` RT60 s, `size`, `damping`, `mod`) fed by the
+    input and the reflections, starting as the reflections thin out. x: (2, n) float32 (pre-delayed). Returns the
+    wet (2, n) float32. Deterministic (the reflection pattern is fixed)."""
+    q = dict(HALL)
+    q.update({k: cfg[k] for k in HALL if k in cfg})
+    n = x.shape[1]
+    rng = np.random.default_rng(1951)  # fixed: the same room every time
+    er = np.zeros((2, n))
+    taps = int(q["taps"])
+    t0, t1 = float(q["itdg_ms"]), max(float(q["er_ms"]), float(q["itdg_ms"]) + 5)
+    for c in range(2):
+        ts = np.sort(rng.uniform(t0, t1, taps))
+        ts[0] = t0 + (3.0 if c else 0.0)
+        for k, tm in enumerate(ts):
+            d = int(tm / 1000 * SR)
+            if d >= n:
+                continue
+            g = (t0 / tm) ** 1.2 * rng.uniform(0.6, 1.0) * (1 if k % 3 else -1)
+            src = x[c] if k % 2 == 0 else x[1 - c]  # reflections from both sides of the room
+            er[c, d:] += g * src[:n - d]
+    er = signal.sosfilt(signal.butter(1, float(q["er_lpf"]), fs=SR, output="sos"), er, axis=1) / np.sqrt(taps / 4)
+    size = float(np.clip(q["size"], 0.0, 1.0))
+    scale = 0.5 + 1.5 * size
+    lens = np.round(_FDN_MS * scale / 1000 * SR).astype(np.int64)
+    rt = max(float(q["decay"]), 0.1)
+    gains = 10 ** (-3.0 * lens / (rt * SR))
+    damp = float(np.clip(q["damping"], 0.0, 0.98)) * 0.85
+    mod_s = float(np.clip(q["mod"], 0, 1)) * 0.0015 * SR
+    diff = np.round(_DIFF_MS * (0.6 + 0.8 * size) / 1000 * SR).astype(np.int64)
+    feed = x.astype(np.float64) * 0.5 + er * 0.5
+    dly = int(t1 * 0.5 / 1000 * SR)  # the tail builds as the reflections thin out
+    feed = np.pad(feed, ((0, 0), (dly, 0)))[:, :n]
+    yl, yr = _shimmer_kernel(np.ascontiguousarray(feed[0]), np.ascontiguousarray(feed[1]), lens, gains, damp, mod_s,
+                             float(q["mod_rate"]), diff, np.zeros(n), 1.0, 1.0, 0.0, 4096.0, 20.0, 0.53)
+    tail = np.stack([yl, yr])
+    wet = tail + er * float(q["er_level"])
+    wd = float(np.clip(q["width"], 0, 1))
+    if wd < 1:
+        m = wet.mean(0, keepdims=True)
+        wet = m + (wet - m) * wd
+    return wet.astype(np.float32)

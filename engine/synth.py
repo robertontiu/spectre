@@ -184,28 +184,81 @@ def mod_sources(p, n, hold, vel):
 
 # ------------------------------------------------------------------ filters with moving cutoff
 
+try:
+    from numba import njit as _njit
+except Exception:  # pragma: no cover
+    _njit = None
+
+
+def _df2t_blocks_py(x, bounds, bs, as_):
+    """scipy.signal.lfilter's direct-form-II-transposed biquad, block by block with the state carried across blocks
+    (the reference loop; the numba version below does the same arithmetic in the same order)."""
+    y = np.empty(len(x))
+    z0 = z1 = 0.0
+    for k in range(len(bounds) - 1):
+        b0, b1, b2 = bs[k]
+        a1, a2 = as_[k, 1], as_[k, 2]
+        for i in range(bounds[k], bounds[k + 1]):
+            xn = x[i]
+            yn = z0 + b0 * xn
+            z0 = z1 + xn * b1 - yn * a1
+            z1 = xn * b2 - yn * a2
+            y[i] = yn
+    return y
+
+
+_df2t_blocks = _njit(cache=True)(_df2t_blocks_py) if _njit else _df2t_blocks_py
+
+
 def tv_filter(x, cut, q, kind="lp", B=256):
-    """Biquad (lp, hp, bp) whose cutoff follows `cut` (Hz per sample), block-wise; settled cutoffs finish in one call."""
+    """Biquad (lp, hp, bp) whose cutoff follows `cut` (Hz per sample), block-wise; settled cutoffs finish in one call.
+
+    Speed pass (2026-11-26), same output bit for bit: (1) "has the cutoff settled for the rest of the note?" comes from
+    suffix maxima and minima computed once (it was a scan of the whole remainder at every block: quadratic in the
+    note length; exact, because rounding is monotonic: max|cut_i - c| < t <=> max(cut) - c < t and c - min(cut) < t);
+    (2) the coefficients of all blocks are computed as arrays with the same expressions, and the blocks run in one
+    compiled loop that repeats scipy.signal.lfilter's arithmetic (direct form II transposed, the same operation order,
+    no fused multiply-add), instead of one lfilter call per 256 samples. Checked identical to the per-block lfilter
+    on random signals and cutoff curves, and on whole projects (docs/agents/engine-rules.md)."""
     n = len(x)
-    y = np.empty(n, dtype=np.float32)
-    zi = np.zeros(2)
     cut = np.broadcast_to(np.asarray(cut, dtype=np.float64), (n,))
+    smax = np.maximum.accumulate(cut[::-1])[::-1]
+    smin = np.minimum.accumulate(cut[::-1])[::-1]
+    bounds = [0]
+    cs = []
     s = 0
     while s < n:
         c = float(cut[s])
-        e = n if np.all(np.abs(cut[s:] - c) < 0.02 * c) else min(n, s + B)
-        if kind == "bp":
-            fc = float(np.clip(c, 10, SR * 0.45))
-            w = TWO_PI * fc / SR
-            al = np.sin(w) / (2 * q)
-            b = np.array([al, 0, -al])
-            a = np.array([1 + al, -2 * np.cos(w), 1 - al])
-            b, a = b / a[0], a / a[0]
-        else:
-            b, a = I._biquad(kind, c, q)
-        y[s:e], zi = signal.lfilter(b, a, x[s:e], zi=zi)
+        t = 0.02 * c
+        e = n if (smax[s] - c < t and c - smin[s] < t) else min(n, s + B)
+        cs.append(c)
+        bounds.append(e)
         s = e
-    return y
+    c = np.array(cs, dtype=np.float64)
+    if kind == "bp":
+        fc = np.clip(c, 10, SR * 0.45)
+        w = TWO_PI * fc / SR
+        al = np.sin(w) / (2 * q)
+        b = np.stack([al, np.zeros_like(al), -al], 1)
+        a = np.stack([1 + al, -2 * np.cos(w), 1 - al], 1)
+    else:  # instruments._biquad, as arrays
+        fc = np.clip(c, 10, SR * 0.45)
+        w = 2 * np.pi * fc / SR
+        cw, sw = np.cos(w), np.sin(w)
+        al = sw / (2 * q)
+        if kind == "lp":
+            b = np.stack([(1 - cw) / 2, 1 - cw, (1 - cw) / 2], 1)
+        elif kind == "hp":
+            b = np.stack([(1 + cw) / 2, -(1 + cw), (1 + cw) / 2], 1)
+        else:
+            raise ValueError(f"tv_filter: kind must be lp, hp or bp, not {kind!r}")
+        a = np.stack([1 + al, -2 * cw, 1 - al], 1)
+    a0 = a[:, :1]
+    b, a = b / a0, a / a0
+    # lfilter divides by a[0] once more (now 1.0: exact), as the reference does
+    y = _df2t_blocks(np.ascontiguousarray(x, dtype=np.float64), np.array(bounds, dtype=np.int64),
+                     np.ascontiguousarray(b), np.ascontiguousarray(a))
+    return y.astype(np.float32)
 
 
 def _hp2(x, f):

@@ -39,8 +39,13 @@ DEFAULT_GAIN.update({"polysynth": -12, "sub": -4, "kicksub": -1, "kickpunch": -8
                      "air": -20})
 DEFAULT_GAIN.update({"acid": -6, "snare909": -1, "clap909": -7, "ride909": -19})
 DEFAULT_GAIN.update({"fmgrowl": -10, "wavetable": -10, "sampler": 0})
+DEFAULT_GAIN.update({"brass": -12, "woodwind": -10, "timpani": -6, "bassdrum": -6, "taiko": -5, "suscymbal": -16,
+                     "braam": -9, "impact": -4, "whoosh": -14, "shepard": -14, "vox2choir": -10, "accordion": -9})
 # bass-music voices and fx (engine/bass.py, engine/bassfx.py; docs/MANUAL.md "Bass music")
 BASS_TONAL = ("fmgrowl", "wavetable", "sampler")
+# orchestral and trailer voices (engine/orchestra.py; docs/MANUAL.md "Orchestra and trailer"): they read the note's
+# articulations ("/stab", "/sfz", "/swell", "/rip", "/fall", "/roll", "/cresc", "/dim")
+ORCH_TONAL = ("brass", "woodwind", "timpani", "suscymbal", "braam", "whoosh", "shepard", "accordion")
 BASS_FX = ("multiband", "fold", "asym", "hardclip", "comb", "flanger", "resonator", "autofilter", "autopan", "vowel",
            "vocoder")
 
@@ -230,6 +235,21 @@ def apply_fx(st, fx_list, bpm, owner=None):
     return flush(st).astype(np.float32)
 
 
+def box_same_decim(a, w, step):
+    """np.convolve(a, np.ones(w) / w, mode="same")[::step] from a cumulative sum: the same moving average at the
+    decimated points only (speed pass 2026-11-26: the direct convolution was O(n x w) per track; the values agree to
+    float rounding, about 1e-12 relative; used for meta and the ears, never for audio)."""
+    a = np.asarray(a, dtype=np.float64)
+    n = len(a)
+    if n < w:
+        return np.convolve(a, np.ones(w) / w, mode="same")[::step]
+    c = np.concatenate([[0.0], np.cumsum(a)])
+    i = np.arange(0, n, step)
+    hi = np.minimum(i + (w - 1) // 2, n - 1)
+    lo = np.maximum(i + (w - 1) // 2 - w + 1, 0)
+    return (c[hi + 1] - c[lo]) / w
+
+
 def fade_gate(n, ranges, fade=0.012):
     """Gain curve that is 0 inside ranges (sample tuples), with short fades."""
     g = np.ones(n, dtype=np.float32)
@@ -244,6 +264,26 @@ def fade_gate(n, ranges, fade=0.012):
         hi = min(n, b + f // 3)
         g[b:hi] = np.minimum(g[b:hi], np.linspace(0, 1, hi - b))
     return g
+
+
+def _ramp_pts(v):
+    """A track's section `lpf` / `hpf` / `gain_db` value as its list of points: a number, [from, to] or [a, b, c, ...];
+    a trailing "log" (the form inst/fx automation takes) is accepted and dropped: these sweeps are always geometric."""
+    if not isinstance(v, list):
+        return [v, v]
+    pts = [float(x) for x in (v[:-1] if v and v[-1] == "log" else v)]
+    if not pts:
+        raise ValueError(f"section auto: empty ramp {v!r}")
+    return pts * 2 if len(pts) == 1 else pts
+
+
+def _sweep(fn, st, a, b, pts, lo):
+    """block_lpf / block_hpf through evenly spaced points (two points: one sweep, exactly as before)."""
+    pts = [max(p, lo) for p in pts]
+    k = len(pts) - 1
+    for i in range(k):
+        st = fn(st, a + (b - a) * i // k, a + (b - a) * (i + 1) // k, pts[i], pts[i + 1])
+    return st
 
 
 def block_lpf(st, a, b, f0, f1):
@@ -850,6 +890,8 @@ def render_track(name, tr, evs, holds, total_n, bpm):
                 pe = _inst_at(p, owners, e["t"])[0]
             if bassv or synced or (modern and e.get("art")):  # tempo, onset and per-note tokens for synced mods
                 pe = dict(pe, _bpm=bpm, _t0=e["t"], _art=e.get("art"))
+            elif typ in ORCH_TONAL and e.get("art"):
+                pe = dict(pe, _art=e["art"])
             if src is not None:
                 pe = dict(pe, _src=src)
             if slide and e.get("glide"):
@@ -932,14 +974,28 @@ def _window_auto(st, au, a, b, n):
         st[:, a1:b1] = 0
     gdb = au.get("gain_db")
     if gdb is not None:
-        g0, g1 = (gdb if isinstance(gdb, list) else [gdb, gdb])
-        st[:, a1:b1] *= db(np.linspace(at(g0, g1, a1), at(g0, g1, b), b - a1)).astype(np.float32)[:b1 - a1]
+        gp = _ramp_pts(gdb)
+        if len(gp) == 2:
+            g0, g1 = gp
+            st[:, a1:b1] *= db(np.linspace(at(g0, g1, a1), at(g0, g1, b), b - a1)).astype(np.float32)[:b1 - a1]
+        else:
+            xs = (np.arange(a1, b1) - a) / span
+            st[:, a1:b1] *= db(np.interp(xs, np.linspace(0, 1, len(gp)), gp)).astype(np.float32)
     for key, fn, lo in (("lpf", block_lpf, 30), ("hpf", block_hpf, 10)):
         v = au.get(key)
         if v:
-            f0, f1 = (v if isinstance(v, list) else [v, v])
-            f0, f1 = max(f0, lo), max(f1, lo)
-            st = fn(st, a1, b1, at(f0, f1, a1, True), at(f0, f1, b1, True))
+            pts = [max(p, lo) for p in _ramp_pts(v)]
+            if len(pts) == 2:
+                f0, f1 = pts
+                st = fn(st, a1, b1, at(f0, f1, a1, True), at(f0, f1, b1, True))
+            else:  # piecewise: each segment clipped to the window
+                k = len(pts) - 1
+                for i in range(k):
+                    sa, sb = a + (b - a) * i // k, a + (b - a) * (i + 1) // k
+                    ca, cb = max(sa, a1), min(sb, b1)
+                    if cb > ca:
+                        g = lambda p: pts[i] * (pts[i + 1] / pts[i]) ** ((p - sa) / max(sb - sa, 1))
+                        st = fn(st, ca, cb, g(ca), g(cb))
     return st
 
 
@@ -1031,16 +1087,21 @@ def _section_moves(P, name, st, sec_by_name, whole, total_n, beat):
                 st[:, a:b] = 0
             gdb = au.get("gain_db")
             if gdb is not None:
-                g0, g1 = (gdb if isinstance(gdb, list) else [gdb, gdb])
-                st[:, a:b] *= db(np.linspace(g0, g1, b - a)).astype(np.float32)
+                gp = _ramp_pts(gdb)
+                if len(gp) == 2:
+                    st[:, a:b] *= db(np.linspace(gp[0], gp[1], b - a)).astype(np.float32)
+                else:
+                    st[:, a:b] *= db(np.interp(np.linspace(0, 1, b - a), np.linspace(0, 1, len(gp)), gp)).astype(np.float32)
             lpf = au.get("lpf")
             if lpf:
-                f0, f1 = (lpf if isinstance(lpf, list) else [lpf, lpf])
-                st = block_lpf(st, a, b, f0, f1)
+                pts = _ramp_pts(lpf)
+                if len(pts) == 2:  # the original call, unchanged
+                    st = block_lpf(st, a, b, pts[0], pts[1])
+                else:
+                    st = _sweep(block_lpf, st, a, b, pts, 0)
             hpf = au.get("hpf")
             if hpf:
-                f0, f1 = (hpf if isinstance(hpf, list) else [hpf, hpf])
-                st = block_hpf(st, a, b, max(f0, 10), max(f1, 10))
+                st = _sweep(block_hpf, st, a, b, _ramp_pts(hpf), 10)
         ex = sec.get("exit") or {}
         cut = ex.get("cut")
         bt_e = S.get("beat_end", beat)  # the local beat in a tempo-mapped section
@@ -1084,8 +1145,8 @@ def _bus_order(buses):
 
 
 def _process_return(rn, cfg, x, beat, duck_env):
-    """A named return (mix.returns): `type` reverb (size, damping, predelay_ms, width) or delay (beats, feedback,
-    pingpong, offset_ms), then hpf / lpf (12 dB/oct; defaults 250 Hz / 7 kHz for reverbs, 300 Hz / 3.5 kHz for
+    """A named return (mix.returns): `type` reverb (size, damping, predelay_ms, width), delay (beats, feedback,
+    pingpong, offset_ms), shimmer, granular or hall (engine/spacefx.py; hall's defaults hpf 80 Hz / lpf 10 kHz), then hpf / lpf (12 dB/oct; defaults 250 Hz / 7 kHz for reverbs, 300 Hz / 3.5 kHz for
     delays), `fx` (any fx chain: an eq cut at 300-600 Hz, ott...), `duck` ({key, depth_db, attack_ms, release_ms}:
     the return dips while the key plays), return_db."""
     typ = cfg.get("type", "reverb")
@@ -1103,6 +1164,10 @@ def _process_return(rn, cfg, x, beat, duck_env):
         else:
             wet = SF.granular(x, cfg, cv, seed=_CTX.get("seed", 1), owner=f"return:{rn}", sections=_CTX.get("sections"))
             hp, lp = cfg.get("hpf", 0), cfg.get("lpf", 0)
+    elif typ == "hall":  # engine/spacefx.py: early reflections + a diffuse tail (the cinematic strand's room)
+        import spacefx as SF
+        wet = SF.hall(x, cfg)
+        hp, lp = cfg.get("hpf", 80), cfg.get("lpf", 10000)
     elif typ == "delay":
         if cfg.get("pingpong"):
             wet = MB.pingpong(x, beat, cfg.get("beats", 0.75), cfg.get("feedback", 0.35), cfg.get("offset_ms", 0.0))
@@ -1111,7 +1176,7 @@ def _process_return(rn, cfg, x, beat, duck_env):
             wet = pb.Pedalboard([pb.Delay(d, cfg.get("feedback", 0.35), 1.0)])(x, SR)
         hp, lp = cfg.get("hpf", 300), cfg.get("lpf", 3500)
     else:
-        raise ValueError(f'return "{rn}": type must be reverb, delay, shimmer or granular')
+        raise ValueError(f'return "{rn}": type must be reverb, delay, shimmer, granular or hall')
     if hp:
         wet = MB.butter(wet, "hpf", hp, 12)
     if lp:
@@ -1232,7 +1297,7 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
             duck_env[name] = st.mean(0)
         if stem_hook is not None:
             stem_hook(name, st)
-        env = np.sqrt(np.convolve(st.mean(0) ** 2, np.ones(2205) / 2205, mode="same")[::2205])
+        env = np.sqrt(np.maximum(box_same_decim(st.mean(0) ** 2, 2205, 2205), 0.0))
         stems_rms[name] = env.tolist()
     # group buses ("buses"): each sums its tracks (and buses), then fx, gain, pan, width, sidechain, section moves and
     # sends, like a track, and goes on to the mix or to the bus it names

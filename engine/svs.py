@@ -466,8 +466,16 @@ def _groups(p, notes):
     groups = []
     for i, nt in enumerate(notes):
         tok = nt.get("syl")
+        implicit = False
         if tok is None:
+            implicit = i >= len(toks)
             tok = toks[i] if i < len(toks) else "_"
+        if implicit and groups and i > 0:  # a note without any lyric (2026-11-26 fix): it holds the vowel over legato
+            prev = notes[i - 1]          # notes only; after a rest it starts a new "oo", so the phrase ends at the rest
+            gap = (nt["t0"] - (prev["t0"] + prev["n"])) / SR * 1000   # (the same rest rule as _phrases) instead of
+            slot = (nt["t0"] - prev["t0"]) / SR * 1000                 # one endless melisma through every rest
+            if gap > max(25.0, 0.12 * slot):
+                tok = ("oo", 0, 1)
         if tok == "_" and groups:
             groups[-1][1].append(i)
         else:
