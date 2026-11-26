@@ -25,8 +25,6 @@ So far: **18 published tracks** across hip hop and folk trap (Romanian, Ukrainia
 
 **This project takes no position on AI-generated music in general. It is one experiment, documented as fully as we could.**
 
-It grew out of [Teodor](https://github.com/robertontiu/teodor), the same experiment applied to painting.
-
 ## What makes the sound
 
 - **Every instrument is synthesized by the engine's own code** (Python, in [`engine/`](engine)): drums, 808s, basses, synths, guitars, strings, brass, choirs and folk instruments from kokle to cimbalom. No samples are played back, and no neural network generates any instrument.
