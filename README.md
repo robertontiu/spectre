@@ -132,4 +132,4 @@ The code is [MIT](LICENSE) © 2026 Robert Ontiu.
 
 **The models above keep their own licences** (see "Voices and third-party models"); the MIT licence covers Spectre's own code, not the voicebanks or model files.
 
-**Tracks you make with it are yours.** If you run this project to make your own tracks, you hold the rights to them and are responsible for them and how they're used.
+**If you run the experiment yourself,** whatever it outputs is yours, and so is the responsibility for it and how it's used. The voicebanks' own terms still apply to any sung parts.
