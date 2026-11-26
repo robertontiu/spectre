@@ -19,7 +19,8 @@
     "zh",
     "fr"
    ],
-   "languages_note": "recorded data per the bank's readme: English about 2 h, Japanese 40 min, German 17 min, Korean 11 min, Spanish 7 min, Mandarin 6 min, French 3 min (Latin 5 min without a dictionary); Spanish via `\"lang\": \"es\"` (engine/lang_es.py plus the bank's dsdict-es.yaml, MIT); other languages are not wired in the engine"
+   "languages_mapped": ["ro"],
+   "languages_note": "Romanian is mapped, not recorded: `\"lang\": \"ro\"` (engine/lang_ro.py; approved by the owner's ear 2026-11-26). Recorded data per the bank's readme: English about 2 h, Japanese 40 min, German 17 min, Korean 11 min, Spanish 7 min, Mandarin 6 min, French 3 min (Latin 5 min without a dictionary); Spanish via `\"lang\": \"es\"` (engine/lang_es.py plus the bank's dsdict-es.yaml, MIT); other languages are not wired in the engine"
   },
   "leona": {
    "name": "LEONA -Ubasti- AI for DiffSinger v0.0.1b (beta)",
@@ -238,6 +239,49 @@
    },
    "settings": "hanami Root singing Spanish: `\"lang\": \"es\"` (set by this id); write the lyrics hyphenated by Spanish syllables (co-ra-zón); see docs/voice/languages/es.md",
    "audition": "examples/vocals/svs/voices/hanami-es.mp3"
+  },
+  {
+   "id": "hanami-ro",
+   "bank": "hanami",
+   "mode": "Root",
+   "gender": 0.0,
+   "lang": "ro",
+   "range": "A3-D5 (usable G3-F5; most data G3-D5, peak G4)",
+   "range_midi": [
+    55,
+    77
+   ],
+   "tags": {
+    "gender": "female",
+    "register": "mezzo-soprano / pop alto-soprano",
+    "language": "Romanian (mapped from Hanami's other languages; no Romanian training data)",
+    "timbre": [
+     "warm",
+     "clear",
+     "natural",
+     "medium-bright"
+    ],
+    "emotions": [
+     "tender",
+     "sincere",
+     "warm",
+     "nostalgic",
+     "hopeful"
+    ],
+    "genres": [
+     "Romanian folk and pop lines",
+     "joc and fusion hooks",
+     "ballad"
+    ],
+    "bad_at": [
+     "a native accent: Hanami has no Romanian data; ă and î are approximations (German schwa, Korean eu)",
+     "male parts",
+     "grit",
+     "political subjects (forbidden by the licence)"
+    ]
+   },
+   "settings": "hanami Root singing Romanian through a phoneme mapping (engine/lang_ro.py): `\"lang\": \"ro\"` (set by this id); write the lyrics hyphenated by Romanian syllables (pri-mă-va-ră); approved by the owner's ear as \"good enough\" (2026-11-26); never in a track with a political subject (Lotte V's terms); see docs/voice/languages/ro.md",
+   "audition": "examples/vocals/svs/romanian-hanami-experiment.mp3"
   },
   {
    "id": "hanami-es-soft",

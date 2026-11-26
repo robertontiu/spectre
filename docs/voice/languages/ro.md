@@ -4,7 +4,7 @@ The Romanian profile (standing rule 10), written 2026-11-24 (queue item 5b) for 
 
 ## Can a voice sing Romanian? (searched and tested 2026-11-24)
 
-**No licence-clean voice was trained on Romanian.** The short answer for a session: Romanian sung words are not supported. Use a wordless voice (`vox2`, or an svs voice on open vowels), or the experimental Hanami mapping below once a native listener has approved it.
+**Approved for use (2026-11-26):** the owner judged the Hanami mapping below "good enough" by ear (`examples/vocals/svs/romanian-hanami-experiment.mp3`), so a session may sing Romanian words with `"voice": "hanami-ro"` (or `"lang": "ro"` on a Hanami voice; `engine/lang_ro.py`, the experiment's mapping unchanged). No licence-clean voice was trained on Romanian: this is Hanami steered by phonemes from her other languages, with a foreign accent and approximate ă and î. Lotte V's terms still forbid political use: never in a track with a political subject (an anthem, a protest line). Write the lyrics as "Writing Romanian lines for Spectre" below says.
 
 - **DiffSinger (`svs`):** no Romanian DiffSinger voicebank was found (web searches in English for DiffSinger, OpenUtau and UTAU Romanian voicebanks; the community wiki is blocked from the sandbox). Hanami's dictionaries cover English, Japanese, German, Korean, Spanish, Mandarin, Cantonese, Vietnamese and French (`dsdur/dsdict-*.yaml`), and its readme lists no Romanian data; LEONA has English and Japanese only.
 - **The experiment: Hanami steered into Romanian by phoneme mapping** (`examples/vocals/svs/romanian.py`, audition `examples/vocals/svs/romanian-hanami-experiment.mp3`, results `romanian.json`). Romanian letters are mapped to phonemes Hanami knows from its other languages: Spanish vowels, unaspirated stops (`px tx kx`), clear l (`l1`) and tapped r (`rx`); the German schwa `ax` for **ă**; the Korean ㅡ vowel `eu` (close, unrounded, central-back) for **î/â**; Japanese palatalized `ky`/`gy` for ch/gh before e/i; glides for the rising diphthongs and offglides `I1`/`U1` for the falling ones; a final non-syllabic i as `I1`; initial e as [je] in the pronouns and forms of "a fi". Five lines, dry, Whisper small forced to Romanian:
@@ -14,7 +14,7 @@ The Romanian profile (standing rule 10), written 2026-11-24 (queue item 5b) for 
   | Romanian mapping | 48% | **0.90** | 1 of 5 lines (others: Polish, Japanese x2, Italian) |
   | control: the Spanish G2P on the same spelling | 51% | 0.85 | 0 of 5 |
 
-  Lines: "acum e primăvară", "în ochii tăi e lumină", "ține-mă de mână", "noaptea vine încet", "dor de casă, dor de voi". Two lines came out right ("Acum e prima vara", "DOR DE CASA, DOR DE VOI"), one nearly ("Sine-mă de mână"); "noaptea" was heard as "nu o te" (the `w` glide of oa sounds like a separate "u") and "tăi e lumină" as "te ieru mine". **Whisper drops diacritics, so it cannot judge ă and î at all**: the Spanish control scored as well while singing every ă as "a". Verdict: partly intelligible, with an audible foreign accent likely; not proper Romanian by this measure. It needs a native ear before any use, and the engine has no `lang: "ro"` (GENERAL.md section 5, item 6).
+  Lines: "acum e primăvară", "în ochii tăi e lumină", "ține-mă de mână", "noaptea vine încet", "dor de casă, dor de voi". Two lines came out right ("Acum e prima vara", "DOR DE CASA, DOR DE VOI"), one nearly ("Sine-mă de mână"); "noaptea" was heard as "nu o te" (the `w` glide of oa sounds like a separate "u") and "tăi e lumină" as "te ieru mine". **Whisper drops diacritics, so it cannot judge ă and î at all**: the Spanish control scored as well while singing every ă as "a". Verdict: partly intelligible, with an audible foreign accent likely; not proper Romanian by this measure. It needed a native ear before any use; the owner judged it "good enough" by ear on 2026-11-26, and the engine now has `"lang": "ro"` (`engine/lang_ro.py`).
 - **Licence of that route:** the Hanami terms allow any creative use with credit, commercial included, and derivative voices only through synth settings, which this is; so it would be fit for CC BY tracks with the Hanami credit line, **but never in a track with a political subject** (Lotte V's terms; for example session 011, the anthem). For political Romanian content there is no sung voice.
 - **Speech synthesizers are not a route:** Spectre sings with singing models only. A male Romanian voice waits on the male-voice search (VOICES.md, "What is missing").
 
@@ -48,7 +48,7 @@ The Romanian profile (standing rule 10), written 2026-11-24 (queue item 5b) for 
 ## Syllables (for hyphenating lyrics)
 - The orthographic norm (DOOM2, Academia Română 2005; the rule as commonly taught, not checked against the text here): one consonant between vowels starts the next syllable ("ca-să", "mâ-nă"); of two, the second starts the next syllable ("noap-te", "ar-ta"), except a stop or f/v plus l or r, which start a syllable together ("ca-pră", "a-cru"); of three or more, the first stays, the rest start the next syllable, with a few fixed exceptions. A diphthong or triphthong is one syllable ("noap-tea", "iau"); the final non-syllabic i adds no syllable ("pomi" is one).
 
-## Writing Romanian lines for Spectre (practical, once a voice exists)
+## Writing Romanian lines for Spectre (practical; `hanami-ro`)
 - Stress first: look up each word's stress, then put it on a strong beat or a longer note.
 - Long notes on a, o, e and ă; î/â short and low; rising diphthongs (ea, oa) on stressed long notes with the glide at the start.
 - Never a note for the final palatal i; hyphenated elisions ("într-o", "s-a") are one note.
@@ -56,5 +56,5 @@ The Romanian profile (standing rule 10), written 2026-11-24 (queue item 5b) for 
 - No political subjects with the Lotte V voices.
 
 ## Still open
-- A native listener on `examples/vocals/svs/romanian-hanami-experiment.mp3`; if approved, a `lang: "ro"` G2P (like `engine/lang_es.py`) with the mapping, phrase-level elision and a stress-aware warning.
+- Done 2026-11-26: the owner's ear approved the experiment ("good enough") and the mapping is wired as `"lang": "ro"` (`engine/lang_ro.py`, voice `hanami-ro`). Still open there: phrase-level elision across words, a stress-aware warning, and a native speaker's check of a full line in a mix.
 - Romanian intonation and phrase-final lengthening (measured studies not read in this pass), Romanian sung diction in the classical and lăutar traditions (no peer-reviewed source found), and the regional pronunciation of oa as [ɒ].

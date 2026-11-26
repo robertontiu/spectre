@@ -263,6 +263,14 @@ class Bank:
         next syllable, the rest stay with the previous one (Spanish: lang_es.syllables). Falls back to each hyphen
         part spelled on its own."""
         parts = [x for x in word.split("-") if x]
+        if lang == "ro":  # Romanian by phoneme mapping (engine/lang_ro.py; Hanami only)
+            import lang_ro
+            cut = lang_ro.syllables(word, n)
+            if cut:
+                return cut
+            _warn(f"word {word!r}: {n} notes but the Romanian syllables don't match; hyphenate it (pri-mă-va-ră)")
+            out = lang_ro.g2p_ro("-".join(parts))[:n]
+            return out + [["a"]] * (n - len(out))
         if lang == "es":
             import lang_es
             whole = self.g2p("".join(parts), "es", prev)
@@ -505,7 +513,7 @@ def take(p, notes, total_n, seed, jitter_ms=0.0, detune_cents=0.0):
     up = int(v.get("sing_up", 0))
     groups = _groups(p, notes)
     lang = str(p.get("lang") or v.get("lang") or "en")
-    if lang != "en" and lang not in info.get("languages", ["en"]):
+    if lang != "en" and lang not in info.get("languages", ["en"]) + info.get("languages_mapped", []):
         _warn(f"voice {v['id']!r} (bank {bank_name}) has no {lang!r} data; languages: {info.get('languages', ['en'])}")
     y = np.zeros(total_n + SR, dtype=np.float32)
     rng = np.random.default_rng(seed)
