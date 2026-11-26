@@ -1949,6 +1949,87 @@
     "film_pulse"
    ],
    "min_length": 60
+  },
+  "techno_2015": {
+   "tag": [
+    "techno"
+   ],
+   "years": "2015-2021",
+   "per_year": 300
+  },
+  "techno_2018": {
+   "tag": [
+    "techno"
+   ],
+   "years": "2018-2021",
+   "per_year": 300
+  },
+  "techno_2000": {
+   "tag": [
+    "techno"
+   ],
+   "years": "2000-2007",
+   "per_year": 300
+  },
+  "techno_1990": {
+   "tag": [
+    "techno"
+   ],
+   "years": "1990-1999",
+   "per_year": 300
+  },
+  "techno_hard": {
+   "artist": [
+    "67db280d-c3e4-49d9-978e-4050f4e209ef",
+    "1de4e373-e597-4087-bf3d-256ec597749e",
+    "f9a4de7f-d3c6-4de8-8892-7aca52610edd",
+    "8a860182-6587-4bc3-b578-88e56424b6dc",
+    "7693c255-9697-4ba2-ac70-8bbbe3f9f7eb",
+    "c6b2c2c3-e771-4228-9401-b263369d5b48",
+    "91b8f0ac-17ee-470a-afcd-457bd45971cd",
+    "c106c230-ab47-4550-adf2-d27db91f0b24",
+    "10d274f0-a063-4fb6-a924-5631e9d9b633",
+    "f2db511c-76ac-490a-8881-b4ee31283d79",
+    "b6a899e8-d886-4562-bc22-269b9589c760",
+    "fee18f64-e35c-4ca6-be78-605d73d0cefa",
+    "86a1c458-2d97-42cd-a142-a8fee30ae4a1",
+    "e1649010-6ebe-4ce7-98d8-cc6e5fa686fa",
+    "82f2714c-f532-482a-859a-5b170901f9e9",
+    "64a285e7-e990-4bd8-934e-732e8e000d69"
+   ],
+   "limit": 100,
+   "names": [
+    "Amelie Lens",
+    "Charlotte de Witte",
+    "I Hate Models",
+    "Dax J",
+    "Perc",
+    "Kobosil",
+    "SNTS",
+    "Paula Temple",
+    "Rebekah",
+    "Ansome",
+    "Clouds",
+    "999999999",
+    "Chris Liebing",
+    "DJ Rush",
+    "Nico Moreno",
+    "Kwartz"
+   ]
+  },
+  "techno_dub": {
+   "tag": [
+    "dub techno"
+   ],
+   "years": "2005-2021",
+   "per_year": 200
+  },
+  "techno_melodic": {
+   "tag": [
+    "melodic techno"
+   ],
+   "years": "2005-2021",
+   "per_year": 200
   }
  },
  "latinpop_granularity": {

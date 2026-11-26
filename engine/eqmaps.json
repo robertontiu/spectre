@@ -185,5 +185,28 @@
       "pad": {"hp": [150, 300], "cut": [[200, 500]], "own": [[1000, 3000]]},
       "return": {"hp": [200, 300], "lp": [6000, 10000], "cut": [[300, 600]]}
     }
+  },
+  "techno": {
+    "source": "docs/TECHNO.md 'Layering and EQ carving': MusicRadar 2023, Attack (dark techno rumble, reverb kick), Futureproof hard techno, MusicRadar rumble (10 steps), Bonedo; clap, perc, lead, pad rows from the trance and dubstep maps [H]",
+    "tolerance_db": 6,
+    "inherit": "dubstep",
+    "core": ["kick", "sub|bass|upper-bass", "hats|cymbals", "clap|snare|perc"],
+    "roles": {
+      "kick": {"hp": [25, 30], "cut": [[300, 600]], "own": [[45, 80], [100, 200], [2000, 5000]]},
+      "sub": {"hp": [20, 30], "lp": [100, 200], "cut": [[125, 145]], "own": [[30, 100]]},
+      "bass": {"hp": [120, 160], "cut": [[200, 300]], "own": [[300, 3000]]},
+      "upper-bass": {"hp": [120, 160], "cut": [[200, 300]], "own": [[300, 3000]]},
+      "clap": {"hp": [150, 250], "cut": [[400, 800]], "own": [[1000, 8000]]},
+      "snare": {"hp": [100, 150], "cut": [[300, 700]], "own": [[180, 250], [2000, 5000]]},
+      "hats": {"hp": [500, 1000], "cut": [[2000, 5000]], "own": [[6000, 14000]]},
+      "cymbals": {"hp": [500, 1000], "cut": [[2000, 5000]], "own": [[6000, 14000]]},
+      "perc": {"hp": [80, 150], "cut": [[300, 500]], "own": [[150, 400], [2000, 6000]]},
+      "lead": {"hp": [200, 300], "cut": [[300, 600]], "own": [[1000, 4000]]},
+      "support": {"hp": [200, 300], "cut": [[300, 600]], "own": [[1000, 4000]]},
+      "pad": {"hp": [200, 300], "cut": [[200, 500]], "own": [[1000, 3000], [8000, 16000]]},
+      "texture": {"hp": [200, 300], "cut": [[200, 500]], "own": [[1000, 3000], [8000, 16000]]},
+      "vocal": {"hp": [100, 150], "cut": [[200, 400]], "own": [[2000, 5000]]},
+      "return": {"hp": [200, 500], "lp": [6000, 12000], "cut": [[300, 600]]}
+    }
   }
 }

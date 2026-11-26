@@ -43,13 +43,14 @@ Settings come from a **genre configuration** (`engine/genres.json`), chosen with
 | `chamberscore` | `chamberscore_ref` (30 albums; 27 more score albums agree with it), **`dynamics` keep** (since 2026-11-26: "Dynamics" below); piano strand: `--strand piano` (`chamberscore_piano`, -16.5, eq 0.3, mono below 60) | -15 | -1 | 0.4 | 0.2 | `rock` (015) | docs/CHAMBER_SCORE.md, "Granularity"; genres.json `master_by_strand` |
 | `dubstep` | `dubstep_2015` (catalogue, 927 tracks); `dubstep_2018`, `dubstep_2005`, `dubstep_2011`, `dubstep_riddim`, `dubstep_melodic` by era and strand | -8 (untested at research; see the engine test in docs/DUBSTEP.md "Engine mapping"); by strand -7 (riddim, tearout), -8.5 (melodic, colour bass), -10 (deep / 140) | -1 | 0.7 | 0.4 | none | docs/DUBSTEP.md; mono below 150 Hz; genres.json `master_by_strand` |
 | `cinematic` | `cinematic_2012` (21 trailer-house albums 2012-2021, 454 tracks); `cinematic_2019` (thin), `cinematic_choir`, `cinematic_film` by era and strand | -12 (untested); by strand -12 (newest, choir), -14.5 (score, `dynamics` keep), -11.5 (sound design), -10.5 (pop anthem), -12.5 (a long quiet first act) | -1 | 0.6 | 0.3 | none | docs/CINEMATIC_HYBRID.md; mono below 120 Hz (80 for the score strand); genres.json `master_by_strand` |
+| `techno` | `techno_2015` (catalogue, 424 tracks); strands `techno_hard` (540), `techno_dub` (792), `techno_melodic` (51, thin), eras `techno_2018` (203), `techno_2000`, `techno_1990` | -9.5; by strand -8.5 (hard), -9 (industrial), -9.5 (hypnotic, newest), -10.5 (minimal), -11 (melodic, minimal era), -12 (dub), -13 (roots) | -1 | 0.7 | 0.4 | none yet | docs/TECHNO.md; loud sections Mixgraph previews; low boosts capped at +2 dB |
 
 Each genre's provenance is in `engine/genres.json` (`target_source`, `target_era`, `target_tracks`, `target_method`, `target_date`, `target_change`), the curves with their spreads in `engine/targets.json`, and every master report carries `target_provenance`. The settings the released tracks were mastered with stay in `master_published`; `master --published` uses them, and the master prints a note whenever a genre's default has changed, so nothing changes silently. Re-mastering a released track with its era target is a separate step, track by track, with the owner's approval (docs/PRODUCTION.md, "Remixing and remastering"). `max_low_boost_db` (optional, `caroling`: 0) caps the tonal EQ's boosts below 200 Hz; every other setting and the +2 dB cap on top-end boosts are as before.
 
 Session 001 was mastered with `--eq 0.9 --lufs -11` (the engine's flags at the time); reproduce it with `--genre trap --eq 0.9 --lufs -11`. The engine-wide fallbacks `--eq 0.7`, `--mono-below 120` and the stage settings are hand-tuned, not sourced.
 
 ### Strands and the dynamic path (2026-11-26)
-- **`--strand`**: `studio.py master vNNN --genre <genre> --strand <name>` takes the genre's `master_by_strand` entry from engine/genres.json (target, lufs, tp, eq, translate, mono_below, max_low_boost_db, dynamics) over the genre's `master`; explicit flags still override one value. A strand can point to another genre (hip hop's `boombap`, `golden`). An unknown strand stops the master and lists the valid ones; `engine/master.py --help` lists them per genre. Since this date every `master_by_strand` entry is a machine-readable object with a short key and a `label` (the description it had); the genre docs' strand names map onto those keys (hiphop: default, trap, boombap, golden, folkfusion, ua_ethno, lv_folkpop, ro_fusion; trance: progressive, mainfloor, hard, melodic_techno, era_2015; rock: current, punk, altpop, 1990s; joc: taraf, fanfare, transylvania_strings, acoustic_unmeasured, urban_period, wedding_band, manele, fusion; caroling: choir, acappella, brass, street, handbells, crooner, midcentury_era; latinpop: bolero, acoustic, ballad, bachata, urbano, mexicano, tropical; chamberscore: default, score, piano; dubstep: modern, newest, riddim, melodic, deep, quiet_section).
+- **`--strand`**: `studio.py master vNNN --genre <genre> --strand <name>` takes the genre's `master_by_strand` entry from engine/genres.json (target, lufs, tp, eq, translate, mono_below, max_low_boost_db, dynamics) over the genre's `master`; explicit flags still override one value. A strand can point to another genre (hip hop's `boombap`, `golden`). An unknown strand stops the master and lists the valid ones; `engine/master.py --help` lists them per genre. Since this date every `master_by_strand` entry is a machine-readable object with a short key and a `label` (the description it had); the genre docs' strand names map onto those keys (hiphop: default, trap, boombap, golden, folkfusion, ua_ethno, lv_folkpop, ro_fusion; trance: progressive, mainfloor, hard, melodic_techno, era_2015; rock: current, punk, altpop, 1990s; joc: taraf, fanfare, transylvania_strings, acoustic_unmeasured, urban_period, wedding_band, manele, fusion; caroling: choir, acappella, brass, street, handbells, crooner, midcentury_era; latinpop: bolero, acoustic, ballad, bachata, urbano, mexicano, tropical; chamberscore: default, score, piano; dubstep: modern, newest, riddim, melodic, deep, quiet_section; techno: default, newest, hard, industrial, hypnotic, dub, minimal, melodic, minimal_era, roots).
 - **`dynamics`** (a genres.json master or strand setting; `--dynamics normal|keep` overrides): `normal` is the chain every master had (multiband peak riding, 2:1 glue taking 1-2 dB, soft clipper, true-peak limiter; unchanged, sample for sample). `keep` is the dynamic path for the acoustic genres: no multiband, a light 1.5:1 glue from the loudest 5% (about 0.5 dB on average: "about .5 to 1dB of steady compression", Sage Audio), no clipper, the true-peak limiter alone ("mild peak-limiting" on a score album: SOS on *Encanto*). Set for `chamberscore` (its master and every strand; docs/CHAMBER_SCORE.md "Granularity" item 9) and for the caroling `choir`, `brass` and `handbells` strands (dynamic complexity 7.7-8.3, 5.6, 7.2; "little limiting or none": docs/CAROLING.md "Granularity"). Not for the a cappella, crooner, street and mid-century caroling strands (DC 4.0-4.8, 3.3: pop-dynamic), nor for any joc scene (taraf 3.7, fanfare 3.0, fusion 3.3: docs/ROMANIAN.md; only the band-limited period recordings, 4.9, move more, and they are not a target). `--published` keeps each genre's old chain.
 - **Measured on 015** (`examples/production/dynamics/`: the same premaster, `chamberscore_ref`, -15 LUFS, -1 dBTP): normal DC 3.92 (the released MP3 3.96), LRA 8.2, PLR 13.9, true peak -1.08; keep DC **4.77**, LRA **10.6**, PLR 13.9, true peak -1.09; the limiter now takes up to 6.2 dB on the loudest transients (0.6 dB in normal, where the clipper took them). The chamber-score records measure DC 5.6-6.8: the master gets 015 part of the way, the rest is the arrangement's (keep the quiet passages quiet).
 
@@ -330,6 +331,39 @@ Cinematic hybrid (2026-11-26, docs/CINEMATIC_HYBRID.md "Catalogue measurements")
 | 12500 | -20 | -22.5 | -18.5 | -26 |
 | 16000 | -24 | -26.5 | -21 | -30.5 |
 
+Techno (2026-11-26, docs/TECHNO.md "Catalogue measurements"):
+
+| Hz | `techno_2015` | `techno_2018` | `techno_hard` | `techno_dub` | `techno_melodic` | `techno_2000` | `techno_1990` |
+|---|---|---|---|---|---|---|---|
+| 31.5 | +9 | +9 | +9.5 | +10.5 | +6 | +3 | +2 |
+| 40 | +12 | +12 | +12.5 | +12.5 | +8.5 | +7 | +5.5 |
+| 50 | +14.5 | +14 | +14.5 | +14 | +10.5 | +10.5 | +9 |
+| 63 | +15 | +14.5 | +15 | +14 | +10.5 | +12 | +10.5 |
+| 80 | +13.5 | +13.5 | +14 | +13 | +9 | +12 | +10.5 |
+| 100 | +11 | +11 | +11.5 | +10.5 | +7 | +10.5 | +9 |
+| 125 | +8.5 | +8.5 | +9 | +8.5 | +4.5 | +9 | +7.5 |
+| 160 | +7 | +7 | +7 | +7 | +3.5 | +7.5 | +6 |
+| 200 | +6 | +6 | +5.5 | +6.5 | +3 | +6 | +5 |
+| 250 | +4.5 | +4.5 | +3.5 | +5.5 | +2.5 | +4 | +3.5 |
+| 315 | +3.5 | +3.5 | +2 | +4.5 | +2.5 | +2 | +2 |
+| 400 | +2.5 | +2.5 | +1 | +3.5 | +2 | +1 | +1 |
+| 500 | +2 | +2 | +0.5 | +2.5 | +2 | +0.5 | +0.5 |
+| 630 | +1.5 | +1.5 | +0.5 | +1.5 | +1.5 | +0.5 | +0.5 |
+| 800 | +0.5 | +0.5 | 0 | +1 | +1 | 0 | 0 |
+| 1000 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1250 | -0.5 | -1 | -0.5 | -1 | -1 | 0 | -0.5 |
+| 1600 | -1.5 | -1.5 | -0.5 | -2 | -2 | -0.5 | -0.5 |
+| 2000 | -2 | -2 | -1 | -3.5 | -3 | -1 | -1.5 |
+| 2500 | -3 | -3 | -1.5 | -4.5 | -4 | -1.5 | -1.5 |
+| 3150 | -3.5 | -3.5 | -2 | -5.5 | -5 | -1.5 | -2 |
+| 4000 | -3.5 | -3.5 | -2 | -6 | -5.5 | -1.5 | -2 |
+| 5000 | -3.5 | -3.5 | -1.5 | -7 | -5.5 | -1.5 | -2.5 |
+| 6300 | -3 | -3 | -1.5 | -7.5 | -5 | -1.5 | -2.5 |
+| 8000 | -3 | -2.5 | -2 | -8.5 | -5 | -2.5 | -3.5 |
+| 10000 | -4 | -4 | -4 | -10 | -6 | -4 | -5.5 |
+| 12500 | -7.5 | -7 | -7.5 | -12.5 | -9 | -7 | -8.5 |
+| 16000 | -13 | -12.5 | -12 | -17.5 | -14.5 | -11.5 | -13.5 |
+
 | Target | Source (provenance) | Era | n | Est. loudness, median (middle half) | Against the curve it replaces (both laid over a mix at 500 Hz-2 kHz) |
 |---|---|---|---|---|---|
 | `trance_2015` | MusicBrainz tag `trance`, first release 2015-2021, up to 300 per year | 2015-2021 | 558 | -10.7 (-12.0 to -9.6) | `trance`: +8 to +12 dB at 31.5-63 Hz, -2 to -5 dB at 100-315 Hz, +2 to +7 dB at 8-16 kHz |
@@ -353,6 +387,13 @@ Cinematic hybrid (2026-11-26, docs/CINEMATIC_HYBRID.md "Catalogue measurements")
 | `cinematic_2019` | the 2019-2021 albums of the same houses with data (Two Steps From Hell *Dragon*, *Orion*; Audiomachine *Another Sky*; Bergersen *Seven*); **thin** | 2019-2021 | 58 | -11.8 (-12.6 to -10.8) | `cinematic_2012`: within 2.3 dB (1.5-2.3 dB darker at 8-15.5 kHz); 2022-2026 extrapolated |
 | `cinematic_choir` | 14 epic-choir era albums with data (E.S. Posthumus, Immediate Music, X-Ray Dog, Globus, Two Steps From Hell to *Archangel*, Bergersen *Illusions*) | 2001-2011 | 273 | -12.1 (-13.1 to -11.2) | `cinematic_2012`: within 1.5 dB (mean 0.4) |
 | `cinematic_film` | 7 hybrid film-score albums (*Inception*, *The Dark Knight Rises*, *Interstellar*, *Mad Max: Fury Road*, *Batman v Superman*, *Dunkirk*, *Tenet*) | 2010-2021 | 108 | -15.2 (-18.7 to -13.5) | `cinematic_2012`: +3 to +8.5 dB under 250 Hz, -5 to -6.5 dB above 8 kHz; `chamberscore_ref`: within 1.6 dB on average, up to 10 dB apart at the extremes |
+| `techno_2015` | MusicBrainz tag `techno`, first release 2015-2021, up to 300 per year | 2015-2021 | 424 | -12.1 (-13.9 to -10.6) | `trance_2015` 7.4 dB short at 32-97 Hz, 4-4.9 dB short at 97-291 Hz, within 1.5 dB from 400 Hz to 12 kHz; `dubstep_2015` 6.8 / 5.5 / 3.7 dB short there; `hiphop_2015` 6.6 dB short at 32-97 Hz and 2.5-4 dB too dark above 4 kHz (`refcurve.py check`): the heaviest low end measured in the project |
+| `techno_2018` | tag `techno`, 2018-2021, up to 300 per year (2022-2026 extrapolated) | 2018-2021 | 203 | -11.6 (-13.7 to -10.2) | `techno_2015`: within 0.5 dB everywhere |
+| `techno_hard` | 16 MusicBrainz artists of the hard and industrial schools (Amelie Lens, Charlotte de Witte, I Hate Models, Dax J, Perc, Kobosil, SNTS, Paula Temple, Rebekah, Ansome, Clouds, 999999999, Chris Liebing, DJ Rush, Nico Moreno, Kwartz), up to 100 recordings each; 9% lossless | mostly 2010-2021 | 540 | -12.0 (-13.6 to -10.6) | `techno_2015`: +1 to +2 dB at 2-8 kHz, -1 to -1.5 dB at 250-500 Hz, the same sub; 16 kHz on the smoothness term |
+| `techno_dub` | tag `dub techno`, 2005-2021, up to 200 per year | 2005-2021 | 792 | -15.1 (-16.9 to -12.9) | `techno_2015`: -3.5 to -5.5 dB from 5 kHz, -1.5 to -2 at 2-3 kHz |
+| `techno_melodic` | tag `melodic techno`, 2005-2021 (**thin**, 92% lossless) | 2005-2021 | 51 | -11.3 (-11.7 to -10.5) | `techno_2015`: -4 to -4.5 dB at 50-160 Hz, -1.5 to -2 dB at 3-8 kHz |
+| `techno_2000` | tag `techno`, 2000-2007 | 2000-2007 | 1,588 | -12.4 (-14.3 to -10.7) | `techno_2015`: -3 to -6 dB at 31.5-63 Hz, +2 dB at 3-5 kHz |
+| `techno_1990` | tag `techno`, 1990-1999 | 1990-1999 | 2,206 | -14.9 (-17.5 to -12.4) | `techno_2015`: -4.5 to -7 dB at 31.5-63 Hz, +1 to +1.5 dB at 3-5 kHz |
 | `caroling_choir` | 23 choir albums of docs/CAROLING.md "Granularity" (King's, St John's, Cambridge Singers, Tenebrae, VOCES8, Tallis Scholars; Chanticleer, Robert Shaw Chorale, Tabernacle Choir) | 1986-2012 | 106 | -22.3 (-24.3 to -19.7) | `caroling_ref`: -13.5 to -18 dB at 50-100 Hz, -7 to -9.5 dB at 4-12.5 kHz; strand choir (and brass) at -18 LUFS |
 | `caroling_acappella` | 8 a cappella Christmas albums (Pentatonix, Straight No Chaser, Take 6) | 1991-2018 | 87 | -12.5 (-14.4 to -10.2) | `caroling_ref`: +6.5 to +7.5 dB at 63-125 Hz, +0.5 to +2 dB at 2-3.15 kHz, +3 to +13 dB from 4 kHz up |
 | `chamberscore_piano` | 13 felt / close-miked neo-classical piano albums (docs/CHAMBER_SCORE.md "Granularity" F) | 2010-2019 | 150 | -17.0 (-18.6 to -14.6) | `chamberscore_ref`: -12 to -13.5 dB at 4-12.5 kHz, -5.5 to -11 dB at 2-3.15 kHz, +4 to +5.5 dB at 125-400 Hz; spread 12-15 dB at 3-6 kHz (a guard: `eq` 0.3) |
@@ -368,6 +409,8 @@ Cinematic hybrid (2026-11-26, docs/CINEMATIC_HYBRID.md "Catalogue measurements")
 | `trap_2015` | tags `trap` AND `hip hop`, 2015-2021, up to 200 per year (the plain `trap` tag is mostly EDM and Latin trap) | 2015-2021 | 463 | -10.4 (-12.3 to -9.3) | `hiphop_2015`: within 1-1.5 dB; optional for a pure trap, drill or rage brief |
 | `rock_punk` | tag `pop punk`, 2013-2021, up to 100 per year | 2013-2021 | 490 | -9.8 (-12.6 to -8.6) | `rock_2015`: +1 to +2 dB at 2-5 kHz, -1 to -1.5 dB at 315-500 Hz, +2 to +3.5 dB at 31.5-40 Hz; pop punk 1997-2012 within 1 dB |
 | `rock_altpop` | tags `alt-pop`, `bedroom pop`, `indie pop`, 2015-2021, up to 100 per year (diluted by indie pop) | 2015-2021 | 464 | -10.6 (-12.2 to -9.5) | `rock_2015`: +2 to +4.5 dB at 31.5-63 Hz, -1.5 to -2.5 dB at 1.6-8 kHz |
+
+Techno, also measured, not targets: 2008-2014 (1,369; within 0.5-1.5 dB of `techno_2015`), minimal techno (406; within 1.5 dB below 12 kHz), acid techno (77; within 1.5 dB below 12 kHz), detroit techno (28), industrial techno (238; the tag mixes industrial bands).
 
 **Strands against eras (granularity research, 2026-11-25).** In some genres the strand moves the curve more than the period: pop rock (`rock_punk` and `rock_altpop` beside `rock_2015`; a 2018-2021 refit is within 1.5 dB of `rock_2015`, pop punk 1997-2012 within 1 dB of 2013-2021, so no period curve), Latin pop (12-20 dB apart at 31.5-50 Hz between urbano and banda / norteño, up to 13 dB at 12.5-16 kHz between bachata and bolero) and caroling (choir and a cappella 20-25 dB apart at 50-100 Hz). In hip hop the era does: golden-age boom-bap is about 4 dB quieter and 3-6 dB darker above 6.4 kHz than 2015-2021 trap. Mastering beyond the curve per strand (loudness, dynamics, low end, top, playback; what open data can and cannot measure) is in each genre doc's granularity section, e.g. docs/LATIN_POP.md 'Granularity' D: loudness differs little between Latin strands before 2022 (-9.6 to -11.6 LUFS, bolero -12.7) while the low end differs by 12-20 dB at 31.5-50 Hz.
 

@@ -970,5 +970,120 @@
       "the 4:00 aim and the change rate in bar counts"
     ],
     "sources": "docs/CINEMATIC_HYBRID.md 'Configuration', 'Catalogue measurements' and 'Mastering per subdivision' (catalogue lengths, tempo, keys, dynamic complexity, loudness and curves by Spectre from MusicBrainz + AcousticBrainz, 2026-11-26; Dynamic Range Database https://dr.loudness-war.info/ ; Sound On Sound library music part 7, Rare Form Audio, UJAM for the three acts; Synchtank/Trailaurality 2017 and Universal Production Music 2024 for trends; epicomposer 2026 for mixing; TASA, EBU R128, Spotify for playback)"
+  },
+  "techno": {
+    "name": "Techno, modern (2009-2026), original / extended mix (one long DJ version)",
+    "doc": "docs/TECHNO.md",
+    "status": "researched 2026-11-26 (queue item 14); targets measured from the open catalogue (tag techno by era, strand tags, a hard-techno artist set); loud sections from Mixgraph's store previews; loudness untested in the engine",
+    "master": {
+      "target": "techno_2015",
+      "lufs": -9.5,
+      "tp": -1.0,
+      "eq": 0.7,
+      "translate": 0.4,
+      "mono_below": 120.0,
+      "max_low_boost_db": 2.0
+    },
+    "target_source": "MusicBrainz tag techno, first release 2015-2021, up to 300 per year; AcousticBrainz low-level Bark bands (CC0)",
+    "target_era": "2015-2021",
+    "target_tracks": 424,
+    "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets')",
+    "target_date": "2026-11-26",
+    "era_targets": {
+      "2015-2021 (the modern period pooled; default)": "techno_2015",
+      "2019-2026, the newest sound (measured 2018-2021, 203 tracks; within 0.5 dB of techno_2015; 2022-2026 extrapolated)": "techno_2018",
+      "the minimal era (2000-2007, 1,588 tracks: 3-6 dB less at 31.5-63 Hz, 2 dB brighter at 3-5 kHz)": "techno_2000",
+      "roots (1990-1999, 2,206 tracks: 4.5-7 dB less at 31.5-63 Hz)": "techno_1990",
+      "note": "2008-2014 (1,369 tracks) reads within 0.5-1.5 dB of techno_2015 and has no target of its own; a brief aimed at an era or strand passes `--strand` (docs/TECHNO.md 'Mastering per subdivision')"
+    },
+    "master_by_strand": {
+      "note": "the loud section varies by strand (store previews, Mixgraph 2026-08-11: Hard Techno -7.3, Peak Time / Driving -8.6, Raw / Deep / Hypnotic -8.7, Minimal / Deep Tech -10.3, Melodic House & Techno -10.5); whole tracks sit 4-5 dB lower (catalogue 2015-21 -12.1; long DJ intros and outros). Integrated levels here aim the loud section at the previews when the main sections are most of the track; read the loudest 2 minutes after mastering. None of these levels has been tested in the engine",
+      "default": {
+        "label": "modern peak-time / driving (2009-2026)",
+        "note": "the genre's master"
+      },
+      "newest": {
+        "label": "newest sound (2019-2026)",
+        "target": "techno_2018",
+        "lufs": -9.5,
+        "tp": -1.0,
+        "note": "within 0.5 dB of techno_2015; 2022-2026 extrapolated"
+      },
+      "hard": {
+        "label": "hard techno, schranz, fast hard groove (2020s revival; queue 14)",
+        "target": "techno_hard",
+        "lufs": -8.5,
+        "tp": -1.0,
+        "mono_below": 150.0,
+        "note": "16-artist set, 540 tracks, 9% lossless (16 kHz on the smoothness term); Hard Techno loud sections -7.3 (-8.2 to -6.2): aim the loudest 2 minutes at about -7.5 to -7, never louder than -6.5"
+      },
+      "industrial": {
+        "label": "industrial / EBM-adjacent",
+        "target": "techno_hard",
+        "lufs": -9.0,
+        "tp": -1.0,
+        "note": "the industrial techno tag mixes industrial bands (7.5 dB less sub) and is not used; the hard set includes the industrial school"
+      },
+      "hypnotic": {
+        "label": "hypnotic, raw, deep",
+        "target": "techno_2015",
+        "lufs": -9.5,
+        "tp": -1.0,
+        "note": "Raw / Deep / Hypnotic previews -8.7, range 3.2 LU (the flattest); no tag data"
+      },
+      "dub": {
+        "label": "dub techno",
+        "target": "techno_dub",
+        "lufs": -12.0,
+        "tp": -1.0,
+        "eq": 0.5,
+        "dynamics": "keep",
+        "note": "792 tracks, whole tracks -15.1 (the quietest); 3.5-5.5 dB darker from 5 kHz"
+      },
+      "minimal": {
+        "label": "minimal",
+        "target": "techno_2015",
+        "lufs": -10.5,
+        "tp": -1.0,
+        "note": "minimal techno tag (406 tracks) within 1.5 dB of techno_2015 below 12 kHz; Minimal / Deep Tech previews -10.3"
+      },
+      "melodic": {
+        "label": "melodic techno and the progressive crossover",
+        "target": "techno_melodic",
+        "lufs": -11.0,
+        "tp": -1.0,
+        "eq": 0.5,
+        "note": "thin: 51 tracks (92% lossless); 4-4.5 dB less at 50-160 Hz; Melodic House & Techno previews -10.5; trance's melodic crossover masters at -11 too"
+      },
+      "minimal_era": {
+        "label": "the minimal era (2000-2008)",
+        "target": "techno_2000",
+        "lufs": -11.0,
+        "tp": -1.0,
+        "note": "whole tracks -12.4; CD albums DR 6-8"
+      },
+      "roots": {
+        "label": "roots (1990s Detroit, Berlin, UK)",
+        "target": "techno_1990",
+        "lufs": -13.0,
+        "tp": -1.0,
+        "dynamics": "keep",
+        "note": "whole tracks -14.9; albums DR 9-14"
+      }
+    },
+    "length": "5:30-7:00, aim about 6:00-6:30 (one long DJ version; measured: tag techno median 5:59 in 2015-21 (middle half 4:44-7:02), 6:08-6:12 in 2009-18, 5:29 in 2019-21; minimal 6:22, dub 6:01, melodic 5:40, acid 5:08; Original Mix titles 6:04, Extended Mix 5:48; Mixgraph 5-7 min; Futureproof hard techno 6-8 min)",
+    "form": "a DJ tool: intro 16-32 bars of kick (and rumble) only; a main section 32-64 bars that adds bass, the hook sound and percussion layer by layer; a breakdown 16-32 bars without the kick (0-8 in hypnotic and minimal strands); a re-entry and peak 32-64 bars; an outro 16-32 bars back to kick and percussion; an element in or out about every 16 bars over an 8-bar loop; builds by filters, density and layers rather than silence and drops",
+    "tempo": "by strand: 124-128 melodic, dub, minimal; 130-140 peak-time / driving, hypnotic, industrial, hard groove; 145-155 hard techno (peak-time festival 150-155); over 160 is hardstyle, hardcore, hardtekk. Mixgraph techno median 133 (128-140; yearly median 128 in 1991 to 140 in 2025, lowest 126 in 2013); hard techno median 146 (136-155); catalogue (Essentia) 132 in the 1990s, 136 in 2000-08, 126-127 in 2009-18, 130 in 2019-21",
+    "meter": "4/4, kick on every quarter (never half time); offbeat open hat, bass or ride; 16th hats; swing 50-54% on hats and percussion only (Attack); swung and syncopated in hard groove and Detroit, straight in hard techno and industrial",
+    "change_rate": "an element in or out about every 16 bars (8 in the busy strands); slow movement inside sections (filter, resonance, decay, sends over 8-16 bars); the kick leaves only for the breakdown",
+    "role": "the kick and its low end are the lead; one repeating hook sound (an acid line, a stab, a riff of one or two notes, a loop) over percussion; voices as short loops, shouts or chopped phrases",
+    "hand_tuned": [
+      "lufs -9.5 and the strand levels (-8.5 hard, -9 industrial, -9.5 hypnotic, -10.5 minimal, -11 melodic and minimal era, -12 dub, -13 roots): choices against the measured loud sections (Mixgraph previews) and whole tracks (catalogue); untested in the engine",
+      "eq 0.7 and translate 0.4 (as trance and dubstep)",
+      "max_low_boost_db 2 (the heaviest measured low end in the project: the mix must supply 50-80 Hz)",
+      "mono_below 120 (MusicRadar; Nihil Young's 50-120 Hz low-end focus) and 150 for hard (Futureproof)",
+      "the default tempos and bar counts inside the sourced ranges"
+    ],
+    "sources": "docs/TECHNO.md 'Configuration', 'Catalogue measurements' and 'Mastering per subdivision' (Mixgraph techno BPM https://www.mixgraph.io/bpm-for/techno ; hard techno BPM https://www.mixgraph.io/bpm-for/hard-techno ; Mixgraph loudness by genre https://www.mixgraph.io/tools/lufs-meter ; catalogue lengths, tempo, loudness and curves by Spectre from MusicBrainz + AcousticBrainz, 2026-11-26; Futureproof hard techno, MusicRadar 2023 techno guide, MusicRadar / Computer Music and Bonedo rumble guides, Attack Magazine for form, drums, rumble and mixing; Dynamic Range Database for album dynamics)"
   }
 }

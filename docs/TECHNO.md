@@ -4,7 +4,7 @@ For sessions that make techno in its modern era and its strands. A vocabulary, n
 
 Labels as in docs/PRODUCTION.md: **[M]** measured (a published measurement, or one made here from open data, method stated), **[S]** a named source, **[H]** hand-tuned or a judgement of this brief.
 
-## Configuration (researched 2026-11-26; engine: `--genre techno` proposed to the orchestrator, not yet in engine/genres.json)
+## Configuration (researched 2026-11-26; engine: `--genre techno` in engine/genres.json since 2026-11-26, strands in its `master_by_strand`)
 | Setting | Value | Source |
 |---|---|---|
 | Length and cut | **5:30-7:00, aim about 6:00-6:30** (the original / extended mix: techno releases one long DJ version; there is no radio-edit habit) | [M] catalogue ("Catalogue measurements"): tag `techno` median **5:59** in 2015-21 (middle half 4:44-7:02), 6:08-6:12 in 2009-18, **5:29** in 2019-21; minimal 6:22, dub 6:01, melodic 5:40, acid 5:08; Mixgraph: "5-7 minutes" is normal, cutting a track at about 3 minutes is "a common mistake" ([Mixgraph techno guide](https://www.mixgraph.io/mixing-guide/techno)); Futureproof's hard-techno map: 6-8 minutes ([Futureproof 2025](https://futureproofmusicschool.com/blog/making-hard-techno-a-path-to-unique-sound-design)) [S] |
@@ -16,7 +16,7 @@ Labels as in docs/PRODUCTION.md: **[M]** measured (a published measurement, or o
 | Loudness of releases | **by strand**, loud section (store previews): **Hard Techno -7.3 LUFS** (middle half -8.2 to -6.2), **Techno (Peak Time / Driving) -8.6** (-9.9 to -7.6, 75 tracks), **Techno (Raw / Deep / Hypnotic) -8.7** (-9.3 to -8.0), Tech House -8.9, Minimal / Deep Tech -10.3, **Melodic House & Techno -10.5**; whole tracks (catalogue) **-12.1** in 2015-21 (middle half -13.9 to -10.6), -11.4 in 2019-21, the hard school -12.0, dub techno -15.1, minimal -13.5, melodic -11.3: 4-5 dB under the loud sections (long DJ intros and outros) | [M] [Mixgraph LUFS meter](https://www.mixgraph.io/tools/lufs-meter) (900 store previews, 120 s, measured 2026-08-11); catalogue (ReplayGain, ±1-2 dB) [M] |
 | How loudness is reached | the drive is made in the mix (a saturated, clipped kick and drum bus, a distorted rumble); on the master **a soft clipper, then a limiter that only catches peaks** | Futureproof ("a soft clipper on the master, then a limiter that catches only the peaks"; avoid brick-wall limiting as the main loudness tool); [Nihil Young, NI](https://blog.native-instruments.com/mastering-with-nihil-young/) (clipping in stages, true-peak control) [S] |
 | Low end | the kick tuned to the key (fundamental about 45-60 Hz), **mono below 120-150 Hz**, the rumble the only other sub source, the bass high-passed about 150 Hz when a rumble plays | Futureproof ("Below 150 Hz, everything is mono"; acid high-passed about 150 Hz); [MusicRadar rumble](https://musicradar.com/how-to/rumbling-techno-kick) (Bass Mono below 120 Hz); MusicRadar 2023 (tune the kick to the key) [S] |
-| Master | `studio.py master vNNN --genre techno` (proposed: target **`techno_2015`**, `--lufs -9.5`, `--tp -1`, `mono_below 120`, `eq 0.7`, `translate 0.4`, low boosts capped at +2 dB); per strand in "Mastering per subdivision" (hard techno `--strand hard`: target `techno_hard`, `--lufs -8.5`, mono below 150 Hz) | target measured here (`refcurve.py catalogue`) [M]; levels are choices against the measured loud sections and whole tracks, **untested in the engine** [H] |
+| Master | `studio.py master vNNN --genre techno` (target **`techno_2015`**, `--lufs -9.5`, `--tp -1`, `mono_below 120`, `eq 0.7`, `translate 0.4`, low boosts capped at +2 dB); per strand in "Mastering per subdivision" (hard techno `--strand hard`: target `techno_hard`, `--lufs -8.5`, mono below 150 Hz) | target measured here (`refcurve.py catalogue`) [M]; levels are choices against the measured loud sections and whole tracks, **untested in the engine** [H] |
 
 **Unsourced or hand-tuned in this table:** the default tempos (choices inside the measured ranges), the integrated loudness targets and `eq`/`translate` (as trance and dubstep), the exact bar counts inside the sourced ranges.
 
@@ -67,7 +67,7 @@ The boundaries in measurement: the catalogue's median tempo rises from 123 (1990
 | Voice | a shouted or spoken loop, a chopped phrase, a pitched-down command | a sung song (standing rule 15) |
 | FX | sweeps, risers, reverse hits, delay throws | replace the groove as the build |
 
-**EQ map** (proposed `techno` entry for engine/eqmaps.json in the proposal; ranges are starting points):
+**EQ map** (engine/eqmaps.json `techno`, merged 2026-11-26; ranges are starting points):
 | Role | High-pass | Cut or control | Owns | Source / cross-check |
 |---|---|---|---|---|
 | kick | 25-30 Hz (45-55 Hz when a rumble carries the sub) | 300-600 Hz (about -3 dB near 500 Hz) | 45-80 Hz, 100-200 Hz, 2-5 kHz | MusicRadar 2023 (roll off under 30 Hz, boost the fundamental 1-3 dB); Attack (high-pass about 50 Hz, -3 dB at 500 Hz); trance map (200-500 cut) |
@@ -202,7 +202,7 @@ Reading it:
 
 **Shared, varying:** the loud section varies **by strand** (-7.3 hard to -10.5 melodic: 3.2 LU) [M]; whole-track levels vary by strand from -11.3 to -15.1 and rose about 1 dB from 2019 [M]; the tonal balance varies by era below 63 Hz (to 2008) and by strand on top (hard brighter, dub and melodic darker) [M]; the method (the drive made in the mix, a soft clipper before a peak limiter, mono low end) is shared [S]; true peak: club masters commonly exceed 0 dBTP (100 top-label Beatport tracks: +0.01 to +5.5 dBTP, Dance Music NW 2018, docs/TRANCE.md), Spotify asks -1 dBTP (-2 above -14 LUFS) [M, S]; one master serves clubs and streaming (Mixgraph: on DJ systems "nothing normalises anything"); vinyl is still part of techno's playback (many DR entries are vinyl rips), and its habit, a mono low end, is already the genre's [S].
 
-**Settings per kind of brief** (proposed for `engine/genres.json`, `master_by_strand`):
+**Settings per kind of brief** (engine/genres.json `master_by_strand`, merged 2026-11-26):
 | Brief | Flags with `--genre techno` | Why |
 |---|---|---|
 | modern, no strand named (peak-time / driving; default) | `--target techno_2015 --lufs -9.5 --tp -1` | target measured on 424 tracks 2015-21; -9.5 integrated aims a loud section near Peak Time's -8.6 when the main sections are most of the track [H; untested] |
@@ -231,7 +231,7 @@ Reading it:
 | 7 | **Groove against the "fist-pumping" critique**: danceability kept at high tempo (syncopation, swing in the percussion) | [S] Attack 2023; Witek 2014 | yes (swing, `dyn`, `humanize`) |
 | 8 | **Distorted lead-basses** (saw or square, unison, heavy drive; 100-400 Hz activity) | [S] Futureproof | yes (`polysynth`, `wavetable`, `multiband`, `fold`, `asym`) |
 | 9 | **Loud masters**: Hard Techno loud sections -7.3 (-8.2 to -6.2), reached by saturation in the mix and a soft clipper | [M] Mixgraph; [S] Futureproof | **untested** for techno (gap 4) |
-| 10 | **Tonal target** `techno_2018` / `techno_hard` (to 2021; 2022-26 extrapolated) | [M] catalogue | proposed |
+| 10 | **Tonal target** `techno_2018` / `techno_hard` (to 2021; 2022-26 extrapolated) | [M] catalogue | yes (engine/targets.json, 2026-11-26) |
 | 11 | **Faster still (hardtekk, uptempo, 180+)** | [S] Techno Airlines 2026 (SoundCloud), We Rave You 2026 | out of scope: another genre family; its "hard techno averages over 180 bpm" is contradicted by Mixgraph's 146 median and not used |
 
 
