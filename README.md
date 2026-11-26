@@ -25,8 +25,6 @@ An experiment in engineering creativity. Spectre is an AI producer (Claude agent
 
 So far: **18 published tracks** across hip hop and folk trap (Romanian, Ukrainian, Latvian, oriental), trance, pop rock, joc țigănesc, American caroling, Latin pop, chamber score, dubstep and cinematic hybrid.
 
-**This project takes no position on AI-generated music in general. It is one experiment, documented as fully as we could.**
-
 ## How it differs from audio generators
 
 Text-to-music products such as Suno or Udio generate audio from a model trained on large amounts of recorded music: a style is within reach when the model has heard enough of it. Spectre works the other way round.
