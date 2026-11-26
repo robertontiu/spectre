@@ -400,5 +400,52 @@
       "loudness: film and TV music -14 to -10 LUFS (https://www.sageaudio.com/articles/mastering-music-for-film-and-video); dynamic classical -20 to -16 LUFS, keep the low side image (https://sageaudio.com/articles/how-to-master-dynamic-classical-music); streaming normalization -14 (Spotify)",
       "tonal balance: acoustic genres show a natural top-end decay (Pestana et al. 2013; docs/MASTERING.md)"
     ]
+  },
+  "dubstep": {
+    "name": "Dubstep, modern (2015-2026), original mix",
+    "doc": "docs/DUBSTEP.md",
+    "status": "researched 2026-11-25 (queue item 12); target measured from the open catalogue; loudness untested in the engine",
+    "master": {
+      "target": "dubstep_2015",
+      "lufs": -8.0,
+      "tp": -1.0,
+      "eq": 0.7,
+      "translate": 0.4,
+      "mono_below": 150.0
+    },
+    "target_source": "MusicBrainz tag dubstep, first release 2015-2021, up to 300 per year; AcousticBrainz low-level Bark bands (CC0)",
+    "target_era": "2015-2021",
+    "target_tracks": 927,
+    "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets')",
+    "target_date": "2026-11-25",
+    "era_targets": {
+      "2015-2021 (the modern period pooled; default)": "dubstep_2015",
+      "2019-2026, the newest sound (measured 2018-2021, 346 tracks; within 1 dB of dubstep_2015; 2022-2026 extrapolated)": "dubstep_2018",
+      "UK roots and deep / 140 (2005-2010, 1,277 tracks)": "dubstep_2005",
+      "brostep years (2011-2014, 866 tracks)": "dubstep_2011",
+      "note": "the master uses `target`; a brief aimed at an era or strand passes `--target` (docs/DUBSTEP.md 'Mastering per subdivision')"
+    },
+    "master_by_strand": {
+      "note": "loudness varies by strand more than by year since 2015 (whole tracks: riddim -7.6, brostep -8.7, melodic -9.3, all dubstep 2015-21 -10.3; loud sections of current releases -6, Mixgraph previews); pass the flags with --genre dubstep and check the loudest 2 minutes; none of these levels has been tested in the engine",
+      "modern default": "--target dubstep_2015 --lufs -8 --tp -1",
+      "newest sound (2019-2026)": "--target dubstep_2018 --lufs -8 --tp -1",
+      "riddim, tearout, briddim": "--target dubstep_riddim --lufs -7 --tp -1 (only with clipped drum and bass buses; riddim curve from 81 tracks)",
+      "melodic dubstep, colour bass": "--target dubstep_melodic --lufs -8.5 --tp -1",
+      "deep / 140, UK roots": "--target dubstep_2005 --lufs -10 --tp -1",
+      "a brief with a long quiet section (e.g. queue 12)": "--lufs -8.5, then read the drop's short-term loudness; lower --lufs rather than let a quiet outro push the drops harder"
+    },
+    "length": "3:30-4:30, aim about 3:50-4:00 (original mix; measured: tag dubstep median 4:06 in 2014-16, 4:02 in 2017-19, 3:42 in 2020-21 (middle half 3:15-4:21), 4:33-4:36 in 2008-13; riddim 3:39, melodic dubstep 4:18)",
+    "form": "intro 8-32 bars (the drop near bar 32), build 8 (a 4-bar false drop optional), drop 1 16-32 bars in 8-bar halves with a switch at the half, breakdown or mid-section 8-16, build 8, drop 2 16-32 bars that differs from drop 1 (new drums, new bass or another strand), outro 8-16",
+    "tempo": "140-150 bpm felt in half time (70-75); catalogue median 140 every year 2006-2018, 148 in 2019, 145 in 2020-21; riddim 145; Mixgraph median 145 (140-150), peak 150 in 2017; 140 for deep / 140 and colour bass, 145-150 for riddim, tearout and much melodic dubstep",
+    "meter": "4/4 written at 140-150, kick on 1, snare (clap + snare) on 3; swung 16ths in the UK strands, triplet percussion in riddim, grid-tight in tearout",
+    "change_rate": "something every 4-8 bars; a switch at the half of each drop (8 bars) in brostep and tearout; riddim holds one motif through a drop and changes it only by modulation",
+    "role": "the bass is the lead: a mid-bass voice (or two in call and response) carries the hook; voices as chopped, pitched phrases and pre-drop calls",
+    "hand_tuned": [
+      "lufs -8 (and the strand levels -7 / -8.5 / -10): choices between measured whole-track medians and the -6 loud previews; untested in the engine",
+      "translate 0.4",
+      "eq 0.7",
+      "mono_below 150 (inside the sourced 150-180 Hz side cut)"
+    ],
+    "sources": "docs/DUBSTEP.md 'Configuration', 'Catalogue measurements' and 'Mastering per subdivision' (Mixgraph dubstep BPM https://www.mixgraph.io/bpm-for/dubstep ; Mixgraph loudness by genre https://www.mixgraph.io/tools/lufs-meter ; catalogue lengths, tempo, loudness and curves by Spectre from MusicBrainz + AcousticBrainz, 2026-11-25; EDMProd, Cymatics, Futureproof, Infekt, iZotope/Skrillex 2011 for form, drums and mixing)"
   }
 }

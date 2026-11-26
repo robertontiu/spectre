@@ -1878,3 +1878,17 @@ def _tr909(kind):
 MONO.add("acid")
 DRUMS.update(snare909=_tr909("snare909"), clap909=_tr909("clap909"), ride909=_tr909("ride909"))
 ROUND_ROBIN = ROUND_ROBIN | {"snare909", "clap909"}
+
+
+# ---------------------------------------------------------------- bass music: FM growl, wavetable, sampler
+# Additive block (2026-11-25, docs/DUBSTEP.md "Engine mapping"; code in engine/bass.py, fx in engine/bassfx.py;
+# docs/MANUAL.md "Bass music"). Used only when a track names them.
+def _bass(kind):
+    def f(p, fr, vel, dur):
+        import bass as _b
+        return getattr(_b, kind)(p, fr, vel, dur)
+    f.__name__ = kind
+    return f
+
+
+TONAL.update(fmgrowl=_bass("fmgrowl"), wavetable=_bass("wavetable"), sampler=_bass("sampler"))

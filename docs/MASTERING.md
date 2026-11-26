@@ -39,6 +39,7 @@ Settings come from a **genre configuration** (`engine/genres.json`), chosen with
 | `caroling` | `caroling_ref` (5 albums), no low-end boosts | -14 | -1 | 0.3 | 0.2 | `rock`, eq 0.5 (012) | docs/CAROLING.md |
 | `latinpop` | `latinpop_ref` (24 albums); `latinpop_dark`, `latinpop_bright` by strand | -11 | -1 | 0.6 | 0.3 | `rock` (014) | docs/LATIN_POP.md |
 | `chamberscore` | `chamberscore_ref` (30 albums) | -15 | -1 | 0.4 | 0.2 | `rock` (015) | docs/CHAMBER_SCORE.md |
+| `dubstep` | `dubstep_2015` (catalogue, 927 tracks); `dubstep_2018`, `dubstep_2005`, `dubstep_2011`, `dubstep_riddim`, `dubstep_melodic` by era and strand | -8 (untested at research; see the engine test in docs/DUBSTEP.md "Engine mapping"); by strand -7 (riddim, tearout), -8.5 (melodic, colour bass), -10 (deep / 140) | -1 | 0.7 | 0.4 | none | docs/DUBSTEP.md; mono below 150 Hz; genres.json `master_by_strand` |
 
 Each genre's provenance is in `engine/genres.json` (`target_source`, `target_era`, `target_tracks`, `target_method`, `target_date`, `target_change`), the curves with their spreads in `engine/targets.json`, and every master report carries `target_provenance`. The settings the released tracks were mastered with stay in `master_published`; `master --published` uses them, and the master prints a note whenever a genre's default has changed, so nothing changes silently. Re-mastering a released track with its era target is a separate step, track by track, with the owner's approval (docs/PRODUCTION.md, "Remixing and remastering"). `max_low_boost_db` (optional, `caroling`: 0) caps the tonal EQ's boosts below 200 Hz; every other setting and the +2 dB cap on top-end boosts are as before.
 
@@ -152,6 +153,39 @@ Downloads are cached in `~/.cache/spectre/refs/catalogue/` (only the few numbers
 | 12500 | -7 | -11 | -14 | -22.5 | -28 | -27 | -11.5 | -17.5 | -8.5 |
 | 16000 | -11 | -16.5 | -20 | -27.5 | -36 | -32.5 | -17.5 | -22.5 | -12.5 |
 
+Dubstep (2026-11-25, docs/DUBSTEP.md "Catalogue measurements"):
+
+| Hz | `dubstep_2015` | `dubstep_2018` | `dubstep_2005` | `dubstep_2011` | `dubstep_riddim` | `dubstep_melodic` | `dubstep_brostep` |
+|---|---|---|---|---|---|---|---|
+| 31.5 | +5 | +6 | +7.5 | +6 | +8.5 | +2 | +5.5 |
+| 40 | +6.5 | +7 | +9.5 | +8 | +8 | +4 | +7 |
+| 50 | +8 | +8 | +11 | +9.5 | +7.5 | +5.5 | +8 |
+| 63 | +8 | +8 | +11 | +9.5 | +6 | +5.5 | +7.5 |
+| 80 | +6.5 | +6.5 | +9 | +7.5 | +4.5 | +4.5 | +6 |
+| 100 | +4.5 | +4.5 | +6.5 | +5.5 | +3 | +2.5 | +3.5 |
+| 125 | +2.5 | +2.5 | +4.5 | +3.5 | +2 | +1 | +2 |
+| 160 | +2 | +2 | +3.5 | +2.5 | +1 | +0.5 | +1.5 |
+| 200 | +1.5 | +1.5 | +2.5 | +2 | 0 | +0.5 | +1.5 |
+| 250 | +1 | +1 | +1.5 | +1.5 | -0.5 | 0 | +0.5 |
+| 315 | +1 | +1 | +1 | +1 | -1 | 0 | 0 |
+| 400 | +1 | +1 | +0.5 | +0.5 | -1 | 0 | -0.5 |
+| 500 | +1 | +1 | +0.5 | 0 | -1 | 0 | -0.5 |
+| 630 | +0.5 | +1 | +0.5 | 0 | -0.5 | +0.5 | 0 |
+| 800 | +0.5 | +0.5 | 0 | 0 | 0 | +0.5 | 0 |
+| 1000 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1250 | -0.5 | -1 | -0.5 | -0.5 | 0 | -1 | -0.5 |
+| 1600 | -1.5 | -1.5 | -0.5 | -1 | 0 | -1.5 | -0.5 |
+| 2000 | -2 | -2 | -1 | -1.5 | -0.5 | -2 | -1 |
+| 2500 | -3 | -2.5 | -1.5 | -1.5 | -0.5 | -3 | -1.5 |
+| 3150 | -3.5 | -3 | -2.5 | -2.5 | -1 | -3.5 | -1.5 |
+| 4000 | -4 | -3.5 | -3 | -2.5 | -1 | -4 | -2 |
+| 5000 | -4.5 | -4 | -3.5 | -2.5 | -1 | -4 | -2 |
+| 6300 | -4.5 | -4 | -3.5 | -2.5 | -1.5 | -4 | -2 |
+| 8000 | -5 | -4.5 | -4.5 | -3 | -1.5 | -4 | -2 |
+| 10000 | -6 | -5.5 | -6 | -4 | -2.5 | -5 | -2.5 |
+| 12500 | -8 | -7.5 | -8.5 | -6.5 | -4 | -7 | -5 |
+| 16000 | -12.5 | -12 | -12.5 | -10 | -7 | -11 | -8.5 |
+
 | Target | Source (provenance) | Era | n | Est. loudness, median (middle half) | Against the curve it replaces (both laid over a mix at 500 Hz-2 kHz) |
 |---|---|---|---|---|---|
 | `trance_2015` | MusicBrainz tag `trance`, first release 2015-2021, up to 300 per year | 2015-2021 | 558 | -10.7 (-12.0 to -9.6) | `trance`: +8 to +12 dB at 31.5-63 Hz, -2 to -5 dB at 100-315 Hz, +2 to +7 dB at 8-16 kHz |
@@ -164,6 +198,13 @@ Downloads are cached in `~/.cache/spectre/refs/catalogue/` (only the few numbers
 | `latinpop_ref` | the 24 albums of docs/LATIN_POP.md with data | 1990-2025 | 301 | -11.1 (-15.0 to -9.5) | `rock` (borrowed): +6 to +8 dB at 31.5-63 Hz, -2.5 to -4.5 dB at 125-250 Hz, +2 to +6 dB from 6.3 kHz |
 | `latinpop_dark` | boleros and acoustic: Luis Miguel's *Romance* trilogy, Natalia Lafourcade's *Musas* and *Hasta la raíz* | 1994-2017 | 66 | -11.9 (-14.1 to -11.1) | 4.5-6 dB darker than `latinpop_ref` at 6.3-12.5 kHz |
 | `latinpop_bright` | bachata: Aventura, Romeo Santos, Prince Royce (two albums each) | 2002-2016 | 81 | -10.4 (-11.7 to -9.0) | 1-3 dB brighter than `latinpop_ref` at 6.3-12.5 kHz |
+| `dubstep_2015` | MusicBrainz tag `dubstep`, first release 2015-2021, up to 300 per year | 2015-2021 | 927 | -10.3 (-12.3 to -8.5) | `trance_2015` reads within 1.2 dB of its Bark medians (mean 0.4 dB; 1 dB too bright at 7.7-12 kHz, 1 dB short at 32-97 Hz); `hiphop_2015` is 1-2 dB too dark at 3-12 kHz and 4 dB at 12-15.5 kHz (`refcurve.py check`) |
+| `dubstep_2018` | tag `dubstep`, 2018-2021, up to 300 per year (2022-2026 extrapolated) | 2018-2021 | 346 | -9.6 (-11.8 to -8.2) | `dubstep_2015`: within 1 dB everywhere (+1 at 31.5 Hz, +0.5 at 2.5-10 kHz) |
+| `dubstep_2005` | tag `dubstep`, 2005-2010 | 2005-2010 | 1,277 | -12.2 (-14.5 to -10.5) | `dubstep_2015`: +2.5 to +3 dB at 31.5-80 Hz, about +1 dB at 2-6 kHz |
+| `dubstep_2011` | tag `dubstep`, 2011-2014 | 2011-2014 | 866 | -10.2 (-12.2 to -8.9) | `dubstep_2015`: +1.5 dB at 50-63 Hz, +1 to +2 dB at 3-10 kHz |
+| `dubstep_riddim` | tag `riddim`, 2010-2021, up to 200 per year | 2010-2021 | 81 | -7.6 (-8.8 to -6.3) | `dubstep_2015`: +3.5 at 31.5 Hz, -2 dB at 63-100 Hz, -1.5 to -2 at 250-500 Hz, +3.5 to +5.5 dB at 5-16 kHz (thin: ±1 dB) |
+| `dubstep_melodic` | tag `melodic dubstep`, 2010-2021 | 2010-2021 | 237 | -9.3 (-10.6 to -8.1) | `dubstep_2015`: -2.5 to -3 dB at 31.5-63 Hz, -1 dB at 250-500 Hz, +0.5 to +1.5 dB at 8-16 kHz |
+| `dubstep_brostep` (installed; for era use `dubstep_2011`) | tag `brostep`, 2010-2021 | 2010-2021 | 605 | -8.7 (-10.3 to -7.4) | `dubstep_2015`: -1 dB at 80-125 Hz, +2 to +3.5 dB at 3-10 kHz |
 
 **What they ask of a mix.** In trance, hip hop and pop rock: the kick-and-sub band about 5-9 dB over 1 kHz at 50-80 Hz (where the older curves had their hump at 100-125 Hz), less 100-300 Hz, and a top 2-7 dB brighter at 8-16 kHz. Session 007's kick fundamental was carved by 5-11 dB to satisfy the old `trance` curve (docs/TRANCE.md C); with `trance_2015` that carving is no longer asked for. In the acoustic genres the top is far darker than the borrowed `rock` curve (caroling and chamber score -15 to -25 dB at 8-12.5 kHz) and the low mids leaner. **Unchanged rules:** the master boosts the top by at most +2 dB from 5 kHz up, so a brighter target must be met by the sounds (tonal content: saw harmonics, air layers, metallic hats), not by lifting synthesized noise (see "Top end"); the -8/+4 dB limits per band stay.
 

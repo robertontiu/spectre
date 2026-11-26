@@ -38,6 +38,11 @@ DEFAULT_GAIN.update({"celesta": -12, "glockenspiel": -12, "cello": -12, "viola":
 DEFAULT_GAIN.update({"polysynth": -12, "sub": -4, "kicksub": -1, "kickpunch": -8, "kickclick": -6, "metalhat": -13,
                      "air": -20})
 DEFAULT_GAIN.update({"acid": -6, "snare909": -1, "clap909": -7, "ride909": -19})
+DEFAULT_GAIN.update({"fmgrowl": -10, "wavetable": -10, "sampler": 0})
+# bass-music voices and fx (engine/bass.py, engine/bassfx.py; docs/MANUAL.md "Bass music")
+BASS_TONAL = ("fmgrowl", "wavetable", "sampler")
+BASS_FX = ("multiband", "fold", "asym", "hardclip", "comb", "flanger", "resonator", "autofilter", "autopan", "vowel",
+           "vocoder")
 
 # Opt-in production features (stacks, buses, returns, role EQ, ott/dyneq/clip/mseq, correlated humanizing) live in
 # engine/mixbus.py; _CTX carries the render's events and genre to the fx that need them (dyneq, role EQ).
@@ -149,6 +154,9 @@ def apply_fx(st, fx_list, bpm, owner=None):
             st = MB.butter(flush(st), k, fx.get("hz", 120 if k == "hpf" else 5000), fx["slope"])
         elif k in ("shimmer", "granular", "suppress"):
             st = _space_fx(flush(st), fx, owner)
+        elif k in BASS_FX:
+            import bassfx as BFX
+            st = BFX.apply(flush(st), fx, bpm, lambda x, fl: apply_fx(x, fl, bpm, owner))
         elif k in ("ott", "dyneq", "clip", "mseq"):
             st = flush(st)
             if k == "ott":
@@ -648,6 +656,42 @@ def _return_moves(P, rn, wet, sec_by_name, n):
     return wet
 
 
+def _sampler_source(name, p, bpm):
+    """The audio a `sampler` plays: its `source` track rendered on its own (instrument, stack and fx; before its
+    sidechain, section moves and sends), cut to `from_bar` (1-based) for `bars` bars. Rendered once per render and
+    cached; the random streams of the other tracks are left exactly as they were (the source's own stream in
+    per-track mode; the shared stream saved and restored otherwise). A sampler can play another sampler (serial
+    resampling)."""
+    C = _CTX.get("src_ctx")
+    src = p.get("source")
+    if not src or C is None or src not in C["P"]["tracks"]:
+        raise ValueError(f"track '{name}': sampler needs \"source\": the name of another track")
+    cache = _CTX.setdefault("sample_cache", {})
+    if src not in cache:
+        if src in C["resolving"] or src == name:
+            raise ValueError(f"track '{name}': sampler source cycle through '{src}'")
+        C["resolving"].add(src)
+        P = C["P"]
+        tail = 3.0
+        n_full = int((C["total"] + tail) * SR)
+        rng_obj = I.RNG
+        state = I.RNG.bit_generator.state
+        if C["per_track"]:
+            I.RNG = track_rng(P, src, 1)
+        try:
+            cache[src] = render_track(src, P["tracks"][src], C["events"][src], C["holds"][src], n_full, P["bpm"])
+        finally:
+            I.RNG = rng_obj
+            if not C["per_track"]:
+                I.RNG.bit_generator.state = state
+            C["resolving"].discard(src)
+    full = cache[src]
+    bar = 4 * 60.0 / bpm
+    a = int(round((float(p.get("from_bar", 1)) - 1) * bar * SR))
+    b = a + int(round(float(p.get("bars", 1)) * bar * SR))
+    return np.ascontiguousarray(full[:, max(a, 0):max(b, 0)])
+
+
 def _prev_pitch(sorted_evs, e):
     """The pitch a slid note comes from: the nearest note of the previous onset (chord) before it."""
     t = e["t"] - 0.03
@@ -794,13 +838,20 @@ def render_track(name, tr, evs, holds, total_n, bpm):
     elif typ in I.TONAL:
         fn = I.TONAL[typ]
         modern = typ == "polysynth" or (typ == "supersaw" and p.get("model", 1) == 2)
-        slide = modern and p.get("glide_ms") is not None      # opt-in: `~` slides polysynth / supersaw model 2
+        bassv = typ in BASS_TONAL                              # bass-music voices (engine/bass.py)
+        slide = (modern and p.get("glide_ms") is not None) or bassv   # opt-in on polysynth / supersaw model 2
         accent = modern and bool(p.get("accent"))              # opt-in: `!` deepens the filter envelope
+        synced = modern and any(isinstance(L.get("rate"), str) for L in (p.get("lfo") or []))
         sevs = sorted(evs, key=lambda e: e["t"]) if slide else None
+        src = _sampler_source(name, p, bpm) if typ == "sampler" else None
         for e in evs:
             pe = p
             if autod:  # section automation of the instrument: this note's params
                 pe = _inst_at(p, owners, e["t"])[0]
+            if bassv or synced or (modern and e.get("art")):  # tempo, onset and per-note tokens for synced mods
+                pe = dict(pe, _bpm=bpm, _t0=e["t"], _art=e.get("art"))
+            if src is not None:
+                pe = dict(pe, _src=src)
             if slide and e.get("glide"):
                 m0 = _prev_pitch(sevs, e)
                 if m0 is not None:
@@ -1022,6 +1073,9 @@ def _process_return(rn, cfg, x, beat, duck_env):
     if lp:
         wet = MB.butter(wet, "lpf", lp, 12)
     wet = apply_fx(wet.astype(np.float32), cfg.get("fx"), 60.0 / beat)
+    if cfg.get("gate"):  # gated reverb: the wet passes while the return's input plays, plus a hold
+        import bassfx as BFX
+        wet = BFX.gate_wet(wet, x, cfg["gate"])
     du = cfg.get("duck")
     if du:
         if du.get("key") not in duck_env:
@@ -1048,7 +1102,12 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
         events, holds, sections, total, offset = _window(events, holds, sections, total, window, pre)
     per_track = per_track_seeds(P)
     shared_rng = I.RNG
-    _CTX.update(auto=_auto_index(P, sections), sections=sections, seed=P.get("seed", 1))
+    _CTX.update(auto=_auto_index(P, sections), sections=sections, seed=P.get("seed", 1), sample_cache={},
+                src_ctx=dict(P=P, events=(whole or {}).get("events", events), holds=(whole or {}).get("holds", holds),
+                             total=(whole or {}).get("total", total), per_track=per_track_seeds(P), resolving=set(),
+                             sources={(i or {}).get("source") for tr in P["tracks"].values()
+                                      for i in [tr.get("inst")] + [L.get("inst") for L in tr.get("layers") or []]
+                                      if (i or {}).get("type") == "sampler"} - {None}))
     _CTX.update(events=events, genre=P.get("genre"), bpm=P["bpm"], layer_hook=layer_hook,
                 layer_rng=(lambda nm: setattr(I, "RNG", track_rng(P, nm, 1))) if per_track else None)
     tail = 3.0
@@ -1088,6 +1147,8 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
             del full
         else:
             st = render_track(name, tr, events[name], holds[name], total_n, P["bpm"])
+            if whole is None and name in _CTX["src_ctx"]["sources"] and name not in _CTX["sample_cache"]:
+                _CTX["sample_cache"][name] = st.copy()  # a sampler plays this track: reuse this render
         # choke: another track's hits cut this track's ring (closed hat chokes the open hat)
         cb = tr.get("choke_by")
         if cb and cb in events:
@@ -1340,7 +1401,7 @@ def main():
     m = sub.add_parser("master")
     m.add_argument("version", nargs="?", help="e.g. v027 (default: latest)")
     m.add_argument("--genre", help="genre configuration (engine/genres.json): trap, hiphop, trance, trance_radio, rock, joc, caroling, "
-                   "latinpop, chamberscore; required unless --target is given; sets target, lufs, tp, eq and translate")
+                   "latinpop, chamberscore, dubstep; required unless --target is given; sets target, lufs, tp, eq and translate")
     m.add_argument("--lufs", type=float)
     m.add_argument("--tp", type=float)
     m.add_argument("--eq", type=float)

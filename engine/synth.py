@@ -145,9 +145,25 @@ def mod_sources(p, n, hold, vel):
 
     def add(dest, curve):
         out[dest] = out.get(dest, 0.0) + curve
-    for L in p.get("lfo", []) or []:
-        rate = float(L.get("rate", 0.5))
-        ph0 = rng.random() if L.get("phase", "free") == "free" else float(L.get("phase0", 0.0))
+    over = {}
+    if p.get("_art"):  # per-note rate tokens: "/r=1/8t" (the first LFO), "/r2=1/16" (the second)
+        import bass as _B
+        over = _B.art_rates(p["_art"])
+    for li, L in enumerate(p.get("lfo", []) or []):
+        r = over.get(li, L.get("rate", 0.5))
+        if isinstance(r, str):  # a note value ("1/8t"): tempo-synced; retriggered at phase0 unless "phase": "grid"
+            import bass as _B
+            rate = _B.rate_hz(r, p.get("_bpm", 120.0))
+            ph = L.get("phase", "retrig")
+            if ph == "free":
+                ph0 = rng.random()
+            elif ph == "grid":
+                ph0 = float(L.get("phase0", 0.0)) + rate * float(p.get("_t0", 0.0))
+            else:
+                ph0 = float(L.get("phase0", 0.0))
+        else:
+            rate = float(r)
+            ph0 = rng.random() if L.get("phase", "free") == "free" else float(L.get("phase0", 0.0))
         w = _lfo_wave(L.get("shape", "sine"), ph0 + rate * t, rng)
         d = float(L.get("delay", 0.0))
         if d > 0:  # fades in after `delay` s, over `fade` s

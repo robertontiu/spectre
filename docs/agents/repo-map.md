@@ -40,6 +40,11 @@ engine/
                   (examples/production/modern/measure909.py)
   spacefx.py      `shimmer` (pitch-shifted feedback reverb), `granular` (grain cloud / freeze / stretch) as fx and return
                   types, `suppress` (dynamic resonance suppressor); numba; section automation curves come from studio.py
+  bass.py         bass-music voices: `fmgrowl` (2-4 op FM), `wavetable` (position morph, built-in tables), `sampler`
+                  (plays audio rendered from another track: resampling); tempo-synced per-note modulation (`mod`, note
+                  values, `/r=` tokens); the formant (vowel) filter; numba
+  bassfx.py       bass-music fx: multiband container, fold, asym, hardclip, comb, flanger, resonator, vocoder,
+                  autofilter, autopan, vowel; gated reverb for returns
   eqmaps.json     the genre EQ maps as data (per role: high-pass, cut and owned regions; core roles), from the genre docs
   master.py       the release mastering stage (see docs/MASTERING.md)
   genres.json     genre configurations (target curve, loudness and mastering settings, length, form, tempo, sources);
@@ -85,7 +90,7 @@ examples/
   chamberscore/   chamber-score instruments A/B (old stand-ins vs celesta, glockenspiel, vibraphone, cello, viola,
                   strings_section) and spectrograms against reference recordings (build.py)
   production/     the production upgrade A/B: First Light and Half of Me excerpts as published vs rebuilt with stacks
-                  (mp3, clarity numbers, spectrograms; build.py); modern/: the modern-strand tools (shimmer, granular,
+                  (mp3, clarity numbers, spectrograms; build.py); dubstep/: the bass-music tools as A/Bs and a drop (build.py), the master test (mastertest.py); modern/: the modern-strand tools (shimmer, granular,
                   acid, 909, slide and accent, automated sounds, suppress) as short A/Bs (build.py) and the 909 fit
                   (measure909.py)
   joc/            lăutar band A/B (old fiddle vs violin, the violin's articulations, acguitar, toba, a tempo ramp; build.py)
@@ -94,6 +99,8 @@ examples/
                   wordless vox and vox2 on a trance hook and session 009's hook (mp3 only)
   engine-test.json  a small project that exercises most engine features (render it to smoke-test changes)
   trance-test.json, poprock-test.json  small projects that exercise the trance and pop rock sounds
+  dubstep-test.json  a small project that exercises the bass-music tools (fmgrowl, wavetable, sampler, synced mods,
+                  vowel, multiband, fold, hardclip, flanger, resonator, autofilter, a gated reverb return)
   trance-modern-test.json  a small project that exercises acid, the 909 drums, shimmer and granular returns, suppress,
                   polysynth slide and accent, and section automation of instrument, fx and return parameters
 ```

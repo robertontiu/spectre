@@ -310,9 +310,11 @@ What modern dubstep needs, against what the engine has (docs/MANUAL.md "Producti
 | Freeze, granular textures, absence | **(new)** `granular` return or fx (`scan` 0 = freeze), **(new)** `shimmer` |
 | Tempo switch (D&B section) | section `bpm` (the `gate` fx and the shared delay stay on the project tempo) |
 | Voice | `singer` (svs), `vox2`, `vox` (a 5-formant tract, wordless); `pitch` fx (shifts formants with the pitch), `gate`, returns |
-| Master | `--genre dubstep` (proposed), clipper then true-peak limiter |
+| Master | `--genre dubstep` (target `dubstep_2015`, -8 LUFS, -1 dBTP, mono below 150 Hz), clipper then true-peak limiter |
 
-**What is missing**, ranked (what a producer would do without each):
+**Built 2026-11-26** (standing rule 19; docs/MANUAL.md "Bass music"; A/B demos in examples/production/dubstep/; published projects render bit-identically): gap 1 → `fmgrowl`; 2 → `mod` (note-value LFOs and envelopes, retrigger, per-note rate `/r=`; note-value `lfo` rates on `polysynth` and `supersaw` model 2); 3 → `vowel` (voice parameter and fx, formants within 2.5% of Peterson & Barney); 4 → `wavetable` (warp modes still open); 5 → `sampler` (resampling a track or bus; time-stretch still open); 6 → `multiband`; 7 → `fold`, `asym`, `hardclip`, `comb`, `flanger` (a modulated downsampler still open); 8 → measured, no master change needed: `--genre dubstep` (-8 LUFS) lands a drop at -6.5 LUFS short-term, true peak -1.03 dBTP (MANUAL "Mastering a loud drop"); 10 → `vocoder`, `resonator`; 11 → a return's `gate`; 12 → `autofilter`, `autopan`. **Still open:** 9 (formant shift on voices).
+
+**What was missing** before 2026-11-26, ranked (what a producer would do without each):
 | # | Gap | Rank | Why (source) | Without it |
 |---|---|---|---|---|
 | 1 | **A growl voice with an FM core** (2-4 operators with ratio, index and feedback; the index driven by envelopes and LFOs; unison) | **essential** | FM is "probably the most common technique" for growls; the "honk" of a modulator moved by a looping envelope (Attack); tearout's "FM and wavetable synthesis in Serum" (Futureproof); melodic dubstep's "aggressive mid-range FM growls" | `polysynth` saws or squares through a resonant filter with a fast cutoff LFO, then `drive`/`bitcrush`/`ott`: reads as a 2011 wobble, not a modern growl; no metallic inharmonic partials |

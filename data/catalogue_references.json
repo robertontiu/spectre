@@ -478,6 +478,55 @@
     "0a03cc00-064f-4983-a603-dd425cd15cec",
     "f8df96c5-0b87-449d-b7fe-5ab2192b9db9"
    ]
+  },
+  "dubstep_2015": {
+   "tag": [
+    "dubstep"
+   ],
+   "years": "2015-2021",
+   "per_year": 300
+  },
+  "dubstep_2018": {
+   "tag": [
+    "dubstep"
+   ],
+   "years": "2018-2021",
+   "per_year": 300
+  },
+  "dubstep_2005": {
+   "tag": [
+    "dubstep"
+   ],
+   "years": "2005-2010",
+   "per_year": 300
+  },
+  "dubstep_2011": {
+   "tag": [
+    "dubstep"
+   ],
+   "years": "2011-2014",
+   "per_year": 300
+  },
+  "dubstep_riddim": {
+   "tag": [
+    "riddim"
+   ],
+   "years": "2010-2021",
+   "per_year": 200
+  },
+  "dubstep_melodic": {
+   "tag": [
+    "melodic dubstep"
+   ],
+   "years": "2010-2021",
+   "per_year": 200
+  },
+  "dubstep_brostep": {
+   "tag": [
+    "brostep"
+   ],
+   "years": "2010-2021",
+   "per_year": 200
   }
  }
 }
