@@ -2,7 +2,8 @@
 # Wait for a free slot before a heavy job, sized to this machine's memory (AGENTS.md rule 7).
 #   waitfree.sh render   a render or listen: no master running, fewer than MAX_RENDERS renders running,
 #                        and RENDER_MB available
-#   waitfree.sh master   a master: nothing else heavy running (no render, listen, master or Whisper),
+#   waitfree.sh master   a master: no other master and no Whisper, at most MAX_RENDERS-1 renders (so on a
+#                        14 GB machine a master may run beside one render, and a busy lane cannot starve it),
 #                        and MASTER_MB available
 #   waitfree.sh whisper  a Whisper check: no other Whisper and no master running, and WHISPER_MB available
 #   waitfree.sh          (no argument) the old rule: nothing heavy running and RENDER_MB available
@@ -27,7 +28,7 @@ avail() { free -m | awk '/Mem/{print $7}' ; }
 ok() {
   case "$KIND" in
     render)  [ "$(masters)" = 0 ] && [ "$(renders)" -lt "$MAX_RENDERS" ] && [ "$(avail)" -ge "$RENDER_MB" ] ;;
-    master)  [ "$(masters)" = 0 ] && [ "$(renders)" = 0 ] && [ "$(whispers)" = 0 ] && [ "$(avail)" -ge "$MASTER_MB" ] ;;
+    master)  [ "$(masters)" = 0 ] && [ "$(renders)" -lt "$MAX_RENDERS" ] && [ "$(whispers)" = 0 ] && [ "$(avail)" -ge "$MASTER_MB" ] ;;
     whisper) [ "$(whispers)" = 0 ] && [ "$(masters)" = 0 ] && [ "$(avail)" -ge "$WHISPER_MB" ] ;;
     *)       [ "$(masters)" = 0 ] && [ "$(renders)" = 0 ] && [ "$(avail)" -ge "$RENDER_MB" ] ;;
   esac
