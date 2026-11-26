@@ -11,7 +11,6 @@ so projects that don't use these instruments render exactly as before.
   glockenspiel   steel bars struck by a mallet: strongly inharmonic modes at the ratios measured per register,
                  a long-ringing fundamental (T60 5-11 s), `hardness` from yarn to brass
   vibraphone     aluminium bars over tube resonators, a motor that turns discs in the tubes (tremolo), a pedal
-  toy_piano      struck steel rods: bright, short, slightly out of tune
   cello, viola   the violin's bowed waveguide string (engine/violin.py) with a cello or viola body fitted to
                  recordings, in their registers
   strings_section several bowed players per line, each its own string, body, intonation, vibrato and timing, spread

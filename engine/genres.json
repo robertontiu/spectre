@@ -57,15 +57,49 @@
     "target_date": "2026-11-25",
     "target_change": "2026-11-25: hiphop -> hiphop_2015: hip hop of 2015-2021 from the open catalogue; against the old `hiphop` curve (curves aligned at 500 Hz-2 kHz) it asks for +6 to +12 dB at 31.5-63 Hz, -2 to -5 dB at 100-250 Hz and +1 to +3 dB from 6.3 kHz up; it is within about 1.5 dB of the hand-tuned `beat` curve below 6 kHz",
     "master_by_strand": {
-      "note": "the default stays streaming trap (`master` above); boom-bap by era has its own genre entries; the other strands pass the flags with --genre hiphop (docs/HIPHOP.md 'Granularity' A-H, which configuration each brief uses in H). Drill and the 2022-2026 strands are not measured",
-      "streaming trap, drill, rage, folk-fusion trap; briefs that name no subdivision (default)": "--genre hiphop",
-      "pure trap, drill or rage": "--genre hiphop --target trap_2015 (463 tracks tagged trap and hip hop, 2015-2021; within 1-1.5 dB of hiphop_2015)",
-      "modern boom-bap, drumless (2010s-2020s)": "--genre boombap",
-      "golden-age boom-bap, 1990s East Coast or West Coast": "--genre hiphop_golden",
-      "Ukrainian and Latvian folk-fusion trap": "--genre hiphop (measured: Ukrainian electro-folk 2014-2022, n 23, within 3.5 dB of hiphop_2015, est. -9.9 LUFS)",
-      "acoustic Ukrainian ethno-fusion": "--genre hiphop --target ua_dakhabrakha --lufs -12 --eq 0.4 (stop-gap, thin: n 48, one act; docs/UKRAINIAN.md 'Granularity')",
-      "Latvian band-led folk-pop": "--genre hiphop --target lv_folk_nometal --lufs -12 --eq 0.4 (stop-gap, thin: n 26, two acts; docs/LATVIAN.md 'Granularity')",
-      "Romanian folk fusion": "--genre hiphop --target ro_fusion --eq 0.6 --lufs -11 unless the 808 dominates (`joc` master_by_strand, fusion; docs/ROMANIAN.md)"
+      "note": "the default stays streaming trap (`master` above); boom-bap by era has its own genre entries; the other strands use `studio.py master --genre hiphop --strand <name>` (docs/HIPHOP.md 'Granularity' A-H, which configuration each brief uses in H). Drill and the 2022-2026 strands are not measured",
+      "default": {
+        "label": "streaming trap, drill, rage, folk-fusion trap; briefs that name no subdivision",
+        "note": "the genre's master"
+      },
+      "trap": {
+        "label": "pure trap, drill or rage",
+        "target": "trap_2015",
+        "note": "463 tracks tagged trap and hip hop, 2015-2021; within 1-1.5 dB of hiphop_2015"
+      },
+      "boombap": {
+        "label": "modern boom-bap, drumless (2010s-2020s)",
+        "genre": "boombap"
+      },
+      "golden": {
+        "label": "golden-age boom-bap, 1990s East Coast or West Coast",
+        "genre": "hiphop_golden"
+      },
+      "folkfusion": {
+        "label": "Ukrainian and Latvian folk-fusion trap",
+        "note": "the genre's master (measured: Ukrainian electro-folk 2014-2022, n 23, within 3.5 dB of hiphop_2015, est. -9.9 LUFS)"
+      },
+      "ua_ethno": {
+        "label": "acoustic Ukrainian ethno-fusion",
+        "target": "ua_dakhabrakha",
+        "lufs": -12.0,
+        "eq": 0.4,
+        "note": "stop-gap, thin: n 48, one act; docs/UKRAINIAN.md 'Granularity'"
+      },
+      "lv_folkpop": {
+        "label": "Latvian band-led folk-pop",
+        "target": "lv_folk_nometal",
+        "lufs": -12.0,
+        "eq": 0.4,
+        "note": "stop-gap, thin: n 26, two acts; docs/LATVIAN.md 'Granularity'"
+      },
+      "ro_fusion": {
+        "label": "Romanian folk fusion",
+        "target": "ro_fusion",
+        "eq": 0.6,
+        "lufs": -11.0,
+        "note": "unless the 808 dominates (then `default`); `joc` master_by_strand, fusion; docs/ROMANIAN.md"
+      }
     },
     "length": "2:30-3:30",
     "form": "intro 4, verse 16, hook 8, verse 16, hook 8, (bridge 8), outro 4; about 60-72 bars (felt bars at half-time tempos)",
@@ -182,7 +216,43 @@
     "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets')",
     "target_date": "2026-11-25",
     "target_change": "2026-11-25: trance -> trance_2015: trance of 2015-2021 from the open catalogue; against the old `trance` curve (number-one singles tagged electronic, not trance; aligned at 500 Hz-2 kHz) it asks for +8 to +12 dB at 31.5-63 Hz, -2 to -5 dB at 100-315 Hz and +2 to +7 dB at 8-16 kHz",
-    "master_by_strand": {"note": "loudness by strand, not by sub-era (whole tracks 2015-17 and 2018-21 measure the same); pass the flags with --genre trance; check the loudest 2 minutes (docs/TRANCE.md 'Modern trance production', J). Measured: AcousticBrainz ReplayGain and dynamic complexity by MusicBrainz tag 2015-2021; Mixgraph store-preview loudness by Beatport genre (2026-08-11); the engine reaches -7.5 in a stacked-kick drop with PLR 6.6 and under 1 dB of limiting", "progressive / melodic (also the default and a bleeding-edge progressive brief)": "--target trance_2018 --lufs -9 --tp -1 (loudest 2 min about -8.5 to -8)", "uplifting, vocal, tech (Main Floor)": "--target trance_2018 --lufs -8.5 --tp -1 (loudest 2 min about -7.7; Main Floor previews -7.5)", "hard revival": "--target trance_2018 --lufs -8 --tp -1, only with the kick bus clipped in the mix (Hard Techno previews -7.3)", "melodic-techno crossover, deep": "--target trance_2018 --eq 0.5 --lufs -11 --tp -1 (Melodic House & Techno previews -10.5; the eq 0.5 is hand-tuned)", "2015-2017 briefs": "--target trance_2015, loudness by strand as above"},
+    "master_by_strand": {
+      "note": "loudness by strand, not by sub-era (whole tracks 2015-17 and 2018-21 measure the same); use `studio.py master --genre trance --strand <name>`; check the loudest 2 minutes (docs/TRANCE.md 'Modern trance production', J). Measured: AcousticBrainz ReplayGain and dynamic complexity by MusicBrainz tag 2015-2021; Mixgraph store-preview loudness by Beatport genre (2026-08-11); the engine reaches -7.5 in a stacked-kick drop with PLR 6.6 and under 1 dB of limiting",
+      "progressive": {
+        "label": "progressive / melodic (also the default and a bleeding-edge progressive brief)",
+        "target": "trance_2018",
+        "lufs": -9.0,
+        "tp": -1.0,
+        "note": "loudest 2 min about -8.5 to -8"
+      },
+      "mainfloor": {
+        "label": "uplifting, vocal, tech (Main Floor)",
+        "target": "trance_2018",
+        "lufs": -8.5,
+        "tp": -1.0,
+        "note": "loudest 2 min about -7.7; Main Floor previews -7.5"
+      },
+      "hard": {
+        "label": "hard revival",
+        "target": "trance_2018",
+        "lufs": -8.0,
+        "tp": -1.0,
+        "note": "only with the kick bus clipped in the mix (Hard Techno previews -7.3)"
+      },
+      "melodic_techno": {
+        "label": "melodic-techno crossover, deep",
+        "target": "trance_2018",
+        "eq": 0.5,
+        "lufs": -11.0,
+        "tp": -1.0,
+        "note": "Melodic House & Techno previews -10.5; the eq 0.5 is hand-tuned"
+      },
+      "era_2015": {
+        "label": "2015-2017 briefs",
+        "target": "trance_2015",
+        "note": "loudness by strand as above (add --lufs)"
+      }
+    },
     "era_targets": {"2015-2017 (and the modern period pooled)": "trance_2015", "2018-2026, the new school and the bleeding edge (measured 2018-2021, extrapolated 2022-2026)": "trance_2018", "note": "the master uses `target`; a brief aimed at a sub-era passes `--target`. trance_2018 against trance_2015: +1 to +1.5 dB at 50-200 Hz, 0.5 dB darker at 1.25-10 kHz (docs/TRANCE.md 'Modern trance production', C continued and D)"},
     "length": "6:00-7:30 (extended mix; measured: MusicBrainz trance \"Extended Mix\" recordings 2015-2025, median 6:34, middle half 6:00-7:09, 414 tracks; 2023-2025: 6:24); a radio edit (`trance_radio`, measured median 3:33) only on request",
     "form": "DJ intro 16-32 bars, theme 16-32, build 8-16, first drop 16-32, breakdown 16-64 (typically 32), build 8-16, main drop 32-64, DJ outro 16-32",
@@ -273,11 +343,34 @@
     "target_date": "2026-11-25",
     "target_change": "2026-11-25: rock -> rock_2015: pop rock of 2015-2021 from the open catalogue; against the old `rock` curve (aligned at 500 Hz-2 kHz) it asks for +6 to +7.5 dB at 31.5-63 Hz, -1 to -3.5 dB at 100-400 Hz and +1.5 to +3.5 dB at 6.3-16 kHz",
     "master_by_strand": {
-      "note": "tonal targets differ by strand, not by period (docs/POP_ROCK.md 'Eras, strands and the bleeding edge', B and H): within pop punk 1997-2012 and 2013-2021 measure within 1 dB, and the strand tags of 1993-2009 measure like 2015-2021 pop rock; pass the flags with --genre rock. Loudness: 2020-2026 band records -8.2 to -7.7 LUFS, alt-pop crossover singles -5.1 to -6.8 (iZotope 2025); 1990 year-end hits -12.5 (Țînț & Drăgulin 2025)",
-      "arena / radio, indie, folk-pop, ballad, and briefs that name no strand (current practice)": "--target rock_2015 --lufs -8.5 --tp -1 (2022-2026 extrapolated)",
-      "pop-punk, emo, 2000s post-grunge / heavy radio rock (any period)": "--target rock_punk --lufs -8.5 --tp -1",
-      "alt-pop / bedroom crossover": "--target rock_altpop --lufs -8.5 --tp -1 (denser, to about -7.5, only after an engine test; untested)",
-      "1990s briefs (Britpop, alt-rock radio)": "--target rock_2015 --lufs -11 --tp -1 (the -11 is hand-tuned between 1990's -12.5 and the late-decade ramp)"
+      "note": "tonal targets differ by strand, not by period (docs/POP_ROCK.md 'Eras, strands and the bleeding edge', B and H): within pop punk 1997-2012 and 2013-2021 measure within 1 dB, and the strand tags of 1993-2009 measure like 2015-2021 pop rock; use `studio.py master --genre rock --strand <name>`. Loudness: 2020-2026 band records -8.2 to -7.7 LUFS, alt-pop crossover singles -5.1 to -6.8 (iZotope 2025); 1990 year-end hits -12.5 (Țînț & Drăgulin 2025)",
+      "current": {
+        "label": "arena / radio, indie, folk-pop, ballad, and briefs that name no strand (current practice)",
+        "target": "rock_2015",
+        "lufs": -8.5,
+        "tp": -1.0,
+        "note": "2022-2026 extrapolated"
+      },
+      "punk": {
+        "label": "pop-punk, emo, 2000s post-grunge / heavy radio rock (any period)",
+        "target": "rock_punk",
+        "lufs": -8.5,
+        "tp": -1.0
+      },
+      "altpop": {
+        "label": "alt-pop / bedroom crossover",
+        "target": "rock_altpop",
+        "lufs": -8.5,
+        "tp": -1.0,
+        "note": "denser, to about -7.5, only after an engine test; untested"
+      },
+      "1990s": {
+        "label": "1990s briefs (Britpop, alt-rock radio)",
+        "target": "rock_2015",
+        "lufs": -11.0,
+        "tp": -1.0,
+        "note": "the -11 is hand-tuned between 1990's -12.5 and the late-decade ramp"
+      }
     },
     "era_targets": {
       "note": "no separate period curve: a 2018-2021 refit is within 1.5 dB of rock_2015; the period sets loudness (master_by_strand) and production (docs/POP_ROCK.md D), not the tonal target"
@@ -325,7 +418,7 @@
     "target_date": "2026-11-25",
     "target_change": "2026-11-25: rock -> joc_taraf: the measured string taraf instead of the borrowed `rock` curve (aligned at 500 Hz-2 kHz): +2 to +4 dB at 40-80 Hz, -4 to -5 dB at 125-250 Hz and -3 to -7 dB from 4 kHz up; eq lowered to 0.4 because one band's records stand for the genre",
     "master_by_strand": {
-      "note": "which master settings each kind of Romanian folk brief uses (docs/ROMANIAN.md 'Regions, scenes and eras', 'Mastering by subdivision'); read by people and the orchestrator, not by the engine: pass --target, --lufs, --eq with --genre joc. Region and scene are named in the brief; a Romanian folk brief that names none takes 'fusion' (a joc brief takes `master`, the taraf). All keep translate 0.3 and mono_below 120 (no scene-specific source; AcousticBrainz has no width data); eq values are hand-tuned to each set's size and spread",
+      "note": "which master settings each kind of Romanian folk brief uses (docs/ROMANIAN.md 'Regions, scenes and eras', 'Mastering by subdivision'); read by `studio.py master --genre joc --strand <name>`. Region and scene are named in the brief; a Romanian folk brief that names none takes 'fusion' (a joc brief takes `master`, the taraf). All keep translate 0.3 and mono_below 120 (no scene-specific source; AcousticBrainz has no width data); eq values are hand-tuned to each set's size and spread. No scene takes the dynamic path (`dynamics` keep): the taraf measures dynamic complexity 3.7, fanfare 3.0, fusion 3.3 (docs/ROMANIAN.md), as dynamic as pop masters; only the band-limited period recordings (4.9) move more, and they are not a target",
       "taraf": {
         "target": "joc_taraf",
         "eq": 0.4,
@@ -435,7 +528,7 @@
     "target_date": "2026-11-25",
     "target_change": "2026-11-25: rock -> caroling_ref: the five reference albums instead of the borrowed `rock` curve (aligned at 500 Hz-2 kHz): -8 to -11 dB at 100-200 Hz, +2.5 dB at 500-630 Hz and -4 to -12 dB from 2 kHz up; eq 0.3 and no low-end boosts (max_low_boost_db 0), as the era assessment recommends, because the albums differ by 15-18 dB at the low end",
     "master_by_strand": {
-      "note": "docs/CAROLING.md 'Granularity': a brief names its strand; no strand = `master` above. Measured 2026-11-25 (AcousticBrainz via tools/refcurve.py); loudness values listed in hand_tuned are choices inside the measured ranges. Not read by the engine: pass --target, --lufs, --eq, --translate with --genre caroling (max_low_boost_db and mono_below come from `master`)",
+      "note": "docs/CAROLING.md 'Granularity': a brief names its strand; no strand = `master` above. Measured 2026-11-25 (AcousticBrainz via tools/refcurve.py); loudness values listed in hand_tuned are choices inside the measured ranges. Read by `studio.py master --genre caroling --strand <name>`. `dynamics` keep (2026-11-26) for the choir, brass and handbell strands: their records move most (dynamic complexity 7.7-8.3, 5.6, 7.2; classical practice, 'little limiting or none': CAROLING.md 'Granularity'); the a cappella, crooner, street and mid-century strands are pop-dynamic (4.0-4.8, 3.3) and keep the normal master",
       "choir": {
         "target": "caroling_choir",
         "lufs": -18.0,
@@ -443,7 +536,8 @@
         "eq": 0.3,
         "translate": 0.2,
         "mono_below": 120.0,
-        "max_low_boost_db": 0.0
+        "max_low_boost_db": 0.0,
+        "dynamics": "keep"
       },
       "acappella": {
         "target": "caroling_acappella",
@@ -460,7 +554,8 @@
         "eq": 0.3,
         "translate": 0.2,
         "mono_below": 120.0,
-        "max_low_boost_db": 0.0
+        "max_low_boost_db": 0.0,
+        "dynamics": "keep"
       },
       "street": {
         "target": "caroling_ref",
@@ -478,7 +573,8 @@
         "eq": 0.3,
         "translate": 0.2,
         "mono_below": 120.0,
-        "max_low_boost_db": 0.0
+        "max_low_boost_db": 0.0,
+        "dynamics": "keep"
       },
       "crooner": {
         "target": "caroling_ref",
@@ -554,7 +650,7 @@
     "target_date": "2026-11-25",
     "target_change": "2026-11-25: rock -> latinpop_ref: the 24 reference albums instead of the borrowed `rock` curve (aligned at 500 Hz-2 kHz): +6 to +8 dB at 31.5-63 Hz, -2.5 to -4.5 dB at 125-250 Hz and +2 to +6 dB from 6.3 kHz up; the strands differ by up to 10 dB on top: `--target latinpop_dark` (bolero, acoustic) or `latinpop_bright` (bachata); romantic dembow / reggaetón-pop should use `latinpop_urbano` (its albums are 3.5-7 dB heavier at 31.5-63 Hz than `latinpop_ref`)",
     "master_by_strand": {
-      "note": "docs/LATIN_POP.md 'Granularity' D: the brief names its strand; no strand = `master` above. Not read by the engine: pass --target, --lufs, --eq, --translate with --genre latinpop. Loudness = the measured strand median rounded to the half dB (whole tracks to 2021, ±1-2 dB); true peak -1 dBTP and mono below 120 Hz for all (no strand evidence to differ)",
+      "note": "docs/LATIN_POP.md 'Granularity' D: the brief names its strand; no strand = `master` above. Read by `studio.py master --genre latinpop --strand <name>`. Loudness = the measured strand median rounded to the half dB (whole tracks to 2021, ±1-2 dB); true peak -1 dBTP and mono below 120 Hz for all (no strand evidence to differ)",
       "bolero": {
         "target": "latinpop_dark",
         "lufs": -12.5,
@@ -635,7 +731,8 @@
       "tp": -1.0,
       "eq": 0.4,
       "translate": 0.2,
-      "mono_below": 80.0
+      "mono_below": 80.0,
+      "dynamics": "keep"
     },
     "master_published": {
       "target": "rock",
@@ -654,9 +751,15 @@
     "target_date": "2026-11-25",
     "target_change": "2026-11-25: rock -> chamberscore_ref: the 30 reference albums instead of the borrowed `rock` curve (aligned at 500 Hz-2 kHz): -2 to -5 dB at 80-200 Hz, +2 dB at 400-500 Hz and -3 to -11 dB from 2.5 kHz up",
     "master_by_strand": {
-      "note": "docs/CHAMBER_SCORE.md 'Granularity': the brief names its strand; no strand = `master` above (the 27 score albums measured 2026-11-25 agree with chamberscore_ref within 1.5 dB from 250 Hz to 12.5 kHz). Not read by the engine: pass the flags with --genre chamberscore",
-      "default": "the blend (score frame, neo-classical piano at the centre): master as configured",
-      "score": "animation / indie-film score of any school (Hollywood, European, Japanese), minimalist or game chamber that is not piano-led: master as configured; European, Japanese and game briefs --lufs -16",
+      "note": "docs/CHAMBER_SCORE.md 'Granularity': the brief names its strand; no strand = `master` above (the 27 score albums measured 2026-11-25 agree with chamberscore_ref within 1.5 dB from 250 Hz to 12.5 kHz). Read by `studio.py master --genre chamberscore --strand <name>`. Every strand keeps the genre's dynamic path (`dynamics` keep, since 2026-11-26: CHAMBER_SCORE.md 'Granularity' item 9, DC 5.6-6.8 in the genre against 3.96 for 015 mastered with glue and clipper)",
+      "default": {
+        "label": "the blend (score frame, neo-classical piano at the centre)",
+        "note": "the genre's master"
+      },
+      "score": {
+        "label": "animation / indie-film score of any school (Hollywood, European, Japanese), minimalist or game chamber that is not piano-led",
+        "note": "the genre's master; European, Japanese and game briefs add --lufs -16"
+      },
       "piano": {
         "target": "chamberscore_piano",
         "lufs": -16.5,
@@ -664,9 +767,13 @@
         "eq": 0.3,
         "translate": 0.2,
         "mono_below": 60.0,
-        "flags": "--target chamberscore_piano --lufs -16.5 --eq 0.3 (mono_below 60 has no command-line flag: studio.py master has no --mono-below)"
+        "dynamics": "keep"
       },
-      "trailer": "not this genre (a contrast): no target"
+      "trailer": {
+        "label": "not this genre (a contrast)",
+        "valid": false,
+        "note": "no target"
+      }
     },
     "length": "3:00-4:30, aim 3:15-4:10 (a standalone track built like a montage cue: Married Life 4:11; score cues of 2:00 and longer median 2:52, middle half 2:18-3:32; standalone neo-classical and indie-folk tracks median 4:17 and 3:42)",
     "form": "theme and variations on one motif: 16-bar periods (A, A', B; Married Life is two AABA cycles with an intro, a break and a closing period), the theme passed between instruments and recoloured; joy and sorrow from the SAME theme by tempo, density and dynamics (a ritardando and a thinning to piano alone), not by switching to minor; one orchestral swell; the return of the theme changed; a slow piano close (Married Life falls from about 175 to 75 bpm); a late whole-tone lift is a habit of the idiom to question",
@@ -718,13 +825,43 @@
       "note": "the master uses `target`; a brief aimed at an era or strand passes `--target` (docs/DUBSTEP.md 'Mastering per subdivision')"
     },
     "master_by_strand": {
-      "note": "loudness varies by strand more than by year since 2015 (whole tracks: riddim -7.6, brostep -8.7, melodic -9.3, all dubstep 2015-21 -10.3; loud sections of current releases -6, Mixgraph previews); pass the flags with --genre dubstep and check the loudest 2 minutes; none of these levels has been tested in the engine",
-      "modern default": "--target dubstep_2015 --lufs -8 --tp -1",
-      "newest sound (2019-2026)": "--target dubstep_2018 --lufs -8 --tp -1",
-      "riddim, tearout, briddim": "--target dubstep_riddim --lufs -7 --tp -1 (only with clipped drum and bass buses; riddim curve from 81 tracks)",
-      "melodic dubstep, colour bass": "--target dubstep_melodic --lufs -8.5 --tp -1",
-      "deep / 140, UK roots": "--target dubstep_2005 --lufs -10 --tp -1",
-      "a brief with a long quiet section (e.g. queue 12)": "--lufs -8.5, then read the drop's short-term loudness; lower --lufs rather than let a quiet outro push the drops harder"
+      "note": "loudness varies by strand more than by year since 2015 (whole tracks: riddim -7.6, brostep -8.7, melodic -9.3, all dubstep 2015-21 -10.3; loud sections of current releases -6, Mixgraph previews); use `studio.py master --genre dubstep --strand <name>` and check the loudest 2 minutes; none of these levels has been tested in the engine",
+      "modern": {
+        "label": "modern default",
+        "target": "dubstep_2015",
+        "lufs": -8.0,
+        "tp": -1.0
+      },
+      "newest": {
+        "label": "newest sound (2019-2026)",
+        "target": "dubstep_2018",
+        "lufs": -8.0,
+        "tp": -1.0
+      },
+      "riddim": {
+        "label": "riddim, tearout, briddim",
+        "target": "dubstep_riddim",
+        "lufs": -7.0,
+        "tp": -1.0,
+        "note": "only with clipped drum and bass buses; riddim curve from 81 tracks"
+      },
+      "melodic": {
+        "label": "melodic dubstep, colour bass",
+        "target": "dubstep_melodic",
+        "lufs": -8.5,
+        "tp": -1.0
+      },
+      "deep": {
+        "label": "deep / 140, UK roots",
+        "target": "dubstep_2005",
+        "lufs": -10.0,
+        "tp": -1.0
+      },
+      "quiet_section": {
+        "label": "a brief with a long quiet section (e.g. queue 12)",
+        "lufs": -8.5,
+        "note": "then read the drop's short-term loudness; lower --lufs rather than let a quiet outro push the drops harder (measured: a 16-bar quiet outro lifts the drop 0.2-0.4 dB; docs/MANUAL.md 'Mastering a loud drop')"
+      }
     },
     "length": "3:30-4:30, aim about 3:50-4:00 (original mix; measured: tag dubstep median 4:06 in 2014-16, 4:02 in 2017-19, 3:42 in 2020-21 (middle half 3:15-4:21), 4:33-4:36 in 2008-13; riddim 3:39, melodic dubstep 4:18)",
     "form": "intro 8-32 bars (the drop near bar 32), build 8 (a 4-bar false drop optional), drop 1 16-32 bars in 8-bar halves with a switch at the half, breakdown or mid-section 8-16, build 8, drop 2 16-32 bars that differs from drop 1 (new drums, new bass or another strand), outro 8-16",

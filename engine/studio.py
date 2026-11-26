@@ -943,6 +943,50 @@ def _window_auto(st, au, a, b, n):
     return st
 
 
+# Voice defaults (2026-11-26): the owner's verdicts by ear (docs/HANDOFF.md section 5 f), as defaults for new projects
+# only. A project with "voice_defaults": 2 (prompts/producer.md asks every new project to set it) gets, on every
+# `singer` track, whatever of the following it does not set itself; a project without the key (every project before
+# 2026-11-26) renders exactly as before. Choirs (role "choir"): `svs_vibrato` 0.3 (examples/vocals/svs/
+# choir-vibrato-0.3.mp3, chosen over 1). Other voices: the blend-d treatment (examples/vocals/svs/blend-d.mp3 and the
+# README table there): its fx chain, reverb send 0.32 behind a 60 ms pre-delay, delay send 0.12, a double 0.2 panned
+# 0.7, a breath, soft phrase edges.
+VOICE_DEFAULTS = {
+    "choir": {"inst": {"svs_vibrato": 0.3}},
+    "voice": {"inst": {"double": 0.2, "double_pan": 0.7, "inhale": 0.3, "svs_fade_in_ms": 30, "svs_fade_out_ms": 120},
+              "track": {"send_reverb": 0.32, "reverb_predelay_ms": 60, "send_delay": 0.12,
+                        "fx": [{"type": "hpf", "hz": 100}, {"type": "eq", "hz": 800, "gain_db": -2.5, "q": 0.9},
+                               {"type": "eq", "hz": 3000, "gain_db": -3, "q": 0.9},
+                               {"type": "highshelf", "hz": 8000, "gain_db": 3},
+                               {"type": "comp", "threshold_db": -22, "ratio": 3}]}},
+}
+
+
+def _voice_defaults(P):
+    """A copy of P with the voice defaults filled in when it asks for them ("voice_defaults": 2); P itself otherwise."""
+    v = P.get("voice_defaults", 1)
+    if v not in (1, 2):
+        raise ValueError(f'"voice_defaults" must be 1 (none: every project before 2026-11-26) or 2, not {v!r}')
+    if v == 1:
+        return P
+    import copy
+    tracks = {}
+    for name, tr in P["tracks"].items():
+        if (tr.get("inst") or {}).get("type") != "singer":
+            tracks[name] = tr
+            continue
+        tr = copy.deepcopy(tr)
+        d = VOICE_DEFAULTS["choir" if tr.get("role") == "choir" else "voice"]
+        for k, val in d.get("inst", {}).items():
+            tr["inst"].setdefault(k, val)
+        for k, val in d.get("track", {}).items():
+            if k == "send_reverb" and tr.get("sends"):
+                continue  # the voice goes to named returns: its sends are the producer's
+            if k not in tr:
+                tr[k] = copy.deepcopy(val)
+        tracks[name] = tr
+    return dict(P, tracks=tracks)
+
+
 def _prepare(P):
     """A stack track without its own `inst` reads its pattern as its first layer's instrument: give the scheduler a
     copy of the project where it has one (the project itself is not changed)."""
@@ -1092,7 +1136,7 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
     starts `meta["window_offset"]` seconds into the track, has no quick master, and its random draws differ from a
     full render (the stems are the same sounds, not the same samples)."""
     t_start = time.time()
-    P = _prepare(P)
+    P = _voice_defaults(_prepare(P))
     hand = Hand(P["bpm"], P.get("swing", 0.5), P.get("seed", 1))
     events, holds, sections, total = schedule(P, hand)
     whole, offset = None, 0.0
@@ -1408,6 +1452,10 @@ def main():
     m.add_argument("--translate", type=float)
     m.add_argument("--target", help="tonal target curve override (beat = the trap curve), e.g. trance_2015, hiphop_2015, "
                    "rock_2015, the reference curves in engine/targets.json, or the older hiphop, trance, rock")
+    m.add_argument("--strand", help="the genre's strand (engine/genres.json `master_by_strand`), e.g. --genre latinpop "
+                   "--strand bolero; `master.py --help` lists them")
+    m.add_argument("--dynamics", choices=("normal", "keep"), help="keep: the dynamic path (no multiband, light glue, no "
+                   "clipper); default: the genre's or strand's")
     m.add_argument("--published", action="store_true",
                    help="the genre's settings from before its era target (what its released tracks were mastered with)")
     m.add_argument("--legacy-master", action="store_true",
@@ -1426,15 +1474,17 @@ def main():
             raise SystemExit("master: no genre given. Use --genre " + "|".join(_m.load_genres()) +
                              " (see engine/genres.json and docs/ORCHESTRATION.md, Genre conventions).")
         flags = []
-        for k in ("genre", "target", "lufs", "tp", "eq", "translate"):
+        for k in ("genre", "strand", "dynamics", "target", "lufs", "tp", "eq", "translate"):
             if getattr(a, k) is not None:
                 flags += [f"--{k}", str(getattr(a, k))]
         if a.legacy_master:
             flags.append("--legacy-master")
         if a.published:
             flags.append("--published")
-        subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "master.py"), pre]
-                       + flags, check=True)
+        rc = subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "master.py"), pre]
+                            + flags).returncode
+        if rc:  # master.py printed why (an unknown genre, strand or target): stop without a traceback
+            raise SystemExit(rc)
         out = pre.replace(".premaster.wav", ".master.wav")
         mp3 = out.replace(".wav", ".mp3")
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", out, "-b:a", "320k", mp3], check=True)

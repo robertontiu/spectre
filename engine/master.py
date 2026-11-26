@@ -78,7 +78,10 @@ TARGETS = {
 }
 
 GENRES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "genres.json")
-SETTINGS = ("target", "lufs", "tp", "eq", "translate", "mono_below", "max_low_boost_db")
+SETTINGS = ("target", "lufs", "tp", "eq", "translate", "mono_below", "max_low_boost_db", "dynamics")
+DYNAMICS = ("normal", "keep")
+# the dynamics path of the current master() call (set by master(); "normal" unless a genre or --dynamics asks for "keep")
+_DYN = {"mode": "normal"}
 
 # Era targets (2026-11-25): measured curves with their provenance, written by tools/refcurve.py into
 # engine/targets.json (`refcurve.py add`). They are added next to the curves above, never in place of one: a name
@@ -129,7 +132,20 @@ def genre_for_target(target, genres):
     return None
 
 
-def resolve_settings(genre=None, target=None, published=False, **overrides):
+def strands(genre, genres=None):
+    """The valid `--strand` names of a genre (genres.json `master_by_strand`: every entry that is a dict, except
+    those marked "valid": false), with their labels."""
+    genres = genres or load_genres()
+    mb = (genres.get(genre) or {}).get("master_by_strand") or {}
+    return {k: v.get("label", "") for k, v in mb.items() if isinstance(v, dict) and v.get("valid", True)}
+
+
+def strand_help(genres=None):
+    genres = genres or load_genres()
+    return "; ".join(f"{g}: {', '.join(strands(g, genres))}" for g in genres if strands(g, genres))
+
+
+def resolve_settings(genre=None, target=None, published=False, strand=None, **overrides):
     """Settings for one master: the genre's config, then explicit overrides (None = not given). `published` takes
     the genre's settings as they were before its era target (`master_published` in genres.json): what the tracks
     already released in that genre were mastered with."""
@@ -143,7 +159,23 @@ def resolve_settings(genre=None, target=None, published=False, **overrides):
             raise SystemExit(f"master: target {target!r} belongs to no genre; also give --genre " + "|".join(genres))
     if genre not in genres:
         raise SystemExit(f"master: unknown genre {genre!r}; choose one of " + ", ".join(genres))
-    s = dict(genres[genre]["master"])
+    if strand is not None:  # a strand: its genre's master_by_strand entry over the genre's master
+        mb = genres[genre].get("master_by_strand") or {}
+        ok = strands(genre, genres)
+        if strand not in ok:
+            bad = mb.get(strand)
+            why = f": {bad.get('note')}" if isinstance(bad, dict) and bad.get("valid") is False else ""
+            raise SystemExit(f"master: genre {genre!r} has no strand {strand!r}{why}; choose one of "
+                             + (", ".join(ok) if ok else "(none: this genre has no strands)"))
+        st = mb[strand]
+        if st.get("genre"):  # a strand that is mastered as another genre (hip hop's boom-bap strands)
+            genre = st["genre"]
+            if genre not in genres:
+                raise SystemExit(f"master: strand {strand!r} points to unknown genre {genre!r}")
+        s = dict(genres[genre]["master"])
+        s.update({k: v for k, v in st.items() if k in SETTINGS})
+    else:
+        s = dict(genres[genre]["master"])
     if published:
         pub = genres[genre].get("master_published")
         if pub is None:
@@ -523,12 +555,14 @@ PHONE_FLAT_NOTE = 0.35
 def _dynamics(x, rep, meter, lufs, tp, translate):
     """Stages 3-7 (multiband, translation, glue, clip + limit, loudness). Returns the master and the
     pre-limiter signal. Shared by every master version."""
+    keep = _DYN["mode"] == "keep"   # the dynamic path (2026-11-26): no multiband, light glue, no clipper
+    rep["dynamics"] = _DYN["mode"]
     # 3. multiband: ride the peaks only (thresholds set from each band's own level distribution)
     xo = [120.0, 600.0, 4000.0]
-    bands = split_bands(x, xo)
+    bands = split_bands(x, xo) if not keep else []
     cfg = [("low <120", 3.0, 15, 160, 2.0), ("lowmid 120-600", 2.0, 20, 180, 3.0),
            ("mid 600-4k", 1.6, 15, 150, 4.0), ("high >4k", 2.5, 3, 80, 3.0)]
-    out = np.zeros_like(x)
+    out = np.zeros_like(x) if not keep else x
     rep["multiband"] = {}
     for b, (name, ratio, att, rel, headroom) in zip(bands, cfg):
         lv = 20 * np.log10(np.sqrt(np.maximum(uniform_filter1d((b ** 2).max(0), int(0.05 * SR))[::512], 0)) + 1e-9)
@@ -537,7 +571,8 @@ def _dynamics(x, rep, meter, lufs, tp, translate):
         y, gr_mean, gr_max = compress(b, thr, ratio, att, rel)
         out += y
         rep["multiband"][name] = dict(threshold_db=round(float(thr), 1), ratio=ratio, gr_mean=round(gr_mean, 1), gr_max=round(gr_max, 1))
-    del bands, b, y  # free the band copies before the oversampled stages
+    if not keep:
+        del bands, b, y  # free the band copies before the oversampled stages
     x = out
     del out
 
@@ -555,8 +590,12 @@ def _dynamics(x, rep, meter, lufs, tp, translate):
     import pedalboard as pb
     lv = 20 * np.log10(np.sqrt(np.maximum(uniform_filter1d((x ** 2).max(0), int(0.05 * SR))[::512], 0)) + 1e-9)
     lv = lv[lv > lv.max() - 40]
-    thr = float(np.percentile(lv, 85) - 1.0)
-    x, gr_mean, gr_max = compress(x, thr, 2.0, 30, 200, knee=8)
+    if keep:  # light glue: 1.5:1 from the loudest 5%, slow, about 0.5-1 dB ("about .5 to 1dB of steady compression")
+        thr = float(np.percentile(lv, 95) - 1.0)
+        x, gr_mean, gr_max = compress(x, thr, 1.5, 50, 300, knee=8)
+    else:
+        thr = float(np.percentile(lv, 85) - 1.0)
+        x, gr_mean, gr_max = compress(x, thr, 2.0, 30, 200, knee=8)
     rep["glue"] = dict(threshold_db=round(thr, 1), gr_mean=round(gr_mean, 1), gr_max=round(gr_max, 1))
 
     # 6-7. solve drive so clip + true-peak limiter lands on the loudness target
@@ -568,7 +607,8 @@ def _dynamics(x, rep, meter, lufs, tp, translate):
     for it in range(6):
         del y
         y = pre * db(drive)
-        y = soft_clip(y, tp + 0.5, 0.5)
+        if not keep:  # the dynamic path has no clipper: the true-peak limiter alone
+            y = soft_clip(y, tp + 0.5, 0.5)
         y, lim_gr = tp_limit(y, tp - 0.1)
         L = meter.integrated_loudness(y.T)
         if abs(L - lufs) < 0.15:
@@ -586,8 +626,14 @@ def _dynamics(x, rep, meter, lufs, tp, translate):
 
 
 def master(x, lufs=-11.0, tp=-1.0, mono_below=120.0, eq_strength=0.7, translate=0.5, report=None, target="beat",
-           genre=None, version=MASTER_VERSION, phone=True, max_low_boost=None):
-    """version 1 reproduces the masters released before 2026-11-24 sample for sample; version 2 is the default."""
+           genre=None, version=MASTER_VERSION, phone=True, max_low_boost=None, dynamics="normal"):
+    """version 1 reproduces the masters released before 2026-11-24 sample for sample; version 2 is the default.
+    dynamics "keep" (opt-in per genre or strand, or --dynamics keep): no multiband peak riding, a light 1.5:1 glue
+    and no soft clipper, only the true-peak limiter: for the acoustic genres, whose records move more (docs/MASTERING.md
+    "Dynamics")."""
+    if dynamics not in DYNAMICS:
+        raise SystemExit(f"master: dynamics must be one of {DYNAMICS}, not {dynamics!r}")
+    _DYN["mode"] = dynamics
     rep = report if report is not None else {}
     rep["master_version"] = version
     rep["genre"] = genre
@@ -708,6 +754,11 @@ def main():
     ap.add_argument("--published", action="store_true",
                     help="the genre's settings from before its era target (genres.json `master_published`): what its "
                     "already released tracks were mastered with")
+    ap.add_argument("--strand", help="the genre's strand (genres.json `master_by_strand`: target, lufs, eq, dynamics...; "
+                    "explicit flags still override). Strands by genre: " + strand_help())
+    ap.add_argument("--dynamics", choices=DYNAMICS, help="normal: multiband peak riding, 2:1 glue, soft clipper, "
+                    "true-peak limiter; keep: no multiband, light 1.5:1 glue, no clipper, the limiter only (default: the "
+                    "genre's or strand's)")
     ap.add_argument("--lufs", type=float, help="integrated loudness target (default: the genre's)")
     ap.add_argument("--tp", type=float, help="true-peak ceiling dBTP (default: the genre's)")
     ap.add_argument("--mono-below", type=float)
@@ -719,10 +770,13 @@ def main():
     ap.add_argument("--out")
     a = ap.parse_args()
     version = 1 if a.legacy_master else a.master_version
-    genre, s = resolve_settings(a.genre, a.target, a.published, lufs=a.lufs, tp=a.tp, eq=a.eq, translate=a.translate,
-                                mono_below=a.mono_below)
+    if a.strand and a.published:
+        raise SystemExit("master: --strand and --published don't combine (published settings have no strands)")
+    genre, s = resolve_settings(a.genre, a.target, a.published, a.strand, lufs=a.lufs, tp=a.tp, eq=a.eq,
+                                translate=a.translate, mono_below=a.mono_below, dynamics=a.dynamics)
     print(f"genre {genre}: target {s['target']}, lufs {s['lufs']}, tp {s['tp']}, eq {s['eq']}, "
           f"translate {s['translate']}, mono below {s['mono_below']} Hz, master version {version}"
+          + (f", strand {a.strand}" if a.strand else "") + f", dynamics {s.get('dynamics', 'normal')}"
           + (f", low boosts capped at {s['max_low_boost_db']:+g} dB" if s.get("max_low_boost_db") is not None else ""))
     pv = PROVENANCE.get(s["target"])
     if pv:
@@ -738,8 +792,10 @@ def main():
     assert sr == SR
     x = x.T.astype(np.float64)
     rep = {"_src": x}
+    if a.strand:
+        rep["strand"] = a.strand
     y, rep = master(x, s["lufs"], s["tp"], s["mono_below"], s["eq"], s["translate"], rep, s["target"], genre, version,
-                    max_low_boost=s.get("max_low_boost_db"))
+                    max_low_boost=s.get("max_low_boost_db"), dynamics=s.get("dynamics", "normal"))
     if a.published:
         rep["settings_from"] = "master_published"
     rep.pop("_src", None)
