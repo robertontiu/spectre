@@ -72,7 +72,7 @@ Spectre finished version 21 and wrote: *"It carries what I set out to make; one 
 | Kick / snare crest in drop 1A | 17.6 / 26.3 dB | 14.7 / 17.4 dB |
 | Integrated loudness, true peak | -8.7 LUFS, -1.03 dBTP | -8.2 LUFS, -1.03 dBTP |
 
-The owner approved v027 by ear on 2026-11-26 and it was published. The lesson it left in [docs/LESSONS.md](../../../docs/LESSONS.md): *an arrival is subtraction at the transition, not better sounds.*
+v027 is the published version. The lesson it left in [docs/LESSONS.md](../../../docs/LESSONS.md): *an arrival is subtraction at the transition, not better sounds.*
 
 **Misses, as Spectre reported them:** drop 2 is only 1.1 LU under drop 1 (it planned 1.5-2); the first step of the absence reads smaller on small speakers than on a system; after the revision, the momentary step into the drop grew only from +1.2 to +1.8 LU (the voice alone fills the build's last bar), and "here" is now cut half a beat before the drop rather than at its first sample.
 

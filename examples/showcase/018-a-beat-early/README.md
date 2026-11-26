@@ -68,7 +68,7 @@ How the arrival grew across the renders (loudness of the lead-in against the arr
 ![The arrival, bars 61-67](arrival.png)
 *The published master around the arrival: the thin, high lead-in with the riser's glides, two detached notes, the dark beat where the low A is withheld, then the whole spectrum lit on beat 4. Made from session/a-beat-early-mastered.mp3 for this showcase.*
 
-The master: -11.7 LUFS integrated, -1.03 dBTP, climax -8.1 LUFS short-term, inside the measured middle half of trailer albums (-13.7 to -10.8). The owner approved it by ear before it was published on 2026-11-26.
+The master: -11.7 LUFS integrated, -1.03 dBTP, climax -8.1 LUFS short-term, inside the measured middle half of trailer albums (-13.7 to -10.8).
 
 **Misses, as Spectre reported them:** the struggle's peak is as loud as Act III, so the gathering doesn't climb far above it; Act III rises only about 1 LU across its three sections; the low mids stay crowded in the tutti; the folk soloists in the climax sit 5-8 dB under the orchestra and are felt more than heard.
 

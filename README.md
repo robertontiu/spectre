@@ -36,7 +36,7 @@ It grew out of [Teodor](https://github.com/robertontiu/teodor), the same experim
 
 ## Who does what
 
-**The owner** (one person) writes a short brief: a theme (*rage*, *the hustle*, *the soul held captive*), sometimes a genre. He listens to every finished track and approves it by ear before it is published; nothing reaches the site without that.
+**The owner** (one person) writes a short brief: a theme (*rage*, *the hustle*, *the soul held captive*), sometimes a genre.
 
 **The AI** (Claude agents: Claude Opus 5.5 produced 13 of the tracks, Claude Fable 5.2 five) does everything else: the genre research, the composition, the sound design, the mixing and mastering, and the engineering of the studio itself (the synthesizers, the "ears", the mastering stage, the tools). An orchestrating agent writes each producer's brief from the owner's theme and the research.
 
@@ -55,8 +55,6 @@ It grew out of [Teodor](https://github.com/robertontiu/teodor), the same experim
 **Surprise is designed.** Each brief asks for the certainties the track teaches and the one or two places it breaks them on purpose, and the producer has to show in the measurements that the break is audible.
 
 **Mixed, then mastered to measured targets.** A mastering stage, modelled on how mastering engineers work, matches the track to its genre's and era's tonal balance and loudness (measured from catalogues where data exists, marked hand-tuned where it doesn't), keeps the low end mono and limits true peaks. When the master has to correct too much, the producer goes back and fixes the mix.
-
-**The owner listens.** The track goes out only after his approval by ear.
 
 ## Two tracks, start to finish
 
