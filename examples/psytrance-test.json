@@ -1,0 +1,343 @@
+{
+ "title": "psytrance-test",
+ "bpm": 145,
+ "swing": 0.5,
+ "seed": 20,
+ "seeds": "per-track",
+ "genre": "psytrance",
+ "fx_model": 2,
+ "tracks": {
+  "kick": {
+   "role": "kick",
+   "humanize_ms": 0,
+   "vel_jitter": 0,
+   "layers": [
+    {
+     "name": "sub",
+     "inst": {
+      "type": "kicksub",
+      "note": "F#1",
+      "punch": 16,
+      "drop": 0.01,
+      "hold": 0.03,
+      "tail": 0.035,
+      "length": 0.2,
+      "drive": 0.25
+     },
+     "role": "kick"
+    },
+    {
+     "name": "punch",
+     "inst": {
+      "type": "kickpunch",
+      "tune": 120,
+      "decay": 0.035
+     },
+     "gain_db": -4,
+     "eq": {
+      "hpf": 80
+     }
+    },
+    {
+     "name": "click",
+     "inst": {
+      "type": "kickclick",
+      "tone": 3500,
+      "decay": 0.01
+     },
+     "gain_db": -8,
+     "eq": {
+      "hpf": 1500
+     }
+    }
+   ],
+   "bus": "drums"
+  },
+  "bass": {
+   "inst": {
+    "type": "trancebass",
+    "cutoff": 380,
+    "env": 2600,
+    "fdecay": 0.045,
+    "reso": 0.25,
+    "sub": 0.9,
+    "detune": 6,
+    "drive": 0.3,
+    "decay": 0.09,
+    "sustain_level": 0.0,
+    "release": 0.015
+   },
+   "role": "bass",
+   "humanize_ms": 0,
+   "vel_jitter": 0,
+   "gain_db": 4
+  },
+  "clap": {
+   "inst": {
+    "type": "clap909"
+   },
+   "humanize_ms": 1,
+   "send_reverb": 0.08,
+   "bus": "drums"
+  },
+  "hat": {
+   "inst": {
+    "type": "metalhat"
+   },
+   "role": "hats",
+   "humanize_ms": 1,
+   "bus": "drums"
+  },
+  "ohat": {
+   "inst": {
+    "type": "metalhat",
+    "open": true
+   },
+   "role": "hats",
+   "humanize_ms": 1,
+   "bus": "drums",
+   "gain_db": -3
+  },
+  "acid": {
+   "inst": {
+    "type": "acid",
+    "cutoff": 450,
+    "env_mod": 0.8,
+    "reso": 0.85,
+    "decay": 0.25,
+    "accent": 0.8,
+    "drive": 0.45
+   },
+   "role": "lead",
+   "humanize_ms": 0,
+   "vel_jitter": 0,
+   "sends": {
+    "echo": 0.2
+   },
+   "gain_db": -9,
+   "hpf": 150
+  },
+  "zap": {
+   "inst": {
+    "type": "zap",
+    "start": 5000,
+    "end": 70,
+    "time": 0.3,
+    "fm": 1.5,
+    "ratio": 1.5
+   },
+   "role": "fx",
+   "gain_db": -14,
+   "sends": {
+    "echo": 0.35
+   },
+   "pan": 0.3
+  },
+  "bells": {
+   "inst": {
+    "type": "sleighbells",
+    "shake": 0.15,
+    "damp": 0.6
+   },
+   "role": "perc",
+   "gain_db": -14,
+   "pan": -0.25,
+   "humanize_ms": 2,
+   "hpf": 3000
+  },
+  "glock": {
+   "inst": {
+    "type": "glockenspiel",
+    "hardness": 0.6
+   },
+   "role": "bells",
+   "gain_db": -6,
+   "send_reverb": 0.35,
+   "sends": {
+    "echo": 0.2
+   }
+  },
+  "pad": {
+   "inst": {
+    "type": "supersaw",
+    "model": 2,
+    "knob": 0.4,
+    "attack": 1.0,
+    "release": 2.0,
+    "cutoff": 2200
+   },
+   "role": "pad",
+   "eq": "auto",
+   "send_reverb": 0.4
+  }
+ },
+ "patterns": {
+  "beat": {
+   "bars": 1,
+   "kick": "X...X...X...X...",
+   "clap": "....x.......x...",
+   "hat": "xoxoxoxoxoxoxoxo",
+   "ohat": "..x...x...x...x."
+  },
+  "kickonly": {
+   "bars": 1,
+   "kick": "X...X...X...X..."
+  },
+  "rollA": {
+   "bars": 2,
+   "bass": "1:F#1:1:0.78 2:F#1:1:1.0 3:F#1:1:0.95 5:F#1:1:0.78 6:F#1:1:1.0 7:F#1:1:0.95 9:F#1:1:0.78 10:F#1:1:1.0 11:F#1:1:0.95 13:F#1:1:0.78 14:F#1:1:1.0 15:F#1:1:0.95 17:F#1:1:0.78 18:F#1:1:1.0 19:F#1:1:0.95 21:F#1:1:0.78 22:F#1:1:1.0 23:F#1:1:0.95 25:F#1:1:0.78 26:F#1:1:1.0 27:F#1:1:0.95 29:A1:1:0.78 30:A1:1:1.0 31:A1:1:0.95"
+  },
+  "acidA": {
+   "bars": 2,
+   "acid": "0:F#2:1 1:F#3:1! 2:F#2:1 3:C#3:1 4:F#2:1 5:E3:1!~ 6:F#2:1 7:A2:1 8:F#2:1 9:F#3:1! 10:G#2:1 11:F#2:1 12:C#3:2~ 14:F#2:1 15:B2:1! 16:F#2:1 17:F#3:1! 18:F#2:1 19:C#3:1 20:F#2:1 21:A3:1!~ 22:F#2:1 23:E3:1 24:F#2:1 25:C#3:1! 26:F#2:1 27:F#3:1 28:E3:2~ 30:C#3:1 31:A2:1"
+  },
+  "zaps": {
+   "bars": 2,
+   "zap": "........x...............x......."
+  },
+  "nowell": {
+   "bars": 2,
+   "glock": "0:C#6:2 2:B5:2 4:A5:6 10:B5:2 12:C#6:2 14:D6:2 16:E6:8 24:C#6:8"
+  },
+  "bellsA": {
+   "bars": 1,
+   "bells": "..x...x...x...x."
+  },
+  "padA": {
+   "bars": 2,
+   "pad": {
+    "chords": "F#m:16 Dmaj7:16",
+    "style": "sustain",
+    "register": "F#3",
+    "voicing": "keys",
+    "vel": 0.55
+   }
+  }
+ },
+ "arrangement": [
+  {
+   "name": "intro",
+   "bars": 4,
+   "play": [
+    "beat",
+    "rollA"
+   ]
+  },
+  {
+   "name": "drive",
+   "bars": 4,
+   "play": [
+    "beat",
+    "rollA",
+    "acidA",
+    "zaps"
+   ],
+   "auto": {
+    "acid": {
+     "inst": {
+      "cutoff": [
+       300,
+       1400,
+       "log"
+      ],
+      "env_mod": [
+       0.5,
+       1.0
+      ]
+     }
+    }
+   }
+  },
+  {
+   "name": "breakdown",
+   "bars": 4,
+   "play": [
+    "padA",
+    "nowell",
+    "bellsA"
+   ]
+  },
+  {
+   "name": "build",
+   "bars": 4,
+   "play": [
+    "kickonly",
+    "padA",
+    "bellsA"
+   ],
+   "auto": {
+    "pad": {
+     "lpf": [
+      800,
+      9000
+     ]
+    }
+   },
+   "exit": {
+    "rise": 16,
+    "riser": 8,
+    "cut": {
+     "tracks": "all",
+     "beats": 4
+    }
+   }
+  },
+  {
+   "name": "drop",
+   "bars": 4,
+   "play": [
+    "beat",
+    "rollA",
+    "acidA",
+    "zaps",
+    "bellsA"
+   ],
+   "enter": {
+    "impact": 0.8,
+    "crash": 0.6
+   },
+   "auto": {
+    "acid": {
+     "inst": {
+      "cutoff": [
+       900,
+       2500,
+       "log"
+      ]
+     }
+    }
+   }
+  }
+ ],
+ "buses": {
+  "drums": {
+   "fx": [
+    {
+     "type": "clip",
+     "ceiling_db": -2
+    }
+   ]
+  }
+ },
+ "mix": {
+  "reverb": {
+   "size": 0.55,
+   "return_db": -10
+  },
+  "returns": {
+   "echo": {
+    "type": "delay",
+    "beats": 0.75,
+    "pingpong": true,
+    "offset_ms": 5,
+    "feedback": 0.45,
+    "lpf": 3000,
+    "return_db": -12
+   }
+  }
+ },
+ "master": {
+  "lufs": -9
+ },
+ "_note": "Psytrance smoke test (docs/PSYTRANCE.md; docs/MANUAL.md 'Psytrance'): psy kick stack, rolling KBBB trancebass written as notes (first 16th after the kick softer), acid, zap, sleighbells, and the opening of THE FIRST NOWELL (verified, docs/CAROLING.md; D major moved to A major, the relative major of F# minor) on glockenspiel in the breakdown."
+}

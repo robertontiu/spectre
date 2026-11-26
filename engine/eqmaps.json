@@ -208,5 +208,16 @@
       "vocal": {"hp": [100, 150], "cut": [[200, 400]], "own": [[2000, 5000]]},
       "return": {"hp": [200, 500], "lp": [6000, 12000], "cut": [[300, 600]]}
     }
+  },
+  "psytrance": {
+    "source": "docs/PSYTRANCE.md 'Layer roles and EQ map': the trance map, except the rolling bass, which carries its own sub between the kicks (bonedo.de psytrance workshop 1: a saw through a low-pass, no separate sub; kick no longer than an 8th) [S]; the bass's high-pass is the 18-30 Hz phase trim the workshop names, not trance's 90-150 Hz; leads and acid lines high-passed so the low end is kick and bass only (workshop 4) [S]",
+    "inherit": "trance",
+    "tolerance_db": 6,
+    "core": ["kick", "bass|sub", "lead|support|arp|pluck", "clap|snare", "hats", "fx|texture|air"],
+    "roles": {
+      "bass": {"hp": [18, 30], "cut": [[250, 400]], "own": [[40, 120], [700, 2000]]},
+      "lead": {"hp": [150, 250], "cut": [[250, 400]], "own": [[1000, 4000]]},
+      "fx": {"hp": [150, 300], "own": [[2000, 12000]]}
+    }
   }
 }

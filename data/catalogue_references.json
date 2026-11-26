@@ -2030,6 +2030,30 @@
    ],
    "years": "2005-2021",
    "per_year": 200
+  },
+  "psytrance_2015": {
+   "tag": [
+    "psytrance",
+    "psychedelic trance",
+    "psy-trance",
+    "full on",
+    "progressive psytrance"
+   ],
+   "years": "2015-2021",
+   "per_year": 300
+  },
+  "psytrance_prog": {
+   "artist": [
+    "Ace Ventura",
+    "Liquid Soul",
+    "Ticon",
+    "Neelix",
+    "Captain Hook",
+    "Zen Mechanics",
+    "Interactive Noise"
+   ],
+   "limit": 60,
+   "note": "artist names as passed to refcurve.py (resolved by MusicBrainz search, 2026-11-26)"
   }
  },
  "latinpop_granularity": {

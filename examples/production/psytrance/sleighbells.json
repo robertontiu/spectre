@@ -1,0 +1,65 @@
+{
+ "bands_hz": [
+  1000,
+  2000,
+  2500,
+  3150,
+  4000,
+  5000,
+  6300,
+  8000,
+  10000,
+  12500,
+  16000
+ ],
+ "reference_hits_median": {
+  "bands": [
+   -48.0,
+   -35.5,
+   -7.4,
+   -22.1,
+   -31.4,
+   -31.2,
+   -5.4,
+   -23.4,
+   -4.3,
+   -17.9,
+   -20.3
+  ],
+  "t20": 0.268,
+  "strikes": 32.0,
+  "centroid": 7375.0
+ },
+ "engine_defaults_median": {
+  "bands": [
+   -54.3,
+   -37.4,
+   -5.4,
+   -27.4,
+   -28.1,
+   -30.3,
+   -3.5,
+   -28.0,
+   -6.4,
+   -20.6,
+   -18.6
+  ],
+  "t20": 0.304,
+  "strikes": 56.0,
+  "centroid": 6572.0
+ },
+ "difference_db": [
+  -6.3,
+  -1.9,
+  2.0,
+  -5.3,
+  3.3,
+  0.9,
+  1.9,
+  -4.6,
+  -2.1,
+  -2.7,
+  1.7
+ ],
+ "note": "1/3-octave power over 300 ms from the peak, dB re the total; t20 s; strikes = >4 kHz envelope peaks within 30 dB; references: VSCO-2 CE sleigh bells, 11 single hits (CC0)"
+}

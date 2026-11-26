@@ -253,7 +253,11 @@
         "note": "loudness by strand as above (add --lufs)"
       }
     },
-    "era_targets": {"2015-2017 (and the modern period pooled)": "trance_2015", "2018-2026, the new school and the bleeding edge (measured 2018-2021, extrapolated 2022-2026)": "trance_2018", "note": "the master uses `target`; a brief aimed at a sub-era passes `--target`. trance_2018 against trance_2015: +1 to +1.5 dB at 50-200 Hz, 0.5 dB darker at 1.25-10 kHz (docs/TRANCE.md 'Modern trance production', C continued and D)"},
+    "era_targets": {
+      "2015-2017 (and the modern period pooled)": "trance_2015",
+      "2018-2026, the new school and the bleeding edge (measured 2018-2021, extrapolated 2022-2026)": "trance_2018",
+      "note": "the master uses `target`; a brief aimed at a sub-era passes `--target`. trance_2018 against trance_2015: +1 to +1.5 dB at 50-200 Hz, 0.5 dB darker at 1.25-10 kHz (docs/TRANCE.md 'Modern trance production', C continued and D)"
+    },
     "length": "6:00-7:30 (extended mix; measured: MusicBrainz trance \"Extended Mix\" recordings 2015-2025, median 6:34, middle half 6:00-7:09, 414 tracks; 2023-2025: 6:24); a radio edit (`trance_radio`, measured median 3:33) only on request",
     "form": "DJ intro 16-32 bars, theme 16-32, build 8-16, first drop 16-32, breakdown 16-64 (typically 32), build 8-16, main drop 32-64, DJ outro 16-32",
     "tempo": "136-140 bpm, typically 138 (progressive 128-134); by sub-era (Mixgraph, by year): 132-136 in 2015-2017, 138 in 2018-2022, 138 rising to 140 in 2023-2026 with the slower quarter at 134-136.5; a bleeding-edge brief 138-140",
@@ -1085,5 +1089,78 @@
       "the default tempos and bar counts inside the sourced ranges"
     ],
     "sources": "docs/TECHNO.md 'Configuration', 'Catalogue measurements' and 'Mastering per subdivision' (Mixgraph techno BPM https://www.mixgraph.io/bpm-for/techno ; hard techno BPM https://www.mixgraph.io/bpm-for/hard-techno ; Mixgraph loudness by genre https://www.mixgraph.io/tools/lufs-meter ; catalogue lengths, tempo, loudness and curves by Spectre from MusicBrainz + AcousticBrainz, 2026-11-26; Futureproof hard techno, MusicRadar 2023 techno guide, MusicRadar / Computer Music and Bonedo rumble guides, Attack Magazine for form, drums, rumble and mixing; Dynamic Range Database for album dynamics)"
+  },
+  "psytrance": {
+    "name": "Psytrance (modern: festival psy and full-on, progressive psy, night full-on; hi-tech on request), extended mix",
+    "doc": "docs/PSYTRANCE.md",
+    "status": "researched 2026-11-26 (docs/PSYTRANCE.md); no track made yet; none of these levels tested on a finished track",
+    "master": {
+      "target": "psytrance_2015",
+      "lufs": -8.5,
+      "tp": -1.0,
+      "eq": 0.7,
+      "translate": 0.4,
+      "mono_below": 120.0,
+      "max_low_boost_db": 2.0
+    },
+    "target_source": "MusicBrainz tags psytrance, psychedelic trance, psy-trance, full on, progressive psytrance; first release 2015-2021, up to 300 per year; AcousticBrainz low-level Bark bands (CC0)",
+    "target_era": "2015-2021",
+    "target_tracks": 458,
+    "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets')",
+    "target_date": "2026-11-26",
+    "era_targets": {
+      "2015-2026, the modern era (measured 2015-2021, extrapolated 2022-2026)": "psytrance_2015",
+      "progressive psy (artist set 2000-2021)": "psytrance_prog",
+      "note": "a full-on artist set (Bliss, Infected Mushroom, Ajja, Astrix, Tristan, Sonic Species...; 219 tracks 1996-2021) reads within 1.5 dB (mean 0.3) of psytrance_2015, so full-on uses it; against trance_2015 psytrance has +3.5 to +5 dB at 40-125 Hz and the same top (docs/PSYTRANCE.md 'Mastering by strand')"
+    },
+    "master_by_strand": {
+      "note": "loud section (Mixgraph store previews, Psy-Trance, 2026-08-11) -7.9 LUFS (-8.6 to -7.2, LRA 4.9); whole tracks 4 dB lower (catalogue 2015-21 -11.6, -12.8 to -10.2: long DJ intros and outros, quiet breakdowns). Integrated levels here aim the drive sections at the previews; read the loudest 2 minutes after mastering. Untested on a finished track",
+      "default": {
+        "label": "festival psy and full-on (138-148 bpm, 2015-2026)",
+        "note": "the genre's master; aim the loudest 2 minutes at about -8 LUFS"
+      },
+      "fullon": {
+        "label": "full-on (140-148 bpm; melodic multi-octave bass)",
+        "target": "psytrance_2015",
+        "lufs": -8.5,
+        "tp": -1.0,
+        "note": "the full-on artist set measures as the tag set (within 1.5 dB)"
+      },
+      "progressive": {
+        "label": "progressive psy (134-140 bpm; deeper, groove, fewer leads)",
+        "target": "psytrance_prog",
+        "lufs": -9.5,
+        "tp": -1.0,
+        "note": "165 tracks by 7 artists; whole tracks -12.1 (-12.9 to -11.1), 0.5 dB under the tag set; no preview figure exists for progressive psy alone (Progressive House -10.1 is the nearest neighbour), so -9.5 is hand-tuned between the two"
+      },
+      "night": {
+        "label": "night full-on / twilight (145-150 bpm; darker)",
+        "target": "psytrance_2015",
+        "lufs": -8.5,
+        "tp": -1.0,
+        "note": "no separate measurement; mastered as full-on"
+      },
+      "hitech": {
+        "label": "hi-tech (170-200 bpm)",
+        "target": "psytrance_2015",
+        "lufs": -8.5,
+        "tp": -1.0,
+        "note": "not measured (no tagged recordings with data); hand-tuned as full-on; mark it so in the journal"
+      }
+    },
+    "length": "7:00-9:00 for the extended (club) mix (bonedo.de workshop #4: 'often 7 to 9 minutes'; Wikipedia: 6-10); a shorter edit (3:30-4:30) only on request",
+    "form": "DJ intro 32-64 bars (kick and bass from bar 1 or 17), drive 32-64, short break 8-16 (kick and bass rest), drive, the big breakdown about two-thirds in (up to 64 bars) with the theme, build 8-32, a 4-beat pause (the cliff), main drop 32-64 in 16-bar blocks with 4-beat gaps, DJ outro 32 (down to kick and bass); two or three drops",
+    "tempo": "festival psy 138-145 (Mixgraph psytrance median 142, middle half 138-145, 13,035 tracks; 144 in 2024); full-on 140-148; progressive psy 134-140; night full-on 145-150; hi-tech 170-200",
+    "meter": "4/4, kick on every beat, the bass on the three 16ths after it (KBBB); offbeat and triplet basses as variants",
+    "change_rate": "add or remove an element every 4 or 8 bars; work in 16-bar blocks",
+    "role": "kick and bass are the record; leads, acid lines and FX answer each other above them; samples or a gated voice instead of a singer",
+    "hand_tuned": [
+      "translate 0.4",
+      "eq 0.7",
+      "lufs -8.5 (default, full-on, night, hi-tech): a choice that puts the loudest 2 minutes near the Psy-Trance previews (-7.9)",
+      "lufs -9.5 progressive",
+      "mono_below 120 (as trance; no psy source)"
+    ],
+    "sources": "docs/PSYTRANCE.md (Mixgraph BPM https://www.mixgraph.io/bpm-for/psytrance ; Mixgraph LUFS by Beatport genre https://www.mixgraph.io/tools/lufs-meter ; bonedo.de psytrance workshop parts 1 and 4; psytranceguide.com; Wikipedia, Psychedelic trance)"
   }
 }
