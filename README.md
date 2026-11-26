@@ -124,6 +124,12 @@ Every instrument is synthesized by the engine's own code. Sung words are the one
 
 Reference recordings and datasets used only for analysis (the singing dataset GTSinger, CC BY-NC-SA 4.0; instrument samples from the University of Iowa MIS, VSCO-2-CE, VCSL and others; dubstep reference sounds from Freesound under CC0 and CC BY) were measured locally and are not part of this repository or of any track.
 
+## Contributing
+
+Contributing isn't built into the project yet. The repository is set up for one owner and the agents working on it, with no contribution guide or review process, so pull requests aren't accepted for now. That may change.
+
+If you'd like to help (with the engine, the research, a genre or a voice), get in touch. GitHub has no direct messages, so [open an issue](https://github.com/robertontiu/spectre/issues/new) saying what you have in mind.
+
 ## Credits
 
 An experiment by [Robert Ontiu](https://github.com/robertontiu), built with Claude (Anthropic). The tracks, journals and titles are Spectre's.
