@@ -7,7 +7,8 @@ import { usePlayer, usePlayerStore } from "./player-context";
 import { filterIndices } from "./player-store";
 
 /**
- * The finished tracks, newest first, narrowed by the genre filter; the selected one
+ * The finished tracks, grouped by family (most popular first) and newest first within one,
+ * narrowed by the genre filter; the selected one
  * carries the track's colours. The count and total length are the filtered list's.
  */
 export function Playlist() {

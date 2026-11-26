@@ -1,10 +1,19 @@
 import data from "../../data/tracks.json";
 
 /**
- * The listener-facing genre families, in the order the playlist's filter shows them. Every
- * track's `family` is one of these; add a new one only when no existing family fits.
+ * The listener-facing genre families, most popular first: the order of the filter pills and
+ * of the playlist's groups. Every track's `family` is one of these; add a new one only when no
+ * existing family fits, placed by its share in the same source.
+ *
+ * Popularity is the U.S. share of on-demand audio streams in Luminate's 2025 Year-End Music
+ * Report (January 2026, "U.S. Share of Total Volume, by Format & Genre" and "Top U.S. Main
+ * Genres, 2025"): R&B/Hip-Hop 24.9%, Rock 18.6%, Latin 8.6%, Dance/Electronic 3.7%, World
+ * Music 2.2%, Holiday/Seasonal about 1.0% (14.5B of about 1.4T streams). Mapping judgements:
+ * Folklore is counted as World Music; Soundtrack has no genre of its own there (soundtracks are
+ * split across their songs' genres) and our score-like instrumentals sit nearest Classical,
+ * 0.8%, so it comes last.
  */
-export const FAMILIES = ["Hip-Hop", "Electronic", "Rock", "Latin", "Folklore", "Soundtrack", "Holiday"] as const;
+export const FAMILIES = ["Hip-Hop", "Rock", "Latin", "Electronic", "Folklore", "Holiday", "Soundtrack"] as const;
 
 export type Family = (typeof FAMILIES)[number];
 
@@ -61,7 +70,14 @@ function checkFamily(t: Omit<Track, "family"> & { family: string }): Track {
   return { ...t, family };
 }
 
-export const tracks: readonly Track[] = data.map(checkFamily);
+/**
+ * Every track in the playlist's order: grouped by family in `FAMILIES` order (most popular
+ * first), newest first within a family (the higher session number first). The player's queue
+ * and a filtered view follow this order, so a filtered view is newest first.
+ */
+export const tracks: readonly Track[] = data
+  .map(checkFamily)
+  .sort((a, b) => FAMILIES.indexOf(a.family) - FAMILIES.indexOf(b.family) || b.id.localeCompare(a.id));
 
 /** The families that have at least one track, in `FAMILIES` order. */
 export const familiesInUse = (list: readonly Track[]): Family[] =>
