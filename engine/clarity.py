@@ -395,7 +395,7 @@ def run(a, renders, latest, meta):
         s = max(sections, key=lambda s: lv[s["name"]])
         spans = [(s["name"], s["start"], s["end"])]
     drum_types = set(ST.DRUM_TYPES)
-    roles = {n: role_of(n, tr, drum_types) for n, tr in P["tracks"].items()}
+    roles = {n: role_of(n, tr, drum_types) for n, tr in ST._presets(P)["tracks"].items()}
     roles.update({"(reverb)": ("return", False), "(delay)": ("return", False), "(fx)": ("fx", False)})
     roles.update({f"({r})": ("return", False) for r in (P.get("mix") or {}).get("returns") or {}})  # named returns
     print(f"CLARITY: {os.path.basename(latest)}  genre {genre or '(none: no EQ map, no target; give --genre)'}"

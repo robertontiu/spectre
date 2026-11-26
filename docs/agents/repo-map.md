@@ -45,6 +45,9 @@ engine/
                   values, `/r=` tokens); the formant (vowel) filter; numba
   bassfx.py       bass-music fx: multiband container, fold, asym, hardclip, comb, flanger, resonator, vocoder,
                   autofilter, autopan, vowel; gated reverb for returns
+  dubstep2.py     bass music fitted to recorded references (2026-11-26): track `"preset"`s (data in bass_presets.json,
+                  fitted by examples/production/dubstep-v2/fit.py), fx `curve`, `transient`, `widen`; the stereo
+                  transitions of `"fx_model": 2`
   orchestra.py    the cinematic orchestra and trailer sounds: `brass` and `woodwind` (measured additive model, data in
                   orchestra_winds.json from examples/production/cinematic/fit_winds.py), `timpani`, `bassdrum`, `taiko`,
                   `suscymbal` (fitted by fit_drums.py), `braam`, `impact`, `whoosh`, `shepard`, `vox2choir`, `accordion`;

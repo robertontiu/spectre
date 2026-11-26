@@ -295,17 +295,17 @@ What modern dubstep needs, against what the engine has (docs/MANUAL.md "Producti
 | Need | Engine |
 |---|---|
 | Sub (sine, mono, 40-60 Hz, glides, follows the bass) | `sub` (phase-continuous sine, `~` glides, `harmonics` for phones), role `sub`; sidechain from kick and snare tracks |
-| Kick | `kicksub` + `kickpunch` + `kickclick` stacked, `clip` on the drum bus |
-| The 200 Hz snare | **(new)** `snare909` (body near 181 Hz, `tune` to 200, `bend`), layered with `clap909` / `handclap` and `kitsnare`, a `room` or a short reverb return, `comp`, `clip`; gated reverb only approximated (a short `room`, or a reverb return with a `gate` fx in its chain) |
+| Kick | `kicksub` + `kickpunch` + `kickclick` stacked, `clip` on the drum bus; **(2026-11-26)** preset `kick`, fitted to recorded kicks |
+| The 200 Hz snare | **(new)** `snare909` (body near 181 Hz, `tune` to 200, `bend`), layered with `clap909` / `handclap` and `kitsnare`, a `room` or a short reverb return, `comp`, `clip`; gated reverb only approximated (a short `room`, or a reverb return with a `gate` fx in its chain); **(2026-11-26)** preset `snare` (and `clap`), fitted to recorded dubstep snares |
 | Hats, percussion, triplets | `metalhat`, **(new)** `ride909`, drum steps with 12/24-character bars for triplets |
-| Mid-bass body | `polysynth` (saw, square, pulse, supersaw oscillators, unison, sub, noise; lp/hp/bp filter with `reso`, `env`, `keytrack`; `lfo` on cutoff / pitch / level / pan / pw / detune with `phase: "retrig"`; `env2` on pitch or cutoff; `glide_ms` with `~`; `accent`) |
+| Mid-bass body | **(2026-11-26)** presets `growl`, `riddim`, `wobble`, `reese`, `screech`, fitted to recorded ones (MANUAL "Bass music, fitted"); `polysynth` (saw, square, pulse, supersaw oscillators, unison, sub, noise; lp/hp/bp filter with `reso`, `env`, `keytrack`; `lfo` on cutoff / pitch / level / pan / pw / detune with `phase: "retrig"`; `env2` on pitch or cutoff; `glide_ms` with `~`; `accent`) |
 | Distortion, grit | `drive`, `sat`, `clip`, `bitcrush`, `srr`, `lofi`; **(new)** `suppress` after them (tames the whistles distortion makes) |
 | Compression, OTT | `ott` (three bands), `comp`, `dyneq` |
 | Sub/mid split, mono low end | stacks (`"layers"`): a `sub` layer plus mid layers with `"eq": {"hp": 100-150}`; `mseq` `side_hpf` 150-180; master `mono_below` |
 | Reese | `polysynth` two or more saws, `detune`, `drift`, an `lfo` on `detune`; filter |
 | Wobble on volume, synced | `gate` fx (a step pattern on the project grid) and sidechain shapes |
 | Pitch dives, sub drops | `env2` with `dest: "pitch"`, `~` glides (`polysynth`, `sub`, `808`), section `exit` `tapestop`, `enter` `downlifter` |
-| Builds and silence | `exit` (`riser`, `rise`, `reverse`, `cut`, `lpf`, `tapestop`, `silence`), `enter` (`impact`, `crash`, `downlifter`), snare-roll patterns with `roll_pitch` |
+| Builds and silence | `exit` (`riser`, `rise`, `reverse`, `cut`, `lpf`, `tapestop`, `silence`), `enter` (`impact`, `crash`, `downlifter`), snare-roll patterns with `roll_pitch`; **(2026-11-26)** `"fx_model": 2`: the transitions stereo and full-bodied, fitted to recorded ones |
 | Movement across the arrangement | **(new)** section `auto` of instrument params (`cutoff`, `drive`, `lfo.0.depth`, `lfo.0.rate`, ...) taken at each note's onset; `lpf`/`hpf`/`gain_db` ramps |
 | Freeze, granular textures, absence | **(new)** `granular` return or fx (`scan` 0 = freeze), **(new)** `shimmer` |
 | Tempo switch (D&B section) | section `bpm` (the `gate` fx and the shared delay stay on the project tempo) |
@@ -313,6 +313,8 @@ What modern dubstep needs, against what the engine has (docs/MANUAL.md "Producti
 | Master | `--genre dubstep` (target `dubstep_2015`, -8 LUFS, -1 dBTP, mono below 150 Hz), clipper then true-peak limiter |
 
 **Built 2026-11-26** (standing rule 19; docs/MANUAL.md "Bass music"; A/B demos in examples/production/dubstep/; published projects render bit-identically): gap 1 → `fmgrowl`; 2 → `mod` (note-value LFOs and envelopes, retrigger, per-note rate `/r=`; note-value `lfo` rates on `polysynth` and `supersaw` model 2); 3 → `vowel` (voice parameter and fx, formants within 2.5% of Peterson & Barney); 4 → `wavetable` (warp modes still open); 5 → `sampler` (resampling a track or bus; time-stretch still open); 6 → `multiband`; 7 → `fold`, `asym`, `hardclip`, `comb`, `flanger` (a modulated downsampler still open); 8 → measured, no master change needed: `--genre dubstep` (-8 LUFS) lands a drop at -6.5 LUFS short-term, true peak -1.03 dBTP (MANUAL "Mastering a loud drop"); 10 → `vocoder`, `resonator`; 11 → a return's `gate`; 12 → `autofilter`, `autopan`. **Still open:** 9 (formant shift on voices).
+
+**Fitted 2026-11-26, second pass** (the owner: "compare our synthesized sounds to the real ones and fix the gaps"; docs/MANUAL.md "Bass music, fitted"; examples/production/dubstep-v2/): 118 openly licensed recorded references (Freesound, CC0 and CC BY; engine/third_party.json `refs-dubstep-*`; 6-11 per role) measured against the engine's sounds. The gaps a listener hears first, and what closed them: the growls were 7-10 dB short at 2-16 kHz and their brightness barely moved (0.2 against 0.69 octaves): preset `growl`; the riddim motif 16 dB short at 2-5 kHz and narrow: `riddim`; the snare stack 10 dB too strong at 500 Hz-2 kHz, 9 dB short at 150-500 Hz, 6.6 dB too peaky (crest 18.8 against 12.2) and so 5.5 dB less loud at the same peak: `snare` (fitted tone, `transient`, clip, `widen`); the kick 6 dB too peaky: `kick`; the wobble 6 dB and the reese 12 dB less dense than recorded ones: `wobble`, `reese` (the reese still 7.5 dB short); every transition mono and the impact a bare 40 Hz sine (nothing in 60-500 Hz, crest 2.7 dB): `"fx_model": 2`. Opt-in (`"preset"`, `"fx_model": 2`); every earlier project renders bit-identically. The diagnosis of session 017 ("doesn't quite peak") is in that folder's README.
 
 **What was missing** before 2026-11-26, ranked (what a producer would do without each):
 | # | Gap | Rank | Why (source) | Without it |

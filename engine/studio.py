@@ -162,6 +162,9 @@ def apply_fx(st, fx_list, bpm, owner=None):
         elif k in BASS_FX:
             import bassfx as BFX
             st = BFX.apply(flush(st), fx, bpm, lambda x, fl: apply_fx(x, fl, bpm, owner))
+        elif k in ("curve", "transient", "widen"):  # engine/dubstep2.py (2026-11-26, opt-in)
+            import dubstep2 as D2
+            st = D2.apply(flush(st), fx)
         elif k in ("ott", "dyneq", "clip", "mseq"):
             st = flush(st)
             if k == "ott":
@@ -1043,6 +1046,15 @@ def _voice_defaults(P):
     return dict(P, tracks=tracks)
 
 
+def _presets(P):
+    """Tracks with a `"preset"` (engine/dubstep2.py, 2026-11-26) get the preset's instrument, layers and fx filled in;
+    a project without one is returned as it is."""
+    if not any(isinstance(tr, dict) and tr.get("preset") for tr in P.get("tracks", {}).values()):
+        return P
+    import dubstep2 as D2
+    return D2.apply_presets(P)
+
+
 def _prepare(P):
     """A stack track without its own `inst` reads its pattern as its first layer's instrument: give the scheduler a
     copy of the project where it has one (the project itself is not changed)."""
@@ -1201,7 +1213,7 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
     starts `meta["window_offset"]` seconds into the track, has no quick master, and its random draws differ from a
     full render (the stems are the same sounds, not the same samples)."""
     t_start = time.time()
-    P = _voice_defaults(_prepare(P))
+    P = _voice_defaults(_prepare(_presets(P)))
     hand = Hand(P["bpm"], P.get("swing", 0.5), P.get("seed", 1))
     events, holds, sections, total = schedule(P, hand)
     whole, offset = None, 0.0
@@ -1339,25 +1351,33 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
 
             def put(x, at, g):
                 at = max(0, at)
+                if x.ndim == 2:  # stereo transitions ("fx_model": 2)
+                    m = min(x.shape[1], total_n - at)
+                    if m > 0:
+                        fxb[:, at:at + m] += x[:, :m] * g
+                    return
                 m = min(len(x), total_n - at)
                 if m > 0:
                     fxb[:, at:at + m] += x[:m] * g
+            TR = I
+            if P.get("fx_model", 1) == 2:  # engine/dubstep2.py: stereo, fitted to reference transitions (opt-in)
+                import dubstep2 as TR
             if en.get("impact"):
-                put(I.impact(), a, db(-6) * en["impact"])
+                put(TR.impact(), a, db(-6) * en["impact"])
             if en.get("crash"):
                 put(I.crash({}, 1.0), a, db(-12) * en["crash"])
             bt_s, bt_e = S.get("beat_start", beat), S.get("beat_end", beat)
             if en.get("downlifter"):
-                put(I.downlifter(en["downlifter"] * bt_s), a, db(-14))
+                put(TR.downlifter(en["downlifter"] * bt_s), a, db(-14))
             if ex.get("riser"):
-                x = I.riser(ex["riser"] * bt_e)
-                put(x, b - len(x), db(-14))
+                x = TR.riser(ex["riser"] * bt_e)
+                put(x, b - x.shape[-1], db(-14))
             if ex.get("reverse"):
-                x = I.reverse_cymbal(ex["reverse"] * bt_e)
-                put(x, b - len(x), db(-12))
+                x = TR.reverse_cymbal(ex["reverse"] * bt_e)
+                put(x, b - x.shape[-1], db(-12))
             if ex.get("rise"):
-                x = I.pitch_riser(ex["rise"] * bt_e)
-                put(x, b - len(x), db(-18))
+                x = TR.pitch_riser(ex["rise"] * bt_e)
+                put(x, b - x.shape[-1], db(-18))
         mix += fxb * 0.9
         if stem_hook is not None and np.any(fxb):
             stem_hook("(fx)", fxb * 0.9)

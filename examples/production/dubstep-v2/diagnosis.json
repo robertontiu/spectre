@@ -1,0 +1,108 @@
+{
+ "master": {
+  "lufs": -8.7,
+  "true_peak": -1.03,
+  "plr": 7.6,
+  "short_term_max": -5.9,
+  "loudness_range": 14.2
+ },
+ "loudness by section (master)": {
+  "intro_sing": {
+   "short_term_median": -9.6,
+   "short_term_max": -8.9,
+   "peak_to_short_term_db": 8.4
+  },
+  "build1": {
+   "short_term_median": -9.1,
+   "short_term_max": -8.4,
+   "peak_to_short_term_db": 8.0
+  },
+  "build1b": {
+   "short_term_median": -8.8,
+   "short_term_max": -8.3,
+   "peak_to_short_term_db": 7.7
+  },
+  "drop1a": {
+   "short_term_median": -7.2,
+   "short_term_max": -6.8,
+   "peak_to_short_term_db": 6.0
+  },
+  "drop1b": {
+   "short_term_median": -7.0,
+   "short_term_max": -6.8,
+   "peak_to_short_term_db": 5.8
+  },
+  "drop1c": {
+   "short_term_median": -6.8,
+   "short_term_max": -6.5,
+   "peak_to_short_term_db": 5.6
+  },
+  "panic": {
+   "short_term_median": -6.8,
+   "short_term_max": -6.7,
+   "peak_to_short_term_db": 5.7
+  },
+  "panic2": {
+   "short_term_median": -5.9,
+   "short_term_max": -5.9,
+   "peak_to_short_term_db": 4.7
+  },
+  "drop2a": {
+   "short_term_median": -8.0,
+   "short_term_max": -7.7,
+   "peak_to_short_term_db": 6.8
+  },
+  "drop2b": {
+   "short_term_median": -8.0,
+   "short_term_max": -7.7,
+   "peak_to_short_term_db": 7.0
+  },
+  "drop2c": {
+   "short_term_median": -8.2,
+   "short_term_max": -7.9,
+   "peak_to_short_term_db": 7.1
+  }
+ },
+ "drop 1 (mastered) against dubstep_2015 re 1 kHz": {
+  "rms_db": 4.1,
+  "by band (mean dB)": {
+   "31.5-40": -10.1,
+   "50-63": -0.3,
+   "80-125": -3.7,
+   "160-400": -2.8,
+   "500-1250": -0.5,
+   "1.6-4k": -1.9,
+   "5-10k": -2.8,
+   "12.5-16k": -5.0
+  }
+ },
+ "the drop's first beat": {
+  "momentary LU, the drop's first bar minus the build's last bar (medians)": 1.2,
+  "the build's quietest 400 ms in its last beat (LUFS)": -8.1,
+  "the build's last beat, peak dBFS": -1.1,
+  "50-80 Hz energy, the drop's first two beats minus the build's last two (dB)": -0.8
+ },
+ "drop 1A stems (window render, before the buses)": {
+  "kick": {
+   "crest_db": 17.6,
+   "peak_vs_bass_peak_db": 3.6,
+   "rms_vs_bass_rms_db": 1.1
+  },
+  "snare": {
+   "crest_db": 26.3,
+   "peak_vs_bass_peak_db": 5.0,
+   "rms_vs_bass_rms_db": -6.1
+  },
+  "sub": {
+   "crest_db": 5.0,
+   "peak_vs_bass_peak_db": -7.1,
+   "rms_vs_bass_rms_db": 3.1
+  }
+ },
+ "captor in drop 1A (stem)": {
+  "150-500 re >150": -3.8,
+  "500-2k re >150": -2.7,
+  "2-5k re >150": -14.1,
+  "5-16k re >150": -18.0
+ }
+}
