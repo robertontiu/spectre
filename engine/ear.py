@@ -106,6 +106,11 @@ def listen(a, renders):
     import librosa
     import librosa.display
     latest = a.wav or json.load(open(os.path.join(renders, "latest.json")))["wav"]
+    if getattr(a, "seams", False) or getattr(a, "coherence", False):  # form ears (engine/seams.py), analysis only
+        import seams
+        mp = next((p for p in (latest.replace(".wav", ".meta.json"), latest.replace(".master.wav", ".meta.json"),
+                               latest.replace(".premaster.wav", ".meta.json")) if p != latest and os.path.exists(p)), None)
+        return seams.run(a, renders, latest, mp)
     mp = latest.replace(".wav", ".meta.json")
     if not os.path.exists(mp):  # e.g. vNNN.master.wav: use the render's own meta
         mp = latest.replace(".master.wav", ".meta.json").replace(".premaster.wav", ".meta.json")

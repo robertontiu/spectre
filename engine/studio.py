@@ -7,6 +7,7 @@
   python3 studio.py listen --section hook1         zoom into a section
   python3 studio.py listen --mono / --lowpass      the 'squint' checks
   python3 studio.py listen --clarity [--section S] --genre G   stems: layer census, masking, EQ map (engine/clarity.py)
+  python3 studio.py listen --seams / --coherence   form: section seams, the through-line (engine/seams.py)
 """
 import sys, os, json, time, glob, re, argparse
 import numpy as np
@@ -1553,6 +1554,15 @@ def main():
                    help="stem analysis of a section (default: the loudest; --section NAME, --section all, --bars): "
                    "layer census, masked and own share per stem, occupancy, low-mid build-up, crest per region, "
                    "flags against the genre's EQ map (engine/eqmaps.json); writes clarity.json")
+    l.add_argument("--seams", action="store_true",
+                   help="every section boundary: the step in ten dimensions (level, low end, balance, brightness, "
+                   "pulse, density, groove, timbre, harmony, width) and in carried sounds, how much of it was "
+                   "prepared, flags for forced seams (engine/seams.py)")
+    l.add_argument("--coherence", action="store_true",
+                   help="the through-line: section x section similarity (motifs, pitch, palette, timbre), the "
+                   "motivic two-block split, a flag when the track splits into two songs (engine/seams.py)")
+    l.add_argument("--map", help="with --seams/--coherence: the section map (a vNNN.meta.json or a project.json), "
+                   "e.g. to analyse a published MP3 given with --wav")
     m = sub.add_parser("master")
     m.add_argument("version", nargs="?", help="e.g. v027 (default: latest)")
     m.add_argument("--genre", help="genre configuration (engine/genres.json): trap, hiphop, trance, trance_radio, rock, joc, caroling, "
