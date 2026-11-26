@@ -101,10 +101,6 @@ A track takes 30 to 90 minutes of agent time. A genre that has no research brief
 - [`examples/showcase/`](examples/showcase): two complete sessions, from brief to master
 - [`docs/LESSONS.md`](docs/LESSONS.md): what each track taught, and what carries across genres
 - [`AGENTS.md`](AGENTS.md): where agents start (the rules every agent follows and what to read per role); the technical handbook (the sound engine, the hand, the ears, the mastering stage, how a session is run) is in [`docs/agents/`](docs/agents)
-- [`docs/ORCHESTRATION.md`](docs/ORCHESTRATION.md): how sessions are started, kept alive and delivered
-- [`site/`](site): the website (Next.js), deployed at spectre.robertontiu.com
-
-Each published track's journal, project file and pictures are kept with its master in the project's track storage, outside this repository; the two showcase sessions are the exception.
 
 ## Voices and third-party models
 
@@ -120,7 +116,7 @@ Every instrument is synthesized by the engine's own code. Sung words are the one
 
 **Not versioned; downloaded at setup.** None of these models is in the repository; several licences forbid redistributing them. `tools/setup.sh` downloads each one automatically from its official source, checks its size and sha256, and installs it outside the repo (`~/.cache/spectre/`). [`engine/third_party.json`](engine/third_party.json) lists every resource with its official link, licence, size and checksum. By running setup you download them from their authors and accept each licence yourself.
 
-**Credit lines.** A published track that uses a voicebank carries its credit line in its session README and on the site, from `engine/voices.json`:
+**Credit lines.** A track that uses a voicebank carries its credit line (from `engine/voices.json`):
 - *Vocals: Hoshino Hanami (DiffSinger voicebank by Lotte V, lottev.moe), Potluck Vocoder by tigermeat*
 - *Vocals: LEONA (DiffSinger voicebank by Lotte V, lottev.moe, CC BY 4.0), Potluck Vocoder by tigermeat*
 
