@@ -3,8 +3,9 @@ import data from "../../data/tracks.json";
 /**
  * The listener-facing genre families: the order of the filter pills and of the playlist's
  * groups. Since 2026-11-26 the owner's order leads (Electronic, with trance before dubstep, then
- * Rock and Hip-Hop); the rest keep the popularity order below. Every track's `family` is one of these; add a new one only when no
- * existing family fits, placed by its share in the same source.
+ * Rock and Hip-Hop, then Latin and Soundtrack; Holiday second to last and Folklore last). Every
+ * track's `family` is one of these; add a new one only when no existing family fits, placed by
+ * its share in the source below.
  *
  * Popularity is the U.S. share of on-demand audio streams in Luminate's 2025 Year-End Music
  * Report (January 2026, "U.S. Share of Total Volume, by Format & Genre" and "Top U.S. Main
@@ -14,7 +15,7 @@ import data from "../../data/tracks.json";
  * split across their songs' genres) and our score-like instrumentals sit nearest Classical,
  * 0.8%, so it comes last.
  */
-export const FAMILIES = ["Electronic", "Rock", "Hip-Hop", "Latin", "Folklore", "Holiday", "Soundtrack"] as const;
+export const FAMILIES = ["Electronic", "Rock", "Hip-Hop", "Latin", "Soundtrack", "Holiday", "Folklore"] as const;
 
 /** Within a family, these genres come first in this order (the owner's order: trance before dubstep); other genres follow. */
 const GENRE_ORDER = ["Trance", "Dubstep"];
@@ -22,6 +23,22 @@ const genreRank = (g: string) => {
   const i = GENRE_ORDER.indexOf(g);
   return i < 0 ? GENRE_ORDER.length : i;
 };
+
+/**
+ * Within a family, songs from more globally popular cultures come first (the owner's rule,
+ * 2026-11-26). Global reach is approximated by the culture's language community (speakers,
+ * rounded): American / English-language first, then Arabic and Middle Eastern (about 400 M),
+ * Ukrainian (about 40 M), Romanian (about 24 M), Latvian (about 1.5 M). A genre not listed
+ * counts as the family's global mainstream (rank 0).
+ */
+const CULTURE_RANK: Record<string, number> = {
+  "Oriental trap": 1,
+  "Ukrainian folk trap": 2,
+  "Romanian boom-bap": 3,
+  "Romanian folk trap": 3,
+  "Latvian folk trap": 4,
+};
+const cultureRank = (g: string) => CULTURE_RANK[g] ?? 0;
 
 export type Family = (typeof FAMILIES)[number];
 
@@ -118,7 +135,8 @@ function checkTrack(t: Omit<Track, "family" | "credits"> & { family: string; cre
 
 /**
  * Every track in the playlist's order: grouped by family in `FAMILIES` order, then by genre in
- * `GENRE_ORDER` within a family, newest first within a genre (the higher session number first). The player's queue
+ * `GENRE_ORDER` within a family, then by `CULTURE_RANK` (more globally popular cultures first),
+ * newest first otherwise (the higher session number first). The player's queue
  * and a filtered view follow this order, so a filtered view is newest first.
  */
 export const tracks: readonly Track[] = data
@@ -127,6 +145,7 @@ export const tracks: readonly Track[] = data
     (a, b) =>
       FAMILIES.indexOf(a.family) - FAMILIES.indexOf(b.family) ||
       genreRank(a.genre) - genreRank(b.genre) ||
+      cultureRank(a.genre) - cultureRank(b.genre) ||
       b.id.localeCompare(a.id),
   );
 
