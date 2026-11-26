@@ -291,7 +291,7 @@ For a brief that asks for the newest sound. Sources in A-E; "engine" says what S
 | 7 | **Minimalist cells** that repeat and shift (Hisaishi, Glass, the piano strand) | above | yes |
 | 8 | **Two depths**: the close piano, the ensemble in a hall | "Mixing and recording practice" | yes: returns with pre-delay and filters |
 | 9 | **A dynamic master**: DC about 6-7, PLR 14 or more, mild peak limiting only; -15 (score) or -16.5 (piano) | E | **partly**: loudness and true peak yes; glue and soft clipper always on; 015 measured DC 3.96 |
-| 10 | **Tonal target by strand**: `chamberscore_ref` for scores and the blend, `chamberscore_piano` for the felt-piano strand | F | `chamberscore_ref` yes; `chamberscore_piano` **after the proposal is merged** |
+| 10 | **Tonal target by strand**: `chamberscore_ref` for scores and the blend, `chamberscore_piano` for the felt-piano strand | F | `chamberscore_ref` yes; `chamberscore_piano` yes (in engine/targets.json since 2026-11-26) |
 | 11 | **A spatial (Atmos) album version** beside the stereo one | SOS, *Encanto* | **no** (stereo only) |
 | 12 | **Brass for the big swell** on the large features (*The Wild Robot*'s full orchestra) | Avid 2025 | **no brass**, no orchestral woodwinds |
 | 13 | **Length**: standalone 3:00-4:30 (piano strand 3:47); cues 2:20-2:30 | A, C | yes |

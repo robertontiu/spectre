@@ -1,5 +1,5 @@
 {
- "_about": "Reference lists for tools/catalogue_stats.py and the era targets in engine/targets.json (tools/refcurve.py). Chosen during the genre research of 2026-11-24 (albums: docs/CAROLING.md, docs/LATIN_POP.md, docs/CHAMBER_SCORE.md, 'Catalogue measurements'; targets: docs/MASTERING.md 'Era targets'). Identifiers only: MusicBrainz release MBIDs (MusicBrainz core data, CC0) and the query parameters. No audio and no per-track data. 'style' records how each doc table computed its middle half (statistics.quantiles method) and whether m:ss was truncated.",
+ "_about": "Reference lists for tools/catalogue_stats.py and the era targets in engine/targets.json (tools/refcurve.py). Chosen during the genre research of 2026-11-24 (albums: docs/CAROLING.md, docs/LATIN_POP.md, docs/CHAMBER_SCORE.md, 'Catalogue measurements'; targets: docs/MASTERING.md 'Era targets'). Identifiers only: MusicBrainz release MBIDs (MusicBrainz core data, CC0) and the query parameters. No audio and no per-track data. 'style' records how each doc table computed its middle half (statistics.quantiles method) and whether m:ss was truncated. Granularity research (2026-11-25, merged 2026-11-26): strand albums for caroling (albums.caroling_choir, caroling_acappella) and chamber score (albums.chamberscore_granularity), strand and era targets for the other genres; latinpop_granularity lists the non-target Latin selections.",
  "albums": {
   "caroling": {
    "source": "docs/CAROLING.md 'Catalogue measurements'",
@@ -231,97 +231,113 @@
      "strand": "score",
      "artist": "Yann Tiersen",
      "album": "Le Fabuleux Destin d'Amélie Poulain",
-     "release": "0ecf61e2-f4dd-4f45-b18d-6dd8a966b511"
+     "release": "0ecf61e2-f4dd-4f45-b18d-6dd8a966b511",
+     "school": "European"
     },
     {
      "strand": "score",
      "artist": "Michael Giacchino",
      "album": "Up",
-     "release": "9cc809ab-e8bc-43eb-955d-ede4dd09af43"
+     "release": "9cc809ab-e8bc-43eb-955d-ede4dd09af43",
+     "school": "Hollywood"
     },
     {
      "strand": "score",
      "artist": "Michael Giacchino",
      "album": "Ratatouille",
-     "release": "734b8bc5-deb1-43bf-be9c-e89a5135461d"
+     "release": "734b8bc5-deb1-43bf-be9c-e89a5135461d",
+     "school": "Hollywood"
     },
     {
      "strand": "score",
      "artist": "Joe Hisaishi",
      "album": "My Neighbor Totoro",
-     "release": "04ea6591-d2b1-44ff-8e9c-884bb6e7fc0a"
+     "release": "04ea6591-d2b1-44ff-8e9c-884bb6e7fc0a",
+     "school": "Japanese"
     },
     {
      "strand": "score",
      "artist": "Joe Hisaishi",
      "album": "Kiki's Delivery Service",
-     "release": "7faf3d79-238c-4806-82dc-14ff2592294c"
+     "release": "7faf3d79-238c-4806-82dc-14ff2592294c",
+     "school": "Japanese"
     },
     {
      "strand": "score",
      "artist": "Joe Hisaishi",
      "album": "Kikujiro",
-     "release": "0ec7d32d-6baf-3e96-84a4-80d5da6ce218"
+     "release": "0ec7d32d-6baf-3e96-84a4-80d5da6ce218",
+     "school": "Japanese"
     },
     {
      "strand": "score",
      "artist": "Joe Hisaishi",
      "album": "Spirited Away",
-     "release": "5df4f9c7-dc3a-465d-a6ae-c429f89ab03e"
+     "release": "5df4f9c7-dc3a-465d-a6ae-c429f89ab03e",
+     "school": "Japanese"
     },
     {
      "strand": "score",
      "artist": "Alexandre Desplat",
      "album": "Moonrise Kingdom",
-     "release": "d1dca239-e521-4bd3-a892-ea455b434a34"
+     "release": "d1dca239-e521-4bd3-a892-ea455b434a34",
+     "school": "European"
     },
     {
      "strand": "score",
      "artist": "Alexandre Desplat",
      "album": "Fantastic Mr. Fox",
-     "release": "a89b48b1-768c-4f1b-ad24-b629025cfad5"
+     "release": "a89b48b1-768c-4f1b-ad24-b629025cfad5",
+     "school": "European"
     },
     {
      "strand": "score",
      "artist": "Thomas Newman",
      "album": "Finding Nemo",
-     "release": "ee93ec58-ccc6-44b9-aeec-a5f3a55d4ab8"
+     "release": "ee93ec58-ccc6-44b9-aeec-a5f3a55d4ab8",
+     "school": "Hollywood"
     },
     {
      "strand": "score",
      "artist": "Patrick Doyle",
      "album": "A Little Princess",
-     "release": "eef3a450-14c3-4d22-80c5-f387ffa2868e"
+     "release": "eef3a450-14c3-4d22-80c5-f387ffa2868e",
+     "school": "European"
     },
     {
      "strand": "score",
      "artist": "Rachel Portman",
      "album": "Chocolat",
-     "release": "e4a03a37-442b-46bb-af28-4c22f3eee26e"
+     "release": "e4a03a37-442b-46bb-af28-4c22f3eee26e",
+     "school": "European"
     },
     {
      "strand": "score",
      "artist": "Jon Brion",
      "album": "Eternal Sunshine of the Spotless Mind",
-     "release": "bba3116b-78e9-48d4-b30d-f1841b201741"
+     "release": "bba3116b-78e9-48d4-b30d-f1841b201741",
+     "school": "Hollywood"
     },
     {
      "strand": "score",
      "artist": "Danny Elfman",
      "album": "Big Fish",
-     "release": "0b3bb6e2-9efa-4a34-ab47-15522398c8ba"
+     "release": "0b3bb6e2-9efa-4a34-ab47-15522398c8ba",
+     "school": "Hollywood"
     },
     {
      "strand": "score",
      "artist": "Mark Mothersbaugh",
      "album": "The Royal Tenenbaums",
-     "release": "6dbbe7cf-dc38-4e39-80db-5462704043d1"
+     "release": "6dbbe7cf-dc38-4e39-80db-5462704043d1",
+     "school": "Hollywood"
     },
     {
      "strand": "score",
      "artist": "Thomas Newman",
      "album": "WALL·E",
-     "release": "39dcc931-fa2e-473f-b4b0-20d69c21b303"
+     "release": "39dcc931-fa2e-473f-b4b0-20d69c21b303",
+     "school": "Hollywood"
     },
     {
      "strand": "neo-classical",
@@ -412,6 +428,482 @@
     "quantiles": "inclusive",
     "floor": false
    }
+  },
+  "caroling_choir": {
+   "source": "docs/CAROLING.md 'Granularity'",
+   "note": "built with refcurve.py's default --min-length 90; `catalogue_stats.py targets` passes --min-length 30 for album lists, so a rebuild may take in a few more short tracks",
+   "releases": [
+    {
+     "artist": "Choir of King's College, Cambridge",
+     "album": "Christmas Carols From King's College",
+     "year": "1986",
+     "release": "690d994c-6f78-4e2c-ac76-28ff831564c6"
+    },
+    {
+     "artist": "Choir of King's College, Cambridge",
+     "album": "Christmas Carols",
+     "year": "1997",
+     "release": "089a1b66-73ab-478d-ac3f-5187bd1cc06c"
+    },
+    {
+     "artist": "Choir of King's College, Cambridge",
+     "album": "Carols From King’s",
+     "year": "1991",
+     "release": "7431d24f-f371-4b86-957b-f5a0c7de99cf"
+    },
+    {
+     "artist": "Choir of King's College, Cambridge",
+     "album": "Noël: Christmas at King's",
+     "year": "1995",
+     "release": "601c195e-2a21-4a8c-8779-2a6fc3e33d9f"
+    },
+    {
+     "artist": "The Choir of St John's College, Cambridge",
+     "album": "Christmas Carols From St. John's",
+     "year": "1986",
+     "release": "8f43912e-4268-44d6-b7a7-6b7568681d9a"
+    },
+    {
+     "artist": "The Choir of St John's College, Cambridge",
+     "album": "On Christmas Night",
+     "year": "2011",
+     "release": "0e532324-8945-4eef-a282-7e528a83372b"
+    },
+    {
+     "artist": "The Choir of St John's College, Cambridge",
+     "album": "Christmas at St John's",
+     "year": "2006",
+     "release": "c0b3980c-ed15-4301-8259-d8b21d48c918"
+    },
+    {
+     "artist": "The Cambridge Singers, John Rutter",
+     "album": "Christmas Night: Carols of the Nativity",
+     "year": "1993",
+     "release": "eee830ad-1ddb-44e0-b327-af5d0d7a1aec"
+    },
+    {
+     "artist": "The Cambridge Singers, John Rutter",
+     "album": "Christmas Star",
+     "year": "1997",
+     "release": "79086ce7-628e-45db-b7d6-8ef6d916a4e4"
+    },
+    {
+     "artist": "Tenebrae, Nigel Short",
+     "album": "What Sweeter Music: Songs and Carols for",
+     "year": "2009",
+     "release": "e0ab6509-56d5-4fda-a9fd-2f63ac4ad54f"
+    },
+    {
+     "artist": "Tenebrae, Nigel Short",
+     "album": "A Very English Christmas",
+     "year": "2015",
+     "release": "519ef1f3-b5a8-46c7-85c4-f748167f11d3"
+    },
+    {
+     "artist": "Voces8",
+     "album": "Christmas",
+     "year": "2012",
+     "release": "dd9e24f1-7a12-4a28-9f86-b1f8560e4482"
+    },
+    {
+     "artist": "The Tallis Scholars",
+     "album": "Christmas Carols and Motets",
+     "year": "1986",
+     "release": "ed65197e-18c4-4a1f-b7b1-6192e20a8823"
+    },
+    {
+     "artist": "Chanticleer",
+     "album": "A Chanticleer Christmas",
+     "year": "2010",
+     "release": "5f65ba72-196c-46b0-85fa-c7a12a45bbc5"
+    },
+    {
+     "artist": "Chanticleer",
+     "album": "Sing We Christmas",
+     "year": "1995",
+     "release": "076af14a-400b-4793-8457-79c0f9efbe8f"
+    },
+    {
+     "artist": "Chanticleer feat. Dawn Upshaw",
+     "album": "Christmas With Chanticleer",
+     "year": "2001",
+     "release": "3cde4bc4-6c20-4cbe-af3d-25cccd74531a"
+    },
+    {
+     "artist": "Chanticleer",
+     "album": "Chanticleer Sings Christmas",
+     "year": "2020",
+     "release": "9339f4a7-0f70-423b-8aa6-33d32c2d05ba"
+    },
+    {
+     "artist": "Chanticleer",
+     "album": "Our Heart's Joy: A Chanticleer Christmas",
+     "year": "1990",
+     "release": "2804712e-8956-471d-a1d5-876e654dc7f2"
+    },
+    {
+     "artist": "Robert Shaw Chorale",
+     "album": "A Festival of Carols",
+     "year": "1987",
+     "release": "27dbdb87-48ae-44de-8f6a-ddecc40d7055"
+    },
+    {
+     "artist": "Mormon Tabernacle Choir",
+     "album": "Noel: A Worldwide Christmas Celebration",
+     "year": "1993",
+     "release": "9d152d00-9949-4cd4-92f6-77cbf2735b64"
+    },
+    {
+     "artist": "Mormon Tabernacle Choir",
+     "album": "Christmas Carols Around the World",
+     "year": "1996",
+     "release": "05c6a6ba-63f4-403e-a143-b1f38813d08a"
+    },
+    {
+     "artist": "Mormon Tabernacle Choir",
+     "album": "This Is Christmas",
+     "year": "1994",
+     "release": "836c22c6-962f-328f-9805-d76da95df84b"
+    },
+    {
+     "artist": "The Mormon Tabernacle Choir & The Canadian Brass",
+     "album": "A Christmas Gloria",
+     "year": "1998",
+     "release": "618ee7fb-7125-40ef-a61b-4ebed941f168"
+    }
+   ]
+  },
+  "caroling_acappella": {
+   "source": "docs/CAROLING.md 'Granularity'",
+   "note": "built with refcurve.py's default --min-length 90; `catalogue_stats.py targets` passes --min-length 30 for album lists, so a rebuild may take in a few more short tracks",
+   "releases": [
+    {
+     "artist": "Pentatonix",
+     "album": "That’s Christmas to Me",
+     "year": "2014",
+     "release": "d4a03a1d-3d19-4868-acfe-5c3c890393b3"
+    },
+    {
+     "artist": "Pentatonix",
+     "album": "A Pentatonix Christmas",
+     "year": "2016",
+     "release": "f89ac131-0b6b-4067-81d4-2cee7ec4aab6"
+    },
+    {
+     "artist": "Pentatonix",
+     "album": "Christmas Is Here!",
+     "year": "2018",
+     "release": "15c12c37-4538-4eed-a7ce-5be1908ee175"
+    },
+    {
+     "artist": "Straight No Chaser",
+     "album": "Holiday Spirits",
+     "year": "2008",
+     "release": "ff026852-5125-4a27-8f8e-8ad2e4beec90"
+    },
+    {
+     "artist": "Straight No Chaser",
+     "album": "Christmas Cheers",
+     "year": "2009",
+     "release": "3ee3fad8-0940-4d65-9b4a-ee070e6f210a"
+    },
+    {
+     "artist": "Straight No Chaser",
+     "album": "I'll Have Another...Christmas Album",
+     "year": "2016",
+     "release": "36463ba3-7533-4779-959c-e6c78579d85e"
+    },
+    {
+     "artist": "Home Free",
+     "album": "Christmas, Vol. 1",
+     "year": "2010",
+     "release": "38900b22-dff2-4af9-8168-e353c0017a1e"
+    },
+    {
+     "artist": "Take 6",
+     "album": "He Is Christmas",
+     "year": "1991",
+     "release": "873bf1ce-1586-321f-9301-49e6afceb00a"
+    }
+   ]
+  },
+  "chamberscore_granularity": {
+   "source": "docs/CHAMBER_SCORE.md 'Granularity' (2026-11-25)",
+   "note": "kept apart from albums.chamberscore so the 30-album pool behind chamberscore_ref is unchanged; the felt-piano strand (13 albums) is the pool behind chamberscore_piano and repeats the four post-2010 neo-classical albums of albums.chamberscore; trailer is a contrast, not this genre. built with refcurve.py's default --min-length 90; `catalogue_stats.py targets` passes --min-length 30 for album lists, so a rebuild may take in a few more short tracks",
+   "since": 2005,
+   "fold": {
+    "*": [
+     60,
+     150
+    ]
+   },
+   "style": {
+    "quantiles": "inclusive",
+    "floor": false
+   },
+   "releases": [
+    {
+     "strand": "score",
+     "artist": "Alexandre Desplat",
+     "album": "The Grand Budapest Hotel",
+     "release": "492f34de-755a-49e9-89eb-7c9de9fbd844",
+     "school": "European"
+    },
+    {
+     "strand": "score",
+     "artist": "Alexandre Desplat",
+     "album": "Isle of Dogs",
+     "release": "15619ae3-b7e3-4e4c-9800-ab84ab6a0c8b",
+     "school": "European"
+    },
+    {
+     "strand": "score",
+     "artist": "Alexandre Desplat",
+     "album": "Little Women",
+     "release": "2f4f461b-46b2-4179-8eb0-d814b7baac63",
+     "school": "European"
+    },
+    {
+     "strand": "score",
+     "artist": "Alexandre Desplat",
+     "album": "The Shape of Water",
+     "release": "57b8051f-04b6-4cd4-9144-4b71b598c284",
+     "school": "European"
+    },
+    {
+     "strand": "score",
+     "artist": "Alexandre Desplat",
+     "album": "The Curious Case of Benjamin Button",
+     "release": "0f22b36d-2ba9-4396-99a9-ff263186bfe2",
+     "school": "European"
+    },
+    {
+     "strand": "score",
+     "artist": "Michael Giacchino",
+     "album": "Jojo Rabbit",
+     "release": "2df0a330-8c9f-46bf-a2d3-dbb862e65ae9",
+     "school": "Hollywood"
+    },
+    {
+     "strand": "score",
+     "artist": "Thomas Newman",
+     "album": "Finding Dory",
+     "release": "0aeed865-d471-43db-af50-758cf3fbab97",
+     "school": "Hollywood"
+    },
+    {
+     "strand": "score",
+     "artist": "Joe Hisaishi",
+     "album": "The Wind Rises",
+     "release": "d4db7c8a-6d29-40e4-8a0f-b8174b09a5c9",
+     "school": "Japanese"
+    },
+    {
+     "strand": "score",
+     "artist": "Joe Hisaishi",
+     "album": "The Tale of the Princess Kaguya",
+     "release": "b8b8583e-14ba-4acc-b770-555aca83644f",
+     "school": "Japanese"
+    },
+    {
+     "strand": "score",
+     "artist": "Joe Hisaishi",
+     "album": "Ponyo",
+     "release": "49d486d0-7209-43cb-ba21-dc732e405ee5",
+     "school": "Japanese"
+    },
+    {
+     "strand": "score",
+     "artist": "Dario Marianelli",
+     "album": "Paddington 2",
+     "release": "3535bf71-1b2b-4955-9122-0d1a142e43d1",
+     "school": "European"
+    },
+    {
+     "strand": "felt-piano",
+     "artist": "Ólafur Arnalds",
+     "album": "…And They Have Escaped the Weight of Darkness",
+     "release": "a0063e3a-15d8-4ed2-a481-60059480928b",
+     "note": "also in albums.chamberscore (neo-classical, part of chamberscore_ref)"
+    },
+    {
+     "strand": "felt-piano",
+     "artist": "Nils Frahm",
+     "album": "Felt",
+     "release": "b0e16b9e-5853-4f8b-93ad-b4ddc1a958cf",
+     "note": "also in albums.chamberscore (neo-classical, part of chamberscore_ref)"
+    },
+    {
+     "strand": "felt-piano",
+     "artist": "Dustin O'Halloran",
+     "album": "Lumiere",
+     "release": "66c8a4e5-5bcd-43e7-a6a7-0a2dc56d2cc2",
+     "note": "also in albums.chamberscore (neo-classical, part of chamberscore_ref)"
+    },
+    {
+     "strand": "felt-piano",
+     "artist": "Joep Beving",
+     "album": "Solipsism",
+     "release": "365f338c-1771-49f2-b14a-9c96d0c59b7e",
+     "note": "also in albums.chamberscore (neo-classical, part of chamberscore_ref)"
+    },
+    {
+     "strand": "felt-piano",
+     "artist": "Nils Frahm",
+     "album": "Screws",
+     "release": "9895b991-9318-4a02-9320-02eea0454cfd"
+    },
+    {
+     "strand": "felt-piano",
+     "artist": "Ólafur Arnalds",
+     "album": "Living Room Songs",
+     "release": "56a15cf2-a435-48c9-8fdc-642e24aff561"
+    },
+    {
+     "strand": "felt-piano",
+     "artist": "Ólafur Arnalds",
+     "album": "re:member",
+     "release": "617e7410-bddc-4a42-9599-88656061ad7a"
+    },
+    {
+     "strand": "felt-piano",
+     "artist": "Joep Beving",
+     "album": "Prehension",
+     "release": "a0a0f5f7-1732-4b7e-a347-b8c42158ffff"
+    },
+    {
+     "strand": "felt-piano",
+     "artist": "Hania Rani",
+     "album": "Esja",
+     "release": "885f8562-cad2-4f1d-bba5-e85faca1d99d"
+    },
+    {
+     "strand": "felt-piano",
+     "artist": "Lambert",
+     "album": "Sweet Apocalypse",
+     "release": "f8fec791-eb15-4902-a2d3-5402649b6be5"
+    },
+    {
+     "strand": "felt-piano",
+     "artist": "Ludovico Einaudi",
+     "album": "Elements",
+     "release": "e5da4a98-3fa9-4446-b674-0497ce05511b"
+    },
+    {
+     "strand": "felt-piano",
+     "artist": "Goldmund",
+     "album": "Sometimes",
+     "release": "9a54c033-af59-436d-b3d7-77cd445e5ba0"
+    },
+    {
+     "strand": "felt-piano",
+     "artist": "Albanese",
+     "album": "The Blue Hour",
+     "release": "3c08cf59-891f-4526-b00b-0aa7eaf25204"
+    },
+    {
+     "strand": "minimalist-score",
+     "artist": "Philip Glass",
+     "album": "The Hours",
+     "release": "ffe351a7-4a05-4575-b450-fba900424efe"
+    },
+    {
+     "strand": "minimalist-score",
+     "artist": "Thomas Newman",
+     "album": "American Beauty",
+     "release": "ef6ce4ab-c0ff-4249-9a5b-db616c290a16"
+    },
+    {
+     "strand": "minimalist-score",
+     "artist": "Jóhann Jóhannsson",
+     "album": "The Theory of Everything",
+     "release": "517ceef8-ccf2-4aad-a2a0-10a87a0a7206"
+    },
+    {
+     "strand": "minimalist-score",
+     "artist": "Clint Mansell",
+     "album": "The Fountain",
+     "release": "33abead4-3015-438f-9ea3-97f2cc5cb278"
+    },
+    {
+     "strand": "game",
+     "artist": "Austin Wintory",
+     "album": "Journey",
+     "release": "da883948-946a-4e11-9001-ca6e41b07bde"
+    },
+    {
+     "strand": "game",
+     "artist": "Christopher Larkin",
+     "album": "Hollow Knight",
+     "release": "085d63c1-d39f-4943-a6e5-704ce896f8a0"
+    },
+    {
+     "strand": "game",
+     "artist": "C418",
+     "album": "Minecraft - Volume Alpha",
+     "release": "5e396e48-5bc1-4d28-ab34-ee77dc534fed"
+    },
+    {
+     "strand": "game",
+     "artist": "Berlinist",
+     "album": "GRIS",
+     "release": "04c11071-1147-4076-ab78-4ae784cbff2b"
+    },
+    {
+     "strand": "game",
+     "artist": "Gareth Coker",
+     "album": "Ori and the Blind Forest",
+     "release": "17eeae4b-5e4e-4170-944c-9a4066d8591a"
+    },
+    {
+     "strand": "game",
+     "artist": "ConcernedApe",
+     "album": "Stardew Valley",
+     "release": "6c730c73-ca63-4673-85b7-22f570ad25d0"
+    },
+    {
+     "strand": "game",
+     "artist": "Gustavo Santaolalla",
+     "album": "The Last of Us",
+     "release": "2d6fb74b-e5e5-4e1f-96fa-f42b00392d28"
+    },
+    {
+     "strand": "trailer",
+     "artist": "Two Steps From Hell",
+     "album": "Invincible",
+     "release": "95fdd1aa-725a-4bc8-b050-613dbd2b5c00"
+    },
+    {
+     "strand": "trailer",
+     "artist": "Two Steps From Hell",
+     "album": "Archangel",
+     "release": "7cdf6a6f-8677-4598-a475-a8aa2d8bfe43"
+    },
+    {
+     "strand": "trailer",
+     "artist": "Two Steps From Hell",
+     "album": "Battlecry",
+     "release": "49eb94a3-e012-4e4d-93e4-55fa8979fd71"
+    },
+    {
+     "strand": "trailer",
+     "artist": "Thomas Bergersen",
+     "album": "Sun",
+     "release": "eec1c2f2-1a7f-41f9-9b7d-a453c8b0ed8f"
+    },
+    {
+     "strand": "trailer",
+     "artist": "Audiomachine",
+     "album": "Phenomena",
+     "release": "1aca18e0-3470-468d-9019-8040d7234fc3"
+    },
+    {
+     "strand": "trailer",
+     "artist": "Hans Zimmer",
+     "album": "Inception",
+     "release": "472cb359-003e-4045-8602-a1804c427a49"
+    }
+   ]
   }
  },
  "targets": {
@@ -527,6 +1019,179 @@
    ],
    "years": "2010-2021",
    "per_year": 200
+  },
+  "caroling_choir": {
+   "albums": "caroling_choir"
+  },
+  "caroling_acappella": {
+   "albums": "caroling_acappella"
+  },
+  "latinpop_urbano": {
+   "tag": [
+    "reggaeton"
+   ],
+   "years": "2015-2021",
+   "per_year": 150
+  },
+  "latinpop_mexicano": {
+   "artist": [
+    "Banda El Recodo",
+    "Los Tigres del Norte",
+    "Calibre 50",
+    "Christian Nodal",
+    "Grupo Firme"
+   ],
+   "limit": 80
+  },
+  "chamberscore_piano": {
+   "albums": "chamberscore_granularity",
+   "strands": [
+    "felt-piano"
+   ]
+  },
+  "ro_fanfare": {
+   "artist": [
+    "a98da524-e565-4d89-b729-17d5a5fe75e0"
+   ],
+   "limit": 300,
+   "names": [
+    "Fanfare Ciocărlia"
+   ]
+  },
+  "ro_fusion": {
+   "artist": [
+    "b115f23e-c1f3-4cbe-95b5-615276ade5f9",
+    "06b13f0d-b1d4-4e29-8b74-d80b63813e32",
+    "21cc597f-1ed6-4a00-b728-4ec0d3b811e3",
+    "b629d16d-6560-4cb4-8f24-afdcc1d44803",
+    "596d9e3e-31dc-484d-a9d4-93fbf69222fa",
+    "acc451d7-bd3c-4b09-8508-eb52133772c4"
+   ],
+   "limit": 100,
+   "names": [
+    "Subcarpați",
+    "Zdob și Zdub",
+    "Mahala Raï Banda",
+    "Shukar Collective",
+    "Balkan Taksim",
+    "Dirty Shirt"
+   ]
+  },
+  "ro_transylvania_revival": {
+   "artist": [
+    "7b85a62b-1d39-4580-bfcc-8668a70fcfcd",
+    "b642bae2-eb1e-467a-8cf9-eb7f5fe4da63"
+   ],
+   "limit": 200,
+   "names": [
+    "Muzsikás",
+    "Kálmán Balogh"
+   ]
+  },
+  "ua_dakhabrakha": {
+   "artist": [
+    "208334a1-abf0-4791-9705-b45838244b29"
+   ],
+   "limit": 300,
+   "names": [
+    "DakhaBrakha"
+   ]
+  },
+  "lv_folk_nometal": {
+   "artist": [
+    "3a3b9876-a3a7-4689-bcbc-bba79f86f910",
+    "6dcf4734-69fc-48b1-b239-00c2a0c68a1b",
+    "94f348f5-20b8-452f-b8a2-c3a365788d7a",
+    "20f95ab1-dff6-4b55-9843-382043b1b95e",
+    "6721ad15-8109-4ec5-8122-2c5fa9451cf7",
+    "5cdf2302-21a6-4607-b3cf-bb7365cc47fc",
+    "1f259399-fc53-41f7-bcf4-e4ea1affcda8",
+    "76aeaad1-d03f-4328-86a4-2666d044478e"
+   ],
+   "limit": 150,
+   "note": "Tautumeitas (3a3b9876) and Auļi (6dcf4734) carry the data; the other six MBIDs (queried: Iļģi, Saucējas, Raxtu Raxti, Laimas muzykanti, Alsungas Suitu Sievas, Laima Jansone) had none in 2026-11 (docs/LATVIAN.md 'Granularity')"
+  },
+  "boombap_golden": {
+   "tag": [
+    "boom bap"
+   ],
+   "years": "1988-1999",
+   "per_year": 200
+  },
+  "boombap_2010": {
+   "tag": [
+    "boom bap"
+   ],
+   "years": "2010-2021",
+   "per_year": 200
+  },
+  "trap_2015": {
+   "tag": [
+    "trap\" AND tag:\"hip hop"
+   ],
+   "years": "2015-2021",
+   "per_year": 200,
+   "note": "the tag string is a Lucene AND inside refcurve's tag query: (tag:\"trap\" AND tag:\"hip hop\"); the plain trap tag is mostly EDM and Latin trap"
+  },
+  "rock_punk": {
+   "tag": [
+    "pop punk"
+   ],
+   "years": "2013-2021",
+   "per_year": 100
+  },
+  "rock_altpop": {
+   "tag": [
+    "alt-pop",
+    "bedroom pop",
+    "indie pop"
+   ],
+   "years": "2015-2021",
+   "per_year": 100
+  }
+ },
+ "latinpop_granularity": {
+  "source": "docs/LATIN_POP.md 'Granularity' (2026-11-25): the selections behind the strand comparisons that are not targets (for reproduction with tools/refcurve.py catalogue)",
+  "reggaeton_2004": {
+   "tag": [
+    "reggaeton"
+   ],
+   "years": "2004-2014",
+   "per_year": 60,
+   "tracks": 257
+  },
+  "tropical": {
+   "tag": [
+    "salsa",
+    "cumbia",
+    "merengue"
+   ],
+   "years": "2005-2021",
+   "per_year": 60,
+   "tracks": 473
+  },
+  "bachata": {
+   "tag": [
+    "bachata"
+   ],
+   "years": "1995-2021",
+   "per_year": 30,
+   "tracks": 90
+  },
+  "latin_trap": {
+   "artist": [
+    "Anuel AA",
+    "Bryant Myers",
+    "Brytiago",
+    "Noriel",
+    "Eladio Carrión",
+    "Lary Over",
+    "Darell",
+    "Arcángel"
+   ],
+   "limit": 80,
+   "tracks": 100,
+   "note": "the artist search for 'Almighty' returns the British rock band The Almighty (57 contaminating tracks in a first run); it was dropped"
   }
  }
 }

@@ -128,7 +128,7 @@ The folk side of this brief, split along the dimensions in which Latvian traditi
 **Missing for this tradition:** vargans (jew's harp; also wanted for Ukraine), ģīga (bowed zither), stabule and other shepherd's pipes as their own models (`nai`/`ney` approximate), goat-horn and birch-bark taure as a short horn (`trembita` approximates), bungas and tree-trunk drums, a second kokle type, accordion. **Voices:** no DiffSinger bank sings Latvian; no hard, penetrating high folk voice ([docs/voice/VOICES.md](voice/VOICES.md) "What is missing"); the Lotte V voices forbid political use, which a "revolution" brief may touch (VOICES.md licence table).
 
 ### Mastering per subdivision
-Measured 2026-11-25 with `tools/refcurve.py catalogue` (MusicBrainz artists joined to AcousticBrainz; Bark bands re 510 Hz-2 kHz; loudness estimated from ReplayGain, ±1-2 dB). The curves are proposed for `engine/targets.json` (until added, the targets named below do not exist). **The data is thin:** AcousticBrainz stops in 2022 (Tautumeitas' 2022-2026 albums are not in it), 4-6% lossless files, two acts make the set.
+Measured 2026-11-25 with `tools/refcurve.py catalogue` (MusicBrainz artists joined to AcousticBrainz; Bark bands re 510 Hz-2 kHz; loudness estimated from ReplayGain, ±1-2 dB). `lv_folk_nometal` is in `engine/targets.json` since 2026-11-26 (a stop-gap); the other sets named below are not targets. **The data is thin:** AcousticBrainz stops in 2022 (Tautumeitas' 2022-2026 albums are not in it), 4-6% lossless files, two acts make the set.
 
 | subdivision (playback) | set | n, years | est. loudness (middle half) | tonal balance against `hiphop_2015` | target for a brief |
 |---|---|---|---|---|---|

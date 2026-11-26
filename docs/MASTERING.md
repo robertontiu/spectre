@@ -32,13 +32,15 @@ Settings come from a **genre configuration** (`engine/genres.json`), chosen with
 | Genre | Target curve (since 2026-11-25) | `--lufs` | `--tp` | `--eq` | `--translate` | Released tracks used (`--published`) | Status |
 |---|---|---|---|---|---|---|---|
 | `trap` | `beat` (hand-tuned) | -10.5 | -1 | 0.7 | 0.5 | unchanged | **Trap / beats: the configuration of the first releases of sessions 001-006**, the former engine default, preserved exactly (craft brief: docs/CRAFT.md; with `--legacy-master` it reproduces those masters). Verified: `--genre trap` re-masters session 005's v025 sample-identically to the pre-change engine and to its stored report |
-| `hiphop` | `hiphop_2015` (catalogue, 347 tracks) | -10.5 | -1 | 0.7 | 0.5 | `hiphop` (remasters of 001-006; 011) | the configuration for beat sessions; docs/HIPHOP.md |
+| `hiphop` | `hiphop_2015` (catalogue, 347 tracks); `trap_2015` (463 tracks tagged trap and hip hop) optional for a pure trap, drill or rage brief | -10.5 | -1 | 0.7 | 0.5 | `hiphop` (remasters of 001-006; 011) | the configuration for beat sessions (streaming trap is the default); docs/HIPHOP.md, by era, scene and strand in "Granularity" A-H; genres.json `master_by_strand` (also the Ukrainian and Latvian stop-gaps `ua_dakhabrakha`, `lv_folk_nometal`: `--lufs -12 --eq 0.4`) |
+| `boombap` | `boombap_2010` (tag boom bap 2010-2021, 193 tracks) | -10.5 | -1 | 0.7 | 0.5 | none | modern boom-bap and drumless beats (new 2026-11-25); docs/HIPHOP.md "Granularity" C, E |
+| `hiphop_golden` | `boombap_golden` (tag boom bap 1988-1999, 257 tracks) | -14 | -1 | 0.7 | 0.5 | none | golden-age boom-bap and 1990s hip hop (new 2026-11-25); mono below 150 Hz (vinyl-era practice); -14 and mono 150 hand-tuned inside the measured and sourced values; docs/HIPHOP.md "Granularity" C, E |
 | `trance`, `trance_radio` | `trance_2015` (catalogue, 558 tracks); `trance_2018` (172 tracks) for briefs aimed at 2018-2026 | -9; by strand -8.5 (uplifting, vocal, tech), -8 (hard revival), -11 (melodic-techno crossover; `--eq 0.5`) | -1 | 0.7 | 0.4 | `trance` (007, 013) | docs/TRANCE.md; strand settings measured (whole-track ReplayGain and dynamics by tag 2015-21, Mixgraph's loud-section loudness by Beatport genre) and checked against the engine (a stacked-kick drop reaches -7.5 with PLR 6.6, under 1 dB of limiting): TRANCE.md "Modern trance production", J; genres.json `master_by_strand` |
-| `rock` | `rock_2015` (catalogue, 408 tracks) | -8.5 | -1 | 0.7 | 0.3 | `rock` (008, 009) | docs/POP_ROCK.md |
-| `joc` | `joc_taraf` (103 Taraf de Haïdouks recordings) | -11 | -1 | 0.4 | 0.3 | `rock`, eq 0.7 (010) | docs/JOC_TIGANESC.md |
-| `caroling` | `caroling_ref` (5 albums), no low-end boosts | -14 | -1 | 0.3 | 0.2 | `rock`, eq 0.5 (012) | docs/CAROLING.md |
-| `latinpop` | `latinpop_ref` (24 albums); `latinpop_dark`, `latinpop_bright` by strand | -11 | -1 | 0.6 | 0.3 | `rock` (014) | docs/LATIN_POP.md |
-| `chamberscore` | `chamberscore_ref` (30 albums) | -15 | -1 | 0.4 | 0.2 | `rock` (015) | docs/CHAMBER_SCORE.md |
+| `rock` | `rock_2015` (catalogue, 408 tracks); by strand `rock_punk` (pop-punk, emo, heavy radio rock) and `rock_altpop` (alt-pop / bedroom crossover); no period curve | -8.5; 1990s briefs -11 (hand-tuned) | -1 | 0.7 | 0.3 | `rock` (008, 009) | docs/POP_ROCK.md, "Eras, strands and the bleeding edge"; genres.json `master_by_strand` |
+| `joc` | `joc_taraf` (103 Taraf de Haïdouks recordings); by region and scene `ro_fanfare` (-12, eq 0.5), `ro_transylvania_revival` (interim proxy; -15, eq 0.3), `ro_fusion` (wedding band, manele, fusion; -11) | -13 (since 2026-11-26: the measured taraf median, the owner's decision following the research; -11 before) | -1 | 0.4 | 0.3 | `rock`, -11, eq 0.7 (010's first release; 010 was remastered at -13) | docs/JOC_TIGANESC.md, docs/ROMANIAN.md "Regions, scenes and eras"; genres.json `master_by_strand` |
+| `caroling` | `caroling_ref` (5 albums), no low-end boosts; by strand `caroling_choir` (-18 LUFS) or `caroling_acappella` (-12 LUFS) | -14 | -1 | 0.3 | 0.2 | `rock`, eq 0.5 (012) | docs/CAROLING.md, "Granularity"; genres.json `master_by_strand` |
+| `latinpop` | `latinpop_ref` (24 albums); by strand `latinpop_dark` (bolero, acoustic), `latinpop_bright` (bachata), `latinpop_urbano` (reggaetón, romantic dembow, Latin trap), `latinpop_mexicano` (banda, norteño; tumbados extrapolated, thin); per-strand loudness -12.5 to -10 (docs/LATIN_POP.md 'Granularity' D) | -11 | -1 | 0.6 | 0.3 | `rock` (014) | docs/LATIN_POP.md; genres.json `master_by_strand` |
+| `chamberscore` | `chamberscore_ref` (30 albums; 27 more score albums agree with it); piano strand: `--target chamberscore_piano --lufs -16.5 --eq 0.3` | -15 | -1 | 0.4 | 0.2 | `rock` (015) | docs/CHAMBER_SCORE.md, "Granularity"; genres.json `master_by_strand` |
 | `dubstep` | `dubstep_2015` (catalogue, 927 tracks); `dubstep_2018`, `dubstep_2005`, `dubstep_2011`, `dubstep_riddim`, `dubstep_melodic` by era and strand | -8 (untested at research; see the engine test in docs/DUBSTEP.md "Engine mapping"); by strand -7 (riddim, tearout), -8.5 (melodic, colour bass), -10 (deep / 140) | -1 | 0.7 | 0.4 | none | docs/DUBSTEP.md; mono below 150 Hz; genres.json `master_by_strand` |
 
 Each genre's provenance is in `engine/genres.json` (`target_source`, `target_era`, `target_tracks`, `target_method`, `target_date`, `target_change`), the curves with their spreads in `engine/targets.json`, and every master report carries `target_provenance`. The settings the released tracks were mastered with stay in `master_published`; `master --published` uses them, and the master prints a note whenever a genre's default has changed, so nothing changes silently. Re-mastering a released track with its era target is a separate step, track by track, with the owner's approval (docs/PRODUCTION.md, "Remixing and remastering"). `max_low_boost_db` (optional, `caroling`: 0) caps the tonal EQ's boosts below 200 Hz; every other setting and the +2 dB cap on top-end boosts are as before.
@@ -50,6 +52,8 @@ Session 001 was mastered with `--eq 0.9 --lufs -11` (the engine's flags at the t
 - **Commercial masters:** 54 Billboard Global 200 top-10 songs (H1 2024) averaged -8.3 LUFS integrated (sd 1 LU; -11.1 to -6), max short-term -6 LUFS, LRA mostly 3.7-6.8 LU, 80% peaking at or above 0 dBTP ([iZotope 2024](https://www.izotope.com/en/learn/mastering-trends)). Hot Dance/Electronic top 10 (2025): -8.3 average (-11.3 to -6.2) ([iZotope](https://www.izotope.com/en/learn/dance-electronic-analysis)). Hot Rock & Alternative (July 2025): -8.1 average (-11.9 to -5.1) ([iZotope](https://www.izotope.com/en/learn/rock-alternative-analysis)). Billboard year-end top 30: -12.5 (1990), -8.0 (2010), -8.8 (2020) ([Țînț & Drăgulin 2025](https://webbut.unitbv.ro/index.php/Series_VIII/article/view/11335)).
 - **Dynamics (PLR):** the same Billboard year-end sets had a mean PLR of 12.6 dB (1990), 10.6 (2000) and 9.3 (2010 and 2020) (Țînț & Drăgulin 2025). One dance hit measured 7.5 dB (iZotope, "Beautiful People" stereo master).
 - **Stereo width:** side-minus-mid integrated loudness of the 2024 top-10 set averaged -8.5 LU, half of the songs between -10.9 and -6 LU; pop widest, hip-hop/rap narrowest; no per-genre numbers (iZotope 2024). The report's `width_side_minus_mid_lu` uses the same definition.
+- **Quiet masters on streaming (2026-11-25, chamber-score and caroling research):** with normalization the playback level of a dynamic master is set by its PLR, not by its integrated loudness. Spotify normalizes each track to -14 but raises a quiet master only until its true peak reaches -1 dBTP (its own example: -20 LUFS with -5 dBTP peaks is raised to -16), so a master of PLR *p* plays at most at -1 - *p* LUFS ([Spotify](https://support.spotify.com/artists/article/loudness-normalization/)). For the acoustic genres (PLR 12-16) that is -13 to -17 in a playlist whatever the integrated target; a louder target only adds limiting, and a classical-level master (a -22 LUFS choir) stays quieter than its playlist neighbours.
+- **Dynamics by genre (measured 2026-11-25):** Essentia dynamic complexity (DC) on AcousticBrainz: pop rock 2015-21 3.6 (238 tracks); trailer albums 5.1, `trailer music`/`epic music` tag 4.8; video-game tag 4.6; chamber idioms 5.6-6.8 (score albums 6.6, European school 5.9, felt piano 6.8, game chamber 5.6); neo-classical before 2010 7.5; choir carols 7.7-8.3, a cappella carols 4.0. Session 015's master (v030) measured DC 3.96 (Essentia 2.1-b6; AcousticBrainz ran 2.1-beta2), PLR 13.9, LRA 8.2; session 012's 2.9 (LRA 5.2). DC is a loose proxy for LRA (r 0.44 on Spectre's masters). Proposed QC check (not built): DC or LRA next to PLR, with a warning when a chamber or caroling master falls below about 5 (hand-tuned threshold from the medians). Nobody publishes true peak or LRA per subdivision of a genre, and AcousticBrainz has none.
 - **Spectre's choice (updated 2026-11-24):** trap/hip-hop stay at -10.5 LUFS (sessions 001-006); trance masters at -9 LUFS and rock at -8.5 LUFS, close to the chart averages (dance/electronic -8.3, rock/alternative -8.1), with -1 dBTP. Engine tests showed the true-peak guard only trims about 0.2 dB, so -8 is reachable; for trance the soft clipper is the real limit (it shaves about 8 dB off clubkick peaks at -9), so trance mixes must tame kick transients. Streaming normalizes to about -14 LUFS, so louder masters only matter where nothing normalizes (DJ decks, SoundCloud, downloads). Sources and tests: docs/proposals/mastering-trance-poprock.md. The proposal's "modern" tonal curves are unmeasured estimates and are not used; the measured Pestana curves stay until reference tracks are measured.
 
 ## Target curves (`--target`)
@@ -186,6 +190,107 @@ Dubstep (2026-11-25, docs/DUBSTEP.md "Catalogue measurements"):
 | 12500 | -8 | -7.5 | -8.5 | -6.5 | -4 | -7 | -5 |
 | 16000 | -12.5 | -12 | -12.5 | -10 | -7 | -11 | -8.5 |
 
+Granularity (2026-11-25, merged 2026-11-26): strand, era and scene targets from the genre docs' granularity sections. Caroling (docs/CAROLING.md "Granularity"), chamber-score piano (docs/CHAMBER_SCORE.md "Granularity" F) and Latin strands (docs/LATIN_POP.md "Granularity" D):
+
+| Hz | `caroling_choir` | `caroling_acappella` | `chamberscore_piano` | `latinpop_urbano` | `latinpop_mexicano` |
+|---|---|---|---|---|---|
+| 31.5 | -22.5 | -14 | -16 | +1.5 | -17.5 |
+| 40 | -24 | -8.5 | -11.5 | +4 | -11.5 |
+| 50 | -25 | -3.5 | -7.5 | +5.5 | -6 |
+| 63 | -24.5 | +0.5 | -3.5 | +6 | -1.5 |
+| 80 | -22 | +3 | -0.5 | +5.5 | +0.5 |
+| 100 | -17.5 | +3.5 | +2 | +3.5 | +0.5 |
+| 125 | -13 | +2 | +4.5 | +2 | -0.5 |
+| 160 | -9.5 | +0.5 | +6.5 | +2 | -1 |
+| 200 | -7 | 0 | +8 | +2 | -0.5 |
+| 250 | -4.5 | +0.5 | +8.5 | +2 | +0.5 |
+| 315 | -1.5 | +1 | +9 | +1 | 0 |
+| 400 | +1.5 | +1 | +8.5 | +1 | 0 |
+| 500 | +4 | +1.5 | +7 | +2 | +1 |
+| 630 | +4 | +2 | +5 | +2.5 | +2 |
+| 800 | +1.5 | +1.5 | +3 | +1 | +1 |
+| 1000 | 0 | 0 | 0 | 0 | 0 |
+| 1250 | -2 | -1.5 | -3.5 | -0.5 | -0.5 |
+| 1600 | -6.5 | -2.5 | -6 | -1 | -1 |
+| 2000 | -10 | -4.5 | -10.5 | -2 | -2.5 |
+| 2500 | -10 | -6.5 | -15 | -3 | -4.5 |
+| 3150 | -12 | -7.5 | -20 | -4 | -6 |
+| 4000 | -20 | -10 | -24 | -5 | -7.5 |
+| 5000 | -26.5 | -11.5 | -28 | -6 | -8.5 |
+| 6300 | -27 | -11 | -31.5 | -6 | -9.5 |
+| 8000 | -27 | -10 | -34.5 | -6.5 | -10 |
+| 10000 | -30 | -10.5 | -37 | -7.5 | -10.5 |
+| 12500 | -35 | -15 | -39 | -10.5 | -12.5 |
+| 16000 | -41 | -22.5 | -40.5 | -17 | -15 |
+
+Romanian folk scenes (docs/ROMANIAN.md "Mastering by subdivision") and the Ukrainian and Latvian stop-gaps (docs/UKRAINIAN.md, docs/LATVIAN.md "Granularity"; **stop-gap, thin**):
+
+| Hz | `ro_fanfare` | `ro_fusion` | `ro_transylvania_revival` | `ua_dakhabrakha` | `lv_folk_nometal` |
+|---|---|---|---|---|---|
+| 31.5 | -20.5 | -4 | -20.5 | -8.5 | -4.5 |
+| 40 | -13 | -0.5 | -14 | -3 | -0.5 |
+| 50 | -5.5 | +3 | -8 | +1.5 | +3 |
+| 63 | 0 | +5 | -3 | +5 | +5 |
+| 80 | +2.5 | +6 | 0 | +5.5 | +5 |
+| 100 | +2 | +5 | +1 | +4 | +4 |
+| 125 | +0.5 | +4 | -0.5 | +2 | +2 |
+| 160 | 0 | +2.5 | -2 | +1 | 0 |
+| 200 | +0.5 | +2 | -1 | +0.5 | -1 |
+| 250 | +1 | +1.5 | +0.5 | +1 | -1.5 |
+| 315 | +1 | +1 | +1.5 | +1 | -1.5 |
+| 400 | +1 | +1 | +1.5 | +1 | -1 |
+| 500 | +0.5 | +2 | +1 | +1.5 | -1 |
+| 630 | 0 | +2 | +0.5 | +2 | -0.5 |
+| 800 | -0.5 | +1 | +0.5 | +2 | +0.5 |
+| 1000 | 0 | 0 | 0 | 0 | 0 |
+| 1250 | 0 | 0 | -0.5 | -1.5 | -0.5 |
+| 1600 | -1 | -0.5 | -1.5 | -1.5 | 0 |
+| 2000 | -2 | -1.5 | -2 | -3.5 | -1 |
+| 2500 | -2.5 | -1.5 | -2.5 | -5 | -2.5 |
+| 3150 | -3.5 | -2 | -3.5 | -4.5 | -4.5 |
+| 4000 | -5 | -3 | -5 | -5.5 | -6 |
+| 5000 | -7.5 | -4.5 | -8.5 | -9.5 | -7.5 |
+| 6300 | -9 | -5.5 | -11.5 | -12.5 | -9 |
+| 8000 | -10.5 | -6.5 | -14 | -13.5 | -10.5 |
+| 10000 | -13 | -8.5 | -17 | -14.5 | -13 |
+| 12500 | -17 | -11.5 | -22.5 | -17 | -16.5 |
+| 16000 | -23 | -16.5 | -29 | -20 | -20.5 |
+
+Hip hop by era and strand (docs/HIPHOP.md "Granularity" C, E) and pop rock by strand (docs/POP_ROCK.md "Eras, strands and the bleeding edge" B, H):
+
+| Hz | `boombap_golden` | `boombap_2010` | `trap_2015` | `rock_punk` | `rock_altpop` |
+|---|---|---|---|---|---|
+| 31.5 | +4 | +0.5 | +6.5 | -5.5 | -4.5 |
+| 40 | +6 | +3.5 | +7.5 | -2.5 | -1 |
+| 50 | +8 | +6.5 | +8.5 | +0.5 | +2.5 |
+| 63 | +9.5 | +8 | +8 | +3 | +4.5 |
+| 80 | +9.5 | +8 | +6.5 | +4 | +4.5 |
+| 100 | +8.5 | +7 | +4.5 | +4 | +3.5 |
+| 125 | +6.5 | +5.5 | +2.5 | +3.5 | +2.5 |
+| 160 | +5 | +4 | +1 | +3 | +2 |
+| 200 | +3.5 | +3 | +0.5 | +2 | +1.5 |
+| 250 | +2.5 | +2.5 | 0 | +1.5 | +2 |
+| 315 | +1.5 | +1.5 | +0.5 | +0.5 | +2 |
+| 400 | +1.5 | +2.5 | +1 | 0 | +2 |
+| 500 | +2 | +3 | +1.5 | +0.5 | +1.5 |
+| 630 | +1.5 | +2 | +1.5 | +1 | +2 |
+| 800 | +0.5 | +1 | +0.5 | +1 | +1.5 |
+| 1000 | 0 | 0 | 0 | 0 | 0 |
+| 1250 | -0.5 | -0.5 | -0.5 | -0.5 | -1.5 |
+| 1600 | -1 | -1 | -1 | -0.5 | -2.5 |
+| 2000 | -1.5 | -2 | -2 | -0.5 | -3.5 |
+| 2500 | -2.5 | -2.5 | -3 | -1 | -5 |
+| 3150 | -3 | -3.5 | -3.5 | -2 | -6.5 |
+| 4000 | -4 | -4.5 | -4.5 | -3.5 | -7.5 |
+| 5000 | -5.5 | -5.5 | -5 | -5.5 | -9 |
+| 6300 | -7 | -6 | -4.5 | -6.5 | -9.5 |
+| 8000 | -9 | -7 | -5 | -7.5 | -10 |
+| 10000 | -11.5 | -9 | -6.5 | -9.5 | -11.5 |
+| 12500 | -14.5 | -13 | -10 | -13.5 | -15.5 |
+| 16000 | -19 | -20.5 | -15 | -19.5 | -21.5 |
+
+16 kHz rests on the smoothness term wherever fewer than 20 files are lossless (the Romanian fanfare and Transylvanian sets, the Ukrainian and Latvian sets, `latinpop_mexicano`); `boombap_golden` is 80% lossy files, whose top is 1.5-3 dB darker at 6.4-12 kHz than its 51 lossless files', so its top is uncertain by that much. `trap_2015` is within 1-1.5 dB of `hiphop_2015` (optional, not a default). The fanfare set is one band; the Transylvanian set is a proxy (Hungarian revival bands); period recordings of urban lăutari (56 tracks) were measured and rejected as a target (band-limited). Ukrainian electro-folk (Go_A, Onuka; n 23) reads within 3.5 dB of `hiphop_2015` and has no target of its own. Drill and every 2022-2026 strand: not measured.
+
 | Target | Source (provenance) | Era | n | Est. loudness, median (middle half) | Against the curve it replaces (both laid over a mix at 500 Hz-2 kHz) |
 |---|---|---|---|---|---|
 | `trance_2015` | MusicBrainz tag `trance`, first release 2015-2021, up to 300 per year | 2015-2021 | 558 | -10.7 (-12.0 to -9.6) | `trance`: +8 to +12 dB at 31.5-63 Hz, -2 to -5 dB at 100-315 Hz, +2 to +7 dB at 8-16 kHz |
@@ -205,10 +310,27 @@ Dubstep (2026-11-25, docs/DUBSTEP.md "Catalogue measurements"):
 | `dubstep_riddim` | tag `riddim`, 2010-2021, up to 200 per year | 2010-2021 | 81 | -7.6 (-8.8 to -6.3) | `dubstep_2015`: +3.5 at 31.5 Hz, -2 dB at 63-100 Hz, -1.5 to -2 at 250-500 Hz, +3.5 to +5.5 dB at 5-16 kHz (thin: ±1 dB) |
 | `dubstep_melodic` | tag `melodic dubstep`, 2010-2021 | 2010-2021 | 237 | -9.3 (-10.6 to -8.1) | `dubstep_2015`: -2.5 to -3 dB at 31.5-63 Hz, -1 dB at 250-500 Hz, +0.5 to +1.5 dB at 8-16 kHz |
 | `dubstep_brostep` (installed; for era use `dubstep_2011`) | tag `brostep`, 2010-2021 | 2010-2021 | 605 | -8.7 (-10.3 to -7.4) | `dubstep_2015`: -1 dB at 80-125 Hz, +2 to +3.5 dB at 3-10 kHz |
+| `caroling_choir` | 23 choir albums of docs/CAROLING.md "Granularity" (King's, St John's, Cambridge Singers, Tenebrae, VOCES8, Tallis Scholars; Chanticleer, Robert Shaw Chorale, Tabernacle Choir) | 1986-2012 | 106 | -22.3 (-24.3 to -19.7) | `caroling_ref`: -13.5 to -18 dB at 50-100 Hz, -7 to -9.5 dB at 4-12.5 kHz; strand choir (and brass) at -18 LUFS |
+| `caroling_acappella` | 8 a cappella Christmas albums (Pentatonix, Straight No Chaser, Take 6) | 1991-2018 | 87 | -12.5 (-14.4 to -10.2) | `caroling_ref`: +6.5 to +7.5 dB at 63-125 Hz, +0.5 to +2 dB at 2-3.15 kHz, +3 to +13 dB from 4 kHz up |
+| `chamberscore_piano` | 13 felt / close-miked neo-classical piano albums (docs/CHAMBER_SCORE.md "Granularity" F) | 2010-2019 | 150 | -17.0 (-18.6 to -14.6) | `chamberscore_ref`: -12 to -13.5 dB at 4-12.5 kHz, -5.5 to -11 dB at 2-3.15 kHz, +4 to +5.5 dB at 125-400 Hz; spread 12-15 dB at 3-6 kHz (a guard: `eq` 0.3) |
+| `latinpop_urbano` | MusicBrainz tag `reggaeton`, 2015-2021, up to 150 per year (also fits the romantic dembow albums and a Latin trap artist set) | 2015-2021 | 262 | -10.3 (-13.0 to -8.7) | `latinpop_ref`: +5.5 to +10 dB at 31.5-50 Hz, +3.5 at 63, +1 to +1.5 dB at 2-5 kHz; `hiphop_2015`: about 3 dB less at 40-63 Hz, the same top |
+| `latinpop_mexicano` | banda and norteño by artist (Banda El Recodo, Los Tigres del Norte, Calibre 50, Christian Nodal, Grupo Firme); **thin**, 8% lossless; tumbados extrapolated | mostly 2000-2019 | 75 | -9.6 (-12.7 to -7.8) | `latinpop_ref`: -9 to -6 dB at 31.5-50 Hz, -3 to -3.5 dB at 6.3-10 kHz, 2.5 dB brighter at 16 kHz |
+| `ro_fanfare` | MusicBrainz artist Fanfare Ciocărlia (MBID; docs/ROMANIAN.md "Mastering by subdivision") | releases 1997-2016 | 105 | -11.7 (-13.3 to -10.8) | `joc_taraf`: 4-8 dB brighter at 5-15 kHz, as heavy at 32-97 Hz, 1-2 dB lighter at 100-160 Hz |
+| `ro_fusion` | MusicBrainz artists Subcarpați, Zdob și Zdub, Mahala Raï Banda, Shukar Collective, Balkan Taksim, Dirty Shirt (MBIDs) | releases 1997-2022 | 138 | -10.9 (-13.0 to -9.1) | `joc_taraf`: 7-12 dB brighter at 5-15 kHz, 3-7.5 dB heavier at 50-80 Hz; `hiphop_2015`: within 2 dB from 160 Hz up, 1.5-8.5 dB less at 31.5-80 Hz |
+| `ro_transylvania_revival` (interim proxy) | MusicBrainz artists Muzsikás, Kálmán Balogh (MBIDs): Hungarian revival musicians playing Transylvanian village music | releases 1986-2008 | 69 | -15.1 (-17.0 to -13.5) | `joc_taraf`: 2-3.5 dB lighter at 50-183 Hz, 2.5-3.5 dB brighter at 5-10 kHz, 2 dB darker above 12 kHz |
+| `ua_dakhabrakha` (stop-gap, thin) | MusicBrainz artist DakhaBrakha (MBID), up to 300 recordings; 15% lossless | 2007-2021 | 48 | -11.8 (-13.2 to -10.3) | `hiphop_2015`: 6-7.4 dB darker at 6.4-12 kHz, 3.7 dB less at 32-97 Hz; for acoustic Ukrainian ethno-fusion, not folk-fusion trap |
+| `lv_folk_nometal` (stop-gap, thin) | MusicBrainz artists Tautumeitas, Auļi (MBIDs; six other Latvian acts queried had no data); 4% lossless | 2005-2020 | 26 | -11.8 (-12.9 to -10.6) | `hiphop_2015`: 4-5 dB darker above 6 kHz, 2 dB less at 183-400 Hz, 3.4 dB less at 32-97 Hz; for Latvian band-led folk-pop |
+| `boombap_golden` | tag `boom bap`, first release 1988-1999, up to 200 per year | 1988-1999 | 257 | -14.5 (-17.8 to -12.0) | `trap_2015` (trap 2015-2021): about 4 dB quieter, 3-4 dB heavier at 97-183 Hz, 3-6 dB darker above 6.4 kHz; target of `hiphop_golden` |
+| `boombap_2010` | tag `boom bap`, 2010-2021, up to 200 per year | 2010-2021 | 193 | -10.3 (-11.7 to -9.5) | `trap_2015`: 5 dB less under 32 Hz, 2-3.5 dB darker above 6.4 kHz; target of `boombap` |
+| `trap_2015` | tags `trap` AND `hip hop`, 2015-2021, up to 200 per year (the plain `trap` tag is mostly EDM and Latin trap) | 2015-2021 | 463 | -10.4 (-12.3 to -9.3) | `hiphop_2015`: within 1-1.5 dB; optional for a pure trap, drill or rage brief |
+| `rock_punk` | tag `pop punk`, 2013-2021, up to 100 per year | 2013-2021 | 490 | -9.8 (-12.6 to -8.6) | `rock_2015`: +1 to +2 dB at 2-5 kHz, -1 to -1.5 dB at 315-500 Hz, +2 to +3.5 dB at 31.5-40 Hz; pop punk 1997-2012 within 1 dB |
+| `rock_altpop` | tags `alt-pop`, `bedroom pop`, `indie pop`, 2015-2021, up to 100 per year (diluted by indie pop) | 2015-2021 | 464 | -10.6 (-12.2 to -9.5) | `rock_2015`: +2 to +4.5 dB at 31.5-63 Hz, -1.5 to -2.5 dB at 1.6-8 kHz |
+
+**Strands against eras (granularity research, 2026-11-25).** In some genres the strand moves the curve more than the period: pop rock (`rock_punk` and `rock_altpop` beside `rock_2015`; a 2018-2021 refit is within 1.5 dB of `rock_2015`, pop punk 1997-2012 within 1 dB of 2013-2021, so no period curve), Latin pop (12-20 dB apart at 31.5-50 Hz between urbano and banda / norteño, up to 13 dB at 12.5-16 kHz between bachata and bolero) and caroling (choir and a cappella 20-25 dB apart at 50-100 Hz). In hip hop the era does: golden-age boom-bap is about 4 dB quieter and 3-6 dB darker above 6.4 kHz than 2015-2021 trap. Mastering beyond the curve per strand (loudness, dynamics, low end, top, playback; what open data can and cannot measure) is in each genre doc's granularity section, e.g. docs/LATIN_POP.md 'Granularity' D: loudness differs little between Latin strands before 2022 (-9.6 to -11.6 LUFS, bolero -12.7) while the low end differs by 12-20 dB at 31.5-50 Hz.
 
 **What they ask of a mix.** In trance, hip hop and pop rock: the kick-and-sub band about 5-9 dB over 1 kHz at 50-80 Hz (where the older curves had their hump at 100-125 Hz), less 100-300 Hz, and a top 2-7 dB brighter at 8-16 kHz. Session 007's kick fundamental was carved by 5-11 dB to satisfy the old `trance` curve (docs/TRANCE.md C); with `trance_2015` that carving is no longer asked for. In the acoustic genres the top is far darker than the borrowed `rock` curve (caroling and chamber score -15 to -25 dB at 8-12.5 kHz) and the low mids leaner. **Unchanged rules:** the master boosts the top by at most +2 dB from 5 kHz up, so a brighter target must be met by the sounds (tonal content: saw harmonics, air layers, metallic hats), not by lifting synthesized noise (see "Top end"); the -8/+4 dB limits per band stay.
 
-**Caveats.** Catalogue data are user-submitted files (12-51% lossless per set), mono, coarse (Bark bands) and end in 2021-2022: nothing here measures 2023-2026. Tags are broad (`trance` spans uplifting, progressive, psy and vocal; `hip hop` mixes boom-bap revival and trap). The reference-album sets are small (66-103 tracks for joc, caroling and the Latin strands) and wide (the middle half of the caroling albums spans 15-18 dB at the low end and on top; chamber score 9-21 dB above 4 kHz), which is why caroling, joc and chamber score keep a light `eq` (0.3-0.4) and caroling gets no low-end boosts at all. 31.5-40 Hz rest on one Bark band and the smoothness term (±3 dB); 16 kHz on the lossless files or, where fewer than 20 are lossless (joc, caroling, the two Latin strands), on the smoothness term (±2-4 dB).
+**Caveats.** Catalogue data are user-submitted files (12-51% lossless per set), mono, coarse (Bark bands) and end in 2021-2022: nothing here measures 2023-2026. Tags are broad (`trance` spans uplifting, progressive, psy and vocal; `hip hop` mixes boom-bap revival and trap). The reference-album sets are small (66-103 tracks for joc, caroling and the Latin strands) and wide (the middle half of the caroling albums spans 15-18 dB at the low end and on top; chamber score 9-21 dB above 4 kHz), which is why caroling, joc and chamber score keep a light `eq` (0.3-0.4) and caroling gets no low-end boosts at all. 31.5-40 Hz rest on one Bark band and the smoothness term (±3 dB); 16 kHz on the lossless files or, where fewer than 20 are lossless (joc, caroling, the two Latin strands), on the smoothness term (±2-4 dB). The caroling strands differ more from each other than any other genre's (20-25 dB at 50-100 Hz between choir and a cappella), which is why `caroling_ref` had its 15-18 dB spread; dynamics per strand rest on Essentia's dynamic_complexity, a loose proxy for LRA (r 0.44 on Spectre's masters). The granularity sets (2026-11-25) share every limit above and add their own: several are thin (`lv_folk_nometal` 26 tracks, `ua_dakhabrakha` 48, `ro_transylvania_revival` 69, `latinpop_mexicano` 75) or one act; AcousticBrainz stops in 2022, so no 2022-2026 strand is measured; and no subdivision of any genre has true-peak, PLR, LRA or width data anywhere (open or published).
 
 ### Test masters with the measured targets (example projects, 2026-11-24)
 | Project | Command | LUFS | dBTP | PLR | Width (S-M) | EQ at its limit | Diagnosis |

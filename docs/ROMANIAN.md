@@ -207,7 +207,7 @@ The taraf row reproduces the existing `joc_taraf` measurement (docs/JOC_TIGANESC
 - *Fusion:* streaming and festivals (Spotify normalises to -14 LUFS, Apple Music to -16: docs/JOC_TIGANESC.md).
 - How the loudness is reached (limiting, clipping, saturation) is not documented for any scene; true peak and width are not either. Spectre's defaults stay: **-1 dBTP**, **mono below 120 Hz** (folk mastering guidance in docs/JOC_TIGANESC.md), no extra width.
 
-**Settings per kind of brief** (`studio.py master vNNN ...`; the new targets are proposals until the orchestrator adds them to `engine/targets.json`; `eq` and `translate` are **[H]**, set by the spread and the size of each set as the other genres do):
+**Settings per kind of brief** (`studio.py master vNNN ...`; the new targets are in `engine/targets.json` and genres.json `joc.master_by_strand` since 2026-11-26; `eq` and `translate` are **[H]**, set by the spread and the size of each set as the other genres do):
 | Brief | Target | `eq` | LUFS | True peak | Basis |
 |---|---|---|---|---|---|
 | Acoustic village taraf, Muntenia or Oltenia (the joc brief) | `joc_taraf` | 0.4 | **-13** (the measured median; -12 is the upper quartile, for a dance-floor version) | -1 | [M] 103 tracks |

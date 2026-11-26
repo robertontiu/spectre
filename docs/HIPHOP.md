@@ -258,7 +258,7 @@ What the evidence says about how each wave is mastered, beyond the tonal curve. 
 | Top end | dark: sampler bandwidth (SP-1200: nothing above about 13 kHz), vinyl sources, low-passed loops [M; S] | trap balance (C) | not measured | dark (C) [M] |
 | Playback the masters are made for | vinyl (DJs), radio, cassette, car systems [H: no source with numbers] | streaming with loudness normalisation (Spotify and Tidal -14, YouTube -13, Apple -16) [S: Splice]; phones, so the 808 needs harmonics around 100 Hz "to be audible on small speakers" [S: SOS 2019]; cars and clubs [H] | streaming and SoundCloud [H] | streaming [H] |
 
-**What this changes in Spectre's masters** (engine/master.py; **proposed** 2026-11-25, values in the proposal for engine/genres.json and engine/targets.json; not in the engine until merged):
+**What this changes in Spectre's masters** (engine/master.py; proposed 2026-11-25, in engine/genres.json and engine/targets.json since 2026-11-26):
 - **Golden-age boom-bap gets its own target and loudness.** Tonal target `boombap_golden` (C: 257 tracks, 1988-1999), integrated **-14 LUFS** (the measured median is -14.5; -14 is also where streaming normalises, so the era master is not turned up on playback), true peak -1 dBTP, low end mono below **150 Hz** (the vinyl practice above; the value is hand-tuned between the engine's 120 Hz and the 200 Hz of one cutting walkthrough). Configuration `hiphop_golden`.
 - **The modern boom-bap revival gets its own target, at modern loudness.** `boombap_2010` (193 tracks, 2010-2021), -10.5 LUFS, -1 dBTP, mono below 120 Hz. Configuration `boombap`.
 - **Trap, drill and streaming rap keep `hiphop_2015`.** The trap-only measurement (`trap_2015` in the proposal, 463 tracks) is within 1-1.5 dB of it everywhere; it is offered as an optional `--target trap_2015` for a pure trap, drill or rage brief (about 1 dB less at 100-250 Hz, 0.5-1.5 dB more above 5 kHz), not as a new default.
@@ -282,7 +282,7 @@ For a brief that asks for "the newest sound" without naming a strand (PRODUCTION
 | 11 | **Short songs**: hip hop lost 29 s from 2018 to 2024, the largest drop of any genre; aim 2:00-3:00 for the newest sound | [M] Chartmetric 2024 | yes |
 | 12 | **Loud by clipping**: 808 and drum bus clipped before the limiter; chart masters mostly above 0 dBTP (80% of the 2024 top 10) | [S] Sage Audio; Mastering.com; [M] iZotope 2024 | partly: `clip` on buses and tracks; the master's soft clipper has a fixed amount and Spectre holds -1 dBTP on purpose (E) |
 | 13 | **Narrow, mono low end**; width from doubles, ad-libs and the lead only | [M] iZotope 2024 (hip-hop/rap the narrowest genre) | yes: `mseq` `side_hpf`, master mono below 120 Hz |
-| 14 | **Tonal target**: `trap_2015` for streaming trap and drill (E); measured to 2021, **extrapolated** to 2024-26 | [M] catalogue to 2021 | yes once the proposal is merged; `hiphop_2015` until then |
+| 14 | **Tonal target**: `trap_2015` for streaming trap and drill (E); measured to 2021, **extrapolated** to 2024-26 | [M] catalogue to 2021 | yes (`trap_2015` in engine/targets.json since 2026-11-26) |
 
 ### G. Engine mapping for the subdivisions
 **What the engine has** (docs/MANUAL.md; engine/synth.py, engine/mixbus.py, engine/master.py):
@@ -312,7 +312,7 @@ For a brief that asks for "the newest sound" without naming a strand (PRODUCTION
 7. **No measured tonal target after 2021** for any subdivision (E): only reference masters bought and measured locally can close it (PRODUCTION.md section 3).
 
 ### H. Which target and settings each kind of brief uses
-`hiphop_golden`, `boombap` and `--target trap_2015` are **proposed** (2026-11-25, with their curves; E) and exist only once the orchestrator has merged them into engine/genres.json and engine/targets.json; until then every row uses `--genre hiphop`.
+`hiphop_golden`, `boombap` and `--target trap_2015` were proposed 2026-11-25 (with their curves; E) and are in engine/genres.json and engine/targets.json since 2026-11-26.
 
 | The brief says | Subdivision | Configuration and master | Elements to build from |
 |---|---|---|---|

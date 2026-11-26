@@ -1,6 +1,6 @@
 {
   "_about": "Per-genre EQ maps for `studio.py listen --clarity` (engine/clarity.py): for each role, the high-pass point (`hp`: [lo, hi] Hz, the range the map gives), optional low-pass (`lp`), regions to cut or control (`cut`) and regions the role owns (`own`), all in Hz, with the source of each map in `source` (the genre doc's 'Layering and EQ carving' section, where every row has its own citation). Ranges are starting points ('there are no specific frequencies that will always work', Mike Senior, Sound On Sound 2008). `core` lists the roles a peak section is expected to fill (alternatives joined by |); `tolerance_db` is how far a stem's level per 1/3 octave in a cut region may exceed its level in its own region before it is flagged (hand-tuned: 6 dB where the genre carves, 9 dB in acoustic genres, where orchestration and balance come first and EQ moves are light); `inherit` borrows the map of another genre for roles this one does not list. Roles: sub, 808, kick, bass, upper-bass, lead, support, air, pluck, arp, pad, keys, organ, strings, low-strings, choir, vocal, guitar, acoustic, bells, brass, snare, clap, hats, cymbals, perc, texture, fx, return.",
-  "_aliases": {"trance_radio": "trance", "trap": "hiphop"},
+  "_aliases": {"trance_radio": "trance", "trap": "hiphop", "hiphop_golden": "hiphop", "boombap": "hiphop"},
   "trance": {
     "source": "docs/TRANCE.md 'Modern trance production', B: the professional trance producer's EQ map [P], checked against iZotope, Attack Magazine, Sound On Sound, NI, Cold Rush",
     "tolerance_db": 6,
