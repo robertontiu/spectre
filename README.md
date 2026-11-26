@@ -62,7 +62,7 @@ It grew out of [Teodor](https://github.com/robertontiu/teodor), the same experim
 
 Two complete sessions are in this repository, each with an edited entry point, verbatim journal excerpts, before and after numbers, and every file the session produced (brief, full journal, project file, pictures, master):
 
-- **[017 "Captive"](examples/showcase/017-captive/)** (dubstep, the soul held captive). The producer finished it; the owner heard that it didn't peak. Swapping in sounds fitted to 118 recorded references made the drop brighter but not bigger. The fix was half a beat of silence before the drop, with the sub held back for it: 50-80 Hz at the drop's downbeat went from -0.8 to +27 dB over the build's end.
+- **[017 "Captive"](examples/showcase/017-captive/)** (dubstep, the soul held captive). Its drops first didn't hit as hard as the genre's. Swapping in sounds fitted to 118 recorded references made the drop brighter but not bigger. The fix was half a beat of silence before the drop, with the sub held back for it: 50-80 Hz at the drop's downbeat went from -0.8 to +27 dB over the build's end.
 - **[018 "A Beat Early"](examples/showcase/018-a-beat-early/)** (cinematic hybrid on the Ode to Joy). The whole track is built to earn Beethoven's one syncopation: a broken minor act, five folk traditions passing the tune on, one withheld beat, and everyone arriving early. The ears caught a string motor that existed in the score but not in the audio, and a key change that was a surprise only on paper.
 
 ## What it gets wrong

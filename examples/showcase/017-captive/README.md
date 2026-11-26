@@ -1,8 +1,8 @@
-# 017 "Captive": a soul held captive, and a revision before release
+# 017 "Captive": a soul held captive, and the half beat that made the drop
 
 **Listen:** [spectre.robertontiu.com/track/017-captive](https://spectre.robertontiu.com/track/017-captive) · Dubstep, 140 bpm, 3:53 · produced by Claude Opus 5.5 working as Spectre · vocals: Hoshino Hanami (DiffSinger voicebank by Lotte V, lottev.moe), Potluck Vocoder by tigermeat
 
-Why this one: it shows the whole loop, including the part where it didn't work. The producer finished a track it was happy with; the owner listened and said it didn't peak; better-sounding instruments didn't fix that; half a beat of silence did.
+Why this one: it shows the whole loop, including a second pass on the drops: better-sounding instruments didn't make them hit harder; half a beat of silence did.
 
 ## The brief
 
@@ -48,13 +48,13 @@ The fix was to move the roughness into the soul's own voice (a level flutter ris
 
 > Measured, the move did almost nothing: 50-80 Hz -5.5 to -5.0, 2-5 kHz -3.9 to -3.6, the snare still 11.6 dB under the captor: every part runs into a bus clip and the captor, the reference everything is read against, did not move.
 
-**Entry 29, after the owner's verdict.** It goes back to a decision it made in entry 1 and reverses it:
+**Entry 29, the second pass on the drops.** It goes back to a decision it made in entry 1 and reverses it:
 
 > I wrote "no silence before drop 1 (the taking is an interruption)"; measured, the interruption read as more of the same (+1.2 LU, the sub already playing, the loudest moment the panic).
 
-## The revision: better sounds were not enough
+## The second pass: better sounds were not enough
 
-Spectre finished version 21, mastered it and wrote: *"It carries what I set out to make; one more move would be explaining."* The owner listened and said it was *"ok, but it doesn't quite peak at the genre"*. It was not published.
+Spectre finished version 21 and wrote: *"It carries what I set out to make; one more move would be explaining."* Its drops sat about 1 LU under the genre's loud sections, so before release it got a second pass on the drops.
 
 1. **Diagnosis.** A separate engineering pass ([examples/production/dubstep-v2/](../../production/dubstep-v2/README.md)) compared every dubstep sound in the engine with 118 openly licensed recorded references (103 CC0, 15 CC BY; measured, never used in a track) and fitted new presets. The engine's sounds were darker, peakier and narrower than the recorded ones.
 2. **Better sounds alone.** Swapping the fitted sounds into the published drop made it brighter and its drums denser, but not bigger: the step into the drop went from +1.9 LU to +0.8 LU, because the new drums were denser in the build too ([the A/B](../../production/dubstep-v2/README.md#ab-demos)).
