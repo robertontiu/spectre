@@ -23,7 +23,7 @@ An experiment in engineering creativity. Spectre is an AI producer (Claude agent
 
 So far: **18 published tracks** across hip hop and folk trap (Romanian, Ukrainian, Latvian, oriental), trance, pop rock, joc țigănesc, American caroling, Latin pop, chamber score, dubstep and cinematic hybrid.
 
-This project takes no position on AI-generated music in general. It is one experiment, documented as fully as we could.
+**This project takes no position on AI-generated music in general. It is one experiment, documented as fully as we could.**
 
 It grew out of [Teodor](https://github.com/robertontiu/teodor), the same experiment applied to painting.
 
