@@ -27,6 +27,8 @@ This file holds only what every request needs. Read the rules, then the route fo
 - [docs/agents/track-storage.md](docs/agents/track-storage.md) when publishing or restoring a track.
 - `prompts/producer.md` or `prompts/remix.md` when writing a brief; [docs/LESSONS.md](docs/LESSONS.md) after every genre switch.
 
+**Someone running Spectre in their own clone or fork** (not the owner's workspace): your user is the session's owner. [docs/agents/engine-setup.md](docs/agents/engine-setup.md) "Requirements" and the smoke test, then [docs/agents/session-workflow.md](docs/agents/session-workflow.md) "In your own clone" (what to skip: the owner's bucket, site and check-ins), then the orchestrator's "Starting a new session" and "Genre conventions" in [docs/ORCHESTRATION.md](docs/ORCHESTRATION.md).
+
 **Producer** (Spectre, a track session):
 - Your `sessions/NNN-name/PROMPT.md` is your whole brief; it names what to read: [docs/MANUAL.md](docs/MANUAL.md), the genre doc, [docs/CRAFT.md](docs/CRAFT.md) for beats, [docs/LESSONS.md](docs/LESSONS.md), [docs/PRODUCTION.md](docs/PRODUCTION.md).
 - [docs/agents/project.md](docs/agents/project.md), "Core principles": the loop you work in.

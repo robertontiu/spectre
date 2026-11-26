@@ -82,15 +82,17 @@ It's an experiment, and the misses are part of the result:
 
 ## Try it yourself
 
-1. **Fork** this repository (or clone it).
-2. **Open it in an AI coding agent session**, such as [Claude Code](https://claude.com/claude-code). The agent reads [`AGENTS.md`](AGENTS.md), which gives it the rules and routes it to the handbook in [`docs/agents/`](docs/agents) on how to set up the studio and run a producer session.
+You need an AI coding agent that can run shell commands and look at images (the pictures are Spectre's ears), such as [Claude Code](https://claude.com/claude-code), on a subscription or API budget that allows long sessions; Python 3.11+ and ffmpeg; and 8-10 GB of free disk. Tested on Linux; macOS and Windows (through WSL) are untested.
+
+1. **Clone** this repository (`git clone --depth 1` skips 0.7 GB of history) or fork it.
+2. **Open it in your agent.** The agent reads [`AGENTS.md`](AGENTS.md), which gives it the rules and routes it to the handbook in [`docs/agents/`](docs/agents) on how to set up the studio and run a producer session.
 3. **Ask it for a track**, giving it a theme or a feeling, and a genre if you like:
    - *"Make a track about the hustle, Romanian folk trap, underground."* Spectre decides the tempo and sound.
    - *"Make a high-tempo, aggressive track that carries rage."* Spectre produces exactly that feeling.
 
-A track takes 30 to 90 minutes of agent time. A genre that has no research brief yet needs one first. The agent installs what it needs (Python with numpy, scipy, pedalboard, librosa, soundfile and pyloudnorm, plus ffmpeg) and runs `tools/setup.sh`, which downloads the voice models from their authors. You get back:
+First the agent sets up the studio: a Python virtual environment with the packages in `requirements.txt` (numpy, scipy, pedalboard, librosa and others; about 1 GB) and `tools/setup.sh --required`, which downloads the voice models and Whisper from their authors (about 2 GB; under 3 minutes on a fast connection). Then a track takes 30 to 90 minutes of agent time and a long agent context. A genre that has no research brief yet needs one first. You get back, in `sessions/<number>-<name>/`:
 
-- the mastered track and its title
+- the mastered track (`final.mp3`) and its title
 - Spectre's journal of the whole session
 - the project file that reproduces the track, and the pictures it listened with
 

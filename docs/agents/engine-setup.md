@@ -12,13 +12,20 @@ Before any work on a track, the orchestrating agent makes sure everything the en
 
 ## Requirements
 
-Python 3.11+ (developed on 3.13) and ffmpeg on PATH.
+Python 3.11+ (developed on 3.13), ffmpeg on PATH, about 8 GB of RAM (16 GB is comfortable) and 8-10 GB of disk: 2.1 GB of required models (5 GB with the optional ones), about 1 GB of Python packages, and about 35 MB of WAVs per render per minute of track (every render is kept until the session's clean-up: a full 3-minute session writes 2.5-4 GB). The agent must be able to look at PNG images: they are its ears. Tested on Linux; macOS (setup.sh installs ffmpeg with Homebrew if it is there) and Windows (through WSL) are untested.
+
+In a fresh clone, from the repo root:
 
 ```bash
-pip install -r requirements.txt
+python3 -m venv .venv && . .venv/bin/activate   # recommended: keeps the packages out of the system Python
+tools/setup.sh --required                        # the required models only (about 2.1 GB); without the flag, everything (about 5 GB)
 ```
 
-Then install the third-party resources: `tools/setup.sh` (or `python3 tools/engine_assets.py install`; see "Third-party resources" above and `engine/third_party.json`).
+Measured on a clean cloud container (2026-11-26; fresh HOME, no `SPECTRE_*` variables): `tools/setup.sh --required` 2.7 minutes in all (the pip requirements 0.9 GB in the venv, the models 2.1 GB in `~/.cache/spectre`); the full `tools/setup.sh` 14.6 minutes and 5.1 GB, of which about 8 minutes was Wikimedia rate-limiting the optional `refs-anthem`. Download speed sets the time on a home connection. `pyworld` (measurement scripts in `examples/vocals/svs/` only) is installed separately and may compile from source; a failure there does not stop setup. The private mirror is skipped without its variables.
+
+**Optional entries in your own clone.** An optional resource that ends as `todo` (for example `refs-anthem` after a rate limit, or a flaky host) does not affect producing tracks: it serves research and measurement scripts only. The Step 0 duty to resolve every `todo` is the owner's workspace rule; elsewhere, report it and carry on.
+
+Without setup.sh: `pip install -r requirements.txt`, then `python3 tools/engine_assets.py install --required` (see "Third-party resources" above and `engine/third_party.json`).
 
 ## Voices: voicebanks, vocoder, Whisper
 
@@ -26,12 +33,12 @@ Sung words (`singer`) use DiffSinger voicebanks, neural models trained on singer
 
 ## Smoke test
 
-Smoke test (about 20 s to render, 25 s to listen):
+Smoke test (about 20 s to render, 20 s to listen, 1-2 minutes to master). In a scratch folder of your own (AGENTS.md rule 8); `<repo>` is the absolute path of the clone:
 
 ```bash
-mkdir -p /tmp/smoke && cp examples/engine-test.json /tmp/smoke/project.json
-cd /tmp/smoke && export BEAT_DIR=$PWD
+SMOKE=$(mktemp -d) && cp <repo>/examples/engine-test.json $SMOKE/project.json
+cd $SMOKE && export BEAT_DIR=$PWD
 python3 <repo>/engine/studio.py render && python3 <repo>/engine/studio.py listen
 python3 <repo>/engine/studio.py master --genre trap   # writes renders/v001.master.{wav,mp3,png,report.json}
 ```
-Open `ear.png` and `renders/v001.master.png` to check that the pipeline works. After a change to the modern-strand tools (`acid`, the 909 drums, `shimmer`, `granular`, `suppress`, section automation of sounds), also render `examples/trance-modern-test.json` (about 10 s; it exercises all of them) and, for engine changes in general, check that an earlier project's premaster stays bit-identical.
+Open `ear.png` and `renders/v001.master.png` to check that the pipeline works, then delete the folder. After a change to the modern-strand tools (`acid`, the 909 drums, `shimmer`, `granular`, `suppress`, section automation of sounds), also render `examples/trance-modern-test.json` (about 10 s; it exercises all of them) and, for engine changes in general, check that an earlier project's premaster stays bit-identical.
