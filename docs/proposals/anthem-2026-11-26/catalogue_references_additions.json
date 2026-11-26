@@ -1,0 +1,807 @@
+{
+ "albums": {
+  "cinematic": {
+   "source": "docs/CINEMATIC_HYBRID.md 'Catalogue measurements' (2026-11-26); album lists by strand and era; ab_tracks = tracks with AcousticBrainz data (0 = no data: kept so the selection is visible)",
+   "fold": {
+    "*": [
+     70,
+     140
+    ]
+   },
+   "style": {
+    "quantiles": "inclusive",
+    "floor": false
+   },
+   "min_length": {
+    "curves": 60,
+    "tables": 90
+   },
+   "releases": [
+    {
+     "strand": "choir",
+     "artist": "E.S. Posthumus",
+     "album": "Unearthed",
+     "year": 2001,
+     "release": "a7a7a7bb-62a8-458e-a5dc-abb2ada129ec",
+     "ab_tracks": 13
+    },
+    {
+     "strand": "choir",
+     "artist": "Immediate Music",
+     "album": "Themes for Orchestra & Choir",
+     "year": 2003,
+     "release": "22cddb4d-6459-4adc-a8b2-e86d798288d0",
+     "ab_tracks": 5
+    },
+    {
+     "strand": "choir",
+     "artist": "Immediate Music",
+     "album": "Themes for Orchestra & Choir 2",
+     "year": 2005,
+     "release": "c9c416de-a4ea-4dbe-81ce-d57b9165a229",
+     "ab_tracks": 45
+    },
+    {
+     "strand": "choir",
+     "artist": "Immediate Music",
+     "album": "Themes for Orchestra & Choir 3",
+     "year": 2008,
+     "release": "638f6771-66e6-4d95-a023-4dc53478937e",
+     "ab_tracks": 8
+    },
+    {
+     "strand": "choir",
+     "artist": "Immediate Music",
+     "album": "Epic Choral Action #1",
+     "year": 2010,
+     "release": "1fe98ace-5c5d-4e69-a9a7-0e26ab1fe9f5",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "choir",
+     "artist": "X-Ray Dog",
+     "album": "Canis Rex I",
+     "year": 2004,
+     "release": "5282018e-c197-4224-87ff-6395defebe84",
+     "ab_tracks": 3
+    },
+    {
+     "strand": "choir",
+     "artist": "X-Ray Dog",
+     "album": "K9 Empire I",
+     "year": 2006,
+     "release": "7ce1168b-3663-42cf-92f1-bc5bd2855ab7",
+     "ab_tracks": 1
+    },
+    {
+     "strand": "choir",
+     "artist": "X-Ray Dog",
+     "album": "Dogs of War I",
+     "year": 2008,
+     "release": "c04c422d-c352-40cf-aefb-f46916cfd1f7",
+     "ab_tracks": 3
+    },
+    {
+     "strand": "choir",
+     "artist": "Globus",
+     "album": "Epicon",
+     "year": 2006,
+     "release": "e514a7f6-34a6-4327-b218-8e490e99b5c0",
+     "ab_tracks": 14
+    },
+    {
+     "strand": "choir",
+     "artist": "E.S. Posthumus",
+     "album": "Cartographer",
+     "year": 2008,
+     "release": "977fa000-43a2-4e04-90e6-aa43d494e7d9",
+     "ab_tracks": 28
+    },
+    {
+     "strand": "choir",
+     "artist": "Two Steps From Hell",
+     "album": "Nemesis, Volume 1: Action",
+     "year": 2008,
+     "release": "8b8f5503-ea47-4933-90e4-ca22cafec3aa",
+     "ab_tracks": 29
+    },
+    {
+     "strand": "choir",
+     "artist": "Two Steps From Hell",
+     "album": "Power of Darkness",
+     "year": 2010,
+     "release": "aaefbff0-0572-4169-96ea-47e328f516d6",
+     "ab_tracks": 77
+    },
+    {
+     "strand": "choir",
+     "artist": "Two Steps From Hell",
+     "album": "Invincible",
+     "year": 2010,
+     "release": "3413dee4-af20-4105-aa9a-91f3fe17da58",
+     "ab_tracks": 21
+    },
+    {
+     "strand": "choir",
+     "artist": "Two Steps From Hell",
+     "album": "Archangel",
+     "year": 2011,
+     "release": "9a04d4a1-6042-4ee3-a8ea-fe416cbf9b97",
+     "ab_tracks": 26
+    },
+    {
+     "strand": "choir",
+     "artist": "Thomas Bergersen",
+     "album": "Illusions",
+     "year": 2011,
+     "release": "4825cfda-91f1-45eb-bade-064f60ffafb7",
+     "ab_tracks": 19
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Two Steps From Hell",
+     "album": "SkyWorld",
+     "year": 2012,
+     "release": "dd5c4d02-02d4-4e2d-89fa-95df91dba446",
+     "ab_tracks": 22
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Two Steps From Hell",
+     "album": "Battlecry",
+     "year": 2015,
+     "release": "49eb94a3-e012-4e4d-93e4-55fa8979fd71",
+     "ab_tracks": 26
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Two Steps From Hell",
+     "album": "Vanquish",
+     "year": 2016,
+     "release": "66f6f114-09b7-464e-9e2f-f84f29dd4874",
+     "ab_tracks": 17
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Two Steps From Hell",
+     "album": "Unleashed",
+     "year": 2017,
+     "release": "8b37937b-2b83-4dab-8bfc-b82dc1e95634",
+     "ab_tracks": 56
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Audiomachine",
+     "album": "Chronicles",
+     "year": 2012,
+     "release": "c8201657-f376-4d96-86f0-70250b0e1dfa",
+     "ab_tracks": 28
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Audiomachine",
+     "album": "Awakenings",
+     "year": 2012,
+     "release": "e5469cc9-6171-42b8-a7bc-2c200ca6db76",
+     "ab_tracks": 27
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Audiomachine",
+     "album": "Tree of Life",
+     "year": 2013,
+     "release": "fa68add5-714d-4082-87eb-378371166e75",
+     "ab_tracks": 29
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Audiomachine",
+     "album": "Phenomena",
+     "year": 2013,
+     "release": "8bac7f67-c7e6-4b42-9f19-280a2adaead6",
+     "ab_tracks": 37
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Audiomachine",
+     "album": "Existence",
+     "year": 2013,
+     "release": "f60c1d37-a081-4793-8039-8902fd0635b3",
+     "ab_tracks": 20
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Audiomachine",
+     "album": "Decimus",
+     "year": 2015,
+     "release": "92cd1e1d-47c2-4796-ac18-8a7fba1063c3",
+     "ab_tracks": 16
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Audiomachine",
+     "album": "Exogenesis",
+     "year": 2018,
+     "release": "9b8341eb-dbb4-48a9-ae3d-d5cfb23905d5",
+     "ab_tracks": 20
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Audiomachine",
+     "album": "Volturnus",
+     "year": 2018,
+     "release": "03c36ab7-bcb6-4954-a8e5-9ac8f43b8cf1",
+     "ab_tracks": 24
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Audiomachine",
+     "album": "Ascendance",
+     "year": 2018,
+     "release": "3f4de60b-c89f-4e83-b3b4-9359e1c895db",
+     "ab_tracks": 16
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Audiomachine",
+     "album": "Chrome Over Brass",
+     "year": 2018,
+     "release": "4289d68e-70cf-4857-bac5-e10046871899",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Brand X Music",
+     "album": "Super X",
+     "year": 2018,
+     "release": "feeba046-dade-4384-a30d-afec2f3e0b21",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Brand X Music",
+     "album": "Kinetic",
+     "year": 2018,
+     "release": "4464c2a8-35f6-4a7b-9088-2a98ee9e3a69",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Really Slow Motion",
+     "album": "Undaunted",
+     "year": 2017,
+     "release": "e45f0136-d44e-4275-9cac-c1bb0c42525f",
+     "ab_tracks": 20
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Really Slow Motion",
+     "album": "Miraculum",
+     "year": 2018,
+     "release": "18cfbfc7-8cc8-470a-bc85-b362b9c24f1b",
+     "ab_tracks": 25
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Ivan Torrent",
+     "album": "Immortalys",
+     "year": 2017,
+     "release": "791d3977-26b5-41a7-aef5-18529cc967e5",
+     "ab_tracks": 18
+    },
+    {
+     "strand": "hybrid",
+     "artist": "Fired Earth Music",
+     "album": "Legends of Time",
+     "year": 2014,
+     "release": "49105e6e-6640-4931-909f-1fcb8de6803a",
+     "ab_tracks": 10
+    },
+    {
+     "strand": "newest",
+     "artist": "Two Steps From Hell",
+     "album": "Dragon",
+     "year": 2019,
+     "release": "7cf7d09d-04a3-4fb1-808b-62a268c5fb2e",
+     "ab_tracks": 19
+    },
+    {
+     "strand": "newest",
+     "artist": "Two Steps From Hell",
+     "album": "Orion",
+     "year": 2019,
+     "release": "44ee2381-4ad6-441a-8174-3022862518e0",
+     "ab_tracks": 14
+    },
+    {
+     "strand": "newest",
+     "artist": "Two Steps From Hell",
+     "album": "Daybreak",
+     "year": 2020,
+     "release": "5b4a2e2f-c202-43b2-aae7-72839e39de7c",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Two Steps From Hell",
+     "album": "Chaos Theory",
+     "year": 2020,
+     "release": "038f58f1-e869-401a-a719-a47568c97047",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Two Steps From Hell",
+     "album": "Insurgent",
+     "year": 2021,
+     "release": "5bc3b3d9-3d6a-4243-b54c-98008380fb19",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Audiomachine",
+     "album": "Banshee",
+     "year": 2019,
+     "release": "e488f7ee-97f2-4a16-a813-972188efa3bb",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Audiomachine",
+     "album": "Another Sky",
+     "year": 2020,
+     "release": "2adfe3de-900c-451c-9352-95769cf1b0f4",
+     "ab_tracks": 18
+    },
+    {
+     "strand": "newest",
+     "artist": "Audiomachine",
+     "album": "Promethium",
+     "year": 2021,
+     "release": "9bd05a65-c83c-4387-b10e-f4475a9bad3b",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Thomas Bergersen",
+     "album": "Seven",
+     "year": 2019,
+     "release": "cf4778e2-6795-4978-9400-9dffb37a20f1",
+     "ab_tracks": 7
+    },
+    {
+     "strand": "newest",
+     "artist": "Thomas Bergersen",
+     "album": "Humanity - Chapter I",
+     "year": 2020,
+     "release": "c60b15da-6824-41b5-9724-af691ebd5db0",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Thomas Bergersen",
+     "album": "Humanity - Chapter II",
+     "year": 2021,
+     "release": "d667e6d1-a3bd-418a-b422-0a04ecc39c07",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Thomas Bergersen",
+     "album": "Humanity - Chapter III",
+     "year": 2021,
+     "release": "02623ef8-8094-47de-99a6-372b7501092e",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Thomas Bergersen",
+     "album": "Humanity - Chapter IV",
+     "year": 2021,
+     "release": "585e3f46-f792-49ab-a480-8da57eb41d22",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Brand X Music",
+     "album": "Perspectives",
+     "year": 2019,
+     "release": "13e88c27-8965-4cc7-835c-2031f5030b8b",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Brand X Music",
+     "album": "Super X 2",
+     "year": 2019,
+     "release": "de17e56c-8522-44f5-9291-d760c5c56189",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Brand X Music",
+     "album": "Nemesis X",
+     "year": 2019,
+     "release": "91de5d1e-5568-49d4-82b0-0c972b65210b",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Brand X Music",
+     "album": "Dimensions",
+     "year": 2020,
+     "release": "e5f83245-5645-41f8-a37f-09e53607b54d",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Brand X Music",
+     "album": "Xpeditions",
+     "year": 2020,
+     "release": "1fda4107-41ae-4341-b1a6-098972aff92c",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Brand X Music",
+     "album": "Realms",
+     "year": 2021,
+     "release": "df9102ff-72d0-462f-8932-ce173f67f28f",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Really Slow Motion",
+     "album": "Paradox",
+     "year": 2020,
+     "release": "c6564477-b06c-4ef9-b28d-96fd7d236ec9",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Hidden Citizens",
+     "album": "Reawakenings, Vol. 2",
+     "year": 2019,
+     "release": "82af930c-bba1-478e-a114-b6d30e0d0bd8",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Hidden Citizens",
+     "album": "Adscendo",
+     "year": 2020,
+     "release": "ee397d2d-f2ca-435a-aaee-2f058269825f",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "newest",
+     "artist": "Hidden Citizens",
+     "album": "Propago",
+     "year": 2021,
+     "release": "c6c655fa-7f4d-4e53-8a6e-6e43adcfc836",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "sounddesign",
+     "artist": "Audiomachine",
+     "album": "Pulses: Palpitate",
+     "year": 2017,
+     "release": "053bce9b-6919-4636-a43f-fc81559d1487",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "sounddesign",
+     "artist": "Audiomachine",
+     "album": "Modern Tension: Cold Sweat",
+     "year": 2017,
+     "release": "bd3f047b-581e-4618-8d03-c23a57b4f48f",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "sounddesign",
+     "artist": "Audiomachine",
+     "album": "Percussive Mayhem: Anarchy",
+     "year": 2017,
+     "release": "461d3ae1-b616-40e6-bb14-5e51fc5d1d1b",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "sounddesign",
+     "artist": "Audiomachine",
+     "album": "Prototype: Source Code",
+     "year": 2018,
+     "release": "2e7f9b42-8be6-4d47-9c4f-a29cf52862f6",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "sounddesign",
+     "artist": "Audiomachine",
+     "album": "Mental Minefield",
+     "year": 2018,
+     "release": "865489f5-9881-4eab-8dee-69f0bf0e4245",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "sounddesign",
+     "artist": "Audiomachine",
+     "album": "Kill Process",
+     "year": 2018,
+     "release": "54772b1f-d69c-4d5e-8183-8d7e56a65c9f",
+     "ab_tracks": 14
+    },
+    {
+     "strand": "sounddesign",
+     "artist": "Audiomachine",
+     "album": "Prototype: Natural Selection",
+     "year": 2019,
+     "release": "1aaa56c5-6943-4405-b01d-048e5f870e08",
+     "ab_tracks": 20
+    },
+    {
+     "strand": "sounddesign",
+     "artist": "Brand X Music",
+     "album": "Deconstruct",
+     "year": 2018,
+     "release": "89f69293-e26c-447b-98c7-37aaece42e10",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "sounddesign",
+     "artist": "Brand X Music",
+     "album": "Unsettled",
+     "year": 2021,
+     "release": "ce3af862-7382-4100-9b8b-db3c83c7ddcc",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "film",
+     "artist": "Hans Zimmer",
+     "album": "Inception",
+     "year": 2010,
+     "release": "4b925986-3704-4138-9947-ea777c50c401",
+     "ab_tracks": 12
+    },
+    {
+     "strand": "film",
+     "artist": "Hans Zimmer",
+     "album": "The Dark Knight Rises",
+     "year": 2012,
+     "release": "0a51a4d1-8b0c-4ffe-adf1-9a8a69e0fe84",
+     "ab_tracks": 17
+    },
+    {
+     "strand": "film",
+     "artist": "Hans Zimmer",
+     "album": "Man of Steel",
+     "year": 2013,
+     "release": "1852099e-8913-4f87-8fef-eb17bdb14139",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "film",
+     "artist": "Hans Zimmer",
+     "album": "Interstellar",
+     "year": 2014,
+     "release": "57491821-1177-4819-8679-4fcdec13ec69",
+     "ab_tracks": 16
+    },
+    {
+     "strand": "film",
+     "artist": "Junkie XL",
+     "album": "Mad Max: Fury Road",
+     "year": 2015,
+     "release": "8b4e605f-ae0c-4f10-8f0d-f11c46fdeb82",
+     "ab_tracks": 17
+    },
+    {
+     "strand": "film",
+     "artist": "Hans Zimmer",
+     "album": "Batman v Superman",
+     "year": 2016,
+     "release": "e21398ce-0a0d-4c9c-a21a-d50334cb0a99",
+     "ab_tracks": 18
+    },
+    {
+     "strand": "film_pulse",
+     "artist": "Hans Zimmer",
+     "album": "Dunkirk",
+     "year": 2017,
+     "release": "7fea2458-b768-4827-9e2c-5da3a1f7df17",
+     "ab_tracks": 11
+    },
+    {
+     "strand": "film_pulse",
+     "artist": "Ludwig Göransson",
+     "album": "Tenet",
+     "year": 2020,
+     "release": "a997bc23-9a79-44cd-86b3-3f24b2a961d8",
+     "ab_tracks": 18
+    },
+    {
+     "strand": "film_pulse",
+     "artist": "Hans Zimmer",
+     "album": "Dune",
+     "year": 2021,
+     "release": "469f0459-e626-4a23-8554-9ee61ca0fb9b",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "film_pulse",
+     "artist": "Lorne Balfe",
+     "album": "Mission: Impossible - Fallout",
+     "year": 2018,
+     "release": "3209234c-5362-4f39-b59d-0fae6cf2c482",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "game",
+     "artist": "Bear McCreary",
+     "album": "God of War",
+     "year": 2018,
+     "release": "e0f8e3bf-c8f2-4003-93c8-b8bb1bde3462",
+     "ab_tracks": 21
+    },
+    {
+     "strand": "game",
+     "artist": "Jeremy Soule",
+     "album": "Skyrim",
+     "year": 2011,
+     "release": "352217ba-04aa-4e3a-a532-6b9aee6ab38d",
+     "ab_tracks": 53
+    },
+    {
+     "strand": "game",
+     "artist": "Martin O'Donnell",
+     "album": "Halo 3",
+     "year": 2007,
+     "release": "f1928150-b2cb-4199-859d-909a2fdc4269",
+     "ab_tracks": 30
+    },
+    {
+     "strand": "game",
+     "artist": "Inon Zur",
+     "album": "Dragon Age: Origins",
+     "year": 2009,
+     "release": "11834436-5c46-35b2-8000-9c01de316672",
+     "ab_tracks": 18
+    },
+    {
+     "strand": "game",
+     "artist": "Hans Zimmer",
+     "album": "Call of Duty: Modern Warfare 2",
+     "year": 2009,
+     "release": "55791712-082e-4a8a-9637-570f453bda9f",
+     "ab_tracks": 1
+    },
+    {
+     "strand": "game",
+     "artist": "Johan Söderqvist",
+     "album": "Battlefield 1",
+     "year": 2016,
+     "release": "0a1fc8bd-0730-440a-80de-b920a335a82f",
+     "ab_tracks": 25
+    },
+    {
+     "strand": "game",
+     "artist": "Jesper Kyd",
+     "album": "Assassin's Creed II",
+     "year": 2009,
+     "release": "b82a5599-aabb-36a6-88a4-6ea32af3500f",
+     "ab_tracks": 35
+    },
+    {
+     "strand": "pop",
+     "artist": "Thomas Bergersen",
+     "album": "Sun",
+     "year": 2014,
+     "release": "43689e74-6868-4901-907c-b7f01d1750d3",
+     "ab_tracks": 16
+    },
+    {
+     "strand": "pop",
+     "artist": "Les Friction",
+     "album": "Les Friction",
+     "year": 2012,
+     "release": "4aad4fc2-43ea-440e-8743-5aabacb6bcaa",
+     "ab_tracks": 1
+    },
+    {
+     "strand": "pop",
+     "artist": "Immediate Music",
+     "album": "Trailer Rock Series: Pop Rock",
+     "year": 2011,
+     "release": "edc7dd25-b3f5-4702-b867-993603c863e0",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "pop",
+     "artist": "Immediate Music",
+     "album": "Trailer Rock Series: Hard Rock",
+     "year": 2011,
+     "release": "d7a17190-8e7f-4e70-a6da-dc10c727c1d5",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "pop",
+     "artist": "Immediate Music",
+     "album": "Trailer Rock Series: Post Rock",
+     "year": 2011,
+     "release": "a5669ec9-e292-4fe0-a7f9-7e82f6a988ec",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "pop",
+     "artist": "Hidden Citizens",
+     "album": "Celestine",
+     "year": 2018,
+     "release": "9276e5e4-a990-450c-b9e3-0a898ad128b8",
+     "ab_tracks": 3
+    },
+    {
+     "strand": "pop",
+     "artist": "Hidden Citizens",
+     "album": "Obsidian",
+     "year": 2018,
+     "release": "6cbbb327-ab69-4962-9a00-b000ebbbfd75",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "pop",
+     "artist": "Hidden Citizens",
+     "album": "Revivals, Vol. 2 (Epic Trailer Version)",
+     "year": 2020,
+     "release": "9e172e43-da1f-42a3-a4a8-6253707e9063",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "pop",
+     "artist": "Brand X Music",
+     "album": "Cinematic Indie Volume 1",
+     "year": 2018,
+     "release": "7cc328c9-d7d1-4085-b881-9898a29e0553",
+     "ab_tracks": 0
+    },
+    {
+     "strand": "sports",
+     "artist": "Immediate Music",
+     "album": "Epic Olympic Dreams",
+     "year": 2012,
+     "release": "b12d8b67-659e-4a44-abe1-7953d3da7b81",
+     "ab_tracks": 20
+    }
+   ]
+  }
+ },
+ "targets": {
+  "cinematic_2012": {
+   "albums": "cinematic",
+   "strands": [
+    "hybrid",
+    "newest"
+   ],
+   "min_length": 60
+  },
+  "cinematic_2019": {
+   "albums": "cinematic",
+   "strands": [
+    "newest"
+   ],
+   "min_length": 60
+  },
+  "cinematic_choir": {
+   "albums": "cinematic",
+   "strands": [
+    "choir"
+   ],
+   "min_length": 60
+  },
+  "cinematic_film": {
+   "albums": "cinematic",
+   "strands": [
+    "film",
+    "film_pulse"
+   ],
+   "min_length": 60
+  }
+ }
+}
