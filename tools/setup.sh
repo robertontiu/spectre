@@ -7,6 +7,11 @@
 #   3. tools/engine_assets.py pull          (an optional private mirror, only if its environment variables are
 #                                            set: SPECTRE_MIRROR_BUCKET and SPECTRE_S3_*; fills in what is still missing)
 #   4. tools/engine_assets.py status        (exits non-zero while a required resource is missing)
+# `tools/setup.sh --required` installs only the required resources (about 2.1 GB: the voicebanks, the vocoder and
+# Whisper small; enough to produce tracks). Without it every resource is installed, the optional references and
+# Whisper medium included (about 5 GB).
+# Python: run it inside a virtual environment (python3 -m venv .venv && . .venv/bin/activate) unless this machine's
+# own Python is meant to carry the packages; outside one, pip installs into the system Python.
 # In a Claude Code cloud environment the variables are only set once the session runs (not in the
 # environment's setup script), so run this at the start of the session; it skips what is already there.
 # If a required resource is still missing at the end: search for its official source (search_hint in the
@@ -15,13 +20,24 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+ONLY=""
+if [ "${1:-}" = "--required" ]; then ONLY="--required"; fi
+
 if ! command -v ffmpeg >/dev/null; then
-  (apt-get update -qq && apt-get install -y -qq ffmpeg) || echo "setup: install ffmpeg by hand (mp3 export)"
+  if command -v brew >/dev/null; then brew install ffmpeg || true
+  elif command -v apt-get >/dev/null; then (apt-get update -qq && apt-get install -y -qq ffmpeg) || true; fi
+  command -v ffmpeg >/dev/null || echo "setup: install ffmpeg by hand (mp3 export)"
 fi
 
-pip install -q --break-system-packages -r requirements.txt
+PIPFLAGS="-q"
+if [ -z "${VIRTUAL_ENV:-}" ]; then PIPFLAGS="-q --break-system-packages"; fi
+python3 -m pip install $PIPFLAGS -r requirements.txt
+# pyworld is for measurement scripts only (examples/vocals/svs/) and builds from source where no wheel exists
+# (it needs a C++ compiler); a failure here never blocks the engine.
+python3 -m pip install $PIPFLAGS "pyworld>=0.3.4" \
+  || echo "setup: pyworld did not install (needs a C++ compiler); only examples/vocals/svs/ measurements use it"
 
-python3 tools/engine_assets.py install
+python3 tools/engine_assets.py install $ONLY
 
 if [ -n "${SPECTRE_MIRROR_BUCKET:-}" ] && [ -n "${SPECTRE_S3_ACCESS_KEY_ID:-}" ]; then
   python3 tools/engine_assets.py pull || echo "setup: the mirror did not answer"

@@ -15,3 +15,6 @@ player/tracks/*.mp3
 
 # voice model caches live outside the repo (~/.cache/spectre); keep any local copy out too
 .cache/
+
+# a local Python virtual environment (docs/agents/engine-setup.md)
+.venv/
