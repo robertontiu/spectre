@@ -302,6 +302,13 @@ def violin_line(p, notes, total_n):
             vb[s:e] = direction * v
             contact[s:s + off] = 1
             slope[s:e] = 5 - 4 * min(P + 0.15, 0.95)
+            sps = p.get("sp_stop_ms")  # opt-in (strings_section basses): the bow comes back to rest on the string
+            if sps:
+                a = s + int(float(sps) / 1000 * SR)
+                b = nxt if nxt is not None else min(n_all, a + int(0.15 * SR))
+                if a < b:
+                    contact[a:b] = 1
+                    vb[a:b] = 0
             prev_end = e
             continue
         # a long note breathes (a small swell), a short one decays a little after the attack

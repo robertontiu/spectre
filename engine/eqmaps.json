@@ -168,5 +168,22 @@
       "vocal": {"hp": [100, 150], "cut": [[200, 400]], "own": [[2000, 5000]]},
       "return": {"hp": [200, 500], "lp": [6000, 12000], "cut": [[300, 600]]}
     }
+  },
+  "cinematic": {
+    "source": "docs/CINEMATIC_HYBRID.md 'Layering and EQ carving': epicomposer 2026 (bass band 20-80 Hz, brass vs percussion, high-pass only where needed), docs/voice/MIXING.md (choir), the chamberscore, dubstep and hip-hop maps for the orchestral, sub and drum rows; points marked [H] in the doc; light moves, orchestration first",
+    "tolerance_db": 8,
+    "core": ["sub", "low-strings", "strings", "brass|lead", "choir"],
+    "roles": {
+      "sub": {"hp": [20, 25], "lp": [100, 120], "own": [[30, 60]]},
+      "low-strings": {"hp": [30, 40], "cut": [[200, 400]], "own": [[60, 200]]},
+      "strings": {"hp": [80, 150], "cut": [[1000, 4000]], "own": [[8000, 16000]]},
+      "brass": {"hp": [60, 80], "cut": [[250, 500]], "own": [[500, 2000]]},
+      "lead": {"hp": [150, 250], "cut": [[400, 800]], "own": [[1500, 4000]]},
+      "choir": {"hp": [100, 200], "cut": [[200, 400]], "own": [[1000, 3000], [8000, 16000]]},
+      "kick": {"hp": [25, 35], "cut": [[250, 500]], "own": [[50, 150], [2000, 5000]]},
+      "snare": {"hp": [60, 100], "cut": [[300, 600]], "own": [[1000, 5000]]},
+      "pad": {"hp": [150, 300], "cut": [[200, 500]], "own": [[1000, 3000]]},
+      "return": {"hp": [200, 300], "lp": [6000, 10000], "cut": [[300, 600]]}
+    }
   }
 }

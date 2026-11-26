@@ -45,6 +45,10 @@ engine/
                   values, `/r=` tokens); the formant (vowel) filter; numba
   bassfx.py       bass-music fx: multiband container, fold, asym, hardclip, comb, flanger, resonator, vocoder,
                   autofilter, autopan, vowel; gated reverb for returns
+  orchestra.py    the cinematic orchestra and trailer sounds: `brass` and `woodwind` (measured additive model, data in
+                  orchestra_winds.json from examples/production/cinematic/fit_winds.py), `timpani`, `bassdrum`, `taiko`,
+                  `suscymbal` (fitted by fit_drums.py), `braam`, `impact`, `whoosh`, `shepard`, `vox2choir`, `accordion`;
+                  the double-bass section is in chamber.py, the `hall` return in spacefx.py
   eqmaps.json     the genre EQ maps as data (per role: high-pass, cut and owned regions; core roles), from the genre docs
   master.py       the release mastering stage (see docs/MASTERING.md)
   genres.json     genre configurations (target curve, loudness and mastering settings, length, form, tempo, sources);

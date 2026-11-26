@@ -1892,3 +1892,31 @@ def _bass(kind):
 
 
 TONAL.update(fmgrowl=_bass("fmgrowl"), wavetable=_bass("wavetable"), sampler=_bass("sampler"))
+
+
+
+# ---------------------------------------------------------------- orchestra and trailer
+# Additive block (2026-11-26, docs/CINEMATIC_HYBRID.md "Engine mapping"; code in engine/orchestra.py, docs/MANUAL.md
+# "Orchestra and trailer"). Used only when a track names them; they draw from generators seeded per note.
+def _orch(kind):
+    def f(*a):
+        import orchestra as _o
+        return getattr(_o, kind)(*a)
+    f.__name__ = kind
+    return f
+
+
+_mono_voice_acid = mono_voice
+
+
+def mono_voice(kind, p, notes, total_n):  # noqa: F811  (extends the chain with the wordless choir)
+    if kind == "vox2choir":
+        import orchestra as _o
+        return _o.vox2choir(p, notes, total_n)
+    return _mono_voice_acid(kind, p, notes, total_n)
+
+
+MONO.add("vox2choir")
+TONAL.update({k: _orch(k) for k in ("brass", "woodwind", "timpani", "suscymbal", "braam", "whoosh", "shepard",
+                                    "accordion")})
+DRUMS.update({k: _orch(k) for k in ("bassdrum", "taiko", "impact")})

@@ -202,12 +202,20 @@ CELLO_BODY = [-19.3, -11.6, -3.5, 0.2, 2.1, 3.4, 4.3, 6.6, 10.2, 11.5, 9.3, 4.3,
 VIOLA_BODY = [-31.1, -31.1, -31.1, -31.1, -31.1, -22.7, -26.5, -15.3, -6.1, -1.4, 0.7, 2.8, 3.3, 1.9, 0.3, 2.2, 6.9,
               10.6, 10.2, 7.4, 6.9, 7.9, 6.0, -1.3, -6.8, -2.2, 4.5, 9.2, 10.4, 8.0, 5.4, 4.1, 4.3, 3.4, 0.9, -1.3, 0.8,
               7.0, 10.4, 6.5, -1.6, -3.5, -1.1, 4.7, 8.9, 10.2, 9.7, 9.6, 9.9]
+# The double bass (2026-11-26, the cinematic strand), by the same method: 13 Iowa MIS notes (arco ff, E1-D3), three
+# closed-loop passes; the model sits 0.40 dB from the recordings on average (1/6-octave smoothed, 100 Hz-8 kHz).
+# examples/production/cinematic/fit_bass.py. The bare waveguide is thin under 200 Hz next to a bass, hence the
+# large low-end values. Pizzicato T60 hand-tuned [H] (no Iowa bass pizz in hand): 3 s at 80 Hz.
+BASS_BODY = [27.7, 27.5, 26.9, 26.1, 26.9, 28.2, 25.9, 21.3, 20.3, 25.7, 23.9, 10.2, 3.2, 2.5, 9.1, 16.0, 15.7, 15.9, 8.7,
+             3.8, 2.6, 5.3, 9.2, -0.6, 0.0, 13.5, 11.4, 6.7, 4.8, 1.8, 2.9, -3.1, -8.1, -4.1, -9.4, -16.1, -11.8, -12.0,
+             -16.5, -13.9, -10.3, -9.0, -4.2, -4.2, -4.2, -4.2, -4.2, -4.2, -4.2]
 STRING_KIND = {
     # body table, lowest mode of the modal layer, DC-block / radiation high-pass, top roll-off, pizzicato T60 =
     # a * (f_ref / f)^b s (fitted to Iowa pizz ff: cello C2 3.0, G2 3.1, D3 1.8, A3 2.2, E4 1.4 s; viola C3 4.5,
     # G3 1.25, D4 1.05, A4 0.44, E5 1.08 s), lowest note
     "cello": dict(table=CELLO_BODY, lo=60.0, hpf=40.0, lpf=11000.0, pz=(2.2, 150.0, 0.5), low=36),
     "viola": dict(table=VIOLA_BODY, lo=110.0, hpf=90.0, lpf=13000.0, pz=(1.1, 300.0, 0.7), low=48),
+    "bass": dict(table=BASS_BODY, lo=40.0, hpf=30.0, lpf=9000.0, pz=(3.0, 80.0, 0.5), low=28),
 }
 # classical vibrato, measured on Versilian's solo violin (VSCO-2-CE "Arco Vib", 6 notes: 4.3-7.1 Hz, median 5.2;
 # +-5 to +-17 cents) and string sections (16 notes: 5.4 Hz, +-10 cents as heard through the section)
@@ -262,7 +270,7 @@ def string_body_ir(kind, variant=0):
     if key in _BODIES:
         return _BODIES[key]
     spec = STRING_KIND[kind]
-    rng = np.random.default_rng(700 + 31 * int(variant) + (0 if kind == "cello" else 5000))
+    rng = np.random.default_rng(700 + 31 * int(variant) + {"cello": 0, "viola": 5000}.get(kind, 9000))
     n = int(0.37 * SR)
     t = _tt(n)
     ir = np.zeros(n)
@@ -347,7 +355,15 @@ def string_line(kind, p, notes, total_n):
 # a section: several players per line, each its own string, body, intonation, timing and vibrato, spread across the
 # stage. The spread values are measured on Versilian's sections (VSCO-2-CE susvib, 18 notes; see docs/MANUAL.md).
 SECTION = {"violins": dict(players=8, body="violin", trim=0.0), "violas": dict(players=6, body="viola", trim=-3.0),
-           "celli": dict(players=5, body="cello", trim=-4.0), "cellos": dict(players=5, body="cello", trim=-4.0)}
+           "celli": dict(players=5, body="cello", trim=-4.0), "cellos": dict(players=5, body="cello", trim=-4.0),
+           "basses": dict(players=4, body="bass", trim=-12.75, sp_stop_ms=750)}
+# basses (2026-11-26): write the sounding pitch (E1 = 41 Hz, the open E string); the trim puts the section at the
+# celli's RMS an octave up (measured at E1-A2: the fitted body leaves the basses 8.75 dB hotter) [H: the balance].
+# A spiccato note is damped by the bow `sp_stop_ms` after its onset (unless the next note comes first): the free
+# waveguide string at 41-110 Hz rang over 1.5 s to -20 dB; VSCO-2-CE's solo contrabass spiccato falls 20 dB in 270-720
+# ms after its peak (median 650; 3 notes), the model at 750 ms in 455-645 (examples/production/cinematic/README.md).
+# Fast ostinati articulate like the recordings: 16ths at 100-140 bpm measure 5-8 dB of note-to-note contrast against
+# 1-6 dB for the recorded notes overlap-added at the same rate.
 
 
 def strings_section(p, notes, total_n):
@@ -363,6 +379,8 @@ def strings_section(p, notes, total_n):
     base = dict(CLASSICAL)
     base.update({k: v for k, v in p.items() if k not in ("section", "players", "spread_ms", "detune_cents", "width",
                                                            "type", "bow_env")})
+    if "sp_stop_ms" in spec:  # the basses: spiccato notes damped by the bow (fitted, see SECTION)
+        base.setdefault("sp_stop_ms", spec["sp_stop_ms"])
     rng = np.random.default_rng(9000 + seed)
     # chords: group notes that start together; player j plays the (j mod k)-th note of a k-note chord (divisi)
     notes = sorted(notes, key=lambda nt: (nt["t0"], nt["f"]))

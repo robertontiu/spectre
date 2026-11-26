@@ -42,6 +42,7 @@ Settings come from a **genre configuration** (`engine/genres.json`), chosen with
 | `latinpop` | `latinpop_ref` (24 albums); by strand `latinpop_dark` (bolero, acoustic), `latinpop_bright` (bachata), `latinpop_urbano` (reggaetón, romantic dembow, Latin trap), `latinpop_mexicano` (banda, norteño; tumbados extrapolated, thin); per-strand loudness -12.5 to -10 (docs/LATIN_POP.md 'Granularity' D) | -11 | -1 | 0.6 | 0.3 | `rock` (014) | docs/LATIN_POP.md; genres.json `master_by_strand` |
 | `chamberscore` | `chamberscore_ref` (30 albums; 27 more score albums agree with it), **`dynamics` keep** (since 2026-11-26: "Dynamics" below); piano strand: `--strand piano` (`chamberscore_piano`, -16.5, eq 0.3, mono below 60) | -15 | -1 | 0.4 | 0.2 | `rock` (015) | docs/CHAMBER_SCORE.md, "Granularity"; genres.json `master_by_strand` |
 | `dubstep` | `dubstep_2015` (catalogue, 927 tracks); `dubstep_2018`, `dubstep_2005`, `dubstep_2011`, `dubstep_riddim`, `dubstep_melodic` by era and strand | -8 (untested at research; see the engine test in docs/DUBSTEP.md "Engine mapping"); by strand -7 (riddim, tearout), -8.5 (melodic, colour bass), -10 (deep / 140) | -1 | 0.7 | 0.4 | none | docs/DUBSTEP.md; mono below 150 Hz; genres.json `master_by_strand` |
+| `cinematic` | `cinematic_2012` (21 trailer-house albums 2012-2021, 454 tracks); `cinematic_2019` (thin), `cinematic_choir`, `cinematic_film` by era and strand | -12 (untested); by strand -12 (newest, choir), -14.5 (score, `dynamics` keep), -11.5 (sound design), -10.5 (pop anthem), -12.5 (a long quiet first act) | -1 | 0.6 | 0.3 | none | docs/CINEMATIC_HYBRID.md; mono below 120 Hz (80 for the score strand); genres.json `master_by_strand` |
 
 Each genre's provenance is in `engine/genres.json` (`target_source`, `target_era`, `target_tracks`, `target_method`, `target_date`, `target_change`), the curves with their spreads in `engine/targets.json`, and every master report carries `target_provenance`. The settings the released tracks were mastered with stay in `master_published`; `master --published` uses them, and the master prints a note whenever a genre's default has changed, so nothing changes silently. Re-mastering a released track with its era target is a separate step, track by track, with the owner's approval (docs/PRODUCTION.md, "Remixing and remastering"). `max_low_boost_db` (optional, `caroling`: 0) caps the tonal EQ's boosts below 200 Hz; every other setting and the +2 dB cap on top-end boosts are as before.
 
@@ -296,6 +297,39 @@ Hip hop by era and strand (docs/HIPHOP.md "Granularity" C, E) and pop rock by st
 
 16 kHz rests on the smoothness term wherever fewer than 20 files are lossless (the Romanian fanfare and Transylvanian sets, the Ukrainian and Latvian sets, `latinpop_mexicano`); `boombap_golden` is 80% lossy files, whose top is 1.5-3 dB darker at 6.4-12 kHz than its 51 lossless files', so its top is uncertain by that much. `trap_2015` is within 1-1.5 dB of `hiphop_2015` (optional, not a default). The fanfare set is one band; the Transylvanian set is a proxy (Hungarian revival bands); period recordings of urban lăutari (56 tracks) were measured and rejected as a target (band-limited). Ukrainian electro-folk (Go_A, Onuka; n 23) reads within 3.5 dB of `hiphop_2015` and has no target of its own. Drill and every 2022-2026 strand: not measured.
 
+Cinematic hybrid (2026-11-26, docs/CINEMATIC_HYBRID.md "Catalogue measurements"):
+
+| Hz | `cinematic_2012` | `cinematic_2019` | `cinematic_choir` | `cinematic_film` |
+|---|---|---|---|---|
+| 31.5 | +0.5 | +2 | -1 | +9 |
+| 40 | +2 | +2 | +0.5 | +8 |
+| 50 | +3 | +2.5 | +2 | +7.5 |
+| 63 | +3.5 | +2.5 | +3 | +7 |
+| 80 | +4 | +3 | +3.5 | +6.5 |
+| 100 | +3.5 | +2.5 | +3.5 | +6.5 |
+| 125 | +2.5 | +2.5 | +2.5 | +6 |
+| 160 | +1.5 | +1.5 | +1.5 | +5.5 |
+| 200 | +1 | +1 | +1 | +5 |
+| 250 | +1 | +1.5 | +1 | +4.5 |
+| 315 | +1.5 | +2.5 | +1.5 | +4.5 |
+| 400 | +2 | +2.5 | +2 | +4.5 |
+| 500 | +2 | +2 | +2 | +3.5 |
+| 630 | +1.5 | +1 | +2 | +2.5 |
+| 800 | +1 | +1 | +1.5 | +1.5 |
+| 1000 | 0 | 0 | 0 | 0 |
+| 1250 | -1.5 | -1.5 | -1.5 | -1.5 |
+| 1600 | -2.5 | -2 | -2 | -2.5 |
+| 2000 | -3 | -2.5 | -3 | -3.5 |
+| 2500 | -3.5 | -3.5 | -3.5 | -5 |
+| 3150 | -5.5 | -5 | -5.5 | -7 |
+| 4000 | -8 | -7.5 | -7.5 | -10 |
+| 5000 | -10 | -10 | -10 | -13.5 |
+| 6300 | -12 | -12.5 | -11.5 | -16.5 |
+| 8000 | -14 | -15.5 | -13.5 | -19.5 |
+| 10000 | -17 | -19 | -15.5 | -22.5 |
+| 12500 | -20 | -22.5 | -18.5 | -26 |
+| 16000 | -24 | -26.5 | -21 | -30.5 |
+
 | Target | Source (provenance) | Era | n | Est. loudness, median (middle half) | Against the curve it replaces (both laid over a mix at 500 Hz-2 kHz) |
 |---|---|---|---|---|---|
 | `trance_2015` | MusicBrainz tag `trance`, first release 2015-2021, up to 300 per year | 2015-2021 | 558 | -10.7 (-12.0 to -9.6) | `trance`: +8 to +12 dB at 31.5-63 Hz, -2 to -5 dB at 100-315 Hz, +2 to +7 dB at 8-16 kHz |
@@ -315,6 +349,10 @@ Hip hop by era and strand (docs/HIPHOP.md "Granularity" C, E) and pop rock by st
 | `dubstep_riddim` | tag `riddim`, 2010-2021, up to 200 per year | 2010-2021 | 81 | -7.6 (-8.8 to -6.3) | `dubstep_2015`: +3.5 at 31.5 Hz, -2 dB at 63-100 Hz, -1.5 to -2 at 250-500 Hz, +3.5 to +5.5 dB at 5-16 kHz (thin: ±1 dB) |
 | `dubstep_melodic` | tag `melodic dubstep`, 2010-2021 | 2010-2021 | 237 | -9.3 (-10.6 to -8.1) | `dubstep_2015`: -2.5 to -3 dB at 31.5-63 Hz, -1 dB at 250-500 Hz, +0.5 to +1.5 dB at 8-16 kHz |
 | `dubstep_brostep` (installed; for era use `dubstep_2011`) | tag `brostep`, 2010-2021 | 2010-2021 | 605 | -8.7 (-10.3 to -7.4) | `dubstep_2015`: -1 dB at 80-125 Hz, +2 to +3.5 dB at 3-10 kHz |
+| `cinematic_2012` | 21 MusicBrainz releases of trailer houses (Two Steps From Hell, Audiomachine, Really Slow Motion, Ivan Torrent, Fired Earth Music, Thomas Bergersen), 2012-2021 | 2012-2021 | 454 | -12.3 (-13.5 to -10.8) | `rock_2015`: within 2.3 dB below 2 kHz, 4-6 dB too bright at 5-15 kHz; `chamberscore_ref`: 5-7 dB too dark at 5-15 kHz, 6.5 dB short at 32-97 Hz; `trance_2015`: 7-13 dB too bright on top (`refcurve.py check`) |
+| `cinematic_2019` | the 2019-2021 albums of the same houses with data (Two Steps From Hell *Dragon*, *Orion*; Audiomachine *Another Sky*; Bergersen *Seven*); **thin** | 2019-2021 | 58 | -11.8 (-12.6 to -10.8) | `cinematic_2012`: within 2.3 dB (1.5-2.3 dB darker at 8-15.5 kHz); 2022-2026 extrapolated |
+| `cinematic_choir` | 14 epic-choir era albums with data (E.S. Posthumus, Immediate Music, X-Ray Dog, Globus, Two Steps From Hell to *Archangel*, Bergersen *Illusions*) | 2001-2011 | 273 | -12.1 (-13.1 to -11.2) | `cinematic_2012`: within 1.5 dB (mean 0.4) |
+| `cinematic_film` | 7 hybrid film-score albums (*Inception*, *The Dark Knight Rises*, *Interstellar*, *Mad Max: Fury Road*, *Batman v Superman*, *Dunkirk*, *Tenet*) | 2010-2021 | 108 | -15.2 (-18.7 to -13.5) | `cinematic_2012`: +3 to +8.5 dB under 250 Hz, -5 to -6.5 dB above 8 kHz; `chamberscore_ref`: within 1.6 dB on average, up to 10 dB apart at the extremes |
 | `caroling_choir` | 23 choir albums of docs/CAROLING.md "Granularity" (King's, St John's, Cambridge Singers, Tenebrae, VOCES8, Tallis Scholars; Chanticleer, Robert Shaw Chorale, Tabernacle Choir) | 1986-2012 | 106 | -22.3 (-24.3 to -19.7) | `caroling_ref`: -13.5 to -18 dB at 50-100 Hz, -7 to -9.5 dB at 4-12.5 kHz; strand choir (and brass) at -18 LUFS |
 | `caroling_acappella` | 8 a cappella Christmas albums (Pentatonix, Straight No Chaser, Take 6) | 1991-2018 | 87 | -12.5 (-14.4 to -10.2) | `caroling_ref`: +6.5 to +7.5 dB at 63-125 Hz, +0.5 to +2 dB at 2-3.15 kHz, +3 to +13 dB from 4 kHz up |
 | `chamberscore_piano` | 13 felt / close-miked neo-classical piano albums (docs/CHAMBER_SCORE.md "Granularity" F) | 2010-2019 | 150 | -17.0 (-18.6 to -14.6) | `chamberscore_ref`: -12 to -13.5 dB at 4-12.5 kHz, -5.5 to -11 dB at 2-3.15 kHz, +4 to +5.5 dB at 125-400 Hz; spread 12-15 dB at 3-6 kHz (a guard: `eq` 0.3) |
@@ -335,7 +373,7 @@ Hip hop by era and strand (docs/HIPHOP.md "Granularity" C, E) and pop rock by st
 
 **What they ask of a mix.** In trance, hip hop and pop rock: the kick-and-sub band about 5-9 dB over 1 kHz at 50-80 Hz (where the older curves had their hump at 100-125 Hz), less 100-300 Hz, and a top 2-7 dB brighter at 8-16 kHz. Session 007's kick fundamental was carved by 5-11 dB to satisfy the old `trance` curve (docs/TRANCE.md C); with `trance_2015` that carving is no longer asked for. In the acoustic genres the top is far darker than the borrowed `rock` curve (caroling and chamber score -15 to -25 dB at 8-12.5 kHz) and the low mids leaner. **Unchanged rules:** the master boosts the top by at most +2 dB from 5 kHz up, so a brighter target must be met by the sounds (tonal content: saw harmonics, air layers, metallic hats), not by lifting synthesized noise (see "Top end"); the -8/+4 dB limits per band stay.
 
-**Caveats.** Catalogue data are user-submitted files (12-51% lossless per set), mono, coarse (Bark bands) and end in 2021-2022: nothing here measures 2023-2026. Tags are broad (`trance` spans uplifting, progressive, psy and vocal; `hip hop` mixes boom-bap revival and trap). The reference-album sets are small (66-103 tracks for joc, caroling and the Latin strands) and wide (the middle half of the caroling albums spans 15-18 dB at the low end and on top; chamber score 9-21 dB above 4 kHz), which is why caroling, joc and chamber score keep a light `eq` (0.3-0.4) and caroling gets no low-end boosts at all. 31.5-40 Hz rest on one Bark band and the smoothness term (±3 dB); 16 kHz on the lossless files or, where fewer than 20 are lossless (joc, caroling, the two Latin strands), on the smoothness term (±2-4 dB). The caroling strands differ more from each other than any other genre's (20-25 dB at 50-100 Hz between choir and a cappella), which is why `caroling_ref` had its 15-18 dB spread; dynamics per strand rest on Essentia's dynamic_complexity, a loose proxy for LRA (r 0.44 on Spectre's masters). The granularity sets (2026-11-25) share every limit above and add their own: several are thin (`lv_folk_nometal` 26 tracks, `ua_dakhabrakha` 48, `ro_transylvania_revival` 69, `latinpop_mexicano` 75) or one act; AcousticBrainz stops in 2022, so no 2022-2026 strand is measured; and no subdivision of any genre has true-peak, PLR, LRA or width data anywhere (open or published).
+**Caveats.** Catalogue data are user-submitted files (12-51% lossless per set), mono, coarse (Bark bands) and end in 2021-2022: nothing here measures 2023-2026. Tags are broad (`trance` spans uplifting, progressive, psy and vocal; `hip hop` mixes boom-bap revival and trap). The reference-album sets are small (66-103 tracks for joc, caroling and the Latin strands) and wide (the middle half of the caroling albums spans 15-18 dB at the low end and on top; chamber score 9-21 dB above 4 kHz), which is why caroling, joc and chamber score keep a light `eq` (0.3-0.4) and caroling gets no low-end boosts at all. 31.5-40 Hz rest on one Bark band and the smoothness term (±3 dB); 16 kHz on the lossless files or, where fewer than 20 are lossless (joc, caroling, the two Latin strands), on the smoothness term (±2-4 dB). The caroling strands differ more from each other than any other genre's (20-25 dB at 50-100 Hz between choir and a cappella), which is why `caroling_ref` had its 15-18 dB spread; dynamics per strand rest on Essentia's dynamic_complexity, a loose proxy for LRA (r 0.44 on Spectre's masters). The granularity sets (2026-11-25) share every limit above and add their own: several are thin (`lv_folk_nometal` 26 tracks, `ua_dakhabrakha` 48, `ro_transylvania_revival` 69, `latinpop_mexicano` 75) or one act; AcousticBrainz stops in 2022, so no 2022-2026 strand is measured; and no subdivision of any genre has true-peak, PLR, LRA or width data anywhere (open or published). The cinematic sets are album lists of trailer houses whose library albums often have no AcousticBrainz data (Brand X Music, most Hidden Citizens, the *Humanity* chapters, all 2020-2021 Two Steps From Hell albums): the 2019-2021 curve rests on four albums; the sound-design (34 tracks) and pop-anthem (20) sets are lossy-only and are not targets.
 
 ### Test masters with the measured targets (example projects, 2026-11-24)
 | Project | Command | LUFS | dBTP | PLR | Width (S-M) | EQ at its limit | Diagnosis |

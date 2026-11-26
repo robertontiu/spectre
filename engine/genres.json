@@ -876,5 +876,99 @@
       "mono_below 150 (inside the sourced 150-180 Hz side cut)"
     ],
     "sources": "docs/DUBSTEP.md 'Configuration', 'Catalogue measurements' and 'Mastering per subdivision' (Mixgraph dubstep BPM https://www.mixgraph.io/bpm-for/dubstep ; Mixgraph loudness by genre https://www.mixgraph.io/tools/lufs-meter ; catalogue lengths, tempo, loudness and curves by Spectre from MusicBrainz + AcousticBrainz, 2026-11-25; EDMProd, Cymatics, Futureproof, Infekt, iZotope/Skrillex 2011 for form, drums and mixing)"
+  },
+  "cinematic": {
+    "name": "Cinematic hybrid / epic (trailer-style orchestral-electronic music), modern era (2012-2026)",
+    "doc": "docs/CINEMATIC_HYBRID.md",
+    "status": "researched 2026-11-26 (queue item 13); targets measured from the open catalogue (album lists by strand and era); album dynamics from the Dynamic Range Database; engine gaps 1-7 built 2026-11-26 (brass, orchestral and epic percussion, basses, trailer effects, hall, vox2choir, woodwinds; docs/MANUAL.md 'Orchestra and trailer'); loudness untested in the engine",
+    "master": {
+      "target": "cinematic_2012",
+      "lufs": -12.0,
+      "tp": -1.0,
+      "eq": 0.6,
+      "translate": 0.3,
+      "mono_below": 120.0,
+      "dynamics": "normal"
+    },
+    "target_source": "21 MusicBrainz releases of trailer houses 2012-2021 (Two Steps From Hell, Audiomachine, Really Slow Motion, Ivan Torrent, Fired Earth Music, Thomas Bergersen); AcousticBrainz low-level Bark bands (CC0)",
+    "target_era": "2012-2021",
+    "target_tracks": 454,
+    "target_method": "catalogue (tools/refcurve.py; docs/MASTERING.md 'Era targets'); --min-length 60",
+    "target_date": "2026-11-26",
+    "era_targets": {
+      "2012-2021, hybrid trailer albums (default)": "cinematic_2012",
+      "2019-2026, the newest sound (measured 2019-2021, 58 tracks: thin; 1.5-2.3 dB darker above 8 kHz; 2022-2026 extrapolated)": "cinematic_2019",
+      "2001-2011, the epic-choir era (273 tracks; within 1.5 dB of cinematic_2012)": "cinematic_choir",
+      "note": "the master uses `target`; a brief aimed at an era or strand passes `--strand` (docs/CINEMATIC_HYBRID.md 'Mastering per subdivision')"
+    },
+    "master_by_strand": {
+      "note": "trailer-house albums are heavily limited in every era (album DR 4-6, 2007-2026; Dynamic Range Database) at whole-track est. -12 to -12.5 LUFS; hybrid film-score albums are 3 dB quieter and dynamic (est. -15.2, DR 7-12). Read the loudest section after mastering: the derived norm is about -8 to -6.5 LUFS short-term for the trailer strands. None of these levels has been tested in the engine",
+      "default": {
+        "label": "hybrid orchestral-electronic, modern (2012-2026)",
+        "note": "the genre's master"
+      },
+      "newest": {
+        "label": "newest sound (2019-2026)",
+        "target": "cinematic_2019",
+        "lufs": -12.0,
+        "tp": -1.0,
+        "note": "thin: 58 tracks"
+      },
+      "choir": {
+        "label": "epic orchestral with choir (the 2000s template)",
+        "target": "cinematic_choir",
+        "lufs": -12.0,
+        "tp": -1.0
+      },
+      "score": {
+        "label": "hybrid film score or pulse score (album)",
+        "target": "cinematic_film",
+        "lufs": -14.5,
+        "tp": -1.0,
+        "eq": 0.5,
+        "translate": 0.2,
+        "mono_below": 80.0,
+        "dynamics": "keep",
+        "note": "108 tracks, est. -15.2 LUFS, DR 7-12; the dynamic path as chamber score"
+      },
+      "sounddesign": {
+        "label": "sound-design trailer (pulses, hits, silences)",
+        "lufs": -11.5,
+        "tp": -1.0,
+        "note": "its own set is lossy-only and thin (34 tracks, est. -11.1): the default curve is used"
+      },
+      "pop": {
+        "label": "cinematic pop / rock anthem",
+        "lufs": -10.5,
+        "tp": -1.0,
+        "note": "thin (20 tracks, est. -10.6; Imagine Dragons album DR 4-6)"
+      },
+      "anthem": {
+        "label": "a long quiet first act before a full climax (queue 13)",
+        "lufs": -12.5,
+        "tp": -1.0,
+        "note": "check that the final act reaches about -8 to -7 LUFS short-term; lower --lufs rather than crush the climax"
+      },
+      "sports": {
+        "label": "sports and broadcast themes (a contrast, not a strand to make)",
+        "valid": false,
+        "note": "no target; one library album measured (-12.3, 70% major)"
+      }
+    },
+    "length": "3:00-4:30; a standalone narrative track 3:40-4:20, aim about 4:00 (measured: trailer-house albums 2012-18 median 3:03, middle half 2:32-3:47; 2019-21 3:57 (thin); epic-choir albums 2001-11 2:53; sound-design library cues 2:22; hybrid film-score albums 4:02 (2010-16) and 4:48 (2017-21))",
+    "form": "three acts: a sparse setup that may state the theme, a build of rising rhythm and density (a pulse or ostinato climbing a layer every 4-8 bars), a climax at full scale; hard boundaries (a hit, a cut, a bar of silence); the lead-in to the climax nearly without bass; a final hit or held chord; for a standalone track a fourth part (a coda, the theme returning quietly)",
+    "tempo": "90-130 bpm written in 4/4 (measured medians, Essentia folded 70-140: epic-choir albums 91, hybrid trailer albums 2012-18 105 (middle half 81-121), 2019-21 about 120 (thin), hybrid film scores 96-100, game scores 92); the felt pulse is often half the written one under 16th-note ostinati",
+    "meter": "4/4 (6/8 or 12/8 for galloping cues); ostinati in 8ths and 16ths, big drums on a slower grid, hits on the downbeats of act changes",
+    "change_rate": "a new layer or rhythm level every 4-8 bars inside an act; a hard change at every act boundary",
+    "role": "the theme is the lead and must be singable: first small (one instrument or voice), then everyone; percussion and ostinati carry the momentum; voices wordless, as instruments",
+    "hand_tuned": [
+      "lufs -12 sits on the measured median (-12.3) but is untested in the engine; the strand levels -14.5 / -11.5 / -10.5 / -12.5 are choices on measured medians",
+      "the loudest-section norm (-8 to -6.5 LUFS short-term) is derived from album DR, not measured",
+      "eq 0.6",
+      "translate 0.3",
+      "mono_below 120 (80 for the score strand)",
+      "the 4:00 aim and the change rate in bar counts"
+    ],
+    "sources": "docs/CINEMATIC_HYBRID.md 'Configuration', 'Catalogue measurements' and 'Mastering per subdivision' (catalogue lengths, tempo, keys, dynamic complexity, loudness and curves by Spectre from MusicBrainz + AcousticBrainz, 2026-11-26; Dynamic Range Database https://dr.loudness-war.info/ ; Sound On Sound library music part 7, Rare Form Audio, UJAM for the three acts; Synchtank/Trailaurality 2017 and Universal Production Music 2024 for trends; epicomposer 2026 for mixing; TASA, EBU R128, Spotify for playback)"
   }
 }

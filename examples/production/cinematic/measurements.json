@@ -1,0 +1,543 @@
+[
+ {
+  "sound": "brass horn",
+  "ref": "Horn/Horn.ff.C3.stereo.aif",
+  "A polysynth": 5.53,
+  "A trembita": 8.02,
+  "B brass": 2.51
+ },
+ {
+  "sound": "brass horn",
+  "ref": "Horn/Horn.ff.C4.stereo.aif",
+  "A polysynth": 3.96,
+  "A trembita": 4.74,
+  "B brass": 8.73
+ },
+ {
+  "sound": "brass horn",
+  "ref": "Horn/Horn.ff.C5.stereo.aif",
+  "A polysynth": 5.96,
+  "A trembita": 4.83,
+  "B brass": 1.62
+ },
+ {
+  "sound": "brass horn",
+  "ref": "Horn/Horn.ff.G3.stereo.aif",
+  "A polysynth": 5.02,
+  "A trembita": 6.29,
+  "B brass": 3.56
+ },
+ {
+  "sound": "brass horn",
+  "ref": "Horn/Horn.ff.G4.stereo.aif",
+  "A polysynth": 3.91,
+  "A trembita": 3.56,
+  "B brass": 1.12
+ },
+ {
+  "sound": "brass horn",
+  "ref": "vsco/Brass/F Horn/sus/MOHorn_sus_A#1_v3_1.wav",
+  "A polysynth": 6.18,
+  "A trembita": 6.83,
+  "B brass": 2.98
+ },
+ {
+  "sound": "brass horn",
+  "ref": "vsco/Brass/F Horn/sus/MOHorn_sus_A2_v3_1.wav",
+  "A polysynth": 3.93,
+  "A trembita": 5.71,
+  "B brass": 1.02
+ },
+ {
+  "sound": "brass horn",
+  "ref": "vsco/Brass/F Horn/sus/MOHorn_sus_C3_v4_1.wav",
+  "A polysynth": 9.17,
+  "A trembita": 10.35,
+  "B brass": 5.24
+ },
+ {
+  "sound": "brass horn",
+  "ref": "vsco/Brass/F Horn/sus/MOHorn_sus_D2_v4_1.wav",
+  "A polysynth": 7.85,
+  "A trembita": 8.25,
+  "B brass": 1.55
+ },
+ {
+  "sound": "brass horn",
+  "ref": "vsco/Brass/F Horn/sus/MOHorn_sus_F2_v3_1.wav",
+  "A polysynth": 7.63,
+  "A trembita": 7.4,
+  "B brass": 1.99
+ },
+ {
+  "sound": "brass horn",
+  "ref": "vsco/Brass/F Horn/sus/MOHorn_sus_G1_v3_1.wav",
+  "A polysynth": 7.03,
+  "A trembita": 7.56,
+  "B brass": 3.81
+ },
+ {
+  "sound": "brass trumpet",
+  "ref": "BbTrumpet/Trumpet.novib.ff.C4.stereo.aif",
+  "A polysynth": 8.13,
+  "A trembita": 8.13,
+  "B brass": 2.11
+ },
+ {
+  "sound": "brass trumpet",
+  "ref": "BbTrumpet/Trumpet.novib.ff.C5.stereo.aif",
+  "A polysynth": 6.17,
+  "A trembita": 6.17,
+  "B brass": 0.88
+ },
+ {
+  "sound": "brass trumpet",
+  "ref": "BbTrumpet/Trumpet.novib.ff.G3.stereo.aif",
+  "A polysynth": 8.45,
+  "A trembita": 8.45,
+  "B brass": 2.7
+ },
+ {
+  "sound": "brass trumpet",
+  "ref": "BbTrumpet/Trumpet.novib.ff.G4.stereo.aif",
+  "A polysynth": 6.01,
+  "A trembita": 6.01,
+  "B brass": 1.28
+ },
+ {
+  "sound": "brass trumpet",
+  "ref": "BbTrumpet/Trumpet.novib.ff.G5.stereo.aif",
+  "A polysynth": 5.33,
+  "A trembita": 5.33,
+  "B brass": 1.46
+ },
+ {
+  "sound": "brass trumpet",
+  "ref": "vsco/Brass/Trumpet/sus/Sum_SHTrumpet_sus_A#3_v3_rr1.wav",
+  "A polysynth": 5.35,
+  "A trembita": 5.35,
+  "B brass": 2.33
+ },
+ {
+  "sound": "brass trumpet",
+  "ref": "vsco/Brass/Trumpet/sus/Sum_SHTrumpet_sus_A4_v3_rr1.wav",
+  "A polysynth": 4.42,
+  "A trembita": 4.42,
+  "B brass": 0.79
+ },
+ {
+  "sound": "brass trumpet",
+  "ref": "vsco/Brass/Trumpet/sus/Sum_SHTrumpet_sus_C5_v3_rr1.wav",
+  "A polysynth": 6.78,
+  "A trembita": 6.78,
+  "B brass": 2.4
+ },
+ {
+  "sound": "brass trumpet",
+  "ref": "vsco/Brass/Trumpet/sus/Sum_SHTrumpet_sus_D4_v3_rr1.wav",
+  "A polysynth": 4.99,
+  "A trembita": 4.99,
+  "B brass": 1.96
+ },
+ {
+  "sound": "brass trumpet",
+  "ref": "vsco/Brass/Trumpet/sus/Sum_SHTrumpet_sus_F4_v3_rr1.wav",
+  "A polysynth": 5.26,
+  "A trembita": 5.26,
+  "B brass": 0.63
+ },
+ {
+  "sound": "brass trombone",
+  "ref": "TenorTrombone/TenorTrombone.ff.Bb2.stereo.aif",
+  "A polysynth": 7.19,
+  "A trembita": 7.19,
+  "B brass": 8.07
+ },
+ {
+  "sound": "brass trombone",
+  "ref": "TenorTrombone/TenorTrombone.ff.Bb3.stereo.aif",
+  "A polysynth": 6.32,
+  "A trembita": 6.32,
+  "B brass": 3.67
+ },
+ {
+  "sound": "brass trombone",
+  "ref": "TenorTrombone/TenorTrombone.ff.E2.stereo.aif",
+  "A polysynth": 8.05,
+  "A trembita": 8.05,
+  "B brass": 4.84
+ },
+ {
+  "sound": "brass trombone",
+  "ref": "TenorTrombone/TenorTrombone.ff.F3.stereo.aif",
+  "A polysynth": 6.42,
+  "A trembita": 6.42,
+  "B brass": 7.26
+ },
+ {
+  "sound": "brass trombone",
+  "ref": "TenorTrombone/TenorTrombone.ff.F4.stereo.aif",
+  "A polysynth": 4.42,
+  "A trembita": 4.42,
+  "B brass": 6.72
+ },
+ {
+  "sound": "brass trombone",
+  "ref": "vsco/Brass/Tenor Trombone/sus/tenortbn_sus_A#0_v2_1.wav",
+  "A polysynth": 8.66,
+  "A trembita": 8.66,
+  "B brass": 1.33
+ },
+ {
+  "sound": "brass trombone",
+  "ref": "vsco/Brass/Tenor Trombone/sus/tenortbn_sus_C#1_v2_1.wav",
+  "A polysynth": 6.79,
+  "A trembita": 6.79,
+  "B brass": 0.63
+ },
+ {
+  "sound": "brass trombone",
+  "ref": "vsco/Brass/Tenor Trombone/sus/tenortbn_sus_C3_v3_1.wav",
+  "A polysynth": 9.58,
+  "A trembita": 9.58,
+  "B brass": 3.61
+ },
+ {
+  "sound": "brass trombone",
+  "ref": "vsco/Brass/Tenor Trombone/sus/tenortbn_sus_D#3_v3_1.wav",
+  "A polysynth": 6.51,
+  "A trembita": 6.51,
+  "B brass": 0.88
+ },
+ {
+  "sound": "brass trombone",
+  "ref": "vsco/Brass/Tenor Trombone/sus/tenortbn_sus_F1_v3_1.wav",
+  "A polysynth": 5.7,
+  "A trembita": 5.7,
+  "B brass": 1.87
+ },
+ {
+  "sound": "brass trombone",
+  "ref": "vsco/Brass/Tenor Trombone/sus/tenortbn_sus_F3_v3_1.wav",
+  "A polysynth": 5.97,
+  "A trembita": 5.97,
+  "B brass": 4.09
+ },
+ {
+  "sound": "brass tuba",
+  "ref": "Tuba/Tuba.ff.Bb1.stereo.aif",
+  "A polysynth": 7.91,
+  "A trembita": 7.91,
+  "B brass": 10.12
+ },
+ {
+  "sound": "brass tuba",
+  "ref": "Tuba/Tuba.ff.Bb2.stereo.aif",
+  "A polysynth": 9.28,
+  "A trembita": 9.28,
+  "B brass": 6.9
+ },
+ {
+  "sound": "brass tuba",
+  "ref": "Tuba/Tuba.ff.F1.stereo.aif",
+  "A polysynth": 9.21,
+  "A trembita": 9.21,
+  "B brass": 8.41
+ },
+ {
+  "sound": "brass tuba",
+  "ref": "Tuba/Tuba.ff.F2.stereo.aif",
+  "A polysynth": 8.87,
+  "A trembita": 8.87,
+  "B brass": 4.17
+ },
+ {
+  "sound": "brass tuba",
+  "ref": "Tuba/Tuba.ff.F3.stereo.aif",
+  "A polysynth": 8.36,
+  "A trembita": 8.36,
+  "B brass": 5.76
+ },
+ {
+  "sound": "brass tuba",
+  "ref": "vsco/Brass/Tuba/sus/Tuba3_sus_A#0_v3_rr1_Mid.wav",
+  "A polysynth": 6.85,
+  "A trembita": 6.85,
+  "B brass": 4.58
+ },
+ {
+  "sound": "brass tuba",
+  "ref": "vsco/Brass/Tuba/sus/Tuba3_sus_A#2_v3_rr1_Mid.wav",
+  "A polysynth": 5.27,
+  "A trembita": 5.27,
+  "B brass": 0.5
+ },
+ {
+  "sound": "brass tuba",
+  "ref": "vsco/Brass/Tuba/sus/Tuba3_sus_D2_v3_rr1_Mid.wav",
+  "A polysynth": 6.5,
+  "A trembita": 6.5,
+  "B brass": 3.15
+ },
+ {
+  "sound": "brass tuba",
+  "ref": "vsco/Brass/Tuba/sus/Tuba3_sus_F0_v1_rr1_Mid.wav",
+  "A polysynth": 7.32,
+  "A trembita": 7.45,
+  "B brass": 7.27
+ },
+ {
+  "sound": "brass tuba",
+  "ref": "vsco/Brass/Tuba/sus/Tuba3_sus_F2_v3_rr1_Mid.wav",
+  "A polysynth": 3.62,
+  "A trembita": 3.62,
+  "B brass": 7.05
+ },
+ {
+  "sound": "brass bass_trombone",
+  "ref": "BassTrombone/BassTrombone.ff.Bb1.stereo.aif",
+  "A polysynth": 10.21,
+  "A trembita": 10.21,
+  "B brass": 4.19
+ },
+ {
+  "sound": "brass bass_trombone",
+  "ref": "BassTrombone/BassTrombone.ff.Bb2.stereo.aif",
+  "A polysynth": 7.74,
+  "A trembita": 7.74,
+  "B brass": 2.08
+ },
+ {
+  "sound": "brass bass_trombone",
+  "ref": "BassTrombone/BassTrombone.ff.F2.stereo.aif",
+  "A polysynth": 9.95,
+  "A trembita": 9.95,
+  "B brass": 2.9
+ },
+ {
+  "sound": "woodwind flute",
+  "ref": "Flute/Flute.nonvib.ff.C4.stereo.aif",
+  "A ney": 13.55,
+  "B woodwind": 2.48
+ },
+ {
+  "sound": "woodwind flute",
+  "ref": "Flute/Flute.nonvib.ff.C5.stereo.aif",
+  "A ney": 6.32,
+  "B woodwind": 1.7
+ },
+ {
+  "sound": "woodwind flute",
+  "ref": "Flute/Flute.nonvib.ff.C6.stereo.aif",
+  "A ney": 2.3,
+  "B woodwind": 2.52
+ },
+ {
+  "sound": "woodwind flute",
+  "ref": "Flute/Flute.nonvib.ff.G4.stereo.aif",
+  "A ney": 12.23,
+  "B woodwind": 3.33
+ },
+ {
+  "sound": "woodwind flute",
+  "ref": "Flute/Flute.nonvib.ff.G5.stereo.aif",
+  "A ney": 3.09,
+  "B woodwind": 3.59
+ },
+ {
+  "sound": "woodwind oboe",
+  "ref": "Oboe/Oboe.ff.C4.stereo.aif",
+  "A polysynth": 6.32,
+  "B woodwind": 1.21
+ },
+ {
+  "sound": "woodwind oboe",
+  "ref": "Oboe/Oboe.ff.C5.stereo.aif",
+  "A polysynth": 5.86,
+  "B woodwind": 1.44
+ },
+ {
+  "sound": "woodwind oboe",
+  "ref": "Oboe/Oboe.ff.G4.stereo.aif",
+  "A polysynth": 5.43,
+  "B woodwind": 1.38
+ },
+ {
+  "sound": "woodwind oboe",
+  "ref": "Oboe/Oboe.ff.G5.stereo.aif",
+  "A polysynth": 3.45,
+  "B woodwind": 0.87
+ },
+ {
+  "sound": "woodwind clarinet",
+  "ref": "BbClarinet/BbClarinet.ff.Bb3.stereo.aif",
+  "A polysynth": 7.49,
+  "B woodwind": 2.55
+ },
+ {
+  "sound": "woodwind clarinet",
+  "ref": "BbClarinet/BbClarinet.ff.C5.stereo.aif",
+  "A polysynth": 6.21,
+  "B woodwind": 1.4
+ },
+ {
+  "sound": "woodwind clarinet",
+  "ref": "BbClarinet/BbClarinet.ff.E3.stereo.aif",
+  "A polysynth": 7.02,
+  "B woodwind": 3.11
+ },
+ {
+  "sound": "woodwind clarinet",
+  "ref": "BbClarinet/BbClarinet.ff.F4.stereo.aif",
+  "A polysynth": 5.25,
+  "B woodwind": 1.64
+ },
+ {
+  "sound": "woodwind clarinet",
+  "ref": "BbClarinet/BbClarinet.ff.G5.stereo.aif",
+  "A polysynth": 9.56,
+  "B woodwind": 1.5
+ },
+ {
+  "sound": "woodwind bassoon",
+  "ref": "Bassoon/Bassoon.ff.Bb1.stereo.aif",
+  "A polysynth": 5.73,
+  "B woodwind": 0.8
+ },
+ {
+  "sound": "woodwind bassoon",
+  "ref": "Bassoon/Bassoon.ff.C3.stereo.aif",
+  "A polysynth": 7.46,
+  "B woodwind": 1.9
+ },
+ {
+  "sound": "woodwind bassoon",
+  "ref": "Bassoon/Bassoon.ff.D4.stereo.aif",
+  "A polysynth": 8.54,
+  "B woodwind": 1.31
+ },
+ {
+  "sound": "woodwind bassoon",
+  "ref": "Bassoon/Bassoon.ff.F2.stereo.aif",
+  "A polysynth": 8.37,
+  "B woodwind": 1.02
+ },
+ {
+  "sound": "woodwind bassoon",
+  "ref": "Bassoon/Bassoon.ff.G3.stereo.aif",
+  "A polysynth": 5.46,
+  "B woodwind": 1.37
+ },
+ {
+  "sound": "basses",
+  "ref": "DoubleBass/Bass.arco.ff.sulA.A1.stereo.aif",
+  "A celli 8va + sub": 8.94,
+  "B basses": 4.75
+ },
+ {
+  "sound": "basses",
+  "ref": "DoubleBass/Bass.arco.ff.sulA.G2.stereo.aif",
+  "A celli 8va + sub": 13.38,
+  "B basses": 6.72
+ },
+ {
+  "sound": "basses",
+  "ref": "DoubleBass/Bass.arco.ff.sulD.G2.stereo.aif",
+  "A celli 8va + sub": 14.15,
+  "B basses": 8.73
+ },
+ {
+  "sound": "basses",
+  "ref": "DoubleBass/Bass.arco.ff.sulE.E1.stereo.aif",
+  "A celli 8va + sub": 15.46,
+  "B basses": 3.13
+ },
+ {
+  "sound": "basses",
+  "ref": "DoubleBass/Bass.arco.ff.sulG.G2.stereo.aif",
+  "A celli 8va + sub": 15.95,
+  "B basses": 4.95
+ },
+ {
+  "sound": "timpani",
+  "ref": "vsco/Percussion/Timpani/Timpani1_Hit_v3_rr1_Sum.wav",
+  "A tom": 34.5,
+  "B timpani": 2.26,
+  "decay_ms_-20dB": {
+   "ref": 719,
+   "A": 1372,
+   "B": 900
+  }
+ },
+ {
+  "sound": "timpani",
+  "ref": "vsco/Percussion/Timpani/Timpani3_Hit_v3_rr1_Sum.wav",
+  "A tom": 39.01,
+  "B timpani": 4.09,
+  "decay_ms_-20dB": {
+   "ref": 652,
+   "A": 1372,
+   "B": 997
+  }
+ },
+ {
+  "sound": "timpani",
+  "ref": "vsco/Percussion/Timpani/Timpani5_Hit_v3_rr1_Sum.wav",
+  "A tom": 47.4,
+  "B timpani": 5.45,
+  "decay_ms_-20dB": {
+   "ref": 441,
+   "A": 1370,
+   "B": 879
+  }
+ },
+ {
+  "sound": "bassdrum",
+  "ref": "vsco/Percussion/BDrumNewhit_v5_rr1_Sum.wav",
+  "A toba": 17.32,
+  "B bassdrum": 2.87,
+  "decay_ms_-20dB": {
+   "ref": 102,
+   "A": 522,
+   "B": 340
+  }
+ },
+ {
+  "sound": "suscymbal hit",
+  "ref": "vsco/VSCO 1 Percussion/varMetal/Cymbals/susp/susp_hit_hardmall_f.wav",
+  "A crash": 18.61,
+  "B suscymbal": 3.77
+ },
+ {
+  "sound": "suscymbal swell",
+  "ref": "vsco/VSCO 1 Percussion/varMetal/Cymbals/susp/susp_hit_softmall_roll2_cresc.wav",
+  "A reversed crash": 23.83,
+  "B suscymbal": 1.64
+ },
+ {
+  "sound": "hall",
+  "candidate": "A reverb size 0.9",
+  "t20_s_by_octave": {
+   "125": 4.73,
+   "250": 4.53,
+   "500": 4.51,
+   "1000": 4.17,
+   "2000": 3.51,
+   "4000": 2.49
+  },
+  "first_reflection_ms": 25.3
+ },
+ {
+  "sound": "hall",
+  "candidate": "B hall",
+  "t20_s_by_octave": {
+   "125": 2.82,
+   "250": 2.72,
+   "500": 2.82,
+   "1000": 2.79,
+   "2000": 2.56,
+   "4000": 1.91
+  },
+  "first_reflection_ms": 20.0
+ }
+]
