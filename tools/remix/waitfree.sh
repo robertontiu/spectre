@@ -8,7 +8,8 @@
 #   waitfree.sh whisper  a Whisper check: no other Whisper and no master running, and WHISPER_MB available
 #   waitfree.sh          (no argument) the old rule: nothing heavy running and RENDER_MB available
 # MAX_RENDERS defaults from total memory: 2 on a machine with at least 14 GB, else 1 (the old one-at-a-time
-# rule of the 8 GB server). Memory figures are the measured peaks plus a margin (AGENTS.md rule 7). Processes are matched by name (real python processes only, so waiting shell wrappers whose
+# rule of the 8 GB server). Memory figures are the measured peaks plus a margin (AGENTS.md rule 7): a 6-7 minute electronic
+# project peaked at 8.2 GB per render (2026-11-26, sessions 019 and 020 side by side; 7 GB let the kernel kill renders). Processes are matched by name (real python processes only, so waiting shell wrappers whose
 # command lines contain "studio.py" never count); each condition must hold twice, 1 s apart.
 # Prints the available memory when it returns, and what it is waiting for every 60 s. Works on Linux and macOS;
 # on a machine under about 12 GB the memory margins shrink to 60% of the total (one heavy job at a time).
@@ -29,8 +30,8 @@ TOTAL_MB=$(total_mb); TOTAL_MB=${TOTAL_MB:-0}
 if [ -z "${MAX_RENDERS:-}" ]; then
   if [ "$TOTAL_MB" -ge 14000 ]; then MAX_RENDERS=2; else MAX_RENDERS=1; fi
 fi
-RENDER_MB=${RENDER_MB:-${MIN_FREE_MB:-7000}}
-MASTER_MB=${MASTER_MB:-7000}
+RENDER_MB=${RENDER_MB:-${MIN_FREE_MB:-9000}}
+MASTER_MB=${MASTER_MB:-9000}
 WHISPER_MB=${WHISPER_MB:-5000}
 # On a smaller machine (under about 12 GB) the 7 GB margin could never be free: wait for 60% of the total instead,
 # so the script cannot wait forever (one heavy job at a time still holds there: MAX_RENDERS is 1).
