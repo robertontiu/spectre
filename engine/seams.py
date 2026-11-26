@@ -61,8 +61,8 @@ FAMILIES = [("loudness", ("level",)), ("spectrum", ("low end", "balance", "brigh
 BANDS = [(20, 150), (150, 400), (400, 2000), (2000, 6000), (6000, 18000)]
 # genre norms: how many dimensions may step at once and how little preparation is still fine (hand-tuned). DJ
 # genres prepare their seams over 8-32 bars; song genres and hip hop cut more (switch-ups, beat drops).
-NORMS = {"default": dict(jumps=3, prep=0.35, score=5.0),
-         "dj": dict(jumps=3, prep=0.35, score=5.0),
+NORMS = {"default": dict(jumps=3, prep=0.3, score=5.0),
+         "dj": dict(jumps=3, prep=0.3, score=5.0),
          "song": dict(jumps=3, prep=0.3, score=6.0)}
 FAMILY = {"techno": "dj", "trance": "dj", "trance_radio": "dj", "psytrance": "dj", "dubstep": "dj",
           "trap": "song", "hiphop": "song", "hiphop_golden": "song", "boombap": "song", "rock": "song",

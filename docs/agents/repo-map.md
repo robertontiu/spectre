@@ -30,6 +30,9 @@ engine/
                   warnings; zoom view with onset grid and timing roll
   clarity.py      ears for stems (`listen --clarity`): a section re-rendered in memory, layer census, masked and own
                   share per stem, occupancy, low-mid build-up, crest, flags against the genre's EQ map, stack view
+  seams.py        ears for form (`listen --seams`, `listen --coherence`; analysis only): the step and the preparation
+                  at every section boundary, flags for forced seams; section x section motif, pitch, palette and timbre
+                  similarity, flags for a track split into two songs (docs/PRODUCTION.md 4b)
   mixbus.py       production (opt-in): stacks (`layers`), role EQ presets from eqmaps.json, group buses, named returns
                   (several reverbs/delays, filtered, ducked), fx ott / dyneq / clip / mseq, correlated humanizing
   synth.py        production sounds: `supersaw` model 2 (Szabo), `polysynth` (LFOs, envelopes, drift), `sub`, kick
