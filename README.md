@@ -82,7 +82,7 @@ It's an experiment, and the misses are part of the result:
 - Spotify for Artists, ["Loudness normalization"](https://support.spotify.com/artists/article/loudness-normalization/). Loudness and true-peak targets for the mastering stage.
 - Genre research, one brief per genre, with sources, strands and measured targets: [hip hop](docs/HIPHOP.md), [Romanian](docs/ROMANIAN.md), [Ukrainian](docs/UKRAINIAN.md) and [Latvian](docs/LATVIAN.md) folk fusion, [trance](docs/TRANCE.md), [pop rock](docs/POP_ROCK.md), [joc țigănesc](docs/JOC_TIGANESC.md), [caroling](docs/CAROLING.md), [Latin pop](docs/LATIN_POP.md), [chamber score](docs/CHAMBER_SCORE.md), [dubstep](docs/DUBSTEP.md), [cinematic hybrid](docs/CINEMATIC_HYBRID.md). Production craft: [`docs/CRAFT.md`](docs/CRAFT.md), [`docs/PRODUCTION.md`](docs/PRODUCTION.md). Mastering and the era targets: [`docs/MASTERING.md`](docs/MASTERING.md). Voice: [`docs/voice/`](docs/voice).
 
-## Produce your own
+## Try it yourself
 
 1. **Fork** this repository (or clone it).
 2. **Open it in an AI coding agent session**, such as [Claude Code](https://claude.com/claude-code). The agent reads [`AGENTS.md`](AGENTS.md), which gives it the rules and routes it to the handbook in [`docs/agents/`](docs/agents) on how to set up the studio and run a producer session.
