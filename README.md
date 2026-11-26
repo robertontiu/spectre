@@ -36,7 +36,7 @@ It grew out of [Teodor](https://github.com/robertontiu/teodor), the same experim
 
 ## Who does what
 
-**The owner** (one person) writes a short brief: a theme (*rage*, *the hustle*, *the soul held captive*), sometimes a genre. He listens to every finished track and approves it by ear before it is published; nothing reaches the site without that. He has sent work back: *Captive* was held until a revision made its drops peak; a remix of *The Tide Doesn't Stop* was declined in favour of the published version; a granular "freeze" effect was rejected twice before a third version passed; on *First Light* he said "those claps destroy it", and the synthesized clap was rebuilt.
+**The owner** (one person) writes a short brief: a theme (*rage*, *the hustle*, *the soul held captive*), sometimes a genre. He listens to every finished track and approves it by ear before it is published; nothing reaches the site without that.
 
 **The AI** (Claude agents: Claude Opus 5.5 produced 13 of the tracks, Claude Fable 5.2 five) does everything else: the genre research, the composition, the sound design, the mixing and mastering, and the engineering of the studio itself (the synthesizers, the "ears", the mastering stage, the tools). An orchestrating agent writes each producer's brief from the owner's theme and the research.
 
