@@ -1,0 +1,52 @@
+{
+ "title": "techno-test",
+ "bpm": 150,
+ "swing": 0.5,
+ "seed": 14,
+ "seeds": "per-track",
+ "genre": "techno",
+ "tracks": {
+  "kick": {"preset": "hardkick", "inst": {"note": "A1"}, "bus": "drums",
+           "rumble": {"tone": "warm", "decay": 0.9}},
+  "kick9": {"inst": {"type": "kick909", "decay": 0.3}, "role": "kick", "humanize_ms": 0, "vel_jitter": 0.02, "bus": "drums", "gain_db": -2},
+  "hat": {"inst": {"type": "hat909"}, "role": "hats", "humanize_ms": 2, "bus": "drums"},
+  "ohat": {"inst": {"type": "openhat909", "decay": 0.16}, "role": "hats", "humanize_ms": 2, "bus": "drums", "choke_by": "hat"},
+  "clap": {"inst": {"type": "clap909"}, "role": "clap", "humanize_ms": 1, "bus": "drums", "gain_db": -2},
+  "ride": {"inst": {"type": "ride909"}, "role": "cymbals", "humanize_ms": 2, "bus": "drums", "sidechain": {"source": "kick", "depth": 0.4, "release_ms": 120}},
+  "tomL": {"inst": {"type": "tom909", "pitch": "low"}, "role": "perc", "humanize_ms": 2, "swing": 0.54, "bus": "perc"},
+  "tomH": {"inst": {"type": "tom909", "pitch": "high"}, "role": "perc", "humanize_ms": 2, "swing": 0.54, "bus": "perc"},
+  "rim": {"inst": {"type": "rim909"}, "role": "perc", "humanize_ms": 2, "bus": "perc"},
+  "conga": {"inst": {"type": "conga"}, "role": "perc", "humanize_ms": 4, "swing": 0.54, "bus": "perc"},
+  "congaSlap": {"inst": {"type": "conga", "stroke": "slap"}, "role": "perc", "humanize_ms": 4, "swing": 0.54, "bus": "perc"},
+  "bongo": {"inst": {"type": "bongo"}, "role": "perc", "humanize_ms": 4, "swing": 0.54, "bus": "perc", "pan": 0.3},
+  "bongoMute": {"inst": {"type": "bongo", "stroke": "mute", "tune": 290}, "role": "perc", "humanize_ms": 4, "swing": 0.54, "bus": "perc", "pan": -0.3},
+  "acid": {"inst": {"type": "acid", "cutoff": 500, "reso": 0.8, "env_mod": 0.6, "decay": 0.2, "drive": 0.6},
+           "role": "bass", "eq": "auto", "humanize_ms": 0, "vel_jitter": 0,
+           "fx": [{"type": "asym", "amount": 0.4, "bias": 0.2}, {"type": "hpf", "hz": 150}],
+           "sidechain": {"source": "kick", "depth": 0.4, "release_ms": 100}},
+  "hoover": {"preset": "hoover", "gain_db": -4}
+ },
+ "buses": {"drums": {"fx": [{"type": "clip", "drive_db": 2, "ceiling_db": -1}]},
+           "perc": {"fx": [{"type": "sat", "amount": 0.3}, {"type": "hpf", "hz": 80}], "gain_db": -2}},
+ "mix": {"reverb": {"size": 0.5, "return_db": -10}},
+ "patterns": {
+  "k": {"bars": 1, "kick": "x...x...x...x..."},
+  "k9": {"bars": 1, "kick9": "x...x...x...x..."},
+  "hats": {"bars": 1, "hat": ".xxx.xxx.xxx.xxx", "ohat": "..x...x...x...x.", "clap": "....x.......x...", "ride": "x.x.x.x.x.x.x.x."},
+  "tom3": {"bars": 0.1875, "free": true, "tomL": "x.."},
+  "tom5": {"bars": 0.3125, "free": true, "tomH": "..x.."},
+  "groove": {"bars": 1, "conga": "x..x..x...x..x..", "congaSlap": "......x.......x.", "bongo": "..x...x.x...x..x",
+             "bongoMute": ".x...x...x...x..", "rim": "...x.....x...x.."},
+  "acidA": {"bars": 1, "acid": "0:A1:1 2:A2:1! 3:A1:1 6:C2:1~ 7:A1:1 8:A1:1! 10:E2:1 12:A1:1 14:G2:1!"},
+  "hooverA": {"bars": 2, "hoover": "0:A3:6 8:A3:2 16:G3:6 24:C4:4"}
+ },
+ "arrangement": [
+  {"name": "ignition", "bars": 4, "play": ["k"], "auto": {"return:rumble": {"lpf": [80, 160]}}},
+  {"name": "engine", "bars": 4, "play": ["k", "hats", "groove", "acidA"],
+   "auto": {"acid": {"inst": {"cutoff": [400, 1200]}}}},
+  {"name": "drive", "bars": 4, "play": ["k", "k9", "hats", "groove", "tom3", "tom5", "acidA"]},
+  {"name": "pressure", "bars": 2, "play": ["hats", "tom3", "acidA"]},
+  {"name": "fury", "bars": 4, "play": ["k", "hats", "groove", "tom3", "tom5", "acidA", "hooverA"], "enter": {"impact": 0.5}}
+ ],
+ "master": {"lufs": -9.5}
+}

@@ -207,7 +207,7 @@ Reading it:
 |---|---|---|
 | modern, no strand named (peak-time / driving; default) | `--target techno_2015 --lufs -9.5 --tp -1` | target measured on 424 tracks 2015-21; -9.5 integrated aims a loud section near Peak Time's -8.6 when the main sections are most of the track [H; untested] |
 | newest sound (2019-26) | `--strand newest`: `techno_2018`, -9.5 | 2018-21 within 0.5 dB; 2022-26 extrapolated |
-| hard techno, schranz, fast hard groove (this brief) | `--strand hard`: `techno_hard`, **-8.5**, mono below 150 | Hard Techno loud sections -7.3 [M]; Futureproof's 150 Hz mono [S]; -8.5 [H] |
+| hard techno, schranz, fast hard groove (this brief) | `--strand hard`: `techno_hard`, **-8** (researched as -8.5), mono below 150 | Hard Techno loud sections -7.3 [M]; Futureproof's 150 Hz mono [S]; tested in the engine 2026-11-26: -8.5 landed the loud sections at -7.9 to -8.0 LUFS short-term, -8 at -7.4 to -7.5 [M, examples/production/techno/README.md] |
 | industrial / EBM-adjacent | `--strand industrial`: `techno_hard`, -9 | between Hard and Peak Time [H] |
 | hypnotic, raw, deep | `--strand hypnotic`: `techno_2015`, -9.5 | Raw / Deep / Hypnotic -8.7, the flattest [M]; [H] |
 | dub techno | `--strand dub`: `techno_dub`, -12, `eq` 0.5, dynamics keep | dub techno whole tracks -15.1 [M]; [H] |
@@ -278,7 +278,7 @@ The brief: *speed, drive and fury*; not the film: no film themes, titles, logos,
 | Rate of change | every 8 bars in Drive, Fury and Overdrive; 16 in Engine and Exhaust | MusicRadar 2023 (16), Futureproof [S]; [H] |
 | Groove | kick, rumble, clap, hats straight (swing 0.5); percussion loop swung (0.52-0.54); humanize off the kick and rumble | Attack (50-54%); hard groove sources [S] |
 | Voices | optional: one or two short shouted or spoken fragments (a word or two, pitched down, gated or delayed), in the breakdown and once in the peak; never a sung line; no film phrases | standing rule 15; Futureproof ("vocal or noise hits") [S] |
-| Master | `--genre techno --strand hard` (target `techno_hard`, `--lufs -8.5`, `--tp -1`, mono below 150 Hz); read the loudest 2 minutes: about -7.5 to -7 LUFS short-term (Hard Techno previews -7.3, middle half -8.2 to -6.2); never louder than -6.5; if Fury and Overdrive read under -8, raise to `--lufs -8` rather than push the mix's clippers | Mixgraph; catalogue [M]; [H] untested |
+| Master | `--genre techno --strand hard` (target `techno_hard`, `--lufs -8` since the engine test of 2026-11-26, researched as -8.5, `--tp -1`, mono below 150 Hz); read the loudest 2 minutes: about -7.5 to -7 LUFS short-term (Hard Techno previews -7.3, middle half -8.2 to -6.2); never louder than -6.5; if Fury and Overdrive read under -8, raise to `--lufs -8` rather than push the mix's clippers | Mixgraph; catalogue [M]; [H] untested |
 
 
 ## Engine mapping
@@ -322,6 +322,18 @@ What modern techno needs, against what the engine has (docs/MANUAL.md "Productio
 **Covered already:** the acid voice (the whole acid strand), the 909 clap, snare and ride, OTT, multiband, the distortion family, `transient`, `curve`, `suppress` after distortion, granular and shimmer for melodic and hypnotic washes, section automation of instrument and return parameters, `fx_model` 2 transitions, presets.
 
 **Minimum for this brief** (standing rule 19): gaps 1 and 2 (the rumble and the hard kick), then 3 (909 hats: the brief's open hat and ride carry the drive) and 4 (the loud master test); 5 makes the hard-groove percussion right; 6-10 can wait.
+
+**Built 2026-11-26** (standing rule 19; docs/MANUAL.md "Techno, fitted"; method, numbers and A/Bs in examples/production/techno/README.md; references: a recorded TR-909 and 56 CC0 / CC BY Freesound sounds, measured only):
+| Gap | Now | Fit (lower is closer) |
+|---|---|---|
+| 1 rumble | return `"type": "rumble"` and a kick track's `"rumble": true` (reverb 0.67 s → 24 dB drive → 48 dB/oct low-pass 390 Hz, or `tone` sub 96.6 / deep 150 / warm 250 / grit 800 → mono → silent on each hit, swelling back over 1.43 beats → 9.5 dB under the kick) | against 8 recorded kick-and-rumble loops: level halfway through the beat -6.8 dB under the kick (references -6.1; built by hand -10.0); pump shape 4.0 dB RMS (by hand 4.2), 25-800 Hz spectrum 4.9 dB (5.2). The fitted tail is shorter (0.67 s) than Futureproof's 3-5 s: the loops swell from silence each beat |
+| 2 hard kick | preset `hardkick` | 15 recorded hard-techno kicks: third-octave RMS 7.0 dB (13.3 before its curve); crest 3.8-4.1 dB (references 7.0), loudness at -1 dBFS peak -9.3 to -10.1 LUFS (-8.6), low band -20 dB in 173-191 ms (192) |
+| 3 909 kick and hats | `kick909`, `hat909`, `openhat909` | on the recorded 909 they were fitted to: kick 4.1 dB / decay 0.33 (`clubkick` 4.2 / 0.70), closed hat 8.2 / 0.33 (`metalhat` 16.6 / 1.38), open hat 6.4 / 0.20 (`metalhat` open 15.4 / 2.30); **on other 909 recordings (not fitted, n = 2-4) no better than the old stand-ins**: kick 7.2 against `clubkick` 6.8 dB, closed hat 13.1 against `metalhat` 12.4, open hat 13.6 against 14.1 |
+| 4 loud master | tested (examples/production/techno/mastertest.py); the `hard` strand now masters at -8 | a 4:45 track with 32-bar DJ ends: at -8.5 the main and peak sections read -7.9 / -8.0 LUFS short-term, at -8 -7.4 / -7.5 (max -7.3), true peak -1.03 dBTP, limiter at most 1.7 dB; `--genre techno` (-9.5): -8.8 / -8.9 |
+| 5 hard-groove percussion | `conga`, `bongo` (open fitted; slap, mute, bass [H]), `tom909`, `rim909` | congas 9.9 dB / decay 0.99 against 8 recordings (darbuka 12.4 / 1.68, tom 14.3); bongos 9.7 / 1.08 (darbuka 12.3-14.6); 909 toms 7.0 / 0.21 on the fitted 909 and 7.0 / 0.25 on another (`tom` 8.2-9.5 / 1.06); rim 6.7 / 0.15 and 6.5 / 0.48 (`rim` 10.3 / 0.28) |
+| 6 free-running loops | pattern `"free": true`; fractional `bars` verified (a 3-step `"bars": 0.1875`, a 5-step `0.3125`, 12 steps in 0.75) | schedule test: a free 5-step loop keeps its phase across sections and after a gap |
+| 7 hoover | preset `hoover` | 6 recorded hoovers: third-octave RMS 6.2 dB (13.9 before its curve); peakier (crest 17 against 12.4 dB) |
+Still open: gap 8 (tape echo, a return feeding a return), 9 (automation across sections), 10 (formant shift).
 
 
 ## Sources

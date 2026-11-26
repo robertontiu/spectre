@@ -1,0 +1,739 @@
+{
+ "rumble": {
+  "what": "the kick's rumble: the parts by hand (reverb return size 1, asym, a 150 Hz low-pass, follower duck) against the fitted `rumble`; same hardkick, same hats",
+  "A_mix": {
+   "groups_db": {
+    "sub <60": -2.6,
+    "low 60-150": -4.5,
+    "lowmid 150-500": -11.0,
+    "mid 500-2k": -20.6,
+    "pres 2-5k": -24.3,
+    "air 5-16k": -23.0
+   },
+   "centroid_hz": 107.0,
+   "short_term_max": -10.4,
+   "short_term_median": -10.5,
+   "integrated": -10.7
+  },
+  "B_mix": {
+   "groups_db": {
+    "sub <60": -2.0,
+    "low 60-150": -6.2,
+    "lowmid 150-500": -9.8,
+    "mid 500-2k": -19.8,
+    "pres 2-5k": -23.5,
+    "air 5-16k": -23.0
+   },
+   "centroid_hz": 119.0,
+   "short_term_max": -10.6,
+   "short_term_median": -10.6,
+   "integrated": -10.7
+  },
+  "A (rumble)": {
+   "groups_db[sub <60]": -2.4,
+   "groups_db[low 60-150]": -4.1,
+   "groups_db[lowmid 150-500]": -14.0,
+   "groups_db[mid 500-2k]": -46.6,
+   "groups_db[pres 2-5k]": -85.3,
+   "groups_db[air 5-16k]": -100.0,
+   "centroid_hz": 77.0,
+   "crest_db": 13.8,
+   "decay20_ms[low]": 742.0,
+   "decay20_ms[mid]": 1066.0,
+   "decay20_ms[high]": 0.0,
+   "lufs_m_max": -11.8
+  },
+  "B (rumble)": {
+   "groups_db[sub <60]": -1.0,
+   "groups_db[low 60-150]": -9.3,
+   "groups_db[lowmid 150-500]": -11.0,
+   "groups_db[mid 500-2k]": -42.8,
+   "groups_db[pres 2-5k]": -63.7,
+   "groups_db[air 5-16k]": -74.3,
+   "centroid_hz": 80.0,
+   "crest_db": 9.1,
+   "decay20_ms[low]": 27.0,
+   "decay20_ms[mid]": 160.0,
+   "decay20_ms[high]": 9.0,
+   "lufs_m_max": -10.0
+  }
+ },
+ "hardkick": {
+  "what": "the hard kick: kicksub + kickpunch + kickclick through asym, hard clip and transient (TECHNO.md's workaround) against `hardkick`",
+  "A_mix": {
+   "groups_db": {
+    "sub <60": -1.4,
+    "low 60-150": -7.9,
+    "lowmid 150-500": -9.8,
+    "mid 500-2k": -19.0,
+    "pres 2-5k": -28.7,
+    "air 5-16k": -29.6
+   },
+   "centroid_hz": 82.0,
+   "short_term_max": -10.4,
+   "short_term_median": -10.5,
+   "integrated": -10.5
+  },
+  "B_mix": {
+   "groups_db": {
+    "sub <60": -1.6,
+    "low 60-150": -6.8,
+    "lowmid 150-500": -11.5,
+    "mid 500-2k": -19.6,
+    "pres 2-5k": -23.2,
+    "air 5-16k": -22.0
+   },
+   "centroid_hz": 189.0,
+   "short_term_max": -10.6,
+   "short_term_median": -10.6,
+   "integrated": -10.7
+  },
+  "A kick": {
+   "groups_db[sub <60]": -1.3,
+   "groups_db[low 60-150]": -8.1,
+   "groups_db[lowmid 150-500]": -10.2,
+   "groups_db[mid 500-2k]": -19.9,
+   "groups_db[pres 2-5k]": -30.9,
+   "groups_db[air 5-16k]": -36.6,
+   "centroid_hz": 71.0,
+   "crest_db": 6.8,
+   "decay20_ms[low]": 12804.0,
+   "decay20_ms[mid]": 256.0,
+   "decay20_ms[high]": 34.0,
+   "lufs_m_max": -9.0
+  },
+  "B kick": {
+   "groups_db[sub <60]": -1.6,
+   "groups_db[low 60-150]": -6.4,
+   "groups_db[lowmid 150-500]": -11.6,
+   "groups_db[mid 500-2k]": -20.5,
+   "groups_db[pres 2-5k]": -25.0,
+   "groups_db[air 5-16k]": -28.9,
+   "centroid_hz": 74.0,
+   "crest_db": 4.1,
+   "decay20_ms[low]": 173.0,
+   "decay20_ms[mid]": 185.0,
+   "decay20_ms[high]": 6.0,
+   "lufs_m_max": -10.1
+  }
+ },
+ "kick909": {
+  "what": "the 909 kick: `clubkick` (909 lineage) against `kick909`",
+  "A_mix": {
+   "groups_db": {
+    "sub <60": -2.0,
+    "low 60-150": -5.9,
+    "lowmid 150-500": -10.1,
+    "mid 500-2k": -22.6,
+    "pres 2-5k": -30.7,
+    "air 5-16k": -25.6
+   },
+   "centroid_hz": 53.0,
+   "short_term_max": -10.6,
+   "short_term_median": -10.6,
+   "integrated": -10.7
+  },
+  "B_mix": {
+   "groups_db": {
+    "sub <60": -0.9,
+    "low 60-150": -7.5,
+    "lowmid 150-500": -18.3,
+    "mid 500-2k": -37.6,
+    "pres 2-5k": -28.9,
+    "air 5-16k": -41.8
+   },
+   "centroid_hz": 53.0,
+   "short_term_max": -10.8,
+   "short_term_median": -10.8,
+   "integrated": -10.9
+  },
+  "A kick": {
+   "groups_db[sub <60]": -2.2,
+   "groups_db[low 60-150]": -5.0,
+   "groups_db[lowmid 150-500]": -11.3,
+   "groups_db[mid 500-2k]": -25.4,
+   "groups_db[pres 2-5k]": -34.0,
+   "groups_db[air 5-16k]": -28.7,
+   "centroid_hz": 53.0,
+   "crest_db": 4.4,
+   "decay20_ms[low]": 272.0,
+   "decay20_ms[mid]": 107.0,
+   "decay20_ms[high]": 16.0,
+   "lufs_m_max": -7.0
+  },
+  "B kick": {
+   "groups_db[sub <60]": -2.7,
+   "groups_db[low 60-150]": -3.6,
+   "groups_db[lowmid 150-500]": -16.4,
+   "groups_db[mid 500-2k]": -35.3,
+   "groups_db[pres 2-5k]": -26.2,
+   "groups_db[air 5-16k]": -40.0,
+   "centroid_hz": 53.0,
+   "crest_db": 10.5,
+   "decay20_ms[low]": 311.0,
+   "decay20_ms[mid]": 26.0,
+   "decay20_ms[high]": 5.0,
+   "lufs_m_max": -14.4
+  }
+ },
+ "hats909": {
+  "what": "909 hats: `metalhat` closed and open (808 tones) against `hat909` and `openhat909`, over `kick909`",
+  "A_mix": {
+   "groups_db": {
+    "sub <60": -1.3,
+    "low 60-150": -7.1,
+    "lowmid 150-500": -18.0,
+    "mid 500-2k": -35.4,
+    "pres 2-5k": -24.1,
+    "air 5-16k": -14.7
+   },
+   "centroid_hz": 284.0,
+   "short_term_max": -10.6,
+   "short_term_median": -10.6,
+   "integrated": -10.7
+  },
+  "B_mix": {
+   "groups_db": {
+    "sub <60": -1.2,
+    "low 60-150": -7.2,
+    "lowmid 150-500": -17.4,
+    "mid 500-2k": -23.4,
+    "pres 2-5k": -21.5,
+    "air 5-16k": -17.7
+   },
+   "centroid_hz": 136.0,
+   "short_term_max": -10.6,
+   "short_term_median": -10.7,
+   "integrated": -10.7
+  },
+  "A hat": {
+   "groups_db[sub <60]": -70.1,
+   "groups_db[low 60-150]": -66.0,
+   "groups_db[lowmid 150-500]": -46.5,
+   "groups_db[mid 500-2k]": -26.5,
+   "groups_db[pres 2-5k]": -11.9,
+   "groups_db[air 5-16k]": -0.3,
+   "centroid_hz": 8195.0,
+   "crest_db": 18.3,
+   "decay20_ms[low]": 31.0,
+   "decay20_ms[mid]": 199.0,
+   "decay20_ms[high]": 119.0,
+   "lufs_m_max": -13.1
+  },
+  "B hat": {
+   "groups_db[sub <60]": -53.9,
+   "groups_db[low 60-150]": -45.2,
+   "groups_db[lowmid 150-500]": -7.6,
+   "groups_db[mid 500-2k]": -7.1,
+   "groups_db[pres 2-5k]": -7.5,
+   "groups_db[air 5-16k]": -3.5,
+   "centroid_hz": 4898.0,
+   "crest_db": 18.3,
+   "decay20_ms[low]": 45.0,
+   "decay20_ms[mid]": 51.0,
+   "decay20_ms[high]": 46.0,
+   "lufs_m_max": -14.5
+  },
+  "A ohat": {
+   "groups_db[sub <60]": -78.3,
+   "groups_db[low 60-150]": -73.6,
+   "groups_db[lowmid 150-500]": -45.5,
+   "groups_db[mid 500-2k]": -25.0,
+   "groups_db[pres 2-5k]": -11.6,
+   "groups_db[air 5-16k]": -0.3,
+   "centroid_hz": 8423.0,
+   "crest_db": 16.9,
+   "decay20_ms[low]": 96.0,
+   "decay20_ms[mid]": 96.0,
+   "decay20_ms[high]": 90.0,
+   "lufs_m_max": -14.6
+  },
+  "B ohat": {
+   "groups_db[sub <60]": -63.1,
+   "groups_db[low 60-150]": -53.8,
+   "groups_db[lowmid 150-500]": -18.1,
+   "groups_db[mid 500-2k]": -9.6,
+   "groups_db[pres 2-5k]": -6.8,
+   "groups_db[air 5-16k]": -1.8,
+   "centroid_hz": 6751.0,
+   "crest_db": 16.2,
+   "decay20_ms[low]": 100.0,
+   "decay20_ms[mid]": 94.0,
+   "decay20_ms[high]": 95.0,
+   "lufs_m_max": -13.0
+  }
+ },
+ "groove": {
+  "what": "hard-groove percussion: darbuka, tom, rim stand-ins against `conga`, `bongo` (open and slap), `tom909`, `rim909`; the tom on a free-running 3-step loop over the 4/4",
+  "A_mix": {
+   "groups_db": {
+    "sub <60": -9.4,
+    "low 60-150": -3.7,
+    "lowmid 150-500": -3.6,
+    "mid 500-2k": -17.7,
+    "pres 2-5k": -26.1,
+    "air 5-16k": -26.9
+   },
+   "centroid_hz": 176.0,
+   "short_term_max": -10.3,
+   "short_term_median": -10.4,
+   "integrated": -10.5
+  },
+  "B_mix": {
+   "groups_db": {
+    "sub <60": -5.8,
+    "low 60-150": -3.8,
+    "lowmid 150-500": -5.6,
+    "mid 500-2k": -15.4,
+    "pres 2-5k": -22.2,
+    "air 5-16k": -19.9
+   },
+   "centroid_hz": 212.0,
+   "short_term_max": -10.4,
+   "short_term_median": -10.6,
+   "integrated": -10.6
+  },
+  "A conga": {
+   "groups_db[sub <60]": -30.9,
+   "groups_db[low 60-150]": -25.9,
+   "groups_db[lowmid 150-500]": -0.1,
+   "groups_db[mid 500-2k]": -17.5,
+   "groups_db[pres 2-5k]": -44.0,
+   "groups_db[air 5-16k]": -58.2,
+   "centroid_hz": 212.0,
+   "crest_db": 7.0,
+   "decay20_ms[low]": 1183.0,
+   "decay20_ms[mid]": 1153.0,
+   "decay20_ms[high]": 34.0,
+   "lufs_m_max": -5.6
+  },
+  "B conga": {
+   "groups_db[sub <60]": -31.5,
+   "groups_db[low 60-150]": -20.5,
+   "groups_db[lowmid 150-500]": -0.2,
+   "groups_db[mid 500-2k]": -19.0,
+   "groups_db[pres 2-5k]": -24.3,
+   "groups_db[air 5-16k]": -18.0,
+   "centroid_hz": 236.0,
+   "crest_db": 10.5,
+   "decay20_ms[low]": 111.0,
+   "decay20_ms[mid]": 165.0,
+   "decay20_ms[high]": 13.0,
+   "lufs_m_max": -7.9
+  },
+  "A bongo": {
+   "groups_db[sub <60]": -38.3,
+   "groups_db[low 60-150]": -34.5,
+   "groups_db[lowmid 150-500]": -24.0,
+   "groups_db[mid 500-2k]": -0.3,
+   "groups_db[pres 2-5k]": -12.8,
+   "groups_db[air 5-16k]": -17.7,
+   "centroid_hz": 936.0,
+   "crest_db": 19.9,
+   "decay20_ms[low]": 29.0,
+   "decay20_ms[mid]": 101.0,
+   "decay20_ms[high]": 73.0,
+   "lufs_m_max": -18.4
+  },
+  "B bongo": {
+   "groups_db[sub <60]": -31.3,
+   "groups_db[low 60-150]": -32.1,
+   "groups_db[lowmid 150-500]": -0.8,
+   "groups_db[mid 500-2k]": -8.2,
+   "groups_db[pres 2-5k]": -22.7,
+   "groups_db[air 5-16k]": -33.4,
+   "centroid_hz": 484.0,
+   "crest_db": 7.8,
+   "decay20_ms[low]": 52.0,
+   "decay20_ms[mid]": 162.0,
+   "decay20_ms[high]": 44.0,
+   "lufs_m_max": -7.4
+  },
+  "A slap": {
+   "groups_db[sub <60]": -31.0,
+   "groups_db[low 60-150]": -26.8,
+   "groups_db[lowmid 150-500]": -2.9,
+   "groups_db[mid 500-2k]": -8.7,
+   "groups_db[pres 2-5k]": -6.2,
+   "groups_db[air 5-16k]": -9.8,
+   "centroid_hz": 923.0,
+   "crest_db": 21.7,
+   "decay20_ms[low]": 30.0,
+   "decay20_ms[mid]": 102.0,
+   "decay20_ms[high]": 63.0,
+   "lufs_m_max": -19.4
+  },
+  "B slap": {
+   "groups_db[sub <60]": -34.2,
+   "groups_db[low 60-150]": -24.9,
+   "groups_db[lowmid 150-500]": -2.3,
+   "groups_db[mid 500-2k]": -18.4,
+   "groups_db[pres 2-5k]": -11.4,
+   "groups_db[air 5-16k]": -5.3,
+   "centroid_hz": 381.0,
+   "crest_db": 18.3,
+   "decay20_ms[low]": 43.0,
+   "decay20_ms[mid]": 52.0,
+   "decay20_ms[high]": 17.0,
+   "lufs_m_max": -15.3
+  },
+  "A tom": {
+   "groups_db[sub <60]": -31.4,
+   "groups_db[low 60-150]": -0.4,
+   "groups_db[lowmid 150-500]": -11.0,
+   "groups_db[mid 500-2k]": -37.7,
+   "groups_db[pres 2-5k]": -39.9,
+   "groups_db[air 5-16k]": -50.3,
+   "centroid_hz": 111.0,
+   "crest_db": 8.2,
+   "decay20_ms[low]": 956.0,
+   "decay20_ms[mid]": 2522.0,
+   "decay20_ms[high]": 23.0,
+   "lufs_m_max": -7.5
+  },
+  "B tom": {
+   "groups_db[sub <60]": -24.7,
+   "groups_db[low 60-150]": -0.1,
+   "groups_db[lowmid 150-500]": -19.3,
+   "groups_db[mid 500-2k]": -28.2,
+   "groups_db[pres 2-5k]": -27.6,
+   "groups_db[air 5-16k]": -30.2,
+   "centroid_hz": 77.0,
+   "crest_db": 7.9,
+   "decay20_ms[low]": 222.0,
+   "decay20_ms[mid]": 76.0,
+   "decay20_ms[high]": 38.0,
+   "lufs_m_max": -7.4
+  },
+  "A rim": {
+   "groups_db[sub <60]": -26.3,
+   "groups_db[low 60-150]": -22.4,
+   "groups_db[lowmid 150-500]": -3.2,
+   "groups_db[mid 500-2k]": -3.3,
+   "groups_db[pres 2-5k]": -15.5,
+   "groups_db[air 5-16k]": -17.6,
+   "centroid_hz": 513.0,
+   "crest_db": 25.3,
+   "decay20_ms[low]": 29.0,
+   "decay20_ms[mid]": 38.0,
+   "decay20_ms[high]": 12.0,
+   "lufs_m_max": -23.0
+  },
+  "B rim": {
+   "groups_db[sub <60]": -35.9,
+   "groups_db[low 60-150]": -26.4,
+   "groups_db[lowmid 150-500]": -0.5,
+   "groups_db[mid 500-2k]": -11.1,
+   "groups_db[pres 2-5k]": -16.7,
+   "groups_db[air 5-16k]": -18.7,
+   "centroid_hz": 388.0,
+   "crest_db": 15.1,
+   "decay20_ms[low]": 25.0,
+   "decay20_ms[mid]": 29.0,
+   "decay20_ms[high]": 11.0,
+   "lufs_m_max": -12.6
+  }
+ },
+ "hoover": {
+  "what": "the hoover: a polysynth patch by hand (PWM pulses, a pitch envelope, chorus) against the `hoover` preset",
+  "A_mix": {
+   "groups_db": {
+    "sub <60": -1.0,
+    "low 60-150": -7.4,
+    "lowmid 150-500": -16.4,
+    "mid 500-2k": -23.0,
+    "pres 2-5k": -27.3,
+    "air 5-16k": -41.3
+   },
+   "centroid_hz": 60.0,
+   "short_term_max": -10.8,
+   "short_term_median": -10.9,
+   "integrated": -10.9
+  },
+  "B_mix": {
+   "groups_db": {
+    "sub <60": -1.4,
+    "low 60-150": -6.8,
+    "lowmid 150-500": -13.9,
+    "mid 500-2k": -20.0,
+    "pres 2-5k": -22.7,
+    "air 5-16k": -31.7
+   },
+   "centroid_hz": 74.0,
+   "short_term_max": -10.7,
+   "short_term_median": -10.8,
+   "integrated": -10.8
+  },
+  "A lead": {
+   "groups_db[sub <60]": -65.3,
+   "groups_db[low 60-150]": -18.7,
+   "groups_db[lowmid 150-500]": -2.1,
+   "groups_db[mid 500-2k]": -4.8,
+   "groups_db[pres 2-5k]": -14.4,
+   "groups_db[air 5-16k]": -33.2,
+   "centroid_hz": 681.0,
+   "crest_db": 17.0,
+   "decay20_ms[low]": 198.0,
+   "decay20_ms[mid]": 351.0,
+   "decay20_ms[high]": 477.0,
+   "lufs_m_max": -13.0
+  },
+  "B lead": {
+   "groups_db[sub <60]": -21.8,
+   "groups_db[low 60-150]": -4.1,
+   "groups_db[lowmid 150-500]": -4.1,
+   "groups_db[mid 500-2k]": -8.3,
+   "groups_db[pres 2-5k]": -12.1,
+   "groups_db[air 5-16k]": -20.4,
+   "centroid_hz": 577.0,
+   "crest_db": 17.0,
+   "decay20_ms[low]": 581.0,
+   "decay20_ms[mid]": 628.0,
+   "decay20_ms[high]": 644.0,
+   "lufs_m_max": -13.3
+  }
+ },
+ "excerpt": {
+  "what": "a 16-bar hard-techno excerpt at 150 bpm with everything together: the old stand-ins (A) against the fitted sounds (B); same acid, clap and patterns",
+  "A_mix": {
+   "groups_db": {
+    "sub <60": -4.1,
+    "low 60-150": -5.8,
+    "lowmid 150-500": -5.2,
+    "mid 500-2k": -13.7,
+    "pres 2-5k": -23.6,
+    "air 5-16k": -25.7
+   },
+   "centroid_hz": 169.0,
+   "short_term_max": -10.2,
+   "short_term_median": -10.3,
+   "integrated": -10.5
+  },
+  "B_mix": {
+   "groups_db": {
+    "sub <60": -5.0,
+    "low 60-150": -5.8,
+    "lowmid 150-500": -5.0,
+    "mid 500-2k": -10.8,
+    "pres 2-5k": -19.8,
+    "air 5-16k": -21.1
+   },
+   "centroid_hz": 306.0,
+   "short_term_max": -10.4,
+   "short_term_median": -10.5,
+   "integrated": -10.5
+  },
+  "A kick": {
+   "groups_db[sub <60]": -1.3,
+   "groups_db[low 60-150]": -8.1,
+   "groups_db[lowmid 150-500]": -10.2,
+   "groups_db[mid 500-2k]": -19.9,
+   "groups_db[pres 2-5k]": -30.9,
+   "groups_db[air 5-16k]": -36.7,
+   "centroid_hz": 71.0,
+   "crest_db": 6.8,
+   "decay20_ms[low]": 25612.0,
+   "decay20_ms[mid]": 256.0,
+   "decay20_ms[high]": 34.0,
+   "lufs_m_max": -9.0
+  },
+  "B kick": {
+   "groups_db[sub <60]": -1.6,
+   "groups_db[low 60-150]": -6.4,
+   "groups_db[lowmid 150-500]": -11.7,
+   "groups_db[mid 500-2k]": -20.5,
+   "groups_db[pres 2-5k]": -24.9,
+   "groups_db[air 5-16k]": -28.8,
+   "centroid_hz": 74.0,
+   "crest_db": 4.1,
+   "decay20_ms[low]": 173.0,
+   "decay20_ms[mid]": 185.0,
+   "decay20_ms[high]": 6.0,
+   "lufs_m_max": -10.1
+  },
+  "A (rumble)": {
+   "groups_db[sub <60]": -3.5,
+   "groups_db[low 60-150]": -3.1,
+   "groups_db[lowmid 150-500]": -11.7,
+   "groups_db[mid 500-2k]": -45.0,
+   "groups_db[pres 2-5k]": -86.3,
+   "groups_db[air 5-16k]": -102.5,
+   "centroid_hz": 75.0,
+   "crest_db": 14.9,
+   "decay20_ms[low]": 333.0,
+   "decay20_ms[mid]": 1377.0,
+   "decay20_ms[high]": 0.0,
+   "lufs_m_max": -11.2
+  },
+  "B (rumble)": {
+   "groups_db[sub <60]": -1.0,
+   "groups_db[low 60-150]": -9.3,
+   "groups_db[lowmid 150-500]": -11.0,
+   "groups_db[mid 500-2k]": -42.8,
+   "groups_db[pres 2-5k]": -63.7,
+   "groups_db[air 5-16k]": -74.3,
+   "centroid_hz": 80.0,
+   "crest_db": 9.0,
+   "decay20_ms[low]": 27.0,
+   "decay20_ms[mid]": 160.0,
+   "decay20_ms[high]": 9.0,
+   "lufs_m_max": -9.9
+  },
+  "A lead": {
+   "groups_db[sub <60]": -64.2,
+   "groups_db[low 60-150]": -18.8,
+   "groups_db[lowmid 150-500]": -1.8,
+   "groups_db[mid 500-2k]": -5.3,
+   "groups_db[pres 2-5k]": -14.9,
+   "groups_db[air 5-16k]": -33.7,
+   "centroid_hz": 674.0,
+   "crest_db": 18.2,
+   "decay20_ms[low]": 213.0,
+   "decay20_ms[mid]": 96.0,
+   "decay20_ms[high]": 400.0,
+   "lufs_m_max": -14.3
+  },
+  "B lead": {
+   "groups_db[sub <60]": -22.1,
+   "groups_db[low 60-150]": -3.5,
+   "groups_db[lowmid 150-500]": -4.6,
+   "groups_db[mid 500-2k]": -8.6,
+   "groups_db[pres 2-5k]": -12.3,
+   "groups_db[air 5-16k]": -20.7,
+   "centroid_hz": 611.0,
+   "crest_db": 17.7,
+   "decay20_ms[low]": 213.0,
+   "decay20_ms[mid]": 611.0,
+   "decay20_ms[high]": 657.0,
+   "lufs_m_max": -12.3
+  }
+ },
+ "master": {
+  "DJ ends (32-bar intro and outro), --genre techno --strand hard": {
+   "loudest_2min_integrated": -8.4,
+   "loudest_2min_start_s": 8,
+   "loudest_2min_short_term_median": -8.0,
+   "loudest_2min_short_term_max": -7.8,
+   "section_short_term_median": {
+    "intro": -9.5,
+    "intro2": -9.3,
+    "main": -7.9,
+    "break": -10.8,
+    "peak": -8.0,
+    "outro": -9.3,
+    "outro2": -9.4
+   },
+   "integrated": -8.7,
+   "true_peak": -1.03,
+   "plr": 7.6,
+   "limiter_max_gr_db": 1.6,
+   "drive_db": 0.3,
+   "duration_s": 284.6
+  },
+  "DJ ends (32-bar intro and outro), --genre techno --strand hard --lufs -8": {
+   "loudest_2min_integrated": -7.9,
+   "loudest_2min_start_s": 8,
+   "loudest_2min_short_term_median": -7.5,
+   "loudest_2min_short_term_max": -7.3,
+   "section_short_term_median": {
+    "intro": -8.9,
+    "intro2": -8.8,
+    "main": -7.4,
+    "break": -10.3,
+    "peak": -7.5,
+    "outro": -8.8,
+    "outro2": -8.9
+   },
+   "integrated": -8.1,
+   "true_peak": -1.03,
+   "plr": 7.1,
+   "limiter_max_gr_db": 1.7,
+   "drive_db": 1.0,
+   "duration_s": 284.6
+  },
+  "DJ ends (32-bar intro and outro), --genre techno": {
+   "loudest_2min_integrated": -9.3,
+   "loudest_2min_start_s": 52,
+   "loudest_2min_short_term_median": -8.8,
+   "loudest_2min_short_term_max": -8.7,
+   "section_short_term_median": {
+    "intro": -10.4,
+    "intro2": -10.3,
+    "main": -8.8,
+    "break": -11.7,
+    "peak": -8.9,
+    "outro": -10.3,
+    "outro2": -10.4
+   },
+   "integrated": -9.5,
+   "true_peak": -1.02,
+   "plr": 8.5,
+   "limiter_max_gr_db": 1.4,
+   "drive_db": -1.0,
+   "duration_s": 284.6
+  },
+  "short ends (8 bars), --genre techno --strand hard": {
+   "loudest_2min_integrated": -8.6,
+   "loudest_2min_start_s": 14,
+   "loudest_2min_short_term_median": -8.2,
+   "loudest_2min_short_term_max": -8.0,
+   "section_short_term_median": {
+    "intro": -9.7,
+    "intro2": -9.6,
+    "main": -8.1,
+    "break": -11.1,
+    "peak": -8.2,
+    "outro": -9.6,
+    "outro2": -9.7
+   },
+   "integrated": -8.6,
+   "true_peak": -1.03,
+   "plr": 7.6,
+   "limiter_max_gr_db": 1.5,
+   "drive_db": -0.2,
+   "duration_s": 207.8
+  },
+  "short ends (8 bars), --genre techno --strand hard --lufs -8": {
+   "loudest_2min_integrated": -8.2,
+   "loudest_2min_start_s": 13,
+   "loudest_2min_short_term_median": -7.7,
+   "loudest_2min_short_term_max": -7.6,
+   "section_short_term_median": {
+    "intro": -9.2,
+    "intro2": -9.1,
+    "main": -7.7,
+    "break": -10.6,
+    "peak": -7.8,
+    "outro": -9.1,
+    "outro2": -9.2
+   },
+   "integrated": -8.2,
+   "true_peak": -1.03,
+   "plr": 7.1,
+   "limiter_max_gr_db": 1.6,
+   "drive_db": 0.4,
+   "duration_s": 207.8
+  },
+  "short ends (8 bars), --genre techno": {
+   "loudest_2min_integrated": -9.5,
+   "loudest_2min_start_s": 14,
+   "loudest_2min_short_term_median": -9.1,
+   "loudest_2min_short_term_max": -9.0,
+   "section_short_term_median": {
+    "intro": -10.7,
+    "intro2": -10.6,
+    "main": -9.1,
+    "break": -12.0,
+    "peak": -9.1,
+    "outro": -10.6,
+    "outro2": -10.7
+   },
+   "integrated": -9.5,
+   "true_peak": -1.03,
+   "plr": 8.5,
+   "limiter_max_gr_db": 1.3,
+   "drive_db": -1.6,
+   "duration_s": 207.8
+  }
+ }
+}

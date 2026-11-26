@@ -48,6 +48,12 @@ engine/
   dubstep2.py     bass music fitted to recorded references (2026-11-26): track `"preset"`s (data in bass_presets.json,
                   fitted by examples/production/dubstep-v2/fit.py), fx `curve`, `transient`, `widen`; the stereo
                   transitions of `"fx_model": 2`
+  psy.py          psytrance: `sleighbells`, `zap` (pitch-dive); docs/MANUAL.md "Psytrance"
+  techno.py       techno fitted to recordings (2026-11-26): `kick909`, `hat909`, `openhat909`, `tom909`, `rim909` (fitted
+                  to a recorded TR-909), `conga`, `bongo` (strokes open, slap, mute, bass), the `rumble` return type (kick
+                  -> reverb -> distortion -> low-pass, ducked on the kick's hits) and a track's `"rumble"` helper,
+                  free-running patterns (`"free": true`); presets `hardkick`, `hoover` in techno_presets.json (fitted by
+                  examples/production/techno/)
   orchestra.py    the cinematic orchestra and trailer sounds: `brass` and `woodwind` (measured additive model, data in
                   orchestra_winds.json from examples/production/cinematic/fit_winds.py), `timpani`, `bassdrum`, `taiko`,
                   `suscymbal` (fitted by fit_drums.py), `braam`, `impact`, `whoosh`, `shepard`, `vox2choir`, `accordion`;
@@ -97,7 +103,9 @@ examples/
   chamberscore/   chamber-score instruments A/B (old stand-ins vs celesta, glockenspiel, vibraphone, cello, viola,
                   strings_section) and spectrograms against reference recordings (build.py)
   production/     the production upgrade A/B: First Light and Half of Me excerpts as published vs rebuilt with stacks
-                  (mp3, clarity numbers, spectrograms; build.py); dubstep/: the bass-music tools as A/Bs and a drop (build.py), the master test (mastertest.py); modern/: the modern-strand tools (shimmer, granular,
+                  (mp3, clarity numbers, spectrograms; build.py); techno/: the techno drums, rumble, presets and the loud
+                  master test fitted to recorded references (fit909.py, fithand.py, fitrumble.py, fitpresets.py, build.py,
+                  mastertest.py, README with the numbers); dubstep/: the bass-music tools as A/Bs and a drop (build.py), the master test (mastertest.py); modern/: the modern-strand tools (shimmer, granular,
                   acid, 909, slide and accent, automated sounds, suppress) as short A/Bs (build.py) and the 909 fit
                   (measure909.py)
   joc/            lăutar band A/B (old fiddle vs violin, the violin's articulations, acguitar, toba, a tempo ramp; build.py)
@@ -108,6 +116,8 @@ examples/
   trance-test.json, poprock-test.json  small projects that exercise the trance and pop rock sounds
   dubstep-test.json  a small project that exercises the bass-music tools (fmgrowl, wavetable, sampler, synced mods,
                   vowel, multiband, fold, hardclip, flanger, resonator, autofilter, a gated reverb return)
+  techno-test.json  a small project that exercises the techno sounds (hardkick and its rumble, the 909 kick, hats, toms,
+                  rim, congas and bongos with strokes, free-running 3- and 5-step loops, acid, the hoover preset)
   trance-modern-test.json  a small project that exercises acid, the 909 drums, shimmer and granular returns, suppress,
                   polysynth slide and accent, and section automation of instrument, fx and return parameters
 ```

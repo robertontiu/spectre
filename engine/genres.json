@@ -1016,10 +1016,10 @@
       "hard": {
         "label": "hard techno, schranz, fast hard groove (2020s revival; queue 14)",
         "target": "techno_hard",
-        "lufs": -8.5,
+        "lufs": -8.0,
         "tp": -1.0,
         "mono_below": 150.0,
-        "note": "16-artist set, 540 tracks, 9% lossless (16 kHz on the smoothness term); Hard Techno loud sections -7.3 (-8.2 to -6.2): aim the loudest 2 minutes at about -7.5 to -7, never louder than -6.5"
+        "note": "16-artist set, 540 tracks, 9% lossless (16 kHz on the smoothness term); Hard Techno loud sections -7.3 (-8.2 to -6.2): aim the loudest 2 minutes at about -7.5 to -7, never louder than -6.5. Tested 2026-11-26 (examples/production/techno/mastertest.py, a 4:45 hard-techno track with 32-bar DJ ends): -8.5 landed the main and peak sections at -7.9 / -8.0 LUFS short-term, -8 at -7.4 / -7.5 (max -7.3), true peak -1.03 dBTP, PLR 7.1, limiter at most 1.7 dB; so -8"
       },
       "industrial": {
         "label": "industrial / EBM-adjacent",
@@ -1082,7 +1082,7 @@
     "change_rate": "an element in or out about every 16 bars (8 in the busy strands); slow movement inside sections (filter, resonance, decay, sends over 8-16 bars); the kick leaves only for the breakdown",
     "role": "the kick and its low end are the lead; one repeating hook sound (an acid line, a stab, a riff of one or two notes, a loop) over percussion; voices as short loops, shouts or chopped phrases",
     "hand_tuned": [
-      "lufs -9.5 and the strand levels (-8.5 hard, -9 industrial, -9.5 hypnotic, -10.5 minimal, -11 melodic and minimal era, -12 dub, -13 roots): choices against the measured loud sections (Mixgraph previews) and whole tracks (catalogue); untested in the engine",
+      "lufs -9.5 and the strand levels (-8 hard (tested in the engine 2026-11-26), -9 industrial, -9.5 hypnotic, -10.5 minimal, -11 melodic and minimal era, -12 dub, -13 roots): choices against the measured loud sections (Mixgraph previews) and whole tracks (catalogue); untested in the engine",
       "eq 0.7 and translate 0.4 (as trance and dubstep)",
       "max_low_boost_db 2 (the heaviest measured low end in the project: the mix must supply 50-80 Hz)",
       "mono_below 120 (MusicRadar; Nihil Young's 50-120 Hz low-end focus) and 150 for hard (Futureproof)",

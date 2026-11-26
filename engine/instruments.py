@@ -1920,3 +1920,33 @@ MONO.add("vox2choir")
 TONAL.update({k: _orch(k) for k in ("brass", "woodwind", "timpani", "suscymbal", "braam", "whoosh", "shepard",
                                     "accordion")})
 DRUMS.update({k: _orch(k) for k in ("bassdrum", "taiko", "impact")})
+
+
+# ---------------------------------------------------------------- techno: 909 kick, hats, toms, rim; conga, bongo
+# Additive block (2026-11-26, docs/TECHNO.md "Engine mapping"; code in engine/techno.py, docs/MANUAL.md "Techno,
+# fitted"). Used only when a track names them; they draw from the module RNG at call time.
+def _techno(kind):
+    def f(p, vel, ps=0.0):
+        import techno as _t
+        return getattr(_t, kind)(p, vel, ps)
+    f.__name__ = kind
+    return f
+
+
+DRUMS.update({k: _techno(k) for k in ("kick909", "hat909", "openhat909", "tom909", "rim909", "conga", "bongo")})
+ROUND_ROBIN = ROUND_ROBIN | {"tom909", "rim909", "conga", "bongo"}
+
+
+# ---------------------------------------------------------------- psytrance: sleigh bells, pitch-dive zap
+# Additive block (2026-11-26, docs/PSYTRANCE.md "Engine mapping"; code in engine/psy.py, docs/MANUAL.md "Psytrance").
+# Used only when a track names them; they draw from the module RNG at call time.
+def _psy(kind):
+    def f(p, vel, ps=0.0):
+        import psy as _p
+        return getattr(_p, kind)(p, vel, ps)
+    f.__name__ = kind
+    return f
+
+
+DRUMS.update({k: _psy(k) for k in ("sleighbells", "zap")})
+ROUND_ROBIN = ROUND_ROBIN | {"sleighbells"}

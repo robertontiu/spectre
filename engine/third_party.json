@@ -2546,6 +2546,766 @@
      "licence": "CC BY 4.0"
     }
    ]
+  },
+  {
+   "id": "refs-techno-cc0",
+   "kind": "files",
+   "required": false,
+   "for": "examples/production/techno/ (fit909.py, fithand.py, fitrumble.py, fitpresets.py, refs.py): reference one-shots and loops per techno sound role (rumble (kick-and-rumble loops), hardkick (hard-techno kicks), kick909, hat909, openhat909, tom909, rim909 (TR-909 recordings), conga, bongo, hoover); the techno drums (engine/techno.py), the rumble and the techno presets (engine/techno_presets.json) were fitted or checked against them; analysed only, never used in a track",
+   "licence": {
+    "name": "CC0 1.0",
+    "terms": "public domain dedication (Freesound); the HQ previews"
+   },
+   "page": "https://freesound.org/",
+   "root": "cache",
+   "path": "refs/techno",
+   "size": 1146433,
+   "search_hint": "Freesound sound pages (each file's `page`): the HQ preview of each sound (cdn.freesound.org/previews/<id // 1000>/<id>_<user id>-hq.mp3, as `url`), saved as refs/techno/<role>/<id>.mp3; check the licence on the sound's page before replacing one.",
+   "mirror": "refs.tar",
+   "files": [
+    {
+     "path": "refs/techno/rumble/789234.mp3",
+     "size": 31879,
+     "sha256": "60e47307546d2ba97725bbd70a6c4b7830f99a5bc60e2ac0dde51b5b6055d30d",
+     "url": "https://cdn.freesound.org/previews/789/789234_26600-hq.mp3",
+     "page": "https://freesound.org/people/mikotondria/sounds/789234/",
+     "author": "mikotondria",
+     "title": "137bpm-tough-mid-rumbler",
+     "role": "rumble",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/rumble/652522.mp3",
+     "size": 88137,
+     "sha256": "59a617f26eeb36e01d3d30ca6e8d4c876439f765ab9f3f85876d8dafc617ee1c",
+     "url": "https://cdn.freesound.org/previews/652/652522_4819210-hq.mp3",
+     "page": "https://freesound.org/people/Johnnie_Holiday/sounds/652522/",
+     "author": "Johnnie_Holiday",
+     "title": "Big Room Techno Rumble Kick F (JH).wav",
+     "role": "rumble",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/rumble/676993.mp3",
+     "size": 253906,
+     "sha256": "14693b1a03d683ca4185088b35ff12e50ad9914dee8bc0f7a088bee064294b58",
+     "url": "https://cdn.freesound.org/previews/676/676993_2448533-hq.mp3",
+     "page": "https://freesound.org/people/.Andre_Onate/sounds/676993/",
+     "author": ".Andre_Onate",
+     "title": "Schranz Kik 67i7w.wav",
+     "role": "rumble",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hardkick/848557.mp3",
+     "size": 14825,
+     "sha256": "abf5e67558c24a8750a6a20d88e046d345bbb7364312efe36d1af3ca1815e393",
+     "url": "https://cdn.freesound.org/previews/848/848557_17675683-hq.mp3",
+     "page": "https://freesound.org/people/CAT-FOX_ALEX/sounds/848557/",
+     "author": "CAT-FOX_ALEX",
+     "title": "Techno-Hardtechno-Kick 1",
+     "role": "hardkick",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hardkick/845585.mp3",
+     "size": 7405,
+     "sha256": "b2c02a08e92c746ca9844f71af5d0e25551f8c1267c72ad1743bb160b82eb80f",
+     "url": "https://cdn.freesound.org/previews/845/845585_17675683-hq.mp3",
+     "page": "https://freesound.org/people/CAT-FOX_ALEX/sounds/845585/",
+     "author": "CAT-FOX_ALEX",
+     "title": "Hardtechno Kick 1",
+     "role": "hardkick",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hardkick/845584.mp3",
+     "size": 15816,
+     "sha256": "a24247220f608609a7ce061d8198e2d8f8ba214b8ceadde08cd0ca7befc1dcff",
+     "url": "https://cdn.freesound.org/previews/845/845584_17675683-hq.mp3",
+     "page": "https://freesound.org/people/CAT-FOX_ALEX/sounds/845584/",
+     "author": "CAT-FOX_ALEX",
+     "title": "Hardtechno Kick 1-Rumbled",
+     "role": "hardkick",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hardkick/864447.mp3",
+     "size": 7149,
+     "sha256": "c52a6c785514320aba88a9a2773ed38531da8a1d990c787fb088c7ca6e52639d",
+     "url": "https://cdn.freesound.org/previews/864/864447_17675683-hq.mp3",
+     "page": "https://freesound.org/people/CAT-FOX_ALEX/sounds/864447/",
+     "author": "CAT-FOX_ALEX",
+     "title": "Techno-Hardtechno Kick 3",
+     "role": "hardkick",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hardkick/860395.mp3",
+     "size": 15084,
+     "sha256": "3edee10463b5fa275cea30286cd7cb38b4b2eff2b8d769cd39f4ddc8afb9f088",
+     "url": "https://cdn.freesound.org/previews/860/860395_17675683-hq.mp3",
+     "page": "https://freesound.org/people/CAT-FOX_ALEX/sounds/860395/",
+     "author": "CAT-FOX_ALEX",
+     "title": "HardTechno Kick Test-1-140bpm",
+     "role": "hardkick",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hardkick/860911.mp3",
+     "size": 16440,
+     "sha256": "66cc0c0acd9840073bba28f5e4f7d33bc35fc870c2bbc14ca4b9454edf1a540c",
+     "url": "https://cdn.freesound.org/previews/860/860911_17675683-hq.mp3",
+     "page": "https://freesound.org/people/CAT-FOX_ALEX/sounds/860911/",
+     "author": "CAT-FOX_ALEX",
+     "title": "Industrial Hardtechno Kick 1",
+     "role": "hardkick",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hardkick/828750.mp3",
+     "size": 4540,
+     "sha256": "d01bbd407913704331846f4ec0b810ba89864e5cc50902ab20f1f71c0087bb89",
+     "url": "https://cdn.freesound.org/previews/828/828750_17675683-hq.mp3",
+     "page": "https://freesound.org/people/CAT-FOX_ALEX/sounds/828750/",
+     "author": "CAT-FOX_ALEX",
+     "title": "Techno-Hard Kick 2",
+     "role": "hardkick",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hardkick/536545.mp3",
+     "size": 12096,
+     "sha256": "69ddad5d26ecdc7f569fd07e9a03f7b85a0dd87cdd5b723c323ef0c3e2348612",
+     "url": "https://cdn.freesound.org/previews/536/536545_245685-hq.mp3",
+     "page": "https://freesound.org/people/angelkunev/sounds/536545/",
+     "author": "angelkunev",
+     "title": "Hard Drum Kick - Destroyer",
+     "role": "hardkick",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hardkick/536544.mp3",
+     "size": 12864,
+     "sha256": "30d430f5ad1d5991231a618a9906f573df52df121c26af62ae23c7334019b72b",
+     "url": "https://cdn.freesound.org/previews/536/536544_245685-hq.mp3",
+     "page": "https://freesound.org/people/angelkunev/sounds/536544/",
+     "author": "angelkunev",
+     "title": "Hard Drum Kick",
+     "role": "hardkick",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hardkick/522125.mp3",
+     "size": 44362,
+     "sha256": "89f5521399059965b6813bd29ea724e9e112e4185445f9a9e92e9452c5875be4",
+     "url": "https://cdn.freesound.org/previews/522/522125_10973700-hq.mp3",
+     "page": "https://freesound.org/people/Leonard.B.Blaesing/sounds/522125/",
+     "author": "Leonard.B.Blaesing",
+     "title": "Heavy Techno Kick 1.wav",
+     "role": "hardkick",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hardkick/400657.mp3",
+     "size": 41118,
+     "sha256": "2d57c822288607389b11cb51c7326dd30de2aecbc9cd5217ae15d78b229fb168",
+     "url": "https://cdn.freesound.org/previews/400/400657_2687421-hq.mp3",
+     "page": "https://freesound.org/people/Jessetz/sounds/400657/",
+     "author": "Jessetz",
+     "title": "Edited Hard Kick",
+     "role": "hardkick",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hardkick/349031.mp3",
+     "size": 15578,
+     "sha256": "f9f7b24f1f370191cb0e01b0c638f4d0aba0f2bad922e09e03fad67f7d7bea03",
+     "url": "https://cdn.freesound.org/previews/349/349031_3356610-hq.mp3",
+     "page": "https://freesound.org/people/Teacoma/sounds/349031/",
+     "author": "Teacoma",
+     "title": "Bass Amp Techno Kick",
+     "role": "hardkick",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hardkick/879577.mp3",
+     "size": 46016,
+     "sha256": "58f97a697b96c2aea7dfaab0b57c8fa29e333d2bffc2bbb6a48a80fc3e5126c5",
+     "url": "https://cdn.freesound.org/previews/879/879577_17675683-hq.mp3",
+     "page": "https://freesound.org/people/CAT-FOX_ALEX/sounds/879577/",
+     "author": "CAT-FOX_ALEX",
+     "title": "Hardtechno Kick 9_Unprocessed",
+     "role": "hardkick",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/kick909/145775.mp3",
+     "size": 12420,
+     "sha256": "22403d0e663befd145482a0da0465519772ec73817490fe912bb3e21dc5ad9b3",
+     "url": "https://cdn.freesound.org/previews/145/145775_2101444-hq.mp3",
+     "page": "https://freesound.org/people/ZeSoundResearchInc./sounds/145775/",
+     "author": "ZeSoundResearchInc.",
+     "title": "909 kICK.WAV",
+     "role": "kick909",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/kick909/871043.mp3",
+     "size": 8293,
+     "sha256": "d7b13172a61b62801cdc9e6b887178d44d44395cbc69eaa7bb60c83abaf6d431",
+     "url": "https://cdn.freesound.org/previews/871/871043_17675683-hq.mp3",
+     "page": "https://freesound.org/people/CAT-FOX_ALEX/sounds/871043/",
+     "author": "CAT-FOX_ALEX",
+     "title": "909 Kick 4",
+     "role": "kick909",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/kick909/414973.mp3",
+     "size": 13968,
+     "sha256": "fc6196d4b5b679a77ea8f306f18a56ecf09f9c4271b54420bb6075c61eafc31f",
+     "url": "https://cdn.freesound.org/previews/414/414973_8070456-hq.mp3",
+     "page": "https://freesound.org/people/GRD-music-/sounds/414973/",
+     "author": "GRD-music-",
+     "title": "Classic_TR_909_KICK_JdXi_4",
+     "role": "kick909",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/openhat909/414971.mp3",
+     "size": 16128,
+     "sha256": "f4b18b0570d13f7bbe098ee492c2d146d0cd8568f14c72c951fe7bcbd93f7e20",
+     "url": "https://cdn.freesound.org/previews/414/414971_8070456-hq.mp3",
+     "page": "https://freesound.org/people/GRD-music-/sounds/414971/",
+     "author": "GRD-music-",
+     "title": "Classic_TR_909_HatOpen_JdXi_5",
+     "role": "openhat909",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/conga/99740.mp3",
+     "size": 3860,
+     "sha256": "470af46329361f3536e485fa3ae1cddf8d63f2a6831e7b353a8c2443c44ae74a",
+     "url": "https://cdn.freesound.org/previews/99/99740_29308-hq.mp3",
+     "page": "https://freesound.org/people/menegass/sounds/99740/",
+     "author": "menegass",
+     "title": "Conga_7.wav",
+     "role": "conga",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/conga/373411.mp3",
+     "size": 23797,
+     "sha256": "8e7cb1b2e32338cc4677b824770a868addecc4cdd20167c34b01c7234fd8e6df",
+     "url": "https://cdn.freesound.org/previews/373/373411_2475994-hq.mp3",
+     "page": "https://freesound.org/people/sgossner/sounds/373411/",
+     "author": "sgossner",
+     "title": "Percussion - D#4 (Conga-HitN_v3_rr2_Sum.wav)",
+     "role": "conga",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/conga/412445.mp3",
+     "size": 5272,
+     "sha256": "6ab5ea716fe35c6159d6578b7f674497a7cf6e5914bb535ebb08ced5cba0ad82",
+     "url": "https://cdn.freesound.org/previews/412/412445_7844747-hq.mp3",
+     "page": "https://freesound.org/people/Lynx_5969/sounds/412445/",
+     "author": "Lynx_5969",
+     "title": "Winter Conga Slap.wav",
+     "role": "conga",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/bongo/219157.mp3",
+     "size": 11273,
+     "sha256": "f877e9dbf68b5ba62d79883104e6b9d4fa7a8e26ad646bc3556197a917ec5150",
+     "url": "https://cdn.freesound.org/previews/219/219157_4062622-hq.mp3",
+     "page": "https://freesound.org/people/Jagadamba/sounds/219157/",
+     "author": "Jagadamba",
+     "title": "Bongo01.wav",
+     "role": "bongo",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/bongo/710220.mp3",
+     "size": 5844,
+     "sha256": "0edeef5f07fe8d91296e94c42c75ff481b0801c9cfcbcba9b30466068688ec33",
+     "url": "https://cdn.freesound.org/previews/710/710220_15225418-hq.mp3",
+     "page": "https://freesound.org/people/oceansonmars/sounds/710220/",
+     "author": "oceansonmars",
+     "title": "TapBongoOpen_01",
+     "role": "bongo",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/bongo/579852.mp3",
+     "size": 21913,
+     "sha256": "8d67e90b5a62c9ee8b18d627712c8ccd10c25980b2fe4ecef4e6b4ad2436740a",
+     "url": "https://cdn.freesound.org/previews/579/579852_8738244-hq.mp3",
+     "page": "https://freesound.org/people/curesforbrokenhearts/sounds/579852/",
+     "author": "curesforbrokenhearts",
+     "title": "LP MATADOR BONGO DRUM - MACHO",
+     "role": "bongo",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/bongo/154682.mp3",
+     "size": 40656,
+     "sha256": "9b4020b0d408307f4f7377a82af8082a5494ce63ee4350df46a4c548e62db5d6",
+     "url": "https://cdn.freesound.org/previews/154/154682_2592492-hq.mp3",
+     "page": "https://freesound.org/people/mistorcaveman/sounds/154682/",
+     "author": "mistorcaveman",
+     "title": "BONGO_2_1-2.aif",
+     "role": "bongo",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/bongo/154683.mp3",
+     "size": 40032,
+     "sha256": "5d03272218139093f5859e92e2437e5f2bfecb7c0dee63c10e7ec54c42006937",
+     "url": "https://cdn.freesound.org/previews/154/154683_2592492-hq.mp3",
+     "page": "https://freesound.org/people/mistorcaveman/sounds/154683/",
+     "author": "mistorcaveman",
+     "title": "BONGO_1_1-2.aif",
+     "role": "bongo",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/bongo/555532.mp3",
+     "size": 18266,
+     "sha256": "99195aa2b9ff52bfaa279867597d0cdcc6906e0e869f4a1c15ba21bbbc66afd2",
+     "url": "https://cdn.freesound.org/previews/555/555532_12183728-hq.mp3",
+     "page": "https://freesound.org/people/stwime/sounds/555532/",
+     "author": "stwime",
+     "title": "dry_bongos.mp3",
+     "role": "bongo",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hoover/11512.mp3",
+     "size": 14037,
+     "sha256": "65a52195f9ae644aa2b01afd859b43918b912d95978d86eb1d366e120149bb2c",
+     "url": "https://cdn.freesound.org/previews/11/11512_31243-hq.mp3",
+     "page": "https://freesound.org/people/woowah/sounds/11512/",
+     "author": "woowah",
+     "title": "hardhouse hoover.wav",
+     "role": "hoover",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hoover/165334.mp3",
+     "size": 82025,
+     "sha256": "9a1ad2861e931aa8d01ebd195252671fb1e25fc3a9fa279a5e6839efb4758b62",
+     "url": "https://cdn.freesound.org/previews/165/165334_2687421-hq.mp3",
+     "page": "https://freesound.org/people/Jessetz/sounds/165334/",
+     "author": "Jessetz",
+     "title": "Hoover Sound C5.wav",
+     "role": "hoover",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hoover/112385.mp3",
+     "size": 127874,
+     "sha256": "b06d255c48af761cee9a67b9725bee1dd2e29e4f717d4312fbaaad2ee1b6dfe2",
+     "url": "https://cdn.freesound.org/previews/112/112385_872714-hq.mp3",
+     "page": "https://freesound.org/people/Blackie666/sounds/112385/",
+     "author": "Blackie666",
+     "title": "dark_hoover.mp3",
+     "role": "hoover",
+     "licence": "CC0 1.0"
+    },
+    {
+     "path": "refs/techno/hoover/788862.mp3",
+     "size": 73560,
+     "sha256": "9993c094be294c049c6d76873702c7e47710a9b1f0586521102bb7d7c5d840b6",
+     "url": "https://cdn.freesound.org/previews/788/788862_7258681-hq.mp3",
+     "page": "https://freesound.org/people/Thirdnail/sounds/788862/",
+     "author": "Thirdnail",
+     "title": "Trap Hoover (SBS)",
+     "role": "hoover",
+     "licence": "CC0 1.0"
+    }
+   ]
+  },
+  {
+   "id": "refs-techno-ccby",
+   "kind": "files",
+   "required": false,
+   "for": "examples/production/techno/ (fit909.py, fithand.py, fitrumble.py, fitpresets.py, refs.py): reference one-shots and loops per techno sound role (rumble (kick-and-rumble loops), hardkick (hard-techno kicks), kick909, hat909, openhat909, tom909, rim909 (TR-909 recordings), conga, bongo, hoover); the techno drums (engine/techno.py), the rumble and the techno presets (engine/techno_presets.json) were fitted or checked against them; analysed only, never used in a track",
+   "licence": {
+    "name": "CC BY 3.0 / CC BY 4.0",
+    "terms": "credit each author (Freesound): Cyclez, \"Hard Techno Schranz Rumble Kick Loop 150 BPM Wav\" (CC BY 4.0, https://freesound.org/people/Cyclez/sounds/505298/); vinodibiza, \"RUMBLE KICK LOOP A#\" (CC BY 4.0, https://freesound.org/people/vinodibiza/sounds/737850/); Victek, \"909 Rumble Kick Loop 130BPM\" (CC BY 4.0, https://freesound.org/people/Victek/sounds/541742/); vortexsamples, \"Distorted Hard Techno Kick - VS_OGKush_Kick_Loops_4_F#_150BPM\" (CC BY 4.0, https://freesound.org/people/vortexsamples/sounds/742742/); Cyclez, \"SCHRANZ HARDCORE TECHNO KICK DRUM LOOP 155 BPM\" (CC BY 4.0, https://freesound.org/people/Cyclez/sounds/518639/); BConstructSound, \"Techno Kick.wav\" (CC BY 4.0, https://freesound.org/people/BConstructSound/sounds/360322/); kaiodeleis, \"KICK TECHNO.aif\" (CC BY 4.0, https://freesound.org/people/kaiodeleis/sounds/66438/); AaronGNP, \"GNP Bass Drum - 9-oh-no-9.wav\" (CC BY 4.0, https://freesound.org/people/AaronGNP/sounds/54598/); NoiseCollector, \"909 hat2.wav\" (CC BY 3.0, https://freesound.org/people/NoiseCollector/sounds/3722/); DWSD, \"hat_appetizer.wav\" (CC BY 3.0, https://freesound.org/people/DWSD/sounds/183105/); DWSD, \"hat_detailedopen909.wav\" (CC BY 3.0, https://freesound.org/people/DWSD/sounds/183119/); NoiseCollector, \"909 hat open2.wav\" (CC BY 3.0, https://freesound.org/people/NoiseCollector/sounds/3720/); DWSD, \"prc_phat909roomtom.wav\" (CC BY 3.0, https://freesound.org/people/DWSD/sounds/183109/); DWSD, \"rim_909analog.wav\" (CC BY 3.0, https://freesound.org/people/DWSD/sounds/183107/); Thirsk, \"Conga3.wav\" (CC BY 4.0, https://freesound.org/people/Thirsk/sounds/121104/); Thirsk, \"Conga1.wav\" (CC BY 4.0, https://freesound.org/people/Thirsk/sounds/121095/); Thirsk, \"Conga2.wav\" (CC BY 4.0, https://freesound.org/people/Thirsk/sounds/121096/); MrRentAPercussionist, \"LP Congas Quinto Muted Slap.wav\" (CC BY 4.0, https://freesound.org/people/MrRentAPercussionist/sounds/455509/); altemark, \"conga.wav\" (CC BY 4.0, https://freesound.org/people/altemark/sounds/35918/); Fran89, \"Bongo.wav\" (CC BY 3.0, https://freesound.org/people/Fran89/sounds/322533/); CorrodedMaster, \"Bongo2.wav\" (CC BY 3.0, https://freesound.org/people/CorrodedMaster/sounds/111204/); vortexsamples, \"Hard Techno Dominator Hoover - VS_OGKush_Synths_Loops_1_Fminor_150BPM\" (CC BY 4.0, https://freesound.org/people/vortexsamples/sounds/742752/); HUKO, \"CZ1000 - 135 bpm - Hoover\" (CC BY 4.0, https://freesound.org/people/HUKO/sounds/817247/)"
+   },
+   "page": "https://freesound.org/",
+   "root": "cache",
+   "path": "refs/techno",
+   "size": 1547350,
+   "search_hint": "Freesound sound pages (each file's `page`): the HQ preview of each sound (cdn.freesound.org/previews/<id // 1000>/<id>_<user id>-hq.mp3, as `url`), saved as refs/techno/<role>/<id>.mp3; check the licence on the sound's page before replacing one.",
+   "mirror": "refs.tar",
+   "files": [
+    {
+     "path": "refs/techno/rumble/505298.mp3",
+     "size": 128640,
+     "sha256": "c5470cabe2cb5d844bdb4cdad8b84e1cb5e87e1e8a96825092eea6e057d84ae8",
+     "url": "https://cdn.freesound.org/previews/505/505298_10538321-hq.mp3",
+     "page": "https://freesound.org/people/Cyclez/sounds/505298/",
+     "author": "Cyclez",
+     "title": "Hard Techno Schranz Rumble Kick Loop 150 BPM Wav",
+     "role": "rumble",
+     "licence": "CC BY 4.0"
+    },
+    {
+     "path": "refs/techno/rumble/737850.mp3",
+     "size": 43727,
+     "sha256": "fbe095c1eb1a9334f5bf074c0a515f8c4d9de2026c5d0a2ecbdb4aeea0467829",
+     "url": "https://cdn.freesound.org/previews/737/737850_16039667-hq.mp3",
+     "page": "https://freesound.org/people/vinodibiza/sounds/737850/",
+     "author": "vinodibiza",
+     "title": "RUMBLE KICK LOOP A#",
+     "role": "rumble",
+     "licence": "CC BY 4.0"
+    },
+    {
+     "path": "refs/techno/rumble/541742.mp3",
+     "size": 138672,
+     "sha256": "6d631475df752b306cd47cde7643710030af1e20bc39915f6f602fe20d42513d",
+     "url": "https://cdn.freesound.org/previews/541/541742_11770237-hq.mp3",
+     "page": "https://freesound.org/people/Victek/sounds/541742/",
+     "author": "Victek",
+     "title": "909 Rumble Kick Loop 130BPM",
+     "role": "rumble",
+     "licence": "CC BY 4.0"
+    },
+    {
+     "path": "refs/techno/rumble/742742.mp3",
+     "size": 191963,
+     "sha256": "b73726e2b0b0eecbfc7d05f219ae251ecc25e65f99275906ee73affee08b3996",
+     "url": "https://cdn.freesound.org/previews/742/742742_16120688-hq.mp3",
+     "page": "https://freesound.org/people/vortexsamples/sounds/742742/",
+     "author": "vortexsamples",
+     "title": "Distorted Hard Techno Kick - VS_OGKush_Kick_Loops_4_F#_150BPM",
+     "role": "rumble",
+     "licence": "CC BY 4.0"
+    },
+    {
+     "path": "refs/techno/rumble/518639.mp3",
+     "size": 375612,
+     "sha256": "b3f7b407375457fd50d6e324399fea413c133639b036b85d4290a025818df281",
+     "url": "https://cdn.freesound.org/previews/518/518639_10538321-hq.mp3",
+     "page": "https://freesound.org/people/Cyclez/sounds/518639/",
+     "author": "Cyclez",
+     "title": "SCHRANZ HARDCORE TECHNO KICK DRUM LOOP 155 BPM",
+     "role": "rumble",
+     "licence": "CC BY 4.0"
+    },
+    {
+     "path": "refs/techno/hardkick/360322.mp3",
+     "size": 20160,
+     "sha256": "807533d5efdb3c6e2ad55ff1acb0604a990e4d325528d9a931b110b24bc2b60c",
+     "url": "https://cdn.freesound.org/previews/360/360322_6559954-hq.mp3",
+     "page": "https://freesound.org/people/BConstructSound/sounds/360322/",
+     "author": "BConstructSound",
+     "title": "Techno Kick.wav",
+     "role": "hardkick",
+     "licence": "CC BY 4.0"
+    },
+    {
+     "path": "refs/techno/hardkick/66438.mp3",
+     "size": 10332,
+     "sha256": "8cbd13c03fff094210267ea216d4b38b6e5f389672b5ab5b3d517011deb0f130",
+     "url": "https://cdn.freesound.org/previews/66/66438_902612-hq.mp3",
+     "page": "https://freesound.org/people/kaiodeleis/sounds/66438/",
+     "author": "kaiodeleis",
+     "title": "KICK TECHNO.aif",
+     "role": "hardkick",
+     "licence": "CC BY 4.0"
+    },
+    {
+     "path": "refs/techno/kick909/54598.mp3",
+     "size": 15554,
+     "sha256": "f89ec8a713fde162c399fd1f36a13252e06eefa08d36eb573b2f93cb12188537",
+     "url": "https://cdn.freesound.org/previews/54/54598_4649-hq.mp3",
+     "page": "https://freesound.org/people/AaronGNP/sounds/54598/",
+     "author": "AaronGNP",
+     "title": "GNP Bass Drum - 9-oh-no-9.wav",
+     "role": "kick909",
+     "licence": "CC BY 4.0"
+    },
+    {
+     "path": "refs/techno/hat909/3722.mp3",
+     "size": 3025,
+     "sha256": "f677208ed71f820f3671e3e989801fc04170e915f887439e8b3a01408bb380e1",
+     "url": "https://cdn.freesound.org/previews/3/3722_4948-hq.mp3",
+     "page": "https://freesound.org/people/NoiseCollector/sounds/3722/",
+     "author": "NoiseCollector",
+     "title": "909 hat2.wav",
+     "role": "hat909",
+     "licence": "CC BY 3.0"
+    },
+    {
+     "path": "refs/techno/hat909/183105.mp3",
+     "size": 8141,
+     "sha256": "2787814a57bae16e069458eb625235896d978dc614f9ebdbbf70e3690d8f8e22",
+     "url": "https://cdn.freesound.org/previews/183/183105_2394245-hq.mp3",
+     "page": "https://freesound.org/people/DWSD/sounds/183105/",
+     "author": "DWSD",
+     "title": "hat_appetizer.wav",
+     "role": "hat909",
+     "licence": "CC BY 3.0"
+    },
+    {
+     "path": "refs/techno/openhat909/183119.mp3",
+     "size": 11271,
+     "sha256": "92eed6dc508640c8c699f2a7c477d5a8b7ae63760ce39cc5bced8b07531a94fa",
+     "url": "https://cdn.freesound.org/previews/183/183119_2394245-hq.mp3",
+     "page": "https://freesound.org/people/DWSD/sounds/183119/",
+     "author": "DWSD",
+     "title": "hat_detailedopen909.wav",
+     "role": "openhat909",
+     "licence": "CC BY 3.0"
+    },
+    {
+     "path": "refs/techno/openhat909/3720.mp3",
+     "size": 11113,
+     "sha256": "d1a171c681a7997aba33c80b26a67a8c03bdf78aec510efffa04b01a3da98941",
+     "url": "https://cdn.freesound.org/previews/3/3720_4948-hq.mp3",
+     "page": "https://freesound.org/people/NoiseCollector/sounds/3720/",
+     "author": "NoiseCollector",
+     "title": "909 hat open2.wav",
+     "role": "openhat909",
+     "licence": "CC BY 3.0"
+    },
+    {
+     "path": "refs/techno/tom909/183109.mp3",
+     "size": 13982,
+     "sha256": "de494f7cea1924c33122c69cfdfb662edc88d3c0e2cb59c7c30f2ccaa6b214db",
+     "url": "https://cdn.freesound.org/previews/183/183109_2394245-hq.mp3",
+     "page": "https://freesound.org/people/DWSD/sounds/183109/",
+     "author": "DWSD",
+     "title": "prc_phat909roomtom.wav",
+     "role": "tom909",
+     "licence": "CC BY 3.0"
+    },
+    {
+     "path": "refs/techno/rim909/183107.mp3",
+     "size": 7565,
+     "sha256": "80f704325e440a4ee25664969a6ad035baf697091259a3dd56a17f0d70c11f3a",
+     "url": "https://cdn.freesound.org/previews/183/183107_2394245-hq.mp3",
+     "page": "https://freesound.org/people/DWSD/sounds/183107/",
+     "author": "DWSD",
+     "title": "rim_909analog.wav",
+     "role": "rim909",
+     "licence": "CC BY 3.0"
+    },
+    {
+     "path": "refs/techno/conga/121104.mp3",
+     "size": 8664,
+     "sha256": "965f3d2a6b06691ac0610d57cbb33169d230ecd76f204a5d8f87a3f30fd00f6c",
+     "url": "https://cdn.freesound.org/previews/121/121104_2193266-hq.mp3",
+     "page": "https://freesound.org/people/Thirsk/sounds/121104/",
+     "author": "Thirsk",
+     "title": "Conga3.wav",
+     "role": "conga",
+     "licence": "CC BY 4.0"
+    },
+    {
+     "path": "refs/techno/conga/121095.mp3",
+     "size": 8768,
+     "sha256": "1c67b67e998824befd2605ddc275ad30bff903f0bc84bb0e70c69afe8b65bb11",
+     "url": "https://cdn.freesound.org/previews/121/121095_2193266-hq.mp3",
+     "page": "https://freesound.org/people/Thirsk/sounds/121095/",
+     "author": "Thirsk",
+     "title": "Conga1.wav",
+     "role": "conga",
+     "licence": "CC BY 4.0"
+    },
+    {
+     "path": "refs/techno/conga/121096.mp3",
+     "size": 9550,
+     "sha256": "607ea28faff9c6239deac84278e0da68ed94f37263738821787fc4b09345c403",
+     "url": "https://cdn.freesound.org/previews/121/121096_2193266-hq.mp3",
+     "page": "https://freesound.org/people/Thirsk/sounds/121096/",
+     "author": "Thirsk",
+     "title": "Conga2.wav",
+     "role": "conga",
+     "licence": "CC BY 4.0"
+    },
+    {
+     "path": "refs/techno/conga/455509.mp3",
+     "size": 18056,
+     "sha256": "9b2da865f3c47b80f66e4dd5631bf96e46090bd925efa177a289793b26d99acb",
+     "url": "https://cdn.freesound.org/previews/455/455509_5720726-hq.mp3",
+     "page": "https://freesound.org/people/MrRentAPercussionist/sounds/455509/",
+     "author": "MrRentAPercussionist",
+     "title": "LP Congas Quinto Muted Slap.wav",
+     "role": "conga",
+     "licence": "CC BY 4.0"
+    },
+    {
+     "path": "refs/techno/conga/35918.mp3",
+     "size": 2923,
+     "sha256": "a8837dbe19c1788cbcc8e2af6715b86d632f4e3ba3bc1af6b873690664cf9568",
+     "url": "https://cdn.freesound.org/previews/35/35918_19852-hq.mp3",
+     "page": "https://freesound.org/people/altemark/sounds/35918/",
+     "author": "altemark",
+     "title": "conga.wav",
+     "role": "conga",
+     "licence": "CC BY 4.0"
+    },
+    {
+     "path": "refs/techno/bongo/322533.mp3",
+     "size": 13673,
+     "sha256": "01c042a068bb1fc0c777c95bbddd9f32042e80f0f0af59f4277b9e560bd7afd6",
+     "url": "https://cdn.freesound.org/previews/322/322533_4436764-hq.mp3",
+     "page": "https://freesound.org/people/Fran89/sounds/322533/",
+     "author": "Fran89",
+     "title": "Bongo.wav",
+     "role": "bongo",
+     "licence": "CC BY 3.0"
+    },
+    {
+     "path": "refs/techno/bongo/111204.mp3",
+     "size": 6624,
+     "sha256": "1f794a8ec0022442553b0a765b676498578468cfb5f982f8fe6af3d3c013a78b",
+     "url": "https://cdn.freesound.org/previews/111/111204_1853660-hq.mp3",
+     "page": "https://freesound.org/people/CorrodedMaster/sounds/111204/",
+     "author": "CorrodedMaster",
+     "title": "Bongo2.wav",
+     "role": "bongo",
+     "licence": "CC BY 3.0"
+    },
+    {
+     "path": "refs/techno/hoover/742752.mp3",
+     "size": 228231,
+     "sha256": "fb0f98edd064b609a63847fb6ee8252681e8f05d20048e9e79081e5ad3965795",
+     "url": "https://cdn.freesound.org/previews/742/742752_16120688-hq.mp3",
+     "page": "https://freesound.org/people/vortexsamples/sounds/742752/",
+     "author": "vortexsamples",
+     "title": "Hard Techno Dominator Hoover - VS_OGKush_Synths_Loops_1_Fminor_150BPM",
+     "role": "hoover",
+     "licence": "CC BY 4.0"
+    },
+    {
+     "path": "refs/techno/hoover/817247.mp3",
+     "size": 271104,
+     "sha256": "b71f844379a2edc71248d6f02b1ee0fa3db3b2987290af7ae2d311d7aa823a15",
+     "url": "https://cdn.freesound.org/previews/817/817247_310556-hq.mp3",
+     "page": "https://freesound.org/people/HUKO/sounds/817247/",
+     "author": "HUKO",
+     "title": "CZ1000 - 135 bpm - Hoover",
+     "role": "hoover",
+     "licence": "CC BY 4.0"
+    }
+   ]
+  },
+  {
+   "id": "refs-tr909-detroit",
+   "kind": "files",
+   "required": false,
+   "for": "examples/production/modern/measure909.py and examples/production/techno/fit909.py: a recorded Roland TR-909 (the 'TR-909 Detroit' kit, recorded through API and Neve); engine/tr909.py (snare, clap, ride) and engine/techno.py (kick, hats, toms, rimshot) were fitted to it; analysed only, never stored in the repo or used in a track",
+   "licence": {
+    "name": "unstated (collection: 'public domain or similar')",
+    "terms": "the oramics/sampled collection says its instruments are 'public domain or similar license' and 'each instrument has its own license'; this kit names none, so it is used for measurement only"
+   },
+   "page": "https://oramics.github.io/sampled/DM/TR-909/Detroit/",
+   "root": "cache",
+   "path": "refs/tr909",
+   "size": 5691326,
+   "search_hint": "github.com/oramics/sampled, DM/TR-909/Detroit/samples/<file> (raw.githubusercontent.com); its sampled.instrument.json names the source (an F9 Audio free 909 kit).",
+   "files": [
+    {
+     "path": "refs/tr909/kick.wav",
+     "size": 160260,
+     "sha256": "7b0a75441ffbbef5e9ccb38bec43e8dfe86ba070621fbe5ac623e52b6fd9f4a1",
+     "url": "https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/samples/kick.wav",
+     "role": "kick909"
+    },
+    {
+     "path": "refs/tr909/kick-short.wav",
+     "size": 109192,
+     "sha256": "f2f3b938f92e1d8d04bdaeac6a2bcbb4b03ac449759847ff9f0ce8b26ed5d11d",
+     "url": "https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/samples/kick-short.wav",
+     "role": "kick909"
+    },
+    {
+     "path": "refs/tr909/hihat-close.wav",
+     "size": 58270,
+     "sha256": "2603a92cb2e3a2532908747c005a8ce8e0eb82d9dcdfdf05659d4f478c886bee",
+     "url": "https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/samples/hihat-close.wav",
+     "role": "hat909"
+    },
+    {
+     "path": "refs/tr909/hihat-closed.wav",
+     "size": 32034,
+     "sha256": "8f67165b4fdf6ce6f1a73e5157ebc36522838659dd7424777e90209c79aea36a",
+     "url": "https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/samples/hihat-closed.wav",
+     "role": "hat909"
+    },
+    {
+     "path": "refs/tr909/hihat-open-1.wav",
+     "size": 95242,
+     "sha256": "e09b1ec288407b3dd4a9eb5688af32618f5c011a6b09f6641370f9634494d515",
+     "url": "https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/samples/hihat-open-1.wav",
+     "role": "openhat909"
+    },
+    {
+     "path": "refs/tr909/hihat-open-2.wav",
+     "size": 108268,
+     "sha256": "3fdd97ed57ae0c389094f93ce011d5cfb3a50c4ac77e68ecd88c2d6b61cd8f3e",
+     "url": "https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/samples/hihat-open-2.wav",
+     "role": "openhat909"
+    },
+    {
+     "path": "refs/tr909/tom-h.wav",
+     "size": 114324,
+     "sha256": "6fc4a813ca6a9eda965173f0142ce917140917d35409ba899bf9fd2266a9d47e",
+     "url": "https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/samples/tom-h.wav",
+     "role": "tom909"
+    },
+    {
+     "path": "refs/tr909/tom-l.wav",
+     "size": 2119618,
+     "sha256": "597314222a40c9e63d74b35c0dc3aa3b9c58429b3c10e6350a2e77d533aecbe6",
+     "url": "https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/samples/tom-l.wav",
+     "role": "tom909"
+    },
+    {
+     "path": "refs/tr909/rim.wav",
+     "size": 356962,
+     "sha256": "2f8a399daf050dcb30c80ffb84906153014b76e65348b7dbf3a98cdd2c110618",
+     "url": "https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/samples/rim.wav",
+     "role": "rim909"
+    },
+    {
+     "path": "refs/tr909/snare.wav",
+     "size": 133764,
+     "sha256": "e33f9949b5ef498cb505c5ba0bc59aee11ecca98fb89a51531d1584e65cb7b2e",
+     "url": "https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/samples/snare.wav",
+     "role": "snare909"
+    },
+    {
+     "path": "refs/tr909/clap-1.wav",
+     "size": 137628,
+     "sha256": "d416c0f1db1bf01db19cc70323e803c4a23bbb7b8488cb0429d27485f0cd15b2",
+     "url": "https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/samples/clap-1.wav",
+     "role": "clap909"
+    },
+    {
+     "path": "refs/tr909/clap-2.wav",
+     "size": 146146,
+     "sha256": "0aadfe88a66ce31eef56ad08efe79fddd2fec229eeb7099895648c30bb7ca4cd",
+     "url": "https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/samples/clap-2.wav",
+     "role": "clap909"
+    },
+    {
+     "path": "refs/tr909/ride.wav",
+     "size": 2119618,
+     "sha256": "1422a672cf4a9b59b4fac480fb2f85ca54c7b0205ddbf3be8a1f6f420bfa2771",
+     "url": "https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/samples/ride.wav",
+     "role": "ride909"
+    }
+   ]
   }
  ]
 }

@@ -39,6 +39,8 @@ DEFAULT_GAIN.update({"polysynth": -12, "sub": -4, "kicksub": -1, "kickpunch": -8
                      "air": -20})
 DEFAULT_GAIN.update({"acid": -6, "snare909": -1, "clap909": -7, "ride909": -19})
 DEFAULT_GAIN.update({"fmgrowl": -10, "wavetable": -10, "sampler": 0})
+DEFAULT_GAIN.update({"kick909": -1, "hat909": -12, "openhat909": -14, "tom909": -6, "rim909": -9, "conga": -7,
+                     "bongo": -8})  # engine/techno.py
 DEFAULT_GAIN.update({"brass": -12, "woodwind": -10, "timpani": -6, "bassdrum": -6, "taiko": -5, "suscymbal": -16,
                      "braam": -9, "impact": -4, "whoosh": -14, "shepard": -14, "vox2choir": -10, "accordion": -9})
 # bass-music voices and fx (engine/bass.py, engine/bassfx.py; docs/MANUAL.md "Bass music")
@@ -411,13 +413,18 @@ def schedule(P, hand):
             pat = patterns[pname]
             pb_ = pat.get("bars", 1)
             reps = int(np.ceil(bars / pb_))
+            ph = 0.0
+            if pat.get("free"):  # free-running (engine/techno.py): the loop keeps the song's clock across sections
+                import techno as TK
+                ph = TK.free_phase(pat, bar_i)
+                reps = int(np.ceil((bars + ph) / pb_))
             for r in range(reps):
-                pstart_bar = r * pb_
+                pstart_bar = r * pb_ - ph
                 if pstart_bar >= bars:
                     break
                 t0 = s0 + pstart_bar * bar
                 for tname, part in pat.items():
-                    if tname == "bars":
+                    if tname in ("bars", "free"):
                         continue
                     if tname not in tracks:
                         raise ValueError(f"pattern '{pname}' uses unknown track '{tname}'")
@@ -441,11 +448,13 @@ def schedule(P, hand):
                     lim = s0 + bars * bar
                     if in_fill:
                         lim = min(lim, s0 + (bars - fill_bars) * bar)
+                    if ph:
+                        new = [e for e in new if e["t"] >= s0 - 1e-4]
                     events[tname] += [e for e in new if e["t"] < lim - 1e-4]
         if fill_pat is not None:
             t0 = s0 + (bars - fill_bars) * bar
             for tname, part in fill_pat.items():
-                if tname == "bars":
+                if tname in ("bars", "free"):
                     continue
                 tr = tracks[tname]
                 use(tname)
@@ -1055,6 +1064,15 @@ def _presets(P):
     return D2.apply_presets(P)
 
 
+def _rumble_setup(P):
+    """Tracks with `"rumble"` (engine/techno.py, 2026-11-26) get a rumble return keyed by their hits and a send to it;
+    a project without one is returned as it is."""
+    if not any(isinstance(tr, dict) and tr.get("rumble") not in (None, False) for tr in P.get("tracks", {}).values()):
+        return P
+    import techno as TK
+    return TK.apply_rumble(P)
+
+
 def _prepare(P):
     """A stack track without its own `inst` reads its pattern as its first layer's instrument: give the scheduler a
     copy of the project where it has one (the project itself is not changed)."""
@@ -1187,8 +1205,16 @@ def _process_return(rn, cfg, x, beat, duck_env):
             d = cfg.get("beats", 0.75) * beat + cfg.get("offset_ms", 0.0) / 1000
             wet = pb.Pedalboard([pb.Delay(d, cfg.get("feedback", 0.35), 1.0)])(x, SR)
         hp, lp = cfg.get("hpf", 300), cfg.get("lpf", 3500)
+    elif typ == "rumble":  # engine/techno.py: reverb -> distortion -> low-pass, mono, ducked on the key's hits
+        import techno as TK
+        key = cfg.get("key")
+        evs = (_CTX.get("events") or {}).get(key)
+        if evs is None:
+            raise ValueError(f'return "{rn}": a rumble needs "key": the kick track whose hits duck it')
+        wet = TK.rumble(x, cfg, beat, [e["t"] for e in evs])
+        hp, lp = 0, 0
     else:
-        raise ValueError(f'return "{rn}": type must be reverb, delay, shimmer, granular or hall')
+        raise ValueError(f'return "{rn}": type must be reverb, delay, shimmer, granular, hall or rumble')
     if hp:
         wet = MB.butter(wet, "hpf", hp, 12)
     if lp:
@@ -1203,7 +1229,7 @@ def _process_return(rn, cfg, x, beat, duck_env):
             raise ValueError(f'return "{rn}": duck key "{du.get("key")}" is not a track or bus')
         e = MB.follower_db(duck_env[du["key"]], du.get("attack_ms", 10.0), du.get("release_ms", 250.0))
         wet = wet * MB.duck_curve(e, du.get("depth_db", 6.0))[None, :].astype(np.float32)
-    return (wet * db(cfg.get("return_db", -4))).astype(np.float32)
+    return (wet * db(cfg.get("return_db", 0 if typ == "rumble" else -4))).astype(np.float32)
 
 
 def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=None, pre_roll=None, layer_hook=None):
@@ -1213,7 +1239,7 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
     starts `meta["window_offset"]` seconds into the track, has no quick master, and its random draws differ from a
     full render (the stems are the same sounds, not the same samples)."""
     t_start = time.time()
-    P = _voice_defaults(_prepare(_presets(P)))
+    P = _voice_defaults(_prepare(_rumble_setup(_presets(P))))
     hand = Hand(P["bpm"], P.get("swing", 0.5), P.get("seed", 1))
     events, holds, sections, total = schedule(P, hand)
     whole, offset = None, 0.0

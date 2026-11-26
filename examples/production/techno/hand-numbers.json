@@ -1,0 +1,46 @@
+{
+ "conga": {
+  "NEW conga": {
+   "spec_db": 9.95,
+   "env_log2": 0.987,
+   "n": 8
+  },
+  "darbuka doum": {
+   "spec_db": 12.42,
+   "env_log2": 1.679,
+   "n": 8
+  },
+  "tom": {
+   "spec_db": 14.29,
+   "env_log2": 2.067,
+   "n": 8
+  },
+  "kittom": {
+   "spec_db": 13.7,
+   "env_log2": 2.416,
+   "n": 8
+  }
+ },
+ "bongo": {
+  "NEW bongo": {
+   "spec_db": 9.74,
+   "env_log2": 1.076,
+   "n": 8
+  },
+  "darbuka tek": {
+   "spec_db": 14.57,
+   "env_log2": 1.366,
+   "n": 8
+  },
+  "darbuka slap": {
+   "spec_db": 12.28,
+   "env_log2": 1.038,
+   "n": 8
+  },
+  "tom": {
+   "spec_db": 13.56,
+   "env_log2": 2.179,
+   "n": 8
+  }
+ }
+}

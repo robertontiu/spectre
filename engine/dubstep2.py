@@ -210,8 +210,17 @@ def reverse_cymbal(sec):
 def _load_presets():
     import json
     import os
-    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "bass_presets.json")) as fh:
-        return {k: v for k, v in json.load(fh)["presets"].items()}
+    here = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(here, "bass_presets.json")) as fh:
+        out = {k: v for k, v in json.load(fh)["presets"].items()}
+    tp = os.path.join(here, "techno_presets.json")  # the techno presets (engine/techno.py, 2026-11-26)
+    if os.path.exists(tp):
+        with open(tp) as fh:
+            for k, v in json.load(fh)["presets"].items():
+                if k in out:
+                    raise ValueError(f"preset '{k}' is in both bass_presets.json and techno_presets.json")
+                out[k] = v
+    return out
 
 
 PRESETS = _load_presets()
@@ -236,6 +245,9 @@ def apply_presets(P):
                 continue
             if k == "inst" and isinstance(out.get("inst"), dict) and isinstance(v, dict):
                 out["inst"] = dict(out["inst"], **copy.deepcopy(v))
+            elif (k == "inst" and out.get("layers") and not out.get("inst") and isinstance(v, dict)
+                  and "type" not in v):  # a stacked preset: the keys tune its first layer (the body), e.g. a note
+                out["layers"][0]["inst"] = dict(out["layers"][0]["inst"], **copy.deepcopy(v))
             else:
                 out[k] = copy.deepcopy(v)
         tracks[name] = out
