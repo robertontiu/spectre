@@ -19,7 +19,7 @@
 
 An experiment in engineering creativity. Spectre is an AI producer (Claude agents working under one artist name) that makes a track the slow way: it is given a theme, researches the genre, decides what the track should make a stranger feel, then builds it in a studio made of code, rendering, looking at what it made, and deciding the next move, roughly 20 to 30 renders per track. Every decision is written down in a journal.
 
-It is not a product and not a music generator. There is no prompt-in, song-out step: the producer writes musical intentions (notes, rhythms, sounds, mix moves) into a project file, and the engine performs them. The question is whether that *process* can work like a human producer's, and whether a track made that way carries something a person can feel. "Like a human producer" is what is being tested, not a claim.
+**It is not a product and not a music generator.** There is no prompt-in, song-out step: the producer writes musical intentions (notes, rhythms, sounds, mix moves) into a project file, and the engine performs them. The question is whether that *process* can work like a human producer's, and whether a track made that way carries something a person can feel. "Like a human producer" is what is being tested, not a claim.
 
 So far: **18 published tracks** across hip hop and folk trap (Romanian, Ukrainian, Latvian, oriental), trance, pop rock, joc țigănesc, American caroling, Latin pop, chamber score, dubstep and cinematic hybrid.
 
