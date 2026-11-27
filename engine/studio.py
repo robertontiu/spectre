@@ -361,6 +361,25 @@ def tapestop(mix, a, b):
     return mix
 
 
+def brake(mix, a, b, curve=1.3, level=0.5, fade_ms=12.0):
+    """The dict form of exit `tapestop` (since 2026-11-27): the playback slows to a halt over [a, b), its level
+    falling with the speed (a tape head's output follows the tape's speed: gain = speed ** `level`, 0 keeps the
+    level), faded out over the last `fade_ms` so the halt never holds a DC value; nothing after b is touched, so
+    a `hold` window before the section end plays whatever the project leaves there (cut tracks are silent)."""
+    n = b - a
+    if n <= 10:
+        return mix
+    r = np.linspace(1, 0, n) ** curve
+    pos = a + np.cumsum(r)
+    g = r ** level if level else np.ones(n)
+    f = min(n, int(fade_ms / 1000 * SR))
+    if f > 1:
+        g[-f:] *= np.cos(np.linspace(0, np.pi / 2, f)) ** 2
+    for c in range(2):
+        mix[c, a:b] = np.interp(pos, np.arange(mix.shape[1]), mix[c]) * g
+    return mix
+
+
 # ------------------------------------------------------------------ render
 
 # Random streams. By default (every project made before 2026-11-25) the hand draws its humanizing from one generator
@@ -1452,8 +1471,13 @@ def render(P, solo=None, out_prefix=None, quiet=False, stem_hook=None, window=No
                 continue
             ex = sec.get("exit") or {}
             bt_e = S.get("beat_end", beat)
-            if ex.get("tapestop"):
-                mix = tapestop(mix, b - int(ex["tapestop"] * bt_e * SR), b)
+            ts = ex.get("tapestop")
+            if isinstance(ts, dict):  # the brake: {"beats", "hold", "curve", "level", "fade_ms"} (opt-in)
+                e = b - int(ts.get("hold", 0) * bt_e * SR)
+                mix = brake(mix, e - int(ts.get("beats", 1) * bt_e * SR), e, ts.get("curve", 1.3), ts.get("level", 0.5),
+                            ts.get("fade_ms", 12.0))
+            elif ts:
+                mix = tapestop(mix, b - int(ts * bt_e * SR), b)
             if ex.get("silence"):
                 mix *= fade_gate(total_n, [(b - int(ex["silence"] * bt_e * SR), b)])
     if per_track:
