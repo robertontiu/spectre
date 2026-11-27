@@ -16,6 +16,13 @@ is read too: a drop-out or drop-in (the energy dimensions moving together) and l
 arrangement's grammar and are never flagged; a swap (content changing at the same energy) is. A seam is flagged
 when it is broad (several families, or a high score) and little of it was prepared, unless the incoming section
 says `"seam": "cut"` (a deliberate hard cut, explained in the journal).
+Harmony comes from the render's notes when it has them (each note weighted by how audible its stem is), the audio's
+chroma otherwise. A seam that lands on NEW HARMONIC GROUND (a distant key: most of the pitch weight on pitch classes
+the track has not used) is prepared by its new notes, not by a brake, a cut, a silence or a fill and not by sounding
+like before: the new pitch classes heard in the bars before (foreshadowed) and a voice carried across that already
+plays them (led). STACKED GESTURES (a strip, a brake or stop, an unprepared key change, a drop-in within two bars of
+the line) count as abruptness, and a brake (a tape stop: a pitch dive) onto a new key costs preparation, more when the
+track taught its brakes to come home (2026-11-27, the owner's ear on Redline v041 bar 161).
 
 --coherence: per section, four fingerprints: the motifs (transposition-free melodic cells of four notes from the
 notes of every pitched track, rhythm-free, so a riff moved to another instrument or played at half speed still
@@ -51,7 +58,7 @@ DIMS = [  # name, step, unit
     ("density", 0.8, "log2"),      # onsets per second (0.8 = x1.74)
     ("groove", 0.25, "1-cos"),     # onset strength on the 16 sixteenths of the bar
     ("timbre", 1.0, "z"),          # MFCC mean, in units of the track's own spread between 2-bar blocks (x3)
-    ("harmony", 0.15, "1-cos"),    # chroma
+    ("harmony", 0.15, "1-cos"),    # the notes' pitch-class profile (4 bars a side), or the audio's chroma
     ("width", 4.0, "dB"),          # side/mid
 ]
 # perceptual families: the dimensions inside one family move together (a hat entering moves balance, brightness,
@@ -75,6 +82,21 @@ SPLIT_LINK = 0.45
 PREP_DEVICES = {"riser", "rise", "reverse", "lpf", "tapestop"}
 SIGNAL_DEVICES = {"cut", "silence"}
 LAND_DEVICES = {"impact", "crash", "downlifter"}
+# devices that signal a line without preparing its content: on new harmonic ground they do not count as preparation
+# (a brake the track taught to mean "home" cannot announce a new key; the owner's ear on Redline v041 bar 161)
+BRAKE_DEVICES = {"tapestop", "cut", "silence", "fill"}
+# new harmonic ground (from the notes): a pitch class carrying at least NEW_PC of the pitch weight after the line that
+# was under OLD_PC of it in every earlier 2-bar block before the four bars that lead to the line (hand-tuned
+# 2026-11-27; a key change by a semitone puts most of the weight on new pitch classes, a chord change inside the key
+# reuses pitch classes heard within the last bars)
+NEW_PC, OLD_PC = 0.08, 0.02
+NEW_SHARE = 0.4      # ... and they carry at least this share together: a distant key (a semitone, a tritone away),
+#                      not a related key that keeps most of its notes nor a colour note added over the same centre
+#                      (A Beat Early's D minor to B minor at bar 29: 0.27; Captive's G over F# at bar 17: 0.25)
+NEW_HOME = 16        # bars of established ground needed before the line
+# stacked gestures: big devices within STACK_BARS bars before the line up to the line (hand-tuned 2026-11-27)
+STACK_BARS = 2
+PCN = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
 
 # ---------------------------------------------------------------- loading
@@ -221,6 +243,50 @@ def pitched_tracks(meta, project):
     return p
 
 
+class Notes:
+    """Pitch-class profiles from the render's events, each note weighted by its velocity and by how audible its stem
+    is at that moment (the stem's level in the render against its own loud level: a note scheduled under a brake, a
+    cut or a filtered-out passage counts little). Used for the harmony step at seams: audio chroma of a distorted,
+    noisy mix with a tuned kick hardly moves when every pitched part goes up a semitone (Redline v041 bar 161: 0.04
+    of a step from chroma, 5.5 from the notes)."""
+
+    def __init__(self, meta, ptracks):
+        self.ev = {}
+        st, hop = meta.get("stems_rms") or {}, meta.get("rms_hop", 0.05)
+        for n in ptracks:
+            xs = [x for x in meta["events"][n] if x.get("m") is not None]
+            if not xs:
+                continue
+            t = np.array([x["t"] for x in xs])
+            w = np.array([float(x.get("v", 1) or 1) for x in xs])
+            e = np.asarray(st.get(n) or [], float)
+            if len(e) > 8:
+                ref = np.percentile(e[e > 0], 95) if (e > 0).any() else 1.0
+                i0 = np.clip((t / hop).astype(int), 0, len(e) - 1)
+                lv = np.maximum(e[i0], e[np.clip(i0 + 1, 0, len(e) - 1)])
+                lv = np.maximum(lv, e[np.clip(i0 + 2, 0, len(e) - 1)])
+                db = 20 * np.log10(lv / (ref + 1e-12) + 1e-9)
+                w = w * np.clip((db + 30) / 24, 0, 1)    # -6 dB of its loud level and up: full; -30 dB: nothing
+            self.ev[n] = (t, np.array([int(x["m"]) % 12 for x in xs]), w)
+
+    def profile(self, t0, t1, tracks=None):
+        h = np.zeros(12)
+        for n, (t, pc, w) in self.ev.items():
+            if tracks is not None and n not in tracks:
+                continue
+            m = (t >= t0) & (t < t1)
+            if m.any():
+                h += np.bincount(pc[m], weights=w[m], minlength=12)
+        return h
+
+    def voices(self, t0, t1):
+        return {n: self.profile(t0, t1, {n}) for n in self.ev if self.profile(t0, t1, {n}).sum() > 1e-6}
+
+
+def _share(h):
+    return h / h.sum() if h.sum() > 1e-9 else h
+
+
 # ---------------------------------------------------------------- seams
 def section_devices(arr, k):
     """Devices the project declares around the seam into arrangement[k]."""
@@ -312,6 +378,22 @@ def run_seams(a, renders, latest, meta, meta_path):
     W = 2
     rows = []
     bar_of = lambda t: int(np.argmin(np.abs(edges - t)))
+    notes = None
+    if meta.get("events"):
+        notes = Notes(meta, pitched_tracks(meta, project))
+        if not notes.ev:
+            notes = None
+    E = lambda i: edges[int(np.clip(i, 0, nb))]
+    hstep = DIMS[8][1]
+
+    def nprof(i0, i1, back=0, fwd=0):
+        """pitch-class profile of bars [i0, i1); when silent, look up to `back` bars earlier or `fwd` bars later"""
+        h = notes.profile(E(i0), E(i1))
+        k = 0
+        while h.sum() < 1e-6 and k < max(back, fwd):
+            k += 2
+            h = notes.profile(E(i0 - k), E(i1)) if back else notes.profile(E(i0), E(i1 + k))
+        return h
     for k in range(1, len(secs)):
         s0, s1 = secs[k - 1], secs[k]
         b = bar_of(s1["start"])
@@ -322,6 +404,45 @@ def run_seams(a, renders, latest, meta, meta_path):
         jump = dist(before, after, tsc) / steps
         total = dist(far, after, tsc) / steps
         move = dist(far, before, tsc) / steps
+        # harmony from the notes when the render has them (chroma of the audio otherwise)
+        hsrc, new_ground, new_pcs, harm_prep, foreshadow, lead, N = "audio", False, [], None, None, None, 0.0
+        if notes is not None:
+            # four bars a side (one turn of the usual 4-bar progression, so a loop running across the line reads
+            # as no change), within the two sections
+            wbn, wan = min(4, max(s0["bars"], 1)), min(4, max(s1["bars"], 1))
+            Hb, Ha = nprof(b - wbn, b, back=8), nprof(b, b + wan, fwd=4)
+            Hf = nprof(b - 12, b - 8, back=8) if b >= 12 else nprof(0, max(b - wbn, 1))
+            if Hb.sum() > 1e-6 and Ha.sum() > 1e-6:
+                hsrc = "notes"
+                jump[8] = (1 - _cos(Hb, Ha)) / hstep
+                total[8] = (1 - _cos(Hf, Ha)) / hstep if Hf.sum() > 1e-6 else jump[8]
+                move[8] = (1 - _cos(Hf, Hb)) / hstep if Hf.sum() > 1e-6 else 0.0
+                # new harmonic ground: pitch classes that carry weight after the line and were (nearly) absent from
+                # every earlier 2-bar block before the four bars leading to the line
+                sa = _share(Ha)
+                cand = [p for p in range(12) if sa[p] >= NEW_PC]
+                for j in range(0, max(b - 4 - 1, 0), 2):
+                    if not cand:
+                        break
+                    sj = _share(notes.profile(E(j), E(j + 2)))
+                    if sj.sum() > 0:
+                        cand = [p for p in cand if sj[p] < OLD_PC]
+                new_pcs = cand
+                N = float(sa[new_pcs].sum()) if new_pcs else 0.0
+                if new_pcs and jump[8] >= 1.0 and b >= NEW_HOME and N >= NEW_SHARE:
+                    new_ground = True
+                    # foreshadowed: the new pitch classes already sounding in the four bars before the line (one
+                    # bar's worth of the new content = fully foreshadowed)
+                    fs = sum(float(_share(notes.profile(E(j), E(j + 1)))[new_pcs].sum()) for j in range(b - 4, b))
+                    foreshadow = float(np.clip(fs / max(N, 1e-9), 0, 1))
+                    # a carried voice moving first: the share of the new content after the line played by voices that
+                    # played before the line and already sounded the new pitch classes there
+                    Va, Vp = notes.voices(E(b), E(b + wan)), notes.voices(E(b - 4), E(b))
+                    tot_new = sum(float(v[new_pcs].sum()) for v in Va.values())
+                    led = sum(float(v[new_pcs].sum()) for n_, v in Va.items()
+                              if n_ in Vp and _share(Vp[n_])[new_pcs].sum() >= 0.05)
+                    lead = float(led / tot_new) if tot_new > 0 else 0.0
+                    harm_prep = 0.5 * foreshadow + 0.5 * lead
         n = np.minimum(jump, 3.0)
         jumps = jump >= 1.0
         dn = [d[0] for d in DIMS]
@@ -330,6 +451,8 @@ def run_seams(a, renders, latest, meta, meta_path):
         # preparation per dimension: the share of the far->after move that happened before the line; a dimension
         # where the bars before moved AWAY from where the next section lands is 'against'
         prep_d = np.where(total > 0.5, np.clip(1 - jump / np.maximum(total, 1e-9), 0, 1), 1.0)
+        if new_ground:  # the new pitch content's own preparation, not how far the chord moved before the line
+            prep_d[8] = harm_prep
         against = (jump > total + 0.5) & (move > 0.5) & jumps
         wsum = n[jumps].sum()
         prep_audio = float((prep_d[jumps] * n[jumps]).sum() / wsum) if wsum > 0 else 1.0
@@ -363,6 +486,9 @@ def run_seams(a, renders, latest, meta, meta_path):
             dmin = min(float(np.minimum(dist(block(F, j, j + 2), after, tsc) / steps, 3).sum())
                        for j in range(0, b - wb - 1, 2))
             ret = float(np.clip(1 - dmin / js, 0, 1))
+        ret_audio = ret
+        if new_ground:  # the audio may sound like before (same drums, same sounds), but the notes land somewhere new
+            ret = 0.0
         dv, sig, land, ramps = ([], [], [], 0)
         intended = False
         breaks = []
@@ -383,20 +509,79 @@ def run_seams(a, renders, latest, meta, meta_path):
         moving = e[np.abs(e) >= 0.5]
         coherent = len(moving) >= 2 and (np.all(moving > 0) or np.all(moving < 0)) and (abs(e[0]) >= 0.67 or abs(e[1]) >= 1)
         layering = carry is not None and carry >= 0.6 and not breaks  # the bed stays: entries over it, or exits
+        if new_ground:  # the bed is kept but the pitched parts land in a new key: not an entry over a kept bed
+            layering = False
         gesture = (("drop-in" if moving.mean() > 0 else "drop-out") if coherent else
                    "layering" if layering else ("swap" if len(fjumps) >= 2 else "small"))
+        if new_ground:
+            gesture = "key change" + (f" ({gesture})" if coherent else "")
         device = s1["bars"] <= 2  # into a short section (a cliff, a squeal, a stop): judged at the seam after it
-        dev_score = min(1.0, 0.35 * len(dv) + 0.1 * min(ramps, 3) + 0.1 * len(land) + 0.05 * len(sig))
-        prep = (0.4 * prep_audio + 0.2 * (carry if carry is not None else 0.5) + 0.25 * ret + 0.15 * dev_score)
-        if ret < 0.5:  # moving away from where the next section lands, into new ground: a promise broken
+        if new_ground:  # a brake, a cut, a silence or a fill signals the line but prepares nothing of the new key
+            dv_p = [x for x in dv if x not in BRAKE_DEVICES]
+            dev_score = min(1.0, 0.35 * len(dv_p) + 0.1 * min(ramps, 3) + 0.1 * len(land))
+        else:
+            dev_score = min(1.0, 0.35 * len(dv) + 0.1 * min(ramps, 3) + 0.1 * len(land) + 0.05 * len(sig))
+        prep = (0.4 * prep_audio + 0.2 * (carry if carry is not None else 0.5)
+                + 0.25 * (harm_prep if new_ground else ret) + 0.15 * dev_score)
+        if ret_audio < 0.5:  # moving away from where the next section lands, into new ground: a promise broken
             prep -= 0.1 * int(against.sum())
+        # stacked gestures: several big devices within a couple of bars of the line (a strip, a brake or stop, an
+        # unprepared key change, a drop-in) read as one abrupt event, however each is prepared on its own
+        stack, dive = [], False
+        if arr:
+            for r in rows:  # a strip at a line in the bars before (or this one, below)
+                if b + 1 - STACK_BARS <= r["bar"] <= b and (len(r["gone"]) >= 3 or r["gesture"] == "drop-out"):
+                    stack.append(f"strip@{r['bar']}")
+                    break
+            for k_ in range(len(secs) - 1):  # brakes and stops ending at a line in the window
+                lb = bar_of(secs[k_]["end"])
+                if not (b - STACK_BARS <= lb <= b) or secs[k_]["name"] not in byname:
+                    continue
+                ex = arr[byname[secs[k_]["name"]]].get("exit") or {}
+                ct = (ex.get("cut") or {}) if isinstance(ex.get("cut"), dict) else {}
+                trk = ct.get("tracks")
+                if ex.get("tapestop"):
+                    stack.append(f"brake@{lb + 1}")
+                    dive = lb + 1
+                    break
+                if ex.get("silence") or trk == "all" or (isinstance(trk, list) and len(trk) >= 6):
+                    stack.append(f"stop@{lb + 1}")
+                    break
+        if len(gone) >= 3 or gesture == "drop-out":
+            stack = [x for x in stack if not x.startswith("strip")] + [f"strip@{b + 1}"]
+        for r in rows:
+            if b + 1 - STACK_BARS <= r["bar"] <= b and r.get("key_change"):
+                stack.append(f"key@{r['bar']}")
+                break
+        key_change = bool(new_ground and harm_prep < 0.5)
+        if key_change:
+            stack.append(f"key@{b + 1}")
+        if meta.get("stems_rms"):
+            L1, mx_ = stem_levels(meta, edges[max(b - 1, 0)], edges[b]), max(La.values(), default=0) + 1e-12
+            entering = [t for t, v in La.items() if v > mx_ * 1e-3 and L1.get(t, 0) < mx_ * 1e-4]
+            if len(entering) >= 3 or (coherent and moving.mean() > 0):
+                stack.append(f"drop-in@{b + 1}")
+        lands_new = new_ground or (notes is None and ret_audio < 0.5 and jump[8] >= 1.0)
+        if len(stack) >= 3:
+            fam["stack"] = min(float(len(stack) - 1), 3.0)
+            fjumps.append("stack")
+            if lands_new:  # several devices at once, onto new ground: one abrupt event, not a prepared change
+                prep -= 0.1 * (len(stack) - 2)
+        taught = 0
+        if dive and new_ground:
+            # a pitch dive (tape stop) followed by a transposition reads as a tape restarting at the wrong speed; and
+            # a brake keeps the meaning the track taught it: brakes that came home before promise home again
+            taught = len({r["brake_home"] for r in rows if r.get("brake_home") and r["brake_home"] != dive})
+            prep -= 0.15 + (0.1 if taught >= 2 else 0.0)
         prep = float(np.clip(prep, 0, 1))
         if breaks:
             fam["streams"] = min(max(b_[0] for b_ in breaks), 3.0)
             fjumps.append("streams")
         score = float(sum(fam.values()))
+        # a drop-in or drop-out reads at once, unless it lands on a new key in a stack of devices
+        grammar = coherent and not (new_ground and len(stack) >= 3)
         flag = ((len(fjumps) >= norm["jumps"] or score >= norm["score"]) and prep < norm["prep"]
-                and not coherent and not layering and not device)
+                and not grammar and not layering and not device)
         rows.append(dict(seam=f"{s0['name']} > {s1['name']}", bar=int(b + 1), time=round(float(edges[b]), 1),
                          steps={d[0]: round(float(v), 2) for d, v in zip(DIMS, jump)},
                          jumps=[d[0] for d, j in zip(DIMS, jumps) if j], families=fjumps,
@@ -406,6 +591,13 @@ def run_seams(a, renders, latest, meta, meta_path):
                          carry=None if carry is None else round(carry, 2), ret=round(ret, 2), devices=dv + sig + land
                          + ([f"{ramps} ramps"] if ramps else []), new=new, gone=gone,
                          prep=round(prep, 2), gesture=gesture, breaks=[b_[1] for b_ in breaks], device=device,
+                         harmony_from=hsrc, new_ground=new_ground, new_pcs=[PCN[p] for p in new_pcs] if new_ground else [],
+                         harm_prep=None if harm_prep is None else round(harm_prep, 2),
+                         foreshadow=None if foreshadow is None else round(foreshadow, 2),
+                         lead=None if lead is None else round(lead, 2), key_change=key_change, stack=stack,
+                         new_share=round(N, 2) if hsrc == "notes" else None,
+                         brake_home=dive if dive and not lands_new else 0, dive_new=bool(dive and new_ground),
+                         taught=taught,
                          intended=intended, flag=bool(flag and not intended)))
     # print
     print(f"SEAMS: {os.path.basename(latest)}  {len(rows)} seams  genre {genre or '-'}  norm: flag when >= "
@@ -421,6 +613,9 @@ def run_seams(a, renders, latest, meta, meta_path):
               f"{mark}{','.join(r['jumps']) or '-'}"
               + (f" | against: {','.join(r['against'])}" if r["against"] else "")
               + (f" | jumps: {'; '.join(r['breaks'])}" if r["breaks"] else "")
+              + (f" | new ground: {'/'.join(r['new_pcs'])} (prepared {r['harm_prep']:.2f}: foreshadowed "
+                 f"{r['foreshadow']:.2f}, led {r['lead']:.2f})" if r["new_ground"] else "")
+              + (f" | stack: {','.join(r['stack'])}" if len(r["stack"]) >= 3 else "")
               + (f" | {','.join(r['devices'])}" if r["devices"] else "")
               + (f" | in: {','.join(r['new'][:4])}" if r["new"] else "") + (f" | out: {','.join(r['gone'][:4])}" if r["gone"] else ""))
     fl = [r for r in rows if r["flag"]]
@@ -429,6 +624,11 @@ def run_seams(a, renders, latest, meta, meta_path):
               f"({', '.join(r['families'])}: {', '.join(r['jumps'])}), score {r['score']}, prepared {r['prep']:.2f}"
               + (f"; moving away before the line: {', '.join(r['against'])}" if r["against"] else "")
               + (f"; carried sounds jumping: {'; '.join(r['breaks'])}" if r["breaks"] else "")
+              + (f"; lands on new harmonic ground ({'/'.join(r['new_pcs'])}), its new notes prepared "
+                 f"{r['harm_prep']:.2f}" if r["new_ground"] else "")
+              + (f"; stacked gestures: {', '.join(r['stack'])}" if len(r["stack"]) >= 3 else "")
+              + (f"; a brake (pitch dive) lands on the new key" + (f", after {r['taught']} brakes that came home"
+                 if r["taught"] >= 2 else "") if r["dive_new"] else "")
               + ". Prepare it (an element of the next section entering early, one of this one carried across, a ramp "
                 "toward the new state, fewer dimensions at once) or mark the section `\"seam\": \"cut\"` with a reason.")
     if not fl:
